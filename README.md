@@ -1,36 +1,203 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open School Portal – Frontend
+A modern, high-performance school management platform frontend built with **Next.js 15**, **TypeScript**, **TailwindCSS**, **Framer Motion**, **TanStack Query**, **Zod**, and **ShadCN UI**.
+Each school receives its own **dedicated instance** of the portal, ensuring private, isolated data storage and deep customization for **Admins, Teachers, Students, and Parents**.
+This repository contains the frontend implementation for the Open School Portal, covering attendance, grading, NFC teacher check-ins, fee management, timetables, analytics, and communication.
+---
+## Overview
+The Open School Portal replaces paper-based workflows with a fast, secure, mobile-first digital system.
+Administrators manage operational tasks, teachers track attendance and results, parents stay updated in real time, and students access schedules and grades in one place.
+Unlike traditional SaaS solutions, the platform is deployed per school, offering:
+- Full data privacy and isolation
+- Customization for each institution
+- Flexible scaling
+- A personalized user experience for all roles
+---
+## Tech Stack
+### Core Technologies
+- **Next.js 16** (App Router)
+- **TypeScript**
+- **TailwindCSS**
+- **ShadCN UI**
+- **Framer Motion**
+- **TanStack Query**
+- **Zod**
+- **pnpm** (package manager)
+### Additional Tools
+- Axios
+- ESLint + Prettier
+- Husky + Lint-Staged
+- Commitlint
+---
+## Repository Structure
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+open-school-portal-frontend/
+├── app/                         # Next.js app router structure
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Landing page
+│   ├── (auth)/                  # Authentication pages
+│   ├── (admin)/                 # Admin dashboards
+│   ├── (teacher)/               # Teacher portal
+│   ├── (student)/               # Student portal
+│   ├── (parent)/                # Parent portal
+│   ├── api/                     # Optional API route handlers
+│   └── ...
+├── components/                  # Shared and UI components
+│   ├── ui/                      # ShadCN UI components
+│   ├── charts/                  # Chart components
+│   └── ...
+├── lib/
+│   ├── api/                     # API layer
+│   ├── validation/              # Zod schemas
+│   ├── hooks/                   # Custom hooks
+│   └── utils/                   # Utility functions
+├── public/                      # Static assets
+├── styles/                      # Global styles
+├── package.json
+├── tailwind.config.ts
+├── next.config.js
+└── README.md
+````
+---
+## Product Overview
+The Open School Portal digitizes core school operations and centralizes communication among all stakeholders.
+The system handles:
+- Attendance (manual + NFC teacher check-in)
+- Fee invoicing and management
+- Timetables and scheduling
+- Result computation and reporting
+- Real-time communication
+- Analytics dashboards
+The platform eliminates paper inefficiencies while providing real-time, reliable data for decision-making.
+---
+## Problem Statement
+Schools face major workflow issues due to outdated processes:
+- Manual attendance registers and grade books
+- Disorganized communication
+- Time-consuming fee reconciliation
+- Lack of transparency for parents
+- Students losing track of schedules and grades
+- Administrators burdened by duplicate work and errors
+Open School Portal solves these through a unified, digital ecosystem.
+---
+## Value Proposition
+### For Administrators
+- Digital workflows for attendance, fees, timetables, and results
+- Real-time insights and analytics
+- Audit logs and accurate historical data
+### For Teachers
+- NFC-powered attendance
+- Automated result computation
+- Organized class and subject management
+### For Parents
+- Access to performance, attendance, and fee history
+- Real-time school updates
+### For Students
+- Timetable access
+- Comprehensive grade history
+- Organized academic updates
+---
+## Goals and Objectives
+- Digitize and streamline all school operations
+- Provide each school with a private, customizable platform
+- Strengthen communication among teachers, parents, admin, and students
+- Reduce staff workload and eliminate redundancy
+- Improve data accuracy and data-driven decision-making
+- Ensure security, scalability, and reliability
+---
+## Competitor Summary
+Open School Portal stands out through:
+- Dedicated deployed instance per school
+- Mobile-first approach
+- NFC attendance integration
+- Comprehensive all-in-one feature set
+Compared to traditional systems like PowerSchool or QuickSchools, it offers better customization and privacy at a more accessible scale.
+---
+## Core Features
+### Administration
+- Create and manage classes and sessions
+- Enroll students and assign teachers
+- Manage fees, invoices, and payment tracking
+- Approve results
+- Monitor dashboards and analytics
+### Teachers
+- NFC attendance check-in
+- Student attendance
+- Grade entry and result sheet generation
+- Timetable view
+### Parents
+- Child attendance
+- Fee invoices and payments
+- Result sheets
+- Notifications
+### Students
+- Timetables
+- Results and performance history
+- School updates
+---
+## Functional Requirements (Summary)
+### Admin
+- Register school and admin account
+- Login and password recovery
+- Manage fees, results, classes, and teachers
+### Teacher
+- NFC attendance check-in
+- Enter grades and attendance
+- Access timetable and class data
+### Parent
+- View attendance, results, and invoices
+- Download report sheets
+### Student
+- View timetable
+- View term results and updates
+---
+## Non-Functional Requirements
+- **Performance:** Dashboard under 2 seconds; attendance under 1 second
+- **Scalability:** Supports 200 to 5,000+ students
+- **Security:**
+  - Role-based access control
+  - Encrypted data
+  - POPIA-compliant storage
+  - Audit trail
+- **Usability:** Mobile-first, intuitive UI
+---
+## Success Metrics
+- Lower attendance and grading errors
+- Increased parent engagement
+- Reduced fee reconciliation disputes
+- Faster admin workflows and reduced manual work
+---
+## Getting Started
+### 1. Clone repository
+```bash
+git clone https://github.com/<org>/open-school-portal-frontend.git
+cd open-school-portal-frontend
+````
+### 2. Install dependencies
+```bash
+pnpm install
+```
+### 3. Start development server
+```bash
+pnpm dev
+```
+Application will be available at:
+```
+http://localhost:3000
+```
+---
+## Development Standards
+* TypeScript-first development
+* Zod for runtime schema validation
+* TanStack Query for API caching and async state
+* ShadCN UI for consistent components
+* Conventional Commits for commit messages
+* Linting/formatting enforced with ESLint, Prettier, Husky, and Lint-Staged
+---
+## Target Users
+* School Administrators
+* Teachers
+* Parents
+* Students
+---
+## License
+Proprietary. All rights reserved.
