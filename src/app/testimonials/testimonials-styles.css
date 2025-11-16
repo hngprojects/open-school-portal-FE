@@ -1,0 +1,18 @@
+.testimonial{
+  color: black !important;
+}
+h2 {
+  font-weight: 600;
+  font-size: clamp(18px, 4vw, 32px);
+  line-height: 100%;
+}
+h3 {
+  font-weight: 500;
+  font-size: clamp(16px, 4vw, 20px);
+}
+p {
+  font-size: clamp(14px, 4vw, 16px);
+}
+.sub-title {
+  font-weight: 400;
+}
