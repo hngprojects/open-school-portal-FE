@@ -1,0 +1,88 @@
+import Image from "next/image"
+import Link from "next/link"
+import React from "react"
+import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+
+const quickLinks = [
+  { name: "Benefit", href: "/benefit" },
+  { name: "Features", href: "/features" },
+  { name: "Who it's for", href: "/who-its-for" },
+]
+const support = [
+  { name: "FAQs", href: "/faq" },
+  { name: "Contact Us", href: "/contact-us" },
+  { name: "Mail Support", href: "/mail-support" },
+]
+
+const Footer = () => {
+  return (
+    <div className="bg-black text-white">
+      <div className="container flex flex-col gap-8 py-8 lg:flex-row lg:justify-between lg:py-12">
+        <section className="flex w-full max-w-100 flex-col gap-5 lg:justify-center">
+          <div className="flex items-center gap-4">
+            <Image
+              src="/assets/logo.png"
+              alt="Open School Portal Logo"
+              width={56}
+              height={56}
+              sizes="56px"
+              loading="lazy"
+              className="size-14 brightness-0 invert"
+            />
+            <h2 className="text-2xl font-bold">Open School Portal</h2>
+          </div>
+          <p className="text-lg leading-8 lg:text-xl">
+            The Modern Way School Run In Nigeria. Manage attendance, results, timetables,
+            fees, and NFC, all in one place
+          </p>
+          <div className="flex items-center gap-4">
+            <Facebook className="size-5 fill-white text-white" />
+            <Instagram className="size-5 text-white" />
+            <Linkedin className="size-5 text-white" />
+            <Twitter className="size-5 text-white" />
+          </div>
+          <p className="text-[#fafafa]">Copyright © 2025</p>
+        </section>
+        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+          <h3 className="text-lg font-bold lg:text-xl">Quick Links</h3>
+          <ul className="flex flex-col gap-4">
+            {quickLinks.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href}>{link.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+          <h3 className="text-lg font-bold lg:text-xl">Support</h3>
+          <ul className="flex flex-col gap-4">
+            {support.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href}>{link.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+          <h3 className="text-lg font-bold lg:text-xl">Get in Touch</h3>
+          <ul className="flex flex-col gap-4">
+            <li className="flex items-center gap-3">
+              <Mail className="size-5 shrink-0" />
+              <span className="wrap-break-word">info@openschoolportal.com</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <Phone className="size-5 shrink-0" />
+              <span>+234 123 456 7890</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Home className="mt-0.5 size-5 shrink-0 fill-current" />
+              <span className="wrap-break-word">123 School Street, Lagos, Nigeria</span>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  )
+}
+
+export default Footer
