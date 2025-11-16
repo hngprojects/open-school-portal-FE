@@ -1,4 +1,10 @@
-h5{
-    font-weight: 500;
+h5 {
+  font-weight: 500;
   font-size: clamp(16px, 4vw, 24px);
+}
+p {
+  font-size: clamp(14px, 4vw, 16px);
+}
+button {
+  font-size: clamp(14px, 4vw, 16px);
 }
