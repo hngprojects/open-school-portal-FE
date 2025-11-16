@@ -10,7 +10,7 @@ interface FAQItem {
 }
 
 const HomeFAQ = () => {
-  const [openItem, setOpenItem] = useState<number | null>(0) // First item open by default
+  const [openItem, setOpenItem] = useState<number | null>(0)
 
   const faqData: FAQItem[] = [
     {
@@ -44,9 +44,12 @@ const HomeFAQ = () => {
   }
 
   return (
-    <section className="w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
+    <section className="font-outfit w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
-        <h2 className="mb-8 text-3xl font-bold text-gray-900">
+        <h2
+          className="mb-8 leading-none font-semibold text-gray-900"
+          style={{ fontSize: "clamp(18px, 4vw, 32px)" }}
+        >
           Frequently Asked Questions
         </h2>
         <div className="flex flex-col items-stretch lg:flex-row lg:gap-[110px]">
@@ -57,8 +60,14 @@ const HomeFAQ = () => {
                   <button
                     onClick={() => toggleItem(faq.id)}
                     className="flex w-full items-center justify-between py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
+                    style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
                   >
-                    <span className="faq-title pr-4 text-lg">{faq.question}</span>
+                    <span
+                      className="pr-4 leading-8 font-semibold"
+                      style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
+                    >
+                      {faq.question}
+                    </span>
                     <svg
                       className={`h-5 w-5 transform transition-transform duration-200 ${
                         openItem === faq.id ? "rotate-180" : ""
@@ -81,7 +90,10 @@ const HomeFAQ = () => {
                       openItem === faq.id ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                     }`}
                   >
-                    <p className=" mt-2 pb-2 leading-relaxed text-[#2d2d2d]">
+                    <p
+                      className="mt-2 pb-2 leading-relaxed text-[#2d2d2d]"
+                      style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+                    >
                       {faq.answer}
                     </p>
                   </div>
@@ -89,10 +101,10 @@ const HomeFAQ = () => {
               ))}
             </div>
           </div>
-          
-          <div className="mt-16 lg:mt-0 lg:max-w-[330px] lg:h-full">
+
+          <div className="mt-16 lg:mt-0 lg:h-full lg:max-w-[330px]">
             <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] p-8 text-center lg:min-h-[400px]">
-              <div className="mx-auto mb-4 w-32 h-32 max-w-32">
+              <div className="mx-auto mb-4 h-32 w-32 max-w-32">
                 <Image
                   src="/faq/chat.png"
                   alt="Chat"
@@ -102,16 +114,25 @@ const HomeFAQ = () => {
                   priority
                 />
               </div>
-              <h2 className="mb-6">
+              <h2
+                className="mb-6 font-medium"
+                style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
+              >
                 Do you have more questions?
               </h2>
 
-              <p className="mb-6 leading-relaxed text-black">
+              <p
+                className="mb-6 leading-relaxed text-black"
+                style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+              >
                 Our team will answer all your questions. We response fast.
               </p>
 
-              <div className="w-full space-y-4 mb-6">
-                <button className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800">
+              <div className="mb-6 w-full space-y-4">
+                <button
+                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
+                  style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+                >
                   Contact Super Team
                 </button>
               </div>

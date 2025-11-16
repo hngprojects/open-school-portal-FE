@@ -1,11 +1,5 @@
 import React from "react"
 import Image from "next/image"
-import { Outfit } from "next/font/google"
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
 
 interface Testimonial {
   id: number
@@ -33,7 +27,6 @@ const HomeTestimonial: React.FC = () => {
       role: "Mathematics Teacher",
       image: "/testimonials/t-teacher.png",
       title: "Teaching and class management made simple!",
-
       content:
         "Open School Portal helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
     },
@@ -43,7 +36,6 @@ const HomeTestimonial: React.FC = () => {
       role: "School Admin",
       image: "/testimonials/t-admin.png",
       title: "A powerful tool for modern schools, Reliable, fast, and built for growth!",
-
       content:
         "Open School Portal has improved communication, record keeping, and student management. Our staff and parents love it.",
     },
@@ -52,21 +44,26 @@ const HomeTestimonial: React.FC = () => {
       name: "Mr. James Kennedy",
       role: "Parent",
       image: "/testimonials/t-parent.png",
-      title: "I can finally monitor my child’s education and progress!",
-
+      title: "I can finally monitor my child's education and progress!",
       content:
         "With Open School Portal, I see my son's attendance, results, and school updates in real time. It keeps me involved and gives me peace of mind.",
     },
   ]
 
   return (
-<section className={`${outfit.className} testimonial w-full bg-white py-16`}>
+    <section className="w-full bg-white py-16 text-black">
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
         <div className="mb-8 text-center lg:mb-12">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
+          <h2
+            className="mb-4 leading-none font-semibold text-gray-900 lg:text-4xl"
+            style={{ fontSize: "clamp(18px, 4vw, 32px)" }}
+          >
             What Our Users Say
           </h2>
-          <p className="sub-title mx-auto max-w-3xl text-lg text-gray-600 lg:text-xl">
+          <p
+            className="mx-auto max-w-3xl font-normal text-gray-600 lg:text-xl"
+            style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+          >
             Discover how Open School Portal is transforming educational institutions and
             enhancing the experience for administrators, teachers, and parents alike.
           </p>
@@ -93,15 +90,29 @@ const HomeTestimonial: React.FC = () => {
                 </div>
 
                 <div className="flex flex-1 flex-col justify-center">
-                  <h3>{testimonial.title}</h3>
-                  <p className="mb-2 text-base leading-relaxed font-normal lg:mb-2">
+                  <h3
+                    className="font-medium text-gray-900"
+                    style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
+                  >
+                    {testimonial.title}
+                  </h3>
+                  <p
+                    className="mb-2 leading-relaxed font-normal lg:mb-2"
+                    style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+                  >
                     &ldquo;{testimonial.content}&rdquo;
                   </p>
                   <div>
-                    <h3 className="text-lg font-semibold lg:text-xl">
+                    <h3
+                      className="font-semibold text-gray-900 lg:text-xl"
+                      style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
+                    >
                       {testimonial.name}
                     </h3>
-                    <p className="text-sm lg:text-base">
+                    <p
+                      className="text-sm lg:text-base"
+                      style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+                    >
                       {testimonial.role}
                     </p>
                   </div>

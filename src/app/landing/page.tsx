@@ -1,7 +1,6 @@
-import HomeTestimonial from "./components/HomeTestimonial"
-import HomeDemo from "./components/HomeDemo"
-import HomeFAQ from "./components/HomeFAQ"
-import "./styles.css"
+import HomeTestimonial from "../components/HomeTestimonial"
+import HomeDemo from "../components/HomeDemo"
+import HomeFAQ from "../components/HomeFAQ"
 
 export default function Home() {
   return (
