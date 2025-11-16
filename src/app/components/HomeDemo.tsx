@@ -5,9 +5,7 @@ const HomeDemo: React.FC = () => {
   return (
     <section className="font-outfit w-full bg-white py-8 sm:py-12 lg:py-24">
       <div className="mx-auto max-w-[1285px] px-4 sm:px-6">
-        {/* Main Demo Container */}
         <div className="relative mx-auto h-auto min-h-[280px] w-full overflow-visible rounded-2xl bg-[#DA3743] sm:min-h-[300px] md:h-[319px] md:max-w-[1259px]">
-          {/* Background Wave Patterns - Desktop Only */}
           <div className="absolute inset-0 hidden overflow-hidden rounded-2xl md:block">
             <div className="absolute top-0 right-0 bottom-0 flex w-1/3">
               <div className="relative h-full w-full">
@@ -45,9 +43,7 @@ const HomeDemo: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Layout - Hidden on Mobile */}
           <div className="relative z-10 hidden h-full items-center justify-between lg:flex lg:px-16">
-            {/* Image Container - Positioned to stick out from the top */}
             <div className="absolute -left-8 -top-20 lg:-left-8 lg:-top-32">
               <div
                 className="h-[450px] w-[400px] overflow-visible"
@@ -96,7 +92,6 @@ const HomeDemo: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Layout - Stacked and Centered */}
           <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 py-8 text-center lg:hidden">
             <div className="mb-6 max-w-[280px]">
               <div
