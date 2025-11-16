@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 html {
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
 }
 
 .container {
@@ -146,5 +146,18 @@ html {
   to {
     width: 100%;
     opacity: 1;
+  }
+}
+
+.animate-onrender {
+  transition: all 0.3s ease-in-out;
+  opacity: 1;
+  transform: translateY(0px);
+
+  @starting-style {
+    & {
+      opacity: 0;
+      transform: translateY(30px);
+    }
   }
 }
