@@ -1,5 +1,5 @@
-import Footer from "./_components/Footer";
-import Navbar from "./_components/Navbar"
+import Footer from "./_components/waitlist-footer";
+import Navbar from "./_components/waitlist-navbar"
 
 export const metadata = {
   title: "Waitlist",
@@ -13,7 +13,7 @@ export default function ExternalLayout({
   return (
     <>
       <Navbar />
-      <main className="pt-20 md:pt-22 lg:pt-28 bg-[#F5F5F5]">{children}</main>
+      <main className="pt-20 md:pt-22 lg:pt-28 bg-[#F5F5F5] px-0">{children}</main>
       <Footer />
     </>
   )

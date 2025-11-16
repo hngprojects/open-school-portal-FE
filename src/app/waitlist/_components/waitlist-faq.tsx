@@ -60,8 +60,8 @@ export default function FAQAccordion() {
   };
 
   return (
-    <div className="w-full container py-10 md:py-16 bg-white">
-        <div className="w-full space-y-8">
+    <div className="w-full py-10 md:py-16 bg-white">
+        <div className="w-full space-y-8 container">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
         Frequently Asked Questions
       </h2>
