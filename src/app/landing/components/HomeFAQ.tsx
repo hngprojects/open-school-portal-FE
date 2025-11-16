@@ -2,7 +2,6 @@
 
 import Image from "next/image"
 import { useState } from "react"
-import "./faq-styles.css"
 
 interface FAQItem {
   id: number
@@ -10,7 +9,7 @@ interface FAQItem {
   answer: string
 }
 
-const FAQSection = () => {
+const HomeFAQ = () => {
   const [openItem, setOpenItem] = useState<number | null>(0) // First item open by default
 
   const faqData: FAQItem[] = [
@@ -124,4 +123,4 @@ const FAQSection = () => {
   )
 }
 
-export default FAQSection
+export default HomeFAQ

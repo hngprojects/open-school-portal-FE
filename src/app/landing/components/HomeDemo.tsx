@@ -1,6 +1,5 @@
 import React from "react"
 import Image from "next/image"
-import "./demo-styles.css"
 import { Outfit } from "next/font/google"
 
 const outfit = Outfit({
@@ -8,7 +7,7 @@ const outfit = Outfit({
   weight: ["400", "500", "600", "700", "800", "900"],
 })
 
-const Demo: React.FC = () => {
+const HomeDemo: React.FC = () => {
   return (
     <section className={`${outfit.className} w-full bg-white py-16 lg:py-24`}>
       <div className="mx-auto max-w-[1285px] px-4">
@@ -113,4 +112,4 @@ const Demo: React.FC = () => {
   )
 }
 
-export default Demo
+export default HomeDemo

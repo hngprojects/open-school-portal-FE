@@ -1,6 +1,5 @@
 import React from "react"
 import Image from "next/image"
-import "./testimonials-styles.css"
 import { Outfit } from "next/font/google"
 
 const outfit = Outfit({
@@ -17,7 +16,7 @@ interface Testimonial {
   content: string
 }
 
-const TestimonialSection: React.FC = () => {
+const HomeTestimonial: React.FC = () => {
   const testimonials: Testimonial[] = [
     {
       id: 1,
@@ -61,7 +60,7 @@ const TestimonialSection: React.FC = () => {
   ]
 
   return (
-<section className={`${outfit.className} testimonial w-full bg-white py-16 lg:py-24`}>
+<section className={`${outfit.className} testimonial w-full bg-white py-16`}>
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
         <div className="mb-8 text-center lg:mb-12">
           <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
@@ -116,4 +115,4 @@ const TestimonialSection: React.FC = () => {
   )
 }
 
-export default TestimonialSection
+export default HomeTestimonial
