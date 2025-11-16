@@ -150,7 +150,9 @@ html {
 }
 
 .animate-onrender {
-  transition: all 0.3s ease-in-out;
+  transition-property: opacity, transform;
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
   opacity: 1;
   transform: translateY(0px);
 

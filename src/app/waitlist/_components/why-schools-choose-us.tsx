@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { ArrowRightIcon } from "lucide-react";
 import React from "react";
 
 interface Reason {
@@ -35,8 +37,8 @@ const reasons: Reason[] = [
 
 const WhySchoolsJoinEarlyAccess = () => {
   return (
-    <section className="bg-white py-16 md:py-24">
-      <div className="container mx-auto flex flex-col gap-12">
+    <section className="w-full bg-white">
+      <div className="container flex flex-col gap-12 py-12 bg-white">
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto">
@@ -53,36 +55,51 @@ const WhySchoolsJoinEarlyAccess = () => {
           {reasons.map((reason, index) => (
             <div
               key={index}
-              className="relative flex flex-col items-center gap-4 rounded-2xl border border-border-secondary/20 bg-white p-6 md:p-8 hover:shadow-lg transition"
+              className="relative flex flex-col items-center gap-4 rounded-2xl bg-[#F9FAFC] p-6 md:p-8 hover:shadow-lg transition"
             >
-              <div className="relative w-[360px] h-[410px] md:w-[420px] md:h-[480px] flex items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
+              <div className="relative w-[360px] h-[410px] md:w-[420px] md:h-[480px] flex items-center justify-center rounded-xl group-hover:bg-accent/20 transition-colors">
                 <img
                   src={reason.imgSrc}
                   alt={reason.title}
                   className="absolute w-full h-full object-contain"
                 />
               </div>
-              <h3 className="text-xl md:text-2xl font-semibold text-text-primary text-center">
+              <h3 className="text-xl md:text-2xl font-semibold text-text-primary text-left">
                 {reason.title}
               </h3>
-              <p className="text-base md:text-lg text-text-secondary leading-7 text-center">
+              <p className="text-base md:text-lg text-text-secondary leading-7">
                 {reason.description}
               </p>
             </div>
           ))}
         </div>
+      </div>
 
-        {/* CTA Section */}
-        <div className="mt-12 md:mt-16 flex flex-col items-center text-center bg-gradient-to-br from-accent/10 to-accent/5 rounded-2xl p-8 md:p-12 gap-4">
-          <h3 className="text-2xl md:text-3xl font-semibold text-text-primary">
-            Ready to Transform Your School?
-          </h3>
-          <p className="text-lg md:text-xl text-text-secondary">
-            Don't get left behind. Join the waitlist and be among the first to experience the future of school management.
-          </p>
-          <button className="mt-4 px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 transition">
-            Join Waitlist
-          </button>
+      {/* CTA Section */}
+      <div className="w-full bg-[#F9FAFC]">
+        <div className="container flex flex-col sm:flex-row items-center gap-5 py-12">
+
+          <div className="flex flex-col items-center w-full rounded-2xl py-4 md:p-12 gap-4 text-left">
+            <h3 className="text-2xl md:text-3xl font-semibold text-text-primary text-left">
+              NFC-Powered Smart ID Cards for Students
+            </h3>
+            <p className="text-lg md:text-xl text-text-secondary">
+              Enhance campus security and streamline access to facilities with our modern NFC smart ID cards. Quick, contactless and secure for every student
+            </p>
+            <Button className="mt-4 px-6 py-3 w-full max-w-md">
+              Join Waitlist
+              <ArrowRightIcon />
+            </Button>
+          </div>
+
+
+          <div className="relative w-full flex items-center justify-center rounded-xl aspect-[637/618]">
+            <img
+              src="/assets/images/waitlist/nfc-powered-smart-id-cards.png"
+              alt="nfc powered smart id cards"
+              className="absolute w-full h-full object-contain"
+            />
+          </div>
         </div>
 
       </div>
