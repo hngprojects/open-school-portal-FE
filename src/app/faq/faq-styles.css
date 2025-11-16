@@ -1,0 +1,16 @@
+h2 {
+  font-weight: 600;
+  font-size: clamp(18px, 4vw, 32px);
+  line-height: 100%;
+}
+.faq-title {
+  font-weight: 600;
+  font-size: clamp(16px, 4vw, 24px);
+  line-height: 32px;
+}
+p {
+  font-size: clamp(16px, 4vw, 18px);
+}
+.sub-title {
+  font-weight: 400;
+}

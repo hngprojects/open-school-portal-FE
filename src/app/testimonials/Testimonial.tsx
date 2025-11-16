@@ -63,11 +63,11 @@ const TestimonialSection: React.FC = () => {
   return (
 <section className={`${outfit.className} testimonial w-full bg-white py-16 lg:py-24`}>
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
-        <div className="mb-12 text-center lg:mb-16">
+        <div className="mb-8 text-center lg:mb-12">
           <h2 className="mb-4 text-3xl font-bold text-gray-900 lg:text-4xl">
             What Our Users Say
           </h2>
-          <p className="mx-auto max-w-3xl text-lg text-gray-600 lg:text-xl">
+          <p className="sub-title mx-auto max-w-3xl text-lg text-gray-600 lg:text-xl">
             Discover how Open School Portal is transforming educational institutions and
             enhancing the experience for administrators, teachers, and parents alike.
           </p>
