@@ -33,6 +33,6 @@ jobs:
             # 4. Install production dependencies
             pnpm install --production --frozen-lockfile
             
-            # 5. FIX: PM2 name changed to "fe-staging"
-            pm2 restart fe-staging --update-env || PORT=3002 pm2 start pnpm -- start --name fe-staging --update-env
+            # 5. Restart PM2 process using ecosystem config
+            pm2 restart fe-staging --update-env || pm2 start ecosystem.config.js
           '
