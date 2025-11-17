@@ -1,129 +1,68 @@
 import React from "react"
 import Image from "next/image"
+import TestimonialCarousel from "./testimonial-carousel"
+import { testimonials } from "@/data/testimonials"
 
-interface Testimonial {
-  id: number
-  name: string
-  role: string
-  image: string
-  title: string
-  content: string
-}
-
-const HomeTestimonial: React.FC = () => {
-  const testimonials: Testimonial[] = [
-    {
-      id: 1,
-      name: "James Chiamaka",
-      role: "JSS 3A Student",
-      image: "/testimonials/t-student.png",
-      title: "Learning and being a student has never been this easy!",
-      content:
-        "Open School Portal helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
-    },
-    {
-      id: 2,
-      name: "Mr. Matthew",
-      role: "Mathematics Teacher",
-      image: "/testimonials/t-teacher.png",
-      title: "Teaching and class management made simple!",
-      content:
-        "Open School Portal helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
-    },
-    {
-      id: 3,
-      name: "Mrs. Thompson Janet",
-      role: "School Admin",
-      image: "/testimonials/t-admin.png",
-      title: "A powerful tool for modern schools, Reliable, fast, and built for growth!",
-      content:
-        "Open School Portal has improved communication, record keeping, and student management. Our staff and parents love it.",
-    },
-    {
-      id: 4,
-      name: "Mr. James Kennedy",
-      role: "Parent",
-      image: "/testimonials/t-parent.png",
-      title: "I can finally monitor my child's education and progress!",
-      content:
-        "With Open School Portal, I see my son's attendance, results, and school updates in real time. It keeps me involved and gives me peace of mind.",
-    },
-  ]
-
+export default function HomeTestimonial() {
   return (
-    <section className="w-full bg-white py-16 text-black">
+    <section className="w-full bg-[#fafafa] py-16 text-black">
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
-        <div className="mb-8 text-center lg:mb-12">
+        <div className="mb-12 lg:text-left">
           <h2
-            className="mb-4 leading-none font-semibold text-gray-900 lg:text-4xl"
-            style={{ fontSize: "clamp(18px, 4vw, 32px)" }}
+            className="mb-4 leading-tight font-semibold text-gray-900"
+            style={{ fontSize: "clamp(20px, 5vw, 32px)" }}
           >
-            What Our Users Say
+            What Students, Staff & Parents Say
+            <br className="hidden lg:block" /> About Open School Portal
           </h2>
-          <p
-            className="mx-auto max-w-3xl font-normal text-gray-600 lg:text-xl"
-            style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
-          >
-            Discover how Open School Portal is transforming educational institutions and
-            enhancing the experience for administrators, teachers, and parents alike.
+          <p className="mx-auto max-w-3xl text-gray-600 lg:mx-0">
+            Real stories from people who use Open School Portal every day to learn, teach,
+            and stay organized
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 lg:gap-8">
+        <div className="hidden grid-cols-1 gap-8 lg:grid lg:grid-cols-2">
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="rounded-xl border border-gray-100 bg-[#FBEBEC] p-6 shadow-lg transition-all duration-300 hover:shadow-xl lg:p-8"
+              className="rounded-2xl border border-gray-100 bg-[#FBEBEC] p-8 shadow-lg transition-shadow duration-300 hover:shadow-2xl"
             >
-              <div className="flex flex-col items-center justify-center gap-6 text-center sm:flex-row lg:gap-8">
-                <div className="shrink-0">
-                  <div className="relative h-32 w-32 overflow-hidden rounded-2xl sm:h-[200px] sm:w-[200px]">
-                    <Image
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 8rem, (max-width: 768px) 12rem, 12rem"
-                      priority={true}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-1 flex-col justify-center">
-                  <h3
-                    className="font-medium text-gray-900"
-                    style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
-                  >
-                    {testimonial.title}
-                  </h3>
-                  <p
-                    className="mb-2 leading-relaxed font-normal lg:mb-2"
-                    style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
-                  >
-                    &ldquo;{testimonial.content}&rdquo;
-                  </p>
-                  <div>
-                    <h3
-                      className="font-semibold text-gray-900 lg:text-xl"
-                      style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
-                    >
-                      {testimonial.name}
-                    </h3>
-                    <p
-                      className="text-sm lg:text-base"
-                      style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
-                    >
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <TestimonialCard testimonial={testimonial} />
             </div>
           ))}
+        </div>
+
+        <div className="lg:hidden">
+          <TestimonialCarousel />
         </div>
       </div>
     </section>
   )
 }
 
-export default HomeTestimonial
+const TestimonialCard = ({ testimonial }: { testimonial: (typeof testimonials)[0] }) => (
+  <div className="flex gap-8">
+    <div className="shrink-0">
+      <div className="relative h-56 w-56 overflow-hidden rounded-2xl shadow-lg">
+        <Image
+          src={testimonial.image}
+          alt={testimonial.name}
+          fill
+          className="object-cover"
+          sizes="14rem"
+          priority
+        />
+      </div>
+    </div>
+    <div className="flex flex-1 flex-col justify-center">
+      <h3 className="mb-3 text-xl font-semibold text-gray-900">{testimonial.title}</h3>
+      <p className="mb-6 text-base leading-relaxed text-gray-700">
+        &ldquo;{testimonial.content}&rdquo;
+      </p>
+      <div>
+        <h4 className="text-lg font-bold text-gray-900">{testimonial.name}</h4>
+        <p className="text-sm text-gray-500">{testimonial.role}</p>
+      </div>
+    </div>
+  </div>
+)
