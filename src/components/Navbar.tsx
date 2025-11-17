@@ -16,6 +16,7 @@ const Navbar = () => {
     { label: "Feature", path: "/feature" },
     { label: "Modules", path: "/modules" },
     { label: "About", path: "/about" },
+    // { label: "Waitlist", path: "/waitlist" },
   ]
 
   const toggleMobileMenu = () => {

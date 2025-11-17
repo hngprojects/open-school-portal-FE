@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 
 html {
-  scrollbar-gutter: stable both-edges;
+  scrollbar-gutter: stable;
 }
 
 .container {
@@ -160,4 +160,19 @@ html {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
+}
+
+.animate-onrender {
+  transition-property: opacity, transform;
+  transition-duration: 500ms;
+  transition-timing-function: ease-out;
+  opacity: 1;
+  transform: translateY(0px);
+
+  @starting-style {
+    & {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
 }
