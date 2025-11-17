@@ -33,7 +33,7 @@ jobs:
         with:
           version: 9
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Create environment file from GitHub secrets
