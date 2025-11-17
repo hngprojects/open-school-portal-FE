@@ -1,140 +1,195 @@
-import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState } from "react"
+import { ArrowRight } from "lucide-react"
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { useCheckWaitlist, useJoinWaitlist } from "../_hooks/use-waitlist"
 
 const WaitlistFormModal: React.FC<{
-    isOpen: boolean;
-    onClose: () => void;
+  isOpen: boolean
+  onClose: () => void
 }> = ({ isOpen, onClose }) => {
-    const [formData, setFormData] = useState({
-        fullName: '',
-        email: ''
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+  })
 
+  const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null)
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const email = formData.email
+  const fullName = formData.fullName
 
-    return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-md rounded-2xl p-8">
-                {submitted ? (
-                    <div className="text-center py-8">
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on the list!</h3>
-                        <p className="text-gray-600">We&apos;ll notify you when we launch.</p>
-                    </div>
+  // Check if email exists in waitlist
+  const {
+    data: existsData,
+    isLoading: checking,
+    error: checkError,
+  } = useCheckWaitlist(email)
+
+  // Mutation: Join waitlist
+  const joinMutation = useJoinWaitlist()
+
+  // Controlled input handler
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalError(null) // clear local errors
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
+  }
+
+  // Handle submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    setLocalError(null)
+
+    if (existsData?.exists) {
+      setLocalError("This email is already on the waitlist.")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await joinMutation.mutateAsync({ email, fullName })
+      setSubmitted(true)
+    } catch (error: any) {
+      setLocalError(error?.message || "Something went wrong.")
+    }
+
+    setIsSubmitting(false)
+
+    // Reset UI after 2 seconds
+    setTimeout(() => {
+      setSubmitted(false)
+      setFormData({ email: "", fullName: "" })
+      onClose()
+    }, 2000)
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="rounded-2xl p-8 sm:max-w-md">
+        {submitted ? (
+          <div className="py-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg
+                className="h-8 w-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+            <h3 className="mb-2 text-2xl font-bold text-gray-900">You're on the list!</h3>
+            <p className="text-gray-600">We’ll notify you when we launch.</p>
+          </div>
+        ) : (
+          <>
+            <DialogHeader className="space-y-3 text-left">
+              <DialogTitle className="text-2xl font-bold text-gray-900">
+                Secure Your Spot Now
+              </DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                Get monthly updates, early access to beta testing, and be the first to
+                know when we launch.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+              {/* 🔴 ERROR MESSAGE BEFORE FIRST INPUT */}
+              {(localError || checkError) && (
+                <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                  {localError || checkError?.message || "Something went wrong."}
+                </p>
+              )}
+
+              {checking && <p className="text-sm text-gray-500">Checking email...</p>}
+
+              {existsData?.exists && (
+                <p className="text-sm text-red-600">
+                  This email is already on the waitlist.
+                </p>
+              )}
+
+              {/* Full Name */}
+              <div>
+                <label
+                  htmlFor="fullName"
+                  className="mb-2 block text-sm font-semibold text-gray-900"
+                >
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  required
+                  value={fullName}
+                  onChange={handleChange}
+                  placeholder="Enter your full name"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-semibold text-gray-900"
+                >
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  value={email}
+                  onChange={handleChange}
+                  placeholder="Enter your email address"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isSubmitting || !email || !fullName || checking}
+                className="mt-6 w-full"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Joining...
+                  </>
                 ) : (
-                    <>
-                        <DialogHeader className="space-y-3 text-left">
-                            <DialogTitle className="text-2xl font-bold text-gray-900">
-                                Secure Your Spot Now
-                            </DialogTitle>
-                            <DialogDescription className="text-gray-600 text-sm">
-                                Get monthly updates, early access to beta testing, and be the first to know when we launch.
-                            </DialogDescription>
-                        </DialogHeader>
-
-                        <form className="space-y-5 mt-6">
-                            {/* Full Name Field */}
-                            <div>
-                                <label
-                                    htmlFor="fullName"
-                                    className="block text-sm font-semibold text-gray-900 mb-2"
-                                >
-                                    Full Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="fullName"
-                                    name="fullName"
-                                    value={formData.fullName}
-                                    required
-                                    onChange={handleChange}
-                                    placeholder="Enter your full name"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all placeholder:text-gray-400"
-                                />
-                            </div>
-
-                            {/* Email Field */}
-                            <div>
-                                <label
-                                    htmlFor="email"
-                                    className="block text-sm font-semibold text-gray-900 mb-2"
-                                >
-                                    Email Address
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    required
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    placeholder="Enter your email address"
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all placeholder:text-gray-400"
-                                />
-                            </div>
-
-                            {/* Submit Button */}
-                            <Button
-                                onClick={handleSubmit}
-                                disabled={isSubmitting || !formData.fullName || !formData.email}
-                                className="w-full mt-6"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                        Joining...
-                                    </>
-                                ) : (
-                                    <>
-                                        Join The Waitlist
-                                        <ArrowRight className="w-5 h-5" />
-                                    </>
-                                )}
-                            </Button>
-                        </form>
-                    </>
+                  <>
+                    Join The Waitlist
+                    <ArrowRight className="h-5 w-5" />
+                  </>
                 )}
-            </DialogContent>
-        </Dialog>
-    );
+              </Button>
+            </form>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  )
+}
 
-    async function handleSubmit() {
-        setIsSubmitting(true);
-
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        setIsSubmitting(false);
-        setSubmitted(true);
-
-        // Reset after 2 seconds
-        setTimeout(() => {
-            setSubmitted(false);
-            setFormData({ fullName: '', email: '' });
-            onClose();
-        }, 2000);
-    };
-};
-
-// Demo component to show usage
 export default WaitlistFormModal

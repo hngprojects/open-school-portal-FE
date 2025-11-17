@@ -6,7 +6,7 @@ const sitemapLinks = [
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   { name: "Privacy Policy", href: "/privacy" },
-  { name: "Terms & Conditions", href: "/terms" }
+  { name: "Terms & Conditions", href: "/terms" },
 ]
 
 const Footer = () => {
@@ -14,7 +14,7 @@ const Footer = () => {
     <div className="bg-black text-white">
       <div className="container flex flex-col gap-5 py-8">
         <section className="flex flex-col items-center gap-5">
-          <ul className="flex flex-col sm:flex-row items-center gap-8">
+          <ul className="flex flex-col items-center gap-8 sm:flex-row">
             {sitemapLinks.map((link) => (
               <li key={link.href}>
                 <Link href={link.href}>{link.name}</Link>
@@ -24,15 +24,15 @@ const Footer = () => {
         </section>
 
         <section className="w-full">
-          <ul className="flex items-center justify-center w-full gap-4">
+          <ul className="flex w-full items-center justify-center gap-4">
             <li>
               <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <FacebookIcon className="size-6 hover:fill-accent transition-colors" />
+                <FacebookIcon className="hover:fill-accent size-6 transition-colors" />
               </Link>
             </li>
             <li>
               <Link href="https://x.com" target="_blank" rel="noopener noreferrer">
-                <TwitterIcon className="size-6 hover:fill-accent transition-colors" />
+                <TwitterIcon className="hover:fill-accent size-6 transition-colors" />
               </Link>
             </li>
             {/* <li>
@@ -42,7 +42,7 @@ const Footer = () => {
             </li> */}
             <li>
               <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                <LinkedinIcon className="size-6 hover:fill-accent transition-colors" />
+                <LinkedinIcon className="hover:fill-accent size-6 transition-colors" />
               </Link>
             </li>
           </ul>
