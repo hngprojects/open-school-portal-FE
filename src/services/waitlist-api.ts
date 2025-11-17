@@ -12,12 +12,6 @@ export interface JoinWaitlistResponse {
   status: string
 }
 
-export interface GetUnitWaitlistResponse {
-  email: string
-  first_name: string
-  last_name: string
-}
-
 // POST: Join Waitlist
 export async function joinWaitlist(payload: JoinWaitlistPayload) {
   return fetchFn<JoinWaitlistResponse>("/waitlist", {
@@ -25,9 +19,4 @@ export async function joinWaitlist(payload: JoinWaitlistPayload) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   })
-}
-
-// GET: Check if a user already exists in waitlist
-export async function getWaitlist() {
-  return fetchFn<GetUnitWaitlistResponse[]>("/waitlist")
 }
