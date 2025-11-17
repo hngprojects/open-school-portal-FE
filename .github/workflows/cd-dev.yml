@@ -15,24 +15,21 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
-      - name: Install SSHPass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
       - name: Deploy on server
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
             # 1. Go to the app directory
-            cd fe-staging/open-school-portal-FE
+            cd /home/open-school-portal/fe-staging/open-school-portal-FE
             
             # 2. Extract the correct artifact file
             tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
+
+            cp .next/standalone/server.js .
             
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
+        
             
-            # 4. Install production dependencies
-            pnpm install --production --frozen-lockfile
-            
-            # 5. Restart PM2 process using ecosystem config
-            pm2 restart fe-staging --update-env || pm2 start ecosystem.config.js
+            # 4. Restart PM2 process using ecosystem config
+            pm2 restart fe-staging --update-env || PORT=3002 pm2 start server.js --name fe-staging --update-env
           '
