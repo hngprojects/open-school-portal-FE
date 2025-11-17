@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button"
 import { ArrowRightIcon } from "lucide-react"
 import Image from "next/image"
 
-const HomeHero = () => {
+const HomeHero = ({
+  onJoinUs,
+}: {
+  onJoinUs: () => void
+}) => {
   return (
     <div className="flex w-full pt-6 md:pt-8 lg:pt-10">
       <div className="container flex flex-col items-center gap-6">
@@ -16,7 +20,7 @@ const HomeHero = () => {
             </p>
           </div>
           <div>
-            <Button className="gap-3 px-5 w-full md:w-auto">
+            <Button className="gap-3 px-5 w-full md:w-auto" onClick={onJoinUs}>
               Join the Waitlist
               <ArrowRightIcon className="w-8 h-8 font-bold" />
             </Button>

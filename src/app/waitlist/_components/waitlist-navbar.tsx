@@ -7,7 +7,11 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 
-const Navbar = () => {
+const Navbar = ({
+  onJoinUs
+}: {
+  onJoinUs: () => void
+}) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuBarRef = React.useRef<HTMLDivElement>(null);
@@ -15,11 +19,11 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", path: "/" },
     { label: "How It works", path: "/how-it-works" },
-    { label: "Waitlist", path: "/waitlist" },
+    // { label: "Waitlist", path: "/waitlist" },
   ]
 
   const toggleMobileMenu = () => {
-      setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   }
 
   return (
@@ -71,27 +75,23 @@ const Navbar = () => {
                       </Link>
                     )
                   })}
-
-                  <div className="mt-2 px-4">
-                    <Button className="w-full" onClick={toggleMobileMenu}>
-                      Join The Waitlist
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
           </>
         )}
 
-        <Image
-          src="/assets/logo.png"
-          alt="Open School Portal Logo"
-          width={64}
-          height={64}
-          priority
-          sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-          className="hidden md:block size-12 md:size-14 lg:size-16"
-        />
+        <a href="/">
+          <Image
+            src="/assets/logo.png"
+            alt="Open School Portal Logo"
+            width={64}
+            height={64}
+            priority
+            sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
+            className="hidden md:block size-12 md:size-14 lg:size-16"
+          />
+        </a>
 
         {/* Desktop Navigation - Centered */}
         <section className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-lg font-medium md:flex md:gap-10">
@@ -111,11 +111,16 @@ const Navbar = () => {
 
         {/* Desktop Button */}
         <div>
-          <Button>Join The Waitlist</Button>
+          <Button onClick={handleJoinClick}>Join The Waitlist</Button>
         </div>
       </div>
     </nav>
   )
+
+  function handleJoinClick() {
+    onJoinUs();
+    setIsMobileMenuOpen(false);
+  }
 }
 
 export default Navbar
