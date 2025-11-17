@@ -1,0 +1,19 @@
+import React from "react"
+
+const HowItWorksHero = () => {
+  return (
+    <div className="mt-[30px] flex w-full justify-center px-4 md:mt-20">
+      <div className="flex max-w-[823px] flex-col items-center gap-4 md:gap-6">
+        <h1 className="text-text-primary text-center text-[20px] leading-[100%] font-bold sm:text-2xl md:text-[32px]">
+          How It Works
+        </h1>
+        <p className="text-text-secondary text-center text-sm leading-[100%] font-normal sm:text-[18px] md:text-2xl">
+          A simple, unified explanation of how the entire system works for admins,
+          teachers, parents, and students.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export default HowItWorksHero
