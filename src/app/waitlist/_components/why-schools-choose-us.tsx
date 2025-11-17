@@ -99,7 +99,7 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
             </Button>
           </div>
 
-          <div className="relative flex aspect-[637/618] w-full items-center justify-center rounded-xl">
+          <div className="relative flex aspect-637/618 w-full items-center justify-center rounded-xl">
             <Image
               height={618}
               width={637}
