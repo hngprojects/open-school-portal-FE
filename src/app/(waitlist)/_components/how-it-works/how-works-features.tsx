@@ -2,11 +2,11 @@
 
 import React from "react"
 import Image from "next/image"
-import { HowItWorksFeatures } from "../_data/features"
+import { HowItWorksFeatures } from "../../_data/features"
 
 const HowItWorksFeaturesPage = () => {
   return (
-    <article className="font-outfit container mt-40 mb-40 space-y-20 bg-white lg:space-y-40">
+    <article className="font-outfit container mb-40 space-y-20 bg-white lg:space-y-40">
       {HowItWorksFeatures.map((feature, index) => (
         <section
           key={feature.id}
