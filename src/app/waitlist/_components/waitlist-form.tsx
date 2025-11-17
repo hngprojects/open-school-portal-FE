@@ -61,8 +61,11 @@ const WaitlistFormModal: React.FC<{
     try {
       await joinMutation.mutateAsync({ email, fullName })
       setSubmitted(true)
-    } catch (error: any) {
-      setLocalError(error?.message || "Something went wrong.")
+
+    } catch (err) {
+        if (err instanceof Error){
+            setLocalError(err?.message || "Something went wrong.")
+        }
     }
 
     setIsSubmitting(false)
@@ -95,7 +98,7 @@ const WaitlistFormModal: React.FC<{
                 />
               </svg>
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-gray-900">You're on the list!</h3>
+            <h3 className="mb-2 text-2xl font-bold text-gray-900">You&apos;re on the list!</h3>
             <p className="text-gray-600">We’ll notify you when we launch.</p>
           </div>
         ) : (
