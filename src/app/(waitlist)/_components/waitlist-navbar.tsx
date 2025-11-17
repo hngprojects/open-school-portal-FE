@@ -4,16 +4,16 @@ import Image from "next/image"
 import Link from "next/link"
 import React, { useState } from "react"
 import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import JoinWaitlistButton from "./join-waitlist-button"
 
-const Navbar = ({ onJoinUs }: { onJoinUs: () => void }) => {
+const Navbar = () => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuBarRef = React.useRef<HTMLDivElement>(null)
 
   const navItems = [
-    { label: "Home", path: "/" },
+    { label: "Home", path: "/waitlist" },
     { label: "How It works", path: "/how-it-works" },
     // { label: "Waitlist", path: "/waitlist" },
   ]
@@ -77,7 +77,7 @@ const Navbar = ({ onJoinUs }: { onJoinUs: () => void }) => {
           </>
         )}
 
-        <Link href="/">
+        <Link href="/waitlist">
           <Image
             src="/assets/logo.png"
             alt="Open School Portal Logo"
@@ -107,16 +107,11 @@ const Navbar = ({ onJoinUs }: { onJoinUs: () => void }) => {
 
         {/* Desktop Button */}
         <div>
-          <Button onClick={handleJoinClick}>Join The Waitlist</Button>
+          <JoinWaitlistButton />
         </div>
       </div>
     </nav>
   )
-
-  function handleJoinClick() {
-    onJoinUs()
-    setIsMobileMenuOpen(false)
-  }
 }
 
 export default Navbar

@@ -1,6 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { ArrowRightIcon } from "lucide-react"
 import Image from "next/image"
+import JoinWaitlistButton from "./join-waitlist-button"
 
 interface Reason {
   imgSrc: string
@@ -40,7 +39,7 @@ const reasons: Reason[] = [
   },
 ]
 
-const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
+const WhySchoolsJoinEarlyAccess = () => {
   return (
     <section className="w-full bg-white">
       <div className="container flex flex-col gap-12 bg-white py-12">
@@ -93,10 +92,10 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
               Enhance campus security and streamline access to facilities with our modern
               NFC smart ID cards. Quick, contactless and secure for every student
             </p>
-            <Button className="mt-4 w-full max-w-md px-6 py-3" onClick={onJoinUs}>
-              Join Waitlist
-              <ArrowRightIcon />
-            </Button>
+            <JoinWaitlistButton
+              showArrow={true}
+              className="mt-4 w-full max-w-md px-6 py-3"
+            />
           </div>
 
           <div className="relative flex aspect-637/618 w-full items-center justify-center rounded-xl">
