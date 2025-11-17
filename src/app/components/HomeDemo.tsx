@@ -44,7 +44,7 @@ const HomeDemo: React.FC = () => {
           </div>
 
           <div className="relative z-10 hidden h-full items-center justify-between lg:flex lg:px-16">
-            <div className="absolute -left-8 -top-20 lg:-left-8 lg:-top-32">
+            <div className="absolute -top-20 -left-8 lg:-top-32 lg:-left-8">
               <div
                 className="h-[450px] w-[400px] overflow-visible"
                 style={{
@@ -64,7 +64,7 @@ const HomeDemo: React.FC = () => {
 
             <div className="ml-auto max-w-xl text-center text-white md:ml-[120px] lg:ml-[450px]">
               <h5
-                className="mb-4 font-bold leading-tight lg:text-4xl"
+                className="mb-4 leading-tight font-bold lg:text-4xl"
                 style={{ fontSize: "clamp(20px, 4vw, 24px)" }}
               >
                 Ready to Modernize Your School
@@ -83,7 +83,7 @@ const HomeDemo: React.FC = () => {
                   Get Started
                 </button>
                 <button
-                  className="rounded-lg border border-white px-6 py-3 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white hover:bg-opacity-10 sm:px-8"
+                  className="hover:bg-opacity-10 rounded-lg border border-white px-6 py-3 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white sm:px-8"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
                   Watch Demo
@@ -110,10 +110,10 @@ const HomeDemo: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div className="text-white">
               <h5
-                className="mb-3 font-bold leading-tight"
+                className="mb-3 leading-tight font-bold"
                 style={{ fontSize: "clamp(20px, 6vw, 28px)" }}
               >
                 Ready to Modernize Your School
@@ -132,7 +132,7 @@ const HomeDemo: React.FC = () => {
                   Get Started
                 </button>
                 <button
-                  className="w-full max-w-[200px] rounded-lg border border-white px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-white hover:bg-opacity-10"
+                  className="hover:bg-opacity-10 w-full max-w-[200px] rounded-lg border border-white px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-white"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
                 >
                   Watch Demo
