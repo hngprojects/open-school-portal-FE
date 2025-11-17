@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button"
-import { ArrowRightIcon } from "lucide-react"
 import Image from "next/image"
+import JoinWaitlistButton from "./join-waitlist-button"
 
-const HomeHero = ({ onJoinUs }: { onJoinUs: () => void }) => {
+const HomeHero = () => {
   return (
     <div className="flex w-full pt-6 md:pt-8 lg:pt-10">
       <div className="container flex flex-col items-center gap-6">
@@ -18,10 +17,10 @@ const HomeHero = ({ onJoinUs }: { onJoinUs: () => void }) => {
             </p>
           </div>
           <div>
-            <Button className="w-full gap-3 px-5 md:w-auto" onClick={onJoinUs}>
-              Join the Waitlist
-              <ArrowRightIcon className="h-8 w-8 font-bold" />
-            </Button>
+            <JoinWaitlistButton
+              showArrow={true}
+              className="w-full gap-3 px-5 md:w-auto"
+            />
           </div>
         </section>
         <div className="animate-onrender flex aspect-[1083/602] w-full justify-center delay-600">

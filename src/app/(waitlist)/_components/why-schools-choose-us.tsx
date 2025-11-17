@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button"
-import { ArrowRightIcon } from "lucide-react"
 import Image from "next/image"
+import JoinWaitlistButton from "./join-waitlist-button"
 
 interface Reason {
   imgSrc: string
   title: string
   description: string
+  imageSize: { height: number; width: number }
 }
 
 const reasons: Reason[] = [
@@ -14,28 +14,32 @@ const reasons: Reason[] = [
     title: "Digital Student Management",
     description:
       "Keep all student records digital and organized. Access grades, progress reports, and histories in one secure platform.",
+    imageSize: { height: 221, width: 200 },
   },
   {
     imgSrc: "/assets/images/waitlist/smart-attendance.png",
     title: "Smart Attendance",
     description:
       "Automate attendance tracking and save hours every week. Teachers can focus on teaching while the system handles the rest.",
+    imageSize: { height: 290, width: 345 },
   },
   {
     imgSrc: "/assets/images/waitlist/integrated-fees-and-invoicing.png",
     title: "Integrated Fee Management",
     description:
       "Manage school fees digitally, track payments, and automate reminders—all from one platform.",
+    imageSize: { height: 361, width: 302 },
   },
   {
     imgSrc: "/assets/images/waitlist/parent-mobile-app.png",
     title: "Parents Mobile App",
     description:
       "Allow parents to stay connected with real-time updates on attendance, grades, and school announcements via mobile.",
+    imageSize: { height: 300, width: 351 },
   },
 ]
 
-const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
+const WhySchoolsJoinEarlyAccess = () => {
   return (
     <section className="w-full bg-white">
       <div className="container flex flex-col gap-12 bg-white py-12">
@@ -61,8 +65,8 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
                 <Image
                   src={reason.imgSrc}
                   alt={reason.title}
-                  width={360}
-                  height={410}
+                  height={reason.imageSize.height}
+                  width={reason.imageSize.width}
                   className="absolute h-full w-full object-contain"
                 />
               </div>
@@ -88,18 +92,18 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
               Enhance campus security and streamline access to facilities with our modern
               NFC smart ID cards. Quick, contactless and secure for every student
             </p>
-            <Button className="mt-4 w-full max-w-md px-6 py-3" onClick={onJoinUs}>
-              Join Waitlist
-              <ArrowRightIcon />
-            </Button>
+            <JoinWaitlistButton
+              showArrow={true}
+              className="mt-4 w-full max-w-md px-6 py-3"
+            />
           </div>
 
           <div className="relative flex aspect-637/618 w-full items-center justify-center rounded-xl">
             <Image
+              height={618}
+              width={637}
               src="/assets/images/waitlist/nfc-powered-smart-id-cards.png"
               alt="nfc powered smart id cards"
-              width={637}
-              height={618}
               className="absolute h-full w-full object-contain"
             />
           </div>
