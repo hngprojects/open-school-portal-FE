@@ -1,8 +1,8 @@
 import React from "react"
-import Form_input from "../_components/form-input"
+import FormInput from "../_components/FormInput"
 
 const Login = () => {
-  return <Form_input label={"Enter ID"} input_placeholder={"Enter your ID"} />
+  return <FormInput label={"Enter ID"} input_placeholder={"Enter your ID"} />
 }
 
 export default Login

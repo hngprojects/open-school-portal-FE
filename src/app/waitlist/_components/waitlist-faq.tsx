@@ -3,7 +3,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion"; // make sure path matches your project
+} from "@/components/ui/accordion" // make sure path matches your project
 
 export default function FAQAccordion() {
   const faqs = [
@@ -22,30 +22,38 @@ export default function FAQAccordion() {
       answer:
         "We take data security very seriously. Your school's data is protected with enterprise-grade encryption both in transit and at rest. We implement strict access controls, regular security audits, and comply with international data protection standards. All data is backed up regularly, and we maintain redundant systems to ensure your information is always safe and accessible.",
     },
-  ];
+  ]
 
   return (
-    <div className="w-full py-10 md:py-16 bg-white">
-      <div className="w-full space-y-8 container">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+    <div className="w-full bg-white py-10 md:py-16">
+      <div className="container w-full space-y-8">
+        <h2 className="text-3xl font-bold text-gray-900 md:text-4xl">
           Frequently Asked Questions
         </h2>
 
         <Accordion type="single" collapsible className="flex flex-col gap-2 py-3">
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border border-gray-200 rounded-lg">
-              <AccordionTrigger className="p-3 md:p-5 text-lg">{faq.question}</AccordionTrigger>
-              <AccordionContent className="p-3 md:px-5 text-lg">{faq.answer}</AccordionContent>
+            <AccordionItem
+              key={index}
+              value={`item-${index}`}
+              className="rounded-lg border border-gray-200"
+            >
+              <AccordionTrigger className="p-3 text-lg md:p-5">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="p-3 text-lg md:px-5">
+                {faq.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
       </div>
     </div>
-  );
+  )
 }
 
-
-{/* <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+{
+  /* <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
 <button
   onClick={onToggle}
   className="w-full flex items-center justify-between p-3 md:p-6 text-left hover:bg-gray-50 transition-colors"
@@ -67,4 +75,5 @@ export default function FAQAccordion() {
   <div className="px-6 pb-6 text-gray-600 leading-relaxed">
     {answer}
   </div>
-</div> */}
+</div> */
+}

@@ -7,14 +7,10 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 
-const Navbar = ({
-  onJoinUs
-}: {
-  onJoinUs: () => void
-}) => {
+const Navbar = ({ onJoinUs }: { onJoinUs: () => void }) => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const menuBarRef = React.useRef<HTMLDivElement>(null);
+  const menuBarRef = React.useRef<HTMLDivElement>(null)
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -23,13 +19,12 @@ const Navbar = ({
   ]
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   return (
-    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-100 bg-[#fffbfc] py-4 md:py-6 shadow-md">
+    <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-100 bg-[#fffbfc] py-4 shadow-md md:py-6">
       <div className="relative container flex items-center justify-between">
-
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
@@ -47,8 +42,9 @@ const Navbar = ({
               onClick={toggleMobileMenu}
             />
             <div
-              className={`fixed top-0 left-0 z-50 h-full w-80 max-w-[85vw] bg-[#fffbfc] shadow-xl transition-transform duration-300 ease-out md:hidden ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-                }`}
+              className={`fixed top-0 left-0 z-50 h-full w-80 max-w-[85vw] bg-[#fffbfc] shadow-xl transition-transform duration-300 ease-out md:hidden ${
+                isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
               ref={menuBarRef}
             >
               <div className="flex h-full flex-col">
@@ -69,7 +65,7 @@ const Navbar = ({
                         key={item.path}
                         href={item.path}
                         onClick={toggleMobileMenu}
-                        className={`px-4 py-3 text-lg font-medium transition-colors ${isActive ? "text-accent" : "text-[#535353] hover:text-accent"}`}
+                        className={`px-4 py-3 text-lg font-medium transition-colors ${isActive ? "text-accent" : "hover:text-accent text-[#535353]"}`}
                       >
                         {item.label}
                       </Link>
@@ -89,7 +85,7 @@ const Navbar = ({
             height={64}
             priority
             sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-            className="hidden md:block size-12 md:size-14 lg:size-16"
+            className="hidden size-12 md:block md:size-14 lg:size-16"
           />
         </Link>
 
@@ -101,7 +97,7 @@ const Navbar = ({
               <Link
                 key={item.path}
                 href={item.path}
-                className={`px-3 py-2 transition-colors duration-200 ${isActive ? "text-accent" : "text-[#535353] hover:text-accent"}`}
+                className={`px-3 py-2 transition-colors duration-200 ${isActive ? "text-accent" : "hover:text-accent text-[#535353]"}`}
               >
                 <span className="font-medium">{item.label}</span>
               </Link>
@@ -118,8 +114,8 @@ const Navbar = ({
   )
 
   function handleJoinClick() {
-    onJoinUs();
-    setIsMobileMenuOpen(false);
+    onJoinUs()
+    setIsMobileMenuOpen(false)
   }
 }
 
