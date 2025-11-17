@@ -1,4 +1,5 @@
 import Footer from "./_components/waitlist-footer"
+
 export const metadata = {
   title: "Waitlist",
 }
