@@ -22,7 +22,7 @@ jobs:
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
             # 1. Go to the app directory
-            cd /fe-staging/open-school-portal-FE
+            cd fe-staging/open-school-portal-FE
             
             # 2. Extract the correct artifact file
             tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
