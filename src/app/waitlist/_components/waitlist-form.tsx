@@ -57,9 +57,10 @@ const WaitlistFormModal: React.FC<{
     }
 
     setIsSubmitting(true)
+    const [first_name, last_name] = fullName.trim().split(" ")
 
     try {
-      await joinMutation.mutateAsync({ email, fullName })
+      await joinMutation.mutateAsync({ email, first_name, last_name })
       setSubmitted(true)
     } catch (err) {
       if (err instanceof Error) {
