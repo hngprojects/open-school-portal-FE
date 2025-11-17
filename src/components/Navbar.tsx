@@ -57,7 +57,9 @@ const Navbar = () => {
 
         {/* Desktop Button */}
         <div className="hidden lg:block">
-          <Button>Get Started</Button>
+          <Link href="/login">
+            <Button>Get Started</Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -106,9 +108,11 @@ const Navbar = () => {
                     )
                   })}
                   <div className="mt-2 px-4">
-                    <Button className="w-full" onClick={closeMobileMenu}>
-                      Get Started
-                    </Button>
+                    <Link href="/login">
+                      <Button className="w-full" onClick={closeMobileMenu}>
+                        Get Started
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

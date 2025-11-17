@@ -1,9 +1,12 @@
 "use client"
-import React from "react"
+
+import React, { useState } from "react"
+import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { MoveRight, UserRound } from "lucide-react"
 
 // Type definitions
 interface FormData {
@@ -130,7 +133,7 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
     return Object.values(errors).some((error) => error !== undefined && error !== "")
   }
   return (
-    <section className="flex flex-1 flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-6 sm:max-[1400px]:gap-[43px]">
+    <section className="mx-auto flex h-full w-full max-w-[488px] flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-20 sm:max-[1400px]:gap-[43px] lg:pt-0 2xl:max-w-[65%] 2xl:pt-60">
       {/* school logo */}
       <div className="flex items-center">
         <picture>
@@ -149,8 +152,8 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
       </div>
 
       {/* main content */}
-      <div className="w-full">
-        <header className="mb-10 md:max-lg:text-center">
+      <div className="w-full pb-10">
+        <header className="mb-10">
           {/* Login Header */}
           <h3 className="font-sans font-semibold max-sm:mb-2 max-sm:text-[24px] max-sm:leading-8 min-[1400px]:text-[42px] sm:mb-3 sm:leading-[38px] sm:max-[1400px]:text-[36px]">
             Welcome Back
@@ -163,7 +166,7 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
           {/* Registration Number Field */}
-          <div className="mb-6 lg:w-[488px]">
+          <div className="mb-6">
             <div className="flex items-start justify-between">
               <label
                 className="block font-sans text-[16px] leading-5 font-medium"
@@ -195,7 +198,7 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
           </div>
 
           {/* Password Field */}
-          <div className="mb-4 lg:w-[488px]">
+          <div className="mb-4">
             <div className="flex items-start justify-between">
               <label
                 className="block font-sans text-[16px] leading-5 font-medium"
@@ -210,9 +213,9 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
                 </span>
               )}
             </div>
-            <div className="relative mt-2 lg:w-[488px]">
+            <div className="relative mt-2">
               <Input
-                className={`pr-12 min-[1400px]:max-w-[488px] ${
+                className={`pr-12 ${
                   errors.password && touched.password
                     ? "border-[#DA3743] bg-[#FFF5F5]"
                     : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
@@ -248,23 +251,28 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
                 )}
               </button>
             </div>
-            <p className="mt-2 cursor-pointer text-right font-sans text-[14px] leading-5 font-normal text-[#DA3743] transition-colors hover:text-[#c53030]">
+            <Link
+              href="/change-password"
+              className="mt-2 flex cursor-pointer justify-end text-right font-sans text-[14px] leading-5 font-normal text-[#DA3743] transition-colors hover:text-[#c53030]"
+            >
               Forgot Password?
-            </p>
+            </Link>
           </div>
 
           <Button
             type="submit"
-            className="mt-4 w-full transition-colors disabled:cursor-not-allowed disabled:bg-gray-400 lg:max-w-[488px]"
+            className="mt-4 w-full disabled:cursor-not-allowed"
             disabled={hasErrors()}
           >
-            <Image
+            {/* <Image
               src={"/assets/images/auth/user-icon.png"}
               alt="user icon"
               width={16}
               height={16}
-            />
-            Login &rarr;
+            /> */}
+            <UserRound className="" />
+            Login
+            <MoveRight />
           </Button>
         </form>
       </div>
