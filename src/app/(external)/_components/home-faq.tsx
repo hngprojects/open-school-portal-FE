@@ -41,11 +41,11 @@ export default function HomeFAQ() {
   ]
 
   return (
-    <section className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-16 sm:px-6 lg:px-8">
+    <section className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8">
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
         <h2
           className="mb-8 leading-none font-semibold text-gray-900"
-          style={{ fontSize: "clamp(18px, 4vw, 32px)" }}
+          style={{ fontSize: "clamp(32px, 4vw, 32px)" }}
         >
           Frequently Asked Questions
         </h2>
@@ -69,7 +69,7 @@ export default function HomeFAQ() {
                   >
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="flex flex-col gap-4 text-balance">
+                  <AccordionContent className="flex flex-col gap-4">
                     <p
                       className="mt-2 pb-2 leading-relaxed text-[#2d2d2d]"
                       style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
@@ -83,8 +83,8 @@ export default function HomeFAQ() {
           </div>
 
           <div className="mt-16 lg:mt-0 lg:h-full lg:max-w-[330px]">
-            <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] p-8 text-center lg:min-h-[400px]">
-              <div className="mx-auto mb-4 h-32 w-32 max-w-32">
+            <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] px-4 py-8 text-center lg:min-h-[400px]">
+              <div className="mx-auto mb-4 h-[62px] w-[62px] max-w-32">
                 <Image
                   src="/faq/chat.png"
                   alt="Chat"
@@ -95,20 +95,20 @@ export default function HomeFAQ() {
                 />
               </div>
               <h2
-                className="mb-6 font-medium"
-                style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
+                className="mb-2 font-bold lg:mb-4"
+                style={{ fontSize: "clamp(18px, 4vw, 20px)" }}
               >
                 Do you have more questions?
               </h2>
 
               <p
-                className="mb-6 leading-relaxed text-black"
+                className="mb-2 leading-relaxed text-black lg:mb-4"
                 style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
               >
                 Our team will answer all your questions. We response fast.
               </p>
 
-              <div className="mb-6 w-full space-y-4">
+              <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
                 <button
                   className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}

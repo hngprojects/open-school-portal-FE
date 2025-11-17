@@ -3,9 +3,26 @@ import Image from "next/image"
 
 const HomeDemo: React.FC = () => {
   return (
-    <section className="font-outfit w-full bg-white py-8 sm:py-12 lg:py-24">
-      <div className="mx-auto max-w-[1285px] px-4 py-16 sm:px-6">
-        <div className="relative mx-auto h-auto min-h-[137px] w-full overflow-visible rounded-2xl bg-[#DA3743] sm:min-h-[300px] md:h-[319px] md:max-w-[1259px]">
+    <section className="font-outfit w-full bg-white py-6 sm:py-8 lg:py-24">
+      <div className="flex items-center justify-center lg:hidden">
+        <div
+          className="md-[349px] h-[249px] w-[229px] overflow-visible md:w-[229px]"
+          style={{
+            transform: "rotate(0.28deg)",
+          }}
+        >
+          <Image
+            src="/demo/demo-mobile.png"
+            alt="Open School Portal Dashboard"
+            width={500}
+            height={550}
+            className="h-full w-full object-contain"
+            priority
+          />
+        </div>
+      </div>
+      <div className="mx-auto max-w-[1285px] px-4 py-8 sm:px-6">
+        <div className="relative mx-auto h-auto min-h-[210px] w-full overflow-visible rounded-2xl bg-[#DA3743] sm:min-h-[300px] md:h-[319px] md:max-w-[1259px]">
           <div className="absolute inset-0 overflow-hidden rounded-2xl md:block">
             <div className="absolute top-0 right-0 bottom-0 flex w-1/3">
               <div className="relative h-full w-full">
@@ -93,25 +110,7 @@ const HomeDemo: React.FC = () => {
           </div>
 
           <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 py-8 text-center lg:hidden">
-            <div className="absolute -top-10 -left-16 lg:-top-32 lg:-left-8">
-              <div
-                className="md-[349px] h-[249px] w-[229px] overflow-visible md:w-[229px]"
-                style={{
-                  transform: "rotate(5.28deg)",
-                }}
-              >
-                <Image
-                  src="/demo/demo-mobile.png"
-                  alt="Open School Portal Dashboard"
-                  width={500}
-                  height={550}
-                  className="h-full w-full object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            <div className="ml-20 max-w-xl text-center text-white md:ml-[120px] lg:ml-[450px]">
+            <div className="max-w-xl text-center text-white lg:ml-[450px]">
               <h5
                 className="leading-tight font-medium lg:text-4xl"
                 style={{ fontSize: "clamp(20px, 4vw, 24px)" }}

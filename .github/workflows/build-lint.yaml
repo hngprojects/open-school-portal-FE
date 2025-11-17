@@ -33,7 +33,7 @@ jobs:
         with:
           version: 9
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Create environment file from GitHub secrets
@@ -53,10 +53,12 @@ jobs:
         run: pnpm run build
 
       - name: Archive Build Artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         run: |
           tar -czf open-school-portal-fe.tar.gz .next public package.json next.config.ts tsconfig.json pnpm-lock.yaml .env
 
       - name: Copy Artifacts to Server
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
         run: |
           sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/open-school-portal-fe-artifact.tar.gz
-          rm -f   .tar.gz
+          rm -f open-school-portal-fe.tar.gz

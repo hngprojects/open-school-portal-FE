@@ -3,7 +3,8 @@ import { fetchFn } from "@/lib/fetch-fn"
 // Types
 export interface JoinWaitlistPayload {
   email: string
-  fullName: string
+  first_name: string
+  last_name: string
 }
 
 export interface JoinWaitlistResponse {
@@ -11,13 +12,15 @@ export interface JoinWaitlistResponse {
   status: string
 }
 
-export interface CheckWaitlistResponse {
-  exists: boolean
+export interface GetUnitWaitlistResponse {
+  email: string
+  first_name: string
+  last_name: string
 }
 
 // POST: Join Waitlist
 export async function joinWaitlist(payload: JoinWaitlistPayload) {
-  return fetchFn<JoinWaitlistResponse>("/waitlist/join", {
+  return fetchFn<JoinWaitlistResponse>("/waitlist", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -25,6 +28,6 @@ export async function joinWaitlist(payload: JoinWaitlistPayload) {
 }
 
 // GET: Check if a user already exists in waitlist
-export async function checkWaitlist(email: string) {
-  return fetchFn<CheckWaitlistResponse>(`/waitlist/check?email=${email}`)
+export async function getWaitlist() {
+  return fetchFn<GetUnitWaitlistResponse[]>("/waitlist")
 }

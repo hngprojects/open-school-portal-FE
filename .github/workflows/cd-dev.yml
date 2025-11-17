@@ -12,27 +12,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
-      - name: Install SSHPass
-        run: sudo apt-get update && sudo apt-get install -y sshpass
-
       - name: Deploy on server
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
-            # 1. Go to the app directory
-            cd /fe-staging/open-school-portal-FE
+            # 1. Go to the frontend directory
+            cd /home/open-school-portal/fe-staging/open-school-portal-FE
             
-            # 2. Extract the correct artifact file
+            # 2. Extract the artifact
             tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
             
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
             
-            # 4. Install production dependencies
-            pnpm install --production --frozen-lockfile
-            
-            # 5. FIX: PM2 name changed to "fe-staging"
-            pm2 restart fe-staging --update-env || PORT=3002 pm2 start pnpm -- start --name fe-staging --update-env
+            # 4. Restart PM2 process
+            pm2 restart fe-staging --update-env || (PORT=3002 pm2 start npm --name fe-staging -- run start && pm2 save)
           '
