@@ -61,6 +61,8 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
                 <Image
                   src={reason.imgSrc}
                   alt={reason.title}
+                  width={360}
+                  height={410}
                   className="absolute h-full w-full object-contain"
                 />
               </div>
@@ -92,10 +94,12 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
             </Button>
           </div>
 
-          <div className="relative flex aspect-[637/618] w-full items-center justify-center rounded-xl">
+          <div className="relative flex aspect-637/618 w-full items-center justify-center rounded-xl">
             <Image
               src="/assets/images/waitlist/nfc-powered-smart-id-cards.png"
               alt="nfc powered smart id cards"
+              width={637}
+              height={618}
               className="absolute h-full w-full object-contain"
             />
           </div>
