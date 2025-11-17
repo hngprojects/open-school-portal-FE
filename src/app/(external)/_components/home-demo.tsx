@@ -4,9 +4,9 @@ import Image from "next/image"
 const HomeDemo: React.FC = () => {
   return (
     <section className="font-outfit w-full bg-white py-8 sm:py-12 lg:py-24">
-      <div className="mx-auto max-w-[1285px] px-4 sm:px-6">
-        <div className="relative mx-auto h-auto min-h-[280px] w-full overflow-visible rounded-2xl bg-[#DA3743] sm:min-h-[300px] md:h-[319px] md:max-w-[1259px]">
-          <div className="absolute inset-0 hidden overflow-hidden rounded-2xl md:block">
+      <div className="mx-auto max-w-[1285px] px-4 py-16 sm:px-6">
+        <div className="relative mx-auto h-auto min-h-[137px] w-full overflow-visible rounded-2xl bg-[#DA3743] sm:min-h-[300px] md:h-[319px] md:max-w-[1259px]">
+          <div className="absolute inset-0 overflow-hidden rounded-2xl md:block">
             <div className="absolute top-0 right-0 bottom-0 flex w-1/3">
               <div className="relative h-full w-full">
                 <div className="absolute top-0 right-0 h-full">
@@ -93,47 +93,47 @@ const HomeDemo: React.FC = () => {
           </div>
 
           <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 py-8 text-center lg:hidden">
-            <div className="mb-6 max-w-[280px]">
+            <div className="absolute -top-10 -left-16 lg:-top-32 lg:-left-8">
               <div
-                className="mx-auto h-[200px] w-full overflow-hidden"
+                className="md-[349px] h-[249px] w-[229px] overflow-visible md:w-[229px]"
                 style={{
-                  transform: "rotate(-5.28deg)",
+                  transform: "rotate(5.28deg)",
                 }}
               >
                 <Image
                   src="/demo/demo-mobile.png"
                   alt="Open School Portal Dashboard"
-                  width={280}
-                  height={200}
-                  className="h-full w-full object-cover"
+                  width={500}
+                  height={550}
+                  className="h-full w-full object-contain"
                   priority
                 />
               </div>
             </div>
 
-            <div className="text-white">
+            <div className="ml-20 max-w-xl text-center text-white md:ml-[120px] lg:ml-[450px]">
               <h5
-                className="mb-3 leading-tight font-bold"
-                style={{ fontSize: "clamp(20px, 6vw, 28px)" }}
+                className="leading-tight font-medium lg:text-4xl"
+                style={{ fontSize: "clamp(20px, 4vw, 24px)" }}
               >
                 Ready to Modernize Your School
               </h5>
               <p
-                className="mb-6 opacity-90"
-                style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+                className="mb-6 opacity-90 lg:mb-8 lg:text-xl"
+                style={{ fontSize: "clamp(16px, 3vw, 18px)" }}
               >
                 It&apos;s just getting started
               </p>
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex items-center justify-center gap-1 sm:flex-row sm:gap-2">
                 <button
-                  className="w-full max-w-[200px] rounded-lg bg-white px-6 py-3 font-semibold text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
-                  style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+                  className="rounded-md bg-white px-4 py-2 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
+                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
                   Get Started
                 </button>
                 <button
-                  className="hover:bg-opacity-10 w-full max-w-[200px] rounded-lg border border-white px-6 py-3 font-semibold text-white transition-colors duration-300 hover:bg-white"
-                  style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+                  className="hover:bg-opacity-10 rounded-md border border-white px-4 py-2 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white"
+                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
                   Watch Demo
                 </button>
