@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon } from "lucide-react"
+import Image from "next/image"
 
 interface Reason {
   imgSrc: string
@@ -57,7 +58,7 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
               className="relative flex flex-col items-center gap-4 rounded-2xl bg-[#F9FAFC] p-6 transition hover:shadow-lg md:p-8"
             >
               <div className="group-hover:bg-accent/20 relative flex h-[410px] w-[360px] items-center justify-center rounded-xl transition-colors md:h-[480px] md:w-[420px]">
-                <img
+                <Image
                   src={reason.imgSrc}
                   alt={reason.title}
                   className="absolute h-full w-full object-contain"
@@ -92,7 +93,7 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
           </div>
 
           <div className="relative flex aspect-[637/618] w-full items-center justify-center rounded-xl">
-            <img
+            <Image
               src="/assets/images/waitlist/nfc-powered-smart-id-cards.png"
               alt="nfc powered smart id cards"
               className="absolute h-full w-full object-contain"

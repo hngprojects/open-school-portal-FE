@@ -1,11 +1,11 @@
 "use client"
 import React from "react"
-import Form_input from "../_components/form-input"
+import FormInput from "../_components/FormInput"
 
 // Login Page
 const Admin_Login = () => {
   return (
-    <Form_input
+    <FormInput
       label="School registration number"
       input_placeholder="Enter your School registration number"
     />
