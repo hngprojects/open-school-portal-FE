@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "lucide-react";
-import React from "react";
 
 interface Reason {
   imgSrc: string;
@@ -35,7 +34,11 @@ const reasons: Reason[] = [
   },
 ];
 
-const WhySchoolsJoinEarlyAccess = () => {
+const WhySchoolsJoinEarlyAccess = ({
+  onJoinUs
+}: {
+  onJoinUs: () => void;
+}) => {
   return (
     <section className="w-full bg-white">
       <div className="container flex flex-col gap-12 py-12 bg-white">
@@ -86,7 +89,7 @@ const WhySchoolsJoinEarlyAccess = () => {
             <p className="text-lg md:text-xl text-text-secondary">
               Enhance campus security and streamline access to facilities with our modern NFC smart ID cards. Quick, contactless and secure for every student
             </p>
-            <Button className="mt-4 px-6 py-3 w-full max-w-md">
+            <Button className="mt-4 px-6 py-3 w-full max-w-md" onClick={onJoinUs}>
               Join Waitlist
               <ArrowRightIcon />
             </Button>
