@@ -3,6 +3,7 @@ import { fetchFn } from "@/lib/fetch-fn"
 // Types
 export interface JoinWaitlistPayload {
   email: string
+  fullName: string
 }
 
 export interface JoinWaitlistResponse {
