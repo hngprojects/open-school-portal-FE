@@ -3,8 +3,8 @@ import { fetchFn } from "@/lib/fetch-fn"
 // Types
 export interface JoinWaitlistPayload {
   email: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
 }
 
 export interface JoinWaitlistResponse {
@@ -14,8 +14,8 @@ export interface JoinWaitlistResponse {
 
 export interface GetUnitWaitlistResponse {
   email: string
-  firstName: string
-  lastName: string
+  first_name: string
+  last_name: string
 }
 
 // POST: Join Waitlist
