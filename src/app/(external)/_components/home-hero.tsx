@@ -4,7 +4,7 @@ import React from "react"
 
 const HomeHero = () => {
   return (
-    <section className="bg-[radial-gradient(111.43%_483.25%_at_21.75%_50.07%,#FEFBFB_0%,#FFF4F4_30%,#FDECED_100%)] w-full pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0">
+    <section className="w-full bg-[radial-gradient(111.43%_483.25%_at_21.75%_50.07%,#FEFBFB_0%,#FFF4F4_30%,#FDECED_100%)] pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0">
       <div className="container flex flex-col items-center gap-6 text-center sm:gap-8 md:gap-10">
         <div className="flex w-full max-w-xl flex-col gap-3 sm:gap-4 md:max-w-4xl md:gap-6">
           <h1 className="text-text-primary text-4xl leading-tight font-bold sm:text-5xl md:text-6xl md:leading-tight">
@@ -16,12 +16,12 @@ const HomeHero = () => {
         </div>
 
         <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-3 sm:max-w-lg sm:gap-6 md:max-w-2xl">
-          <Button className="flex-1 min-w-[140px] sm:min-w-[180px] lg:w-auto lg:flex-none">
+          <Button className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none">
             Get Started
           </Button>
           <Button
             variant="outline"
-            className="flex-1 min-w-[140px] sm:min-w-[180px] lg:w-auto lg:flex-none"
+            className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"
           >
             Watch Demo
           </Button>
