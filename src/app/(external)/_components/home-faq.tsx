@@ -95,20 +95,20 @@ export default function HomeFAQ() {
                 />
               </div>
               <h2
-                className="mb-2 font-bold"
+                className="mb-2 font-bold lg:mb-4"
                 style={{ fontSize: "clamp(18px, 4vw, 20px)" }}
               >
                 Do you have more questions?
               </h2>
 
               <p
-                className="mb-2 leading-relaxed text-black"
+                className="mb-2 leading-relaxed text-black lg:mb-4"
                 style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
               >
                 Our team will answer all your questions. We response fast.
               </p>
 
-              <div className="my-2 w-full space-y-4">
+              <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
                 <button
                   className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
