@@ -1,0 +1,30 @@
+name: Deployment Pipeline
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: evote
+    timeout-minutes: 10
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy on server
+        run: |
+          sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
+            cd /fe-staging/open-school-portal-FE
+            
+            tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
+            
+            rm -f /tmp/open-school-portal-fe-artifact.tar.gz
+            
+            pnpm install --production --frozen-lockfile
+            
+            pm2 restart evote-fe-staging --update-env || PORT=3002 pm2 start pnpm -- start --name evote-fe-staging --update-env
+          '
