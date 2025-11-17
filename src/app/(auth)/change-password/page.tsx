@@ -1,6 +1,6 @@
-'use client'
-import React, { useState } from 'react'
-import Image from 'next/image'
+"use client"
+import React, { useState } from "react"
+import Image from "next/image"
 
 interface FormErrors {
   newPassword?: string
@@ -19,82 +19,91 @@ interface FormData {
 
 const PasswordReset = () => {
   const [formData, setFormData] = useState<FormData>({
-    newPassword: '',
-    confirmPassword: ''
+    newPassword: "",
+    confirmPassword: "",
   })
-  
+
   const [errors, setErrors] = useState<FormErrors>({})
   const [touched, setTouched] = useState<TouchedFields>({
     newPassword: false,
-    confirmPassword: false
+    confirmPassword: false,
   })
-  
+
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const validatePassword = (password: string): string | undefined => {
     if (!password) {
-      return 'Password is required'
+      return "Password is required"
     }
     if (password.length < 8) {
-      return 'Password must be at least 8 characters'
+      return "Password must be at least 8 characters"
     }
     if (!/(?=.*[a-z])/.test(password)) {
-      return 'Password must contain lowercase letter'
+      return "Password must contain lowercase letter"
     }
     if (!/(?=.*[A-Z])/.test(password)) {
-      return 'Password must contain uppercase letter'
+      return "Password must contain uppercase letter"
     }
     if (!/(?=.*\d)/.test(password)) {
-      return 'Password must contain a number'
+      return "Password must contain a number"
     }
     return undefined
   }
 
-  const validateConfirmPassword = (confirmPassword: string, newPassword: string): string | undefined => {
+  const validateConfirmPassword = (
+    confirmPassword: string,
+    newPassword: string
+  ): string | undefined => {
     if (!confirmPassword) {
-      return 'Please confirm your password'
+      return "Please confirm your password"
     }
     if (confirmPassword !== newPassword) {
-      return 'Passwords do not match'
+      return "Passwords do not match"
     }
     return undefined
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData((prev) => ({ ...prev, [name]: value }))
 
     // Real-time validation
     if (touched[name as keyof TouchedFields]) {
       const newErrors: FormErrors = { ...errors }
-      
-      if (name === 'newPassword') {
+
+      if (name === "newPassword") {
         newErrors.newPassword = validatePassword(value)
         // Also re-validate confirm password if it's been touched
         if (touched.confirmPassword) {
-          newErrors.confirmPassword = validateConfirmPassword(formData.confirmPassword, value)
+          newErrors.confirmPassword = validateConfirmPassword(
+            formData.confirmPassword,
+            value
+          )
         }
-      } else if (name === 'confirmPassword') {
+      } else if (name === "confirmPassword") {
         newErrors.confirmPassword = validateConfirmPassword(value, formData.newPassword)
       }
-      
+
       setErrors(newErrors)
     }
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name } = e.target
-    setTouched(prev => ({ ...prev, [name]: true }))
+    setTouched((prev) => ({ ...prev, [name]: true }))
 
     const newErrors: FormErrors = { ...errors }
-    
-    if (name === 'newPassword') {
+
+    if (name === "newPassword") {
       newErrors.newPassword = validatePassword(formData.newPassword)
-    } else if (name === 'confirmPassword') {
-      newErrors.confirmPassword = validateConfirmPassword(formData.confirmPassword, formData.newPassword)
+    } else if (name === "confirmPassword") {
+      newErrors.confirmPassword = validateConfirmPassword(
+        formData.confirmPassword,
+        formData.newPassword
+      )
     }
-    
+
     setErrors(newErrors)
   }
 
@@ -109,32 +118,38 @@ const PasswordReset = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate all fields
     const newPasswordError = validatePassword(formData.newPassword)
-    const confirmPasswordError = validateConfirmPassword(formData.confirmPassword, formData.newPassword)
-    
+    const confirmPasswordError = validateConfirmPassword(
+      formData.confirmPassword,
+      formData.newPassword
+    )
+
     if (newPasswordError || confirmPasswordError) {
       setErrors({
         newPassword: newPasswordError,
-        confirmPassword: confirmPasswordError
+        confirmPassword: confirmPasswordError,
       })
       setTouched({ newPassword: true, confirmPassword: true })
       return
     }
 
     // Submit form
-    console.log('Password reset submitted:', formData)
+    console.log("Password reset submitted:", formData)
   }
 
   return (
-    <section className="flex flex-1 flex-col max-[1400px]:items-center max-sm:gap-10 sm:max-[1400px]:gap-[43px] min-[1400px]:gap-1 px-4 max-sm:pt-[60px] sm:pt-6">
+    <section className="flex flex-1 flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-6 sm:max-[1400px]:gap-[43px]">
       {/* school logo */}
       <div className="flex items-center">
         <picture>
-          <source media="(min-width: 641px)" srcSet="/assets/images/auth/desktop-school-logo.png" />
+          <source
+            media="(min-width: 641px)"
+            srcSet="/assets/images/auth/desktop-school-logo.png"
+          />
           <Image
-            className="sm:max-[1400px]:w-[152px] sm:max-[1400px]:h-[152px] min-[1400px]:w-[250px] min-[1400px]:h-[250px]"
+            className="min-[1400px]:h-[250px] min-[1400px]:w-[250px] sm:max-[1400px]:h-[152px] sm:max-[1400px]:w-[152px]"
             src={"/assets/images/auth/school-logo.png"}
             alt="School Logo"
             width={56}
@@ -142,35 +157,34 @@ const PasswordReset = () => {
           />
         </picture>
       </div>
-      
+
       {/* main content */}
       <div className="w-full max-w-[488px] md:max-lg:flex md:max-lg:flex-col md:max-lg:items-center">
-        
         {/* Password Reset Form */}
-        <form onSubmit={handleSubmit} className='w-full'>
+        <form onSubmit={handleSubmit} className="w-full">
           {/* New Password Field */}
           <div className="mb-6">
-            <div className="flex justify-between items-start  max-w-[488px] ">
+            <div className="flex max-w-[488px] items-start justify-between">
               <label
-                className="font-sans block text-[16px] leading-5 font-medium"
+                className="block font-sans text-[16px] leading-5 font-medium"
                 htmlFor="new-password"
               >
                 New Password
-                <span className="text-[#DA3743] ml-1">*</span>
+                <span className="ml-1 text-[#DA3743]">*</span>
               </label>
               {errors.newPassword && touched.newPassword && (
-                <span className="text-[12px] text-[#DA3743] font-medium max-w-[200px] text-right">
+                <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
                   {errors.newPassword}
                 </span>
               )}
             </div>
-            <div className="relative mt-2  max-w-[488px]">
+            <div className="relative mt-2 max-w-[488px]">
               <input
-                className={`w-full min-[1400px]:max-w-[488px] rounded-xl border px-4 py-3.5 pr-12 font-sans text-[14px] leading-5 font-normal text-[#535353] ${
+                className={`w-full rounded-xl border px-4 py-3.5 pr-12 font-sans text-[14px] leading-5 font-normal text-[#535353] min-[1400px]:max-w-[488px] ${
                   errors.newPassword && touched.newPassword
-                    ? 'border-[#DA3743] bg-[#FFF5F5]'
-                    : 'border-[#2D2D2D4D] hover:border-[#2D2D2D]'
-                } focus:outline-none focus:ring-2 focus:ring-[#DA3743] focus:border-transparent transition-colors`}
+                    ? "border-[#DA3743] bg-[#FFF5F5]"
+                    : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
+                } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
                 type={showNewPassword ? "text" : "password"}
                 name="newPassword"
                 id="new-password"
@@ -182,39 +196,53 @@ const PasswordReset = () => {
               <button
                 type="button"
                 onClick={() => setShowNewPassword(!showNewPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2D2D2D80] hover:text-[#2D2D2D] transition-colors"
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
               >
-                {showNewPassword ? <Image src={'/assets/images/auth/show-password-icon.png'} alt ="show password Icon" width={16} height={16} />: <Image src={'/assets/images/auth/hide-password-icon.png'} alt ="show password Icon" width={16} height={16} />}
+                {showNewPassword ? (
+                  <Image
+                    src={"/assets/images/auth/show-password-icon.png"}
+                    alt="show password Icon"
+                    width={16}
+                    height={16}
+                  />
+                ) : (
+                  <Image
+                    src={"/assets/images/auth/hide-password-icon.png"}
+                    alt="show password Icon"
+                    width={16}
+                    height={16}
+                  />
+                )}
               </button>
             </div>
-            <p className="mt-2 text-[12px] text-[#2D2D2D80] font-sans">
+            <p className="mt-2 font-sans text-[12px] text-[#2D2D2D80]">
               Must be 8+ characters with uppercase, lowercase & number
             </p>
           </div>
 
           {/* Confirm Password Field */}
-          <div className="mb-6  max-w-[488px]">
-            <div className="flex justify-between items-start">
+          <div className="mb-6 max-w-[488px]">
+            <div className="flex items-start justify-between">
               <label
                 className="block font-sans text-[16px] leading-5 font-medium"
                 htmlFor="confirm-password"
               >
                 Confirm Password
-                <span className="text-[#DA3743] ml-1">*</span>
+                <span className="ml-1 text-[#DA3743]">*</span>
               </label>
               {errors.confirmPassword && touched.confirmPassword && (
-                <span className="text-[12px] text-[#DA3743] font-medium max-w-[200px] text-right">
+                <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
                   {errors.confirmPassword}
                 </span>
               )}
             </div>
             <div className="relative mt-2">
               <input
-                className={`w-full min-[1400px]:max-w-[488px] rounded-xl border px-4 py-3.5 pr-12 font-sans text-[14px] leading-5 font-normal text-[#535353] ${
+                className={`w-full rounded-xl border px-4 py-3.5 pr-12 font-sans text-[14px] leading-5 font-normal text-[#535353] min-[1400px]:max-w-[488px] ${
                   errors.confirmPassword && touched.confirmPassword
-                    ? 'border-[#DA3743] bg-[#FFF5F5]'
-                    : 'border-[#2D2D2D4D] hover:border-[#2D2D2D]'
-                } focus:outline-none focus:ring-2 focus:ring-[#DA3743] focus:border-transparent transition-colors`}
+                    ? "border-[#DA3743] bg-[#FFF5F5]"
+                    : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
+                } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 id="confirm-password"
@@ -226,16 +254,30 @@ const PasswordReset = () => {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2D2D2D80] hover:text-[#2D2D2D] transition-colors"
+                className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
               >
-                {showConfirmPassword ? <Image src={'/assets/images/auth/show-password-icon.png'} alt ="show password Icon" width={16} height={16} />: <Image src={'/assets/images/auth/hide-password-icon.png'} alt ="show password Icon" width={16} height={16} />}
+                {showConfirmPassword ? (
+                  <Image
+                    src={"/assets/images/auth/show-password-icon.png"}
+                    alt="show password Icon"
+                    width={16}
+                    height={16}
+                  />
+                ) : (
+                  <Image
+                    src={"/assets/images/auth/hide-password-icon.png"}
+                    alt="show password Icon"
+                    width={16}
+                    height={16}
+                  />
+                )}
               </button>
             </div>
           </div>
 
-          <button 
+          <button
             type="submit"
-            className="mt-4 flex w-full max-w-[488px] items-center justify-center gap-2 rounded-xl bg-[#DA3743] px-8 py-4 text-white font-medium hover:bg-[#c53030] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            className="mt-4 flex w-full max-w-[488px] items-center justify-center gap-2 rounded-xl bg-[#DA3743] px-8 py-4 font-medium text-white transition-colors hover:bg-[#c53030] disabled:cursor-not-allowed disabled:bg-gray-400"
             disabled={hasErrors()}
           >
             Reset Password →
