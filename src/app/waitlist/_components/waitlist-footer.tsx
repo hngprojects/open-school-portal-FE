@@ -27,7 +27,7 @@ const Footer = () => {
           <ul className="flex w-full items-center justify-center gap-4">
             <li>
               <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <FacebookIcon className="size-6 hover:fill-accent transition-colors" />
+                <FacebookIcon className="hover:fill-accent size-6 transition-colors" />
               </Link>
             </li>
             <li>
@@ -42,7 +42,7 @@ const Footer = () => {
             </li> */}
             <li>
               <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                <LinkedinIcon className="size-6 hover:fill-accent transition-colors" />
+                <LinkedinIcon className="hover:fill-accent size-6 transition-colors" />
               </Link>
             </li>
           </ul>

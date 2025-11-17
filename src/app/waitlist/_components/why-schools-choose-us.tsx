@@ -6,6 +6,7 @@ interface Reason {
   imgSrc: string
   title: string
   description: string
+  imageSize: { height: number; width: number }
 }
 
 const reasons: Reason[] = [
@@ -14,24 +15,28 @@ const reasons: Reason[] = [
     title: "Digital Student Management",
     description:
       "Keep all student records digital and organized. Access grades, progress reports, and histories in one secure platform.",
+    imageSize: {height: 221, width: 200}
   },
   {
     imgSrc: "/assets/images/waitlist/smart-attendance.png",
     title: "Smart Attendance",
     description:
       "Automate attendance tracking and save hours every week. Teachers can focus on teaching while the system handles the rest.",
+    imageSize: {height: 290, width: 345}
   },
   {
     imgSrc: "/assets/images/waitlist/integrated-fees-and-invoicing.png",
     title: "Integrated Fee Management",
     description:
       "Manage school fees digitally, track payments, and automate reminders—all from one platform.",
+    imageSize: {height: 361, width: 302}
   },
   {
     imgSrc: "/assets/images/waitlist/parent-mobile-app.png",
     title: "Parents Mobile App",
     description:
       "Allow parents to stay connected with real-time updates on attendance, grades, and school announcements via mobile.",
+    imageSize: {height: 300, width: 351}
   },
 ]
 
@@ -61,6 +66,8 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
                 <Image
                   src={reason.imgSrc}
                   alt={reason.title}
+                  height={reason.imageSize.height}
+                  width={reason.imageSize.width}
                   className="absolute h-full w-full object-contain"
                 />
               </div>
@@ -94,6 +101,8 @@ const WhySchoolsJoinEarlyAccess = ({ onJoinUs }: { onJoinUs: () => void }) => {
 
           <div className="relative flex aspect-[637/618] w-full items-center justify-center rounded-xl">
             <Image
+              height={618}
+              width={637}
               src="/assets/images/waitlist/nfc-powered-smart-id-cards.png"
               alt="nfc powered smart id cards"
               className="absolute h-full w-full object-contain"
