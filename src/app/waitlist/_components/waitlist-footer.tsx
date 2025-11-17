@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter, TwitterIcon } from "lucide-react"
+import { FacebookIcon, LinkedinIcon, TwitterIcon } from "lucide-react"
 
 const sitemapLinks = [
   { name: "Home", href: "/" },
@@ -27,7 +27,7 @@ const Footer = () => {
           <ul className="flex items-center justify-center w-full gap-4">
             <li>
               <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <Facebook className="size-6 hover:fill-accent transition-colors" />
+                <FacebookIcon className="size-6 hover:fill-accent transition-colors" />
               </Link>
             </li>
             <li>
@@ -42,7 +42,7 @@ const Footer = () => {
             </li> */}
             <li>
               <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                <Linkedin className="size-6 hover:fill-accent transition-colors" />
+                <LinkedinIcon className="size-6 hover:fill-accent transition-colors" />
               </Link>
             </li>
           </ul>

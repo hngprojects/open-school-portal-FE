@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -38,8 +38,8 @@ const WaitlistFormModal: React.FC<{
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">You're on the list!</h3>
-                        <p className="text-gray-600">We'll notify you when we launch.</p>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re on the list!</h3>
+                        <p className="text-gray-600">We&apos;ll notify you when we launch.</p>
                     </div>
                 ) : (
                     <>

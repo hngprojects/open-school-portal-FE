@@ -1,5 +1,4 @@
 import Footer from "./_components/waitlist-footer";
-import Navbar from "./_components/waitlist-navbar"
 
 export const metadata = {
   title: "Waitlist",

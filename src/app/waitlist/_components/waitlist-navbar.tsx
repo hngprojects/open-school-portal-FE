@@ -81,7 +81,7 @@ const Navbar = ({
           </>
         )}
 
-        <a href="/">
+        <Link href="/">
           <Image
             src="/assets/logo.png"
             alt="Open School Portal Logo"
@@ -91,7 +91,7 @@ const Navbar = ({
             sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
             className="hidden md:block size-12 md:size-14 lg:size-16"
           />
-        </a>
+        </Link>
 
         {/* Desktop Navigation - Centered */}
         <section className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-lg font-medium md:flex md:gap-10">
