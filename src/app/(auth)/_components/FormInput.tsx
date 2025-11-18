@@ -4,6 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 // Type definitions
 interface FormData {
@@ -248,9 +249,11 @@ const FormInput = ({ label, input_placeholder }: Form_input_Props) => {
                 )}
               </button>
             </div>
-            <p className="mt-2 cursor-pointer text-right font-sans text-[14px] leading-5 font-normal text-[#DA3743] transition-colors hover:text-[#c53030]">
-              Forgot Password?
-            </p>
+            <Link href={"/forgot-password"}>
+              <p className="mt-2 cursor-pointer text-right font-sans text-[14px] leading-5 font-normal text-[#DA3743] transition-colors hover:text-[#c53030]">
+                Forgot Password?
+              </p>
+            </Link>
           </div>
 
           <Button
