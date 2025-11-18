@@ -2,7 +2,7 @@ import Link from "next/link"
 import { FacebookIcon, LinkedinIcon, TwitterIcon } from "lucide-react"
 
 const sitemapLinks = [
-  { name: "Home", href: "/" },
+  { name: "Home", href: "/waitlist" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   { name: "Privacy Policy", href: "/privacy" },
