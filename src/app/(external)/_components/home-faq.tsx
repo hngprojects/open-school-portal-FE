@@ -61,17 +61,18 @@ export default function HomeFAQ() {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="rounded-md border border-[#999] p-2"
+                  className="rounded-md border border-[#999] px-4 py-1"
                 >
                   <AccordionTrigger
                     className="w-full py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
                     style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
                   >
-                    {faq.question}
+                    <span className="block max-w-[500px]">{faq.question}</span>
                   </AccordionTrigger>
+
                   <AccordionContent className="flex flex-col gap-4">
                     <p
-                      className="mt-2 pb-2 leading-relaxed text-[#2d2d2d]"
+                      className="mt-2 leading-relaxed text-[#2d2d2d]"
                       style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
                     >
                       {faq.answer}

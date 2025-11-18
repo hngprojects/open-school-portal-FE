@@ -4,15 +4,14 @@ import { testimonials } from "@/data/testimonials"
 
 export default function HomeTestimonial() {
   return (
-    <section className="w-full bg-[#fafafa] py-16 text-black">
+    <section className="w-full bg-[#fafafa] py-20 text-black">
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
         <div className="mb-12 text-center lg:text-left">
           <h2
             className="mb-4 leading-tight font-semibold text-gray-900"
             style={{ fontSize: "clamp(28px, 5vw, 40px)" }}
           >
-            What Students, Staff & Parents Say
-            <br className="hidden lg:block" /> About Open School Portal
+            What Students, Staff & Parents Say About Open School Portal
           </h2>
           <p className="mx-auto max-w-3xl text-gray-600 lg:mx-0">
             Real stories from people who use Open School Portal every day to learn, teach,
@@ -67,8 +66,8 @@ const TestimonialCard = ({
         </p>
       </div>
 
-      <div className="flex items-center justify-items-start gap-4 md:block">
-        <div className="relative h-[31px] w-[31px] overflow-hidden rounded-full shadow md:hidden">
+      <div className="flex items-center justify-items-start gap-4 md:flex">
+        <div className="relative h-[31px] w-[31px] overflow-hidden rounded-full shadow lg:hidden">
           <Image
             src={testimonial.image}
             alt={testimonial.name}
