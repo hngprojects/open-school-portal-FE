@@ -46,6 +46,9 @@ const PasswordReset = () => {
     if (!/(?=.*[#?!@$%^&*-])/.test(password))
       return "Password must contain special character";
     return undefined;
+    if (password === formData.oldPassword)
+      return "Your new password cannot be the same as your old password";
+    return undefined;
   };
 
   const validateConfirmPassword = (
@@ -151,7 +154,7 @@ const PasswordReset = () => {
       </div>
 
       {/* Right content */}
-      <div className="w-full lg:w-1/2 flex flex-col items-center justify-start pt-[132px] px-4 sm:px-8 lg:px-12 xl:px-20">
+      <div className="w-full lg:w-1/2 flex flex-col items-center justify-start pt-[100px] px-4 sm:px-8 lg:px-12 xl:px-20">
         {/* Logo */}
         <div className="mb-8 sm:mb-12">
           <Image
@@ -287,7 +290,7 @@ const PasswordReset = () => {
                   : "bg-[#DA3743] hover:bg-[#C32F3A]"
               }`}
             >
-              Reset Password
+              Login
             </button>
           </form>
         </div>
