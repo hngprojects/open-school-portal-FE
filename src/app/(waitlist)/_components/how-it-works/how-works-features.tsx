@@ -1,16 +1,19 @@
 "use client"
 
-import React from "react"
+import React, { CSSProperties } from "react"
 import Image from "next/image"
 import { HowItWorksFeatures } from "../../_data/features"
+import { useMediaQuery } from "@/app/(waitlist)/_hooks/use-media-query"
 
 const HowItWorksFeaturesPage = () => {
+  const isDesktop = useMediaQuery("(min-width: 1024px)")
+
   return (
-    <article className="font-outfit container mb-40 space-y-20 bg-white lg:space-y-40">
+    <article className="font-outfit container-full mb-40 bg-white px-5 md:px-20 lg:space-y-40">
       {HowItWorksFeatures.map((feature, index) => (
         <section
           key={feature.id}
-          className="grid min-h-[380px] grid-cols-1 gap-10 p-5 lg:grid-cols-2"
+          className={`grid min-h-[380px] grid-cols-1 md:gap-10 md:p-7 lg:grid-cols-2 ${index === 0 ? "gap-48" : "gap-40"}`}
         >
           {/* LEFT SIDE (text) */}
           <div
@@ -34,51 +37,67 @@ const HowItWorksFeaturesPage = () => {
           {/* RIGHT SIDE (image stack) */}
           <div className={`relative ${index % 2 === 1 ? "lg:order-1" : "lg:order-2"}`}>
             {/* Background Accent Box */}
-            <div className="bg-accent h-[180px] rounded-xl p-6 lg:h-full lg:pt-24">
-              <div className="relative h-[120px] overflow-hidden rounded-b-xl bg-white lg:h-full">
+            <div className="bg-accent flex h-[174px] flex-col justify-center rounded-xl p-8 pt-3 md:mt-0 md:h-[388px] md:w-full md:p-10 xl:w-[574px]">
+              <div className="relative h-[138px] rounded-b-xl bg-white md:h-[220px]">
                 {/* IMAGES STACKED */}
-                {feature.images.map((image, imgIndex) => (
-                  <Image
-                    key={imgIndex}
-                    src={image.src}
-                    alt={feature.header}
-                    width={image.desktop.width}
-                    height={image.desktop.height}
-                    className="absolute"
-                    style={{
-                      width: "auto",
-                      height: "auto",
-                      bottom: image.mobile.bottom,
-                      left: image.mobile.left,
-                      zIndex: image.zIndex,
-                    }}
-                  />
-                ))}
+                {feature.images.map((image, imgIndex) => {
+                  const style: CSSProperties = {
+                    position: "absolute",
+                    zIndex: image.zIndex,
+                    bottom: isDesktop ? image.desktop.bottom : image.mobile.bottom,
+                    left: isDesktop ? image.desktop.left : image.mobile.left,
+                  }
+
+                  return (
+                    <Image
+                      key={imgIndex}
+                      src={image.src}
+                      alt={feature.header}
+                      width={isDesktop ? image.desktop.width : image.mobile.width}
+                      height={isDesktop ? image.desktop.height : image.mobile.height}
+                      style={style}
+                    />
+                  )
+                })}
               </div>
             </div>
 
             {/* arrows */}
-            <div
-              className={`absolute ${index % 2 === 1 ? "lg:-right-28" : "lg:-left-50"} ${index === 4 ? "hidden" : "block"}`}
-            >
-              {index % 2 === 1 ? (
-                <Image
-                  src="/assets/icons/curl-arrow-right.svg"
-                  alt="an arrow pointing right"
-                  width={220}
-                  height={120}
-                  className="max-h-[100px]"
-                />
-              ) : (
-                <Image
-                  src="/assets/icons/curl-arrow-left.svg"
-                  alt="an arrow pointing left"
-                  width={220}
-                  height={120}
-                  className="max-h-[100px] lg:max-h-[200px]"
-                />
-              )}
-            </div>
+            {isDesktop ? (
+              <div
+                className={`absolute ${index % 2 === 1 ? "lg:-right-20" : "lg:-left-40"} ${index === 4 ? "hidden" : "block"}`}
+              >
+                {index % 2 === 1 ? (
+                  <Image
+                    src="/assets/icons/curl-arrow-right.svg"
+                    alt="an arrow pointing right"
+                    width={220}
+                    height={190}
+                    className="max-h-[200px]"
+                  />
+                ) : (
+                  <Image
+                    src="/assets/icons/curl-arrow-left.svg"
+                    alt="an arrow pointing left"
+                    width={220}
+                    height={120}
+                    className="max-h-[100px] lg:max-h-[200px]"
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="mx-auto w-fit">
+                {index < HowItWorksFeatures.length - 1 && (
+                  <Image
+                    src="/assets/icons/curl-arrow-down.svg"
+                    alt="an arrow pointing down"
+                    width={61}
+                    height={132}
+                    // className="max-h-full"
+                  />
+                )}
+              </div>
+            )}
           </div>
         </section>
       ))}
