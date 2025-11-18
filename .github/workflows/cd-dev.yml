@@ -27,6 +27,7 @@ jobs:
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
             
-            # 4. Restart PM2 process
-            pm2 restart fe-staging --update-env || (PORT=3002 pm2 start npm --name fe-staging -- run start && pm2 save)
+            # 4. Restart PM2 process using ecosystem config
+            pm2 start ecosystem.config.mjs --update-env || pm2 restart fe-staging --update-env
+            pm2 save
           '
