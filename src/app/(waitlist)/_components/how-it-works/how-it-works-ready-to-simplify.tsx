@@ -3,10 +3,10 @@ import React from "react"
 
 const ReadyToSimplify = () => {
   return (
-    <div className="mt-24 flex w-full justify-center px-4">
+    <div className="mt-24 mb-48 flex w-full justify-center px-4">
       <div className="bg-accent flex max-w-[1069px] flex-col justify-center rounded-xl pt-12 pb-14 max-sm:w-[361px] sm:w-full">
-        <div className="mx-auto max-md:mb-[25px] max-sm:w-[293px] sm:px-20 md:mb-8">
-          <h1 className="text-center leading-[160%] font-bold text-[#FAFAFA] max-md:mb-[9px] max-md:text-[20px] md:mb-6 md:text-[32px]">
+        <div className="mx-auto px-5 max-md:mb-[25px] max-sm:w-[293px] sm:px-20 md:mb-8">
+          <h1 className="text-center leading-[160%] font-bold text-[#FAFAFA] max-md:mb-[9px] max-md:text-[18px] md:mb-6 md:text-[32px]">
             Ready to Simplify Your School?
           </h1>
           <p className="text-center leading-[100%] font-normal text-[#EBEBEB] max-md:text-sm md:text-[24px]">

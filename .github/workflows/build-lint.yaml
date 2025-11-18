@@ -54,7 +54,7 @@ jobs:
 
       - name: Archive Build Artifacts
         run: |
-          tar -czf open-school-portal-fe.tar.gz .next public package.json next.config.ts tsconfig.json pnpm-lock.yaml .env
+          tar -czf open-school-portal-fe.tar.gz .next public package.json next.config.ts tsconfig.json pnpm-lock.yaml ecosystem.config.mjs .env
 
       - name: Copy Artifacts to Server
         run: |
