@@ -8,7 +8,7 @@ export interface AuthActionResult {
 }
 
 export const loginWithPortal = async (
-  payload: LoginPayload,
+  payload: LoginPayload
 ): Promise<AuthActionResult> => {
   const response = await loginRequest({
     registrationNumber: payload.registrationNumber.trim(),
@@ -22,4 +22,3 @@ export const refreshPortalSession = async (): Promise<AuthActionResult> => {
   const response = await refreshRequest()
   return { response }
 }
-

@@ -34,9 +34,9 @@ const forWhoData = [
 
 const HomeForWho = () => {
   return (
-    <div className="flex flex-col gap-6 bg-[#FEF9FA] py-8 md:gap-8 md:py-12 lg:py-18">
+    <div className="flex flex-col gap-6 bg-white px-4 py-8 md:gap-8 md:py-12 lg:py-18">
       <div className="container flex flex-col gap-6 md:gap-8">
-        <section className="mx-auto flex w-full max-w-280 flex-col gap-3 text-center md:gap-4">
+        <section className="flex w-full max-w-[1296px] flex-col gap-3 px-4 text-left md:gap-4">
           <h2 className="text-2xl font-semibold md:text-3xl">Who is it for?</h2>
           <p className="text-base leading-7 md:text-lg md:leading-8 lg:text-xl">
             With Open School Portal, students, teachers, parents, and administrators stay

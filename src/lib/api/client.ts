@@ -46,7 +46,7 @@ const parseJsonSafely = async (response: Response): Promise<unknown> => {
 
 export async function apiFetch<TResponse>(
   path: string,
-  init?: RequestInit,
+  init?: RequestInit
 ): Promise<TResponse> {
   const headers = new Headers(init?.headers ?? undefined)
 
@@ -83,8 +83,7 @@ export async function apiFetch<TResponse>(
     throw new ApiError(
       "Unable to reach the server. Please try again.",
       0,
-      error instanceof Error ? { message: error.message } : error,
+      error instanceof Error ? { message: error.message } : error
     )
   }
 }
-

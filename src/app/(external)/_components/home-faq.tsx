@@ -1,7 +1,11 @@
-"use client"
-
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import { useState } from "react"
 
 interface FAQItem {
   id: number
@@ -9,9 +13,7 @@ interface FAQItem {
   answer: string
 }
 
-const HomeFAQ = () => {
-  const [openItem, setOpenItem] = useState<number | null>(0)
-
+export default function HomeFAQ() {
   const faqData: FAQItem[] = [
     {
       id: 0,
@@ -39,72 +41,52 @@ const HomeFAQ = () => {
     },
   ]
 
-  const toggleItem = (id: number) => {
-    setOpenItem((prev) => (prev === id ? null : id))
-  }
-
   return (
-    <section className="font-outfit w-full bg-white px-4 py-12 sm:px-6 lg:px-8">
+    <section className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8">
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
         <h2
           className="mb-8 leading-none font-semibold text-gray-900"
-          style={{ fontSize: "clamp(18px, 4vw, 32px)" }}
+          style={{ fontSize: "clamp(32px, 4vw, 32px)" }}
         >
           Frequently Asked Questions
         </h2>
         <div className="flex flex-col items-stretch lg:flex-row lg:gap-[110px]">
           <div className="flex-1 lg:max-w-[860px]">
-            <div className="space-y-4">
-              {faqData.map((faq) => (
-                <div key={faq.id} className="rounded-md border border-[#999] p-4">
-                  <button
-                    onClick={() => toggleItem(faq.id)}
-                    className="flex w-full items-center justify-between py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
-                    style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full space-y-4"
+              defaultValue={`item-0`}
+            >
+              {faqData.map((faq, index) => (
+                <AccordionItem
+                  key={index}
+                  value={`item-${index}`}
+                  className="rounded-md border border-gray-200 px-4 py-2"
+                >
+                  <AccordionTrigger
+                    className="w-full py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
+                    style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
                   >
-                    <span
-                      className="pr-4 leading-8 font-semibold"
-                      style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
-                    >
-                      {faq.question}
-                    </span>
-                    <svg
-                      className={`h-5 w-5 transform transition-transform duration-200 ${
-                        openItem === faq.id ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
+                    <span className="block max-w-[500px] text-2xl">{faq.question}</span>
+                  </AccordionTrigger>
 
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openItem === faq.id ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                    }`}
-                  >
+                  <AccordionContent className="flex flex-col gap-4">
                     <p
-                      className="mt-2 pb-2 leading-relaxed text-[#2d2d2d]"
+                      className="mt-2 leading-relaxed text-[#2d2d2d]"
                       style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
                     >
                       {faq.answer}
                     </p>
-                  </div>
-                </div>
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </div>
 
           <div className="mt-16 lg:mt-0 lg:h-full lg:max-w-[330px]">
-            <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] p-8 text-center lg:min-h-[400px]">
-              <div className="mx-auto mb-4 h-32 w-32 max-w-32">
+            <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] px-4 py-8 text-center lg:min-h-[400px]">
+              <div className="mx-auto mb-4 h-[62px] w-[62px] max-w-32">
                 <Image
                   src="/faq/chat.png"
                   alt="Chat"
@@ -115,26 +97,26 @@ const HomeFAQ = () => {
                 />
               </div>
               <h2
-                className="mb-6 font-medium"
-                style={{ fontSize: "clamp(16px, 4vw, 20px)" }}
+                className="mb-2 font-bold lg:mb-4"
+                style={{ fontSize: "clamp(18px, 4vw, 20px)" }}
               >
                 Do you have more questions?
               </h2>
 
               <p
-                className="mb-6 leading-relaxed text-black"
+                className="mb-2 leading-relaxed text-black lg:mb-4"
                 style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
               >
                 Our team will answer all your questions. We response fast.
               </p>
 
-              <div className="mb-6 w-full space-y-4">
-                <button
-                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
+              <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
+                <Button
+                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
                 >
                   Contact Super Team
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -143,5 +125,3 @@ const HomeFAQ = () => {
     </section>
   )
 }
-
-export default HomeFAQ

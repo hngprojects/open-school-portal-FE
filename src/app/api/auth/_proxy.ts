@@ -32,9 +32,11 @@ const collectForwardHeaders = (req: Request): Headers => {
 }
 
 const appendSetCookies = (source: Response, target: NextResponse): void => {
-  const getSetCookie = (source.headers as unknown as {
-    getSetCookie?: () => string[]
-  }).getSetCookie
+  const getSetCookie = (
+    source.headers as unknown as {
+      getSetCookie?: () => string[]
+    }
+  ).getSetCookie
 
   const cookies = getSetCookie?.call(source.headers)
 
@@ -51,7 +53,7 @@ const appendSetCookies = (source: Response, target: NextResponse): void => {
 
 export const proxyAuthRequest = async (
   req: Request,
-  pathname: string,
+  pathname: string
 ): Promise<NextResponse> => {
   try {
     const backendUrl = buildBackendUrl(pathname)
@@ -70,7 +72,8 @@ export const proxyAuthRequest = async (
       status: backendResponse.status,
       headers: {
         "content-type":
-          backendResponse.headers.get("content-type") ?? "application/json; charset=utf-8",
+          backendResponse.headers.get("content-type") ??
+          "application/json; charset=utf-8",
       },
     })
 
@@ -85,8 +88,7 @@ export const proxyAuthRequest = async (
       },
       {
         status: 502,
-      },
+      }
     )
   }
 }
-

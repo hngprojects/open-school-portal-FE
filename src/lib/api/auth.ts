@@ -19,4 +19,3 @@ export const refresh = async (): Promise<RefreshResponse> => {
     method: "POST",
   })
 }
-
