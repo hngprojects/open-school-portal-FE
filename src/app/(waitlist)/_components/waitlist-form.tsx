@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { useJoinWaitlist } from "../_hooks/use-waitlist"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { getErrorMessage } from "@/lib/errors"
 
 const WaitlistFormModal: React.FC<{
   isOpen: boolean
@@ -59,9 +60,7 @@ const WaitlistFormModal: React.FC<{
         onClose()
       }, 2000)
     } catch (err) {
-      if (err instanceof Error) {
-        setLocalError(err?.message || "Something went wrong.")
-      }
+      setLocalError(getErrorMessage(err))
     }
 
     setIsSubmitting(false)
