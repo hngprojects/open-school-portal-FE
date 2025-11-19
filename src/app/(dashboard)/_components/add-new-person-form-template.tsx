@@ -111,6 +111,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
         return (
           <Select
             value={formData[field.name] as string}
+            required={field.required}
             onValueChange={(value) =>
               setFormData((prev) => ({ ...prev, [field.name]: value }))
             }
@@ -248,7 +249,8 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
               htmlFor={field.name}
               className="mb-2 block text-sm font-semibold text-gray-900"
             >
-              {field.label}
+              {field.label}{" "}
+              {field.required ? <span className="text-red-600">*</span> : <></>}
             </label>
             {renderField(field)}
           </div>
