@@ -139,7 +139,7 @@ const PasswordReset = () => {
   return (
     <section className="flex min-h-screen w-full justify-center overflow-x-hidden bg-white">
       {/* Right content */}
-      <div className="flex w-full flex-col items-center justify-start px-4 pt-[100px] sm:px-8 lg:px-12 xl:px-20">
+      <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-20">
         {/* Logo */}
         <div className="mb-8 sm:mb-12">
           <Image
