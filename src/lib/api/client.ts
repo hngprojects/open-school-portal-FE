@@ -63,13 +63,18 @@ export async function apiFetch<TResponse>(
     const data = await parseJsonSafely(response)
 
     if (!response.ok) {
-      const message =
-        (data &&
-          typeof data === "object" &&
-          "message" in data &&
-          typeof data.message === "string" &&
-          data.message) ||
-        `Request failed with status ${response.status}`
+      let message: string
+      if (
+        data &&
+        typeof data === "object" &&
+        "message" in data &&
+        typeof data.message === "string" &&
+        data.message
+      ) {
+        message = data.message
+      } else {
+        message = "An unexpected error occurred. Please try again."
+      }
 
       throw new ApiError(message, response.status, data)
     }
