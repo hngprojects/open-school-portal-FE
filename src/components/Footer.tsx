@@ -46,8 +46,8 @@ const Footer = () => {
         <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
           <h3 className="text-lg font-bold lg:text-xl">Quick Links</h3>
           <ul className="flex flex-col gap-4">
-            {quickLinks.map((link) => (
-              <li key={link.href}>
+            {quickLinks.map((link, i) => (
+              <li key={link.href + i}>
                 <Link href={link.href}>{link.name}</Link>
               </li>
             ))}
@@ -57,7 +57,7 @@ const Footer = () => {
           <h3 className="text-lg font-bold lg:text-xl">Support</h3>
           <ul className="flex flex-col gap-4">
             {support.map((link) => (
-              <li key={link.href}>
+              <li key={`${link.href + 1}`}>
                 <Link href={link.href}>{link.name}</Link>
               </li>
             ))}
