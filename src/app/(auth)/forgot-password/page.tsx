@@ -4,19 +4,16 @@ import React, { useState } from "react"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Loader2Icon } from "lucide-react"
 import Link from "next/link"
-
-// interface FormData {
-//   email: string;
-// }
+import { sendForgotPasswordEmail } from "@/lib/api/auth"
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState<boolean | undefined>(false)
   const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email.trim()) {
@@ -29,10 +26,15 @@ export default function ForgotPassword() {
     }
 
     setError("")
-    setIsSubmitted(true)
+    setIsSubmitted(undefined)
 
-    // TODO: Call your API to send reset link
-    console.log("Sending reset link to:", email)
+    try {
+      await sendForgotPasswordEmail(email)
+      setIsSubmitted(true)
+    } catch (err) {
+      setError("Failed to send reset link. Please try again later.")
+      setIsSubmitted(false)
+    }
   }
 
   return (
@@ -110,15 +112,13 @@ export default function ForgotPassword() {
               </div>
 
               {/* Submit Button */}
-              {/* this button should go straight to email before redirecting to reset-password, but for the demo, I'm redirecting it straight to reset-password*/}
-              <Link href={"/reset-password"}>
-                <Button
-                  type="submit"
-                  className="h-12 w-full rounded-lg bg-[#DA3743] text-lg font-medium text-white transition-all hover:bg-[#8B1126] hover:text-white"
-                >
-                  Send Reset Link
-                </Button>
-              </Link>
+              <Button type="submit" className="h-12 w-full">
+                {isSubmitted === undefined ? (
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Send Reset Link"
+                )}
+              </Button>
             </form>
           )}
 

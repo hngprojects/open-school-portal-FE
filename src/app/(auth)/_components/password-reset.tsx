@@ -128,8 +128,6 @@ const PasswordReset = () => {
       setTouched({ newPassword: true, confirmPassword: true })
       return
     }
-
-    console.log("Password reset submitted:", formData)
     setIsResetSuccess(true)
   }
   return (

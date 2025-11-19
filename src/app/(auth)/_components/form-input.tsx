@@ -11,8 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Loader2Icon } from "lucide-react"
 import Link from "next/link"
+import { loginUsingEmail } from "@/lib/api/auth"
 
 // Type definitions
 interface FormData {
@@ -47,6 +48,7 @@ const LoginForm = () => {
   const [showWarningModal, setShowWarningModal] = useState(false)
   const [showLockedModal, setShowLockedModal] = useState(false)
   const [isLocked, _setIsLocked] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
@@ -80,7 +82,6 @@ const LoginForm = () => {
       setShowLockedModal(true)
       return
     }
-
     // Mark all fields as touched
     setTouched({
       email: true,
@@ -105,61 +106,17 @@ const LoginForm = () => {
       setErrors(newErrors)
       return
     }
-
-    // ============================================================
-    // TODO: API INTEGRATION REQUIRED
-    // ============================================================
-    // Replace this section with actual API call to your authentication endpoint
-    //
-    // Example API call structure:
-    //
-    // try {
-    //   const response = await fetch('/api/auth/login', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       email: formData.email,
-    //       password: formData.password
-    //     })
-    //   })
-    //
-    //   const data = await response.json()
-    //
-    //   if (response.ok) {
-    //     // Successful login
-    //     console.log("Login successful:", data)
-    //     setLoginAttempts(0)
-    //     // Redirect user to dashboard or store auth token
-    //     // Example: router.push('/dashboard')
-    //   } else {
-    //     // Failed login - increment attempts
-    //     const newAttempts = loginAttempts + 1
-    //     setLoginAttempts(newAttempts)
-    //
-    //     // Set error messages based on API response
-    //     const authErrors: FormErrors = {}
-    //     if (data.field === 'email') {
-    //       authErrors.email = data.message || "Email is not valid"
-    //     } else {
-    //       authErrors.password = data.message || "Wrong password. Try again"
-    //     }
-    //     setErrors(authErrors)
-    //
-    //     // Show warning modal after 3 failed attempts
-    //     if (newAttempts === 3) {
-    //       setShowWarningModal(true)
-    //     }
-    //     // Lock account after 5 failed attempts
-    //     else if (newAttempts >= 5) {
-    //       setIsLocked(true)
-    //       setShowLockedModal(true)
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error)
-    //   setErrors({ password: "An error occurred. Please try again." })
-    // }
-    // ============================================================
+    setIsLoading(true)
+    try {
+      // const data = await
+      // Successful login
+      await loginUsingEmail(formData)
+    } catch (error) {
+      console.error("Login error:", error)
+      setErrors({ password: "An error occurred. Please try again." })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -199,12 +156,12 @@ const LoginForm = () => {
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   className={`w-full ${
                     errors.email && touched.email
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
-                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                  } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
                 />
                 {errors.email && touched.email && (
                   <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
@@ -232,17 +189,17 @@ const LoginForm = () => {
                   value={formData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   className={`w-full pr-10 ${
                     errors.password && touched.password
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
-                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                  } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
                 >
                   {showPassword ? (
@@ -277,13 +234,13 @@ const LoginForm = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  disabled={isLocked}
-                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                  className="accent-accent h-4 w-4 rounded"
                 />
                 <label
                   htmlFor="remember-me"
                   className={`ml-2 block text-sm text-gray-900 ${
-                    isLocked ? "opacity-50" : ""
+                    isLoading ? "opacity-50" : ""
                   }`}
                 >
                   Remember me
@@ -293,8 +250,8 @@ const LoginForm = () => {
               <div className="text-sm">
                 <Link
                   href="/forgot-password"
-                  className={`font-medium text-black hover:text-gray-800 ${
-                    isLocked ? "pointer-events-none opacity-50" : ""
+                  className={`text-accent font-medium ${
+                    isLoading ? "pointer-events-none opacity-50" : ""
                   }`}
                 >
                   Forgot password?
@@ -305,10 +262,11 @@ const LoginForm = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={!formData.email || !formData.password || isLocked}
-              className="w-full bg-red-600 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              disabled={isLoading}
+              className="w-full disabled:cursor-not-allowed"
             >
-              {isLocked ? "Account Locked" : "Sign In"}
+              {" "}
+              {isLoading ? <Loader2Icon className="mx-auto animate-spin" /> : "Sign In"}
             </Button>
           </form>
         </div>

@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { sendResetPasswordRequest } from "@/lib/api/auth"
 
 interface FormErrors {
   newPassword?: string
@@ -24,6 +25,11 @@ const PasswordReset = () => {
     newPassword: "",
     confirmPassword: "",
   })
+  // get reset token from url
+  const resetToken =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("token")
+      : null
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [touched, setTouched] = useState<TouchedFields>({
@@ -115,7 +121,7 @@ const PasswordReset = () => {
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     const newPasswordError = validatePassword(formData.newPassword)
@@ -132,7 +138,15 @@ const PasswordReset = () => {
       setTouched({ newPassword: true, confirmPassword: true })
       return
     }
-    router.push("/login")
+    try {
+      await sendResetPasswordRequest({
+        token: resetToken || "",
+        newPassword: formData.newPassword,
+      })
+      router.push("/login")
+    } catch (error) {
+      console.error("Password reset failed:", error)
+    }
   }
 
   /* ----------------------------- UI ----------------------------- */
