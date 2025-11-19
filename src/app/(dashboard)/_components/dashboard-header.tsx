@@ -14,7 +14,7 @@ const DashboardHeader = () => {
   const showTrigger = showDesktopTrigger || showMobileTrigger
 
   return (
-    <header className="flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
+    <header className="fixed top-0 right-0 left-0 z-0 flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
       <div>{showTrigger && <SidebarTrigger />}</div>
 
       <p className="rounded-2xl border px-3.5 py-1">Sophia Alkija</p>
