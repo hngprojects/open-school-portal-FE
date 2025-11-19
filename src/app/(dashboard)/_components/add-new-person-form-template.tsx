@@ -255,7 +255,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
         ))}
       </div>
 
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex justify-center gap-3 pt-4 md:justify-end">
         {config.cancelText && config.onCancel && (
           <Button
             type="button"
