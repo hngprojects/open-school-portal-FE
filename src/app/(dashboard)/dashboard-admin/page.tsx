@@ -2,6 +2,8 @@ import React from "react"
 import DashboardTitle from "../_components/dashboard-title"
 import StatCard from "../_components/dashboard/stat-card"
 import TodayActivities from "../_components/dashboard/today-activities"
+import StudentGrowthChart from "../_components/dashboard/student-growth-chart"
+import FeesReportChart from "../_components/dashboard/fees-report-chart"
 
 const page = () => {
   return (
@@ -15,6 +17,12 @@ const page = () => {
 
       {/* Stat card */}
       <StatCard />
+
+      {/* student growth and fees report*/}
+      <section className="mt-10 grid grid-cols-1 gap-[72px] lg:grid-cols-2">
+        <StudentGrowthChart />
+        <FeesReportChart />
+      </section>
 
       {/* Today's activities */}
       <TodayActivities />
