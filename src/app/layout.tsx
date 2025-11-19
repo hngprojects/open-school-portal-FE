@@ -1,20 +1,19 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Outfit } from "next/font/google"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
 })
 
 export const metadata: Metadata = {
-  title: "Open School Portal",
-  description: "Welcome to open school portal",
+  title: {
+    default: "Open School Portal",
+    template: "%s | Open School Portal",
+  },
+  description:
+    "The modern way schools run in Nigeria. Manage attendance, results, timetables, fees, and NFC all in one place. Connect students, teachers, parents, and administrators.",
 }
 
 export default function RootLayout({
@@ -24,9 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
+      <body className={`${outfit.variable} font-outfit antialiased`}>{children}</body>
     </html>
   )
 }
