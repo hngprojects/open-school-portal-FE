@@ -1,16 +1,18 @@
+"use server"
+
 import axios, { AxiosRequestConfig } from "axios"
+import { createApiError } from "./errors"
 
-export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true, // optional flag to include cookies in requests
-  timeout: 15000,
-})
-
-export async function fetchFn<T>(
-  endpoint: string,
-  options?: RequestInit // optional parameter you can pass to fetch for all the configuration options fetch accepts
-): Promise<T> {
+export async function fetchFn<T>(endpoint: string, options?: RequestInit): Promise<T> {
   try {
+    const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL
+
+    const api = axios.create({
+      baseURL,
+      withCredentials: true,
+      timeout: 15000,
+    })
+
     const response = await api({
       url: endpoint,
       method: options?.method || "GET",
@@ -20,19 +22,6 @@ export async function fetchFn<T>(
 
     return response.data as T
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.response) {
-        const message =
-          error.response?.data?.message ||
-          error.response.data?.error ||
-          error.message ||
-          "Unknown error"
-        throw new Error(message)
-      } else if (error.request) {
-        throw new Error("Network error: Could not reach the server.")
-      }
-    }
-
-    throw new Error("An Unexpected error occurred, please try again later.")
+    throw createApiError(error, `fetchFn(${endpoint})`)
   }
 }
