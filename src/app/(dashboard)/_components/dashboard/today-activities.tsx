@@ -76,7 +76,7 @@ const TodayActivities = () => {
 
         {/* search and button */}
         <aside className="flex items-center justify-between gap-2">
-          <div className="bg-[#D9D9D933 relative]">
+          <div className="relative bg-[#D9D9D933]">
             <Search className="absolute top-1/2 left-3 size-3.5 -translate-y-1/2" />
             <Input type="search" className="h-11 pl-8 md:h-10" placeholder="Search" />
           </div>
