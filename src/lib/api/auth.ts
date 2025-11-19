@@ -19,3 +19,40 @@ export const refresh = async (): Promise<RefreshResponse> => {
     method: "POST",
   })
 }
+
+interface EmailLoginPayload {
+  email: string
+  password: string
+}
+
+export const loginUsingEmail = async (
+  payload: EmailLoginPayload
+): Promise<LoginResponse> => {
+  return apiFetch<LoginResponse>(LOGIN_PATH, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+}
+
+export const sendForgotPasswordEmail = async (
+  email: string
+): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>("/api/proxy-auth/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  })
+}
+
+interface ResetPasswordPayload {
+  token: string
+  newPassword: string
+}
+
+export const sendResetPasswordRequest = async (
+  payload: ResetPasswordPayload
+): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>("/api/proxy-auth/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+}
