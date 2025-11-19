@@ -23,12 +23,14 @@ const HomeHero = () => {
             </Button>
           </Link>
 
-          <Button
-            variant="outline"
-            className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"
-          >
-            Watch Demo
-          </Button>
+          <Link href="/demo">
+            <Button
+              variant="outline"
+              className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"
+            >
+              Watch Demo
+            </Button>
+          </Link>
         </div>
 
         <div className="w-full px-4 pt-6 sm:px-0">

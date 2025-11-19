@@ -16,7 +16,6 @@ const Navbar = () => {
     { label: "Feature", path: "/feature" },
     { label: "Modules", path: "/modules" },
     { label: "About", path: "/about" },
-    // { label: "Waitlist", path: "/waitlist" },
   ]
 
   const toggleMobileMenu = () => {
@@ -48,7 +47,7 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 href={item.path}
-                className={`px-3 py-2 transition-colors duration-200 ${isActive ? "text-[#2D2D2D]" : "text-[#535353]"} hover:text-[#2D2D2D]`}
+                className={`px-3 py-2 transition-colors duration-200 ${isActive ? "text-accent" : "text-[#535353]"} hover:text-accent/70`}
               >
                 <span className="font-medium">{item.label}</span>
               </Link>

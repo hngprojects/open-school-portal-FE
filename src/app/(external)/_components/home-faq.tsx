@@ -42,7 +42,10 @@ export default function HomeFAQ() {
   ]
 
   return (
-    <section className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8">
+    <section
+      id="faq"
+      className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
+    >
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
         <h2
           className="mb-8 leading-none font-semibold text-gray-900"
