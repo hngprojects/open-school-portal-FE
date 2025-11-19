@@ -1,17 +1,17 @@
+import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
 import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
 
 const quickLinks = [
-  { name: "Benefit", href: "/benefit" },
+  { name: "Benefit", href: "/coming-soon" },
   { name: "Features", href: "/features" },
-  { name: "Who it's for", href: "/who-its-for" },
+  { name: "Who it's for", href: "/coming-soon" },
 ]
 const support = [
-  { name: "FAQs", href: "/faq" },
-  { name: "Contact Us", href: "/contact-us" },
-  { name: "Mail Support", href: "/mail-support" },
+  { name: "FAQs", href: "/#faq" },
+  { name: "Contact Us", href: "/coming-soon" },
+  { name: "Mail Support", href: "/coming-soon" },
 ]
 
 const Footer = () => {
