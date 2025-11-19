@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState } from "react"
-import Link from "next/link"
+import React, { useMemo, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "motion/react"
 
 import PasswordResetSuccess from "./password-reset-success"
@@ -10,30 +11,31 @@ import PasswordResetSuccess from "./password-reset-success"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
+import { Suspense } from "react"
 
-interface FormErrors {
-  newPassword?: string
-  confirmPassword?: string
+import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
+
+import { sendResetPasswordRequest } from "@/lib/api/auth"
+
+type ResetField = keyof ResetPasswordFormValues
+
+const initialValues: ResetPasswordFormValues = {
+  newPassword: "",
+  confirmPassword: "",
 }
 
-interface TouchedFields {
-  newPassword: boolean
-  confirmPassword: boolean
-}
+const PasswordResetForm = () => {
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
-interface FormData {
-  newPassword: string
-  confirmPassword: string
-}
+  const token = useMemo(() => {
+    const t = searchParams.get("token")
+    return t && t.trim() ? t : undefined
+  }, [searchParams])
 
-const PasswordReset = () => {
-  const [formData, setFormData] = useState<FormData>({
-    newPassword: "",
-    confirmPassword: "",
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [touched, setTouched] = useState<TouchedFields>({
+  const [formData, setFormData] = useState(initialValues)
+  const [errors, setErrors] = useState<Partial<Record<ResetField, string>>>({})
+  const [touched, setTouched] = useState<Record<ResetField, boolean>>({
     newPassword: false,
     confirmPassword: false,
   })
@@ -41,253 +43,274 @@ const PasswordReset = () => {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const [isResetSuccess, setIsResetSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [tokenError, setTokenError] = useState<string | null>(null)
 
-  const validatePassword = (password: string): string | undefined => {
-    if (!password) return "Password is required"
-    if (password.length < 8) return "Password must be at least 8 characters"
-    if (!/(?=.*[a-z])/.test(password)) return "Password must contain lowercase letter"
-    if (!/(?=.*[A-Z])/.test(password)) return "Password must contain uppercase letter"
-    if (!/(?=.*\d)/.test(password)) return "Password must contain a number"
-    return undefined
+  /* ----------------------- VALIDATION (ZOD ONLY) ----------------------- */
+  const validateField = (field: ResetField, candidate: ResetPasswordFormValues) => {
+    const result = resetPasswordSchema.safeParse(candidate)
+    if (result.success) return undefined
+    return result.error.flatten().fieldErrors[field]?.[0]
   }
 
-  const validateConfirmPassword = (
-    confirmPassword: string,
-    newPassword: string
-  ): string | undefined => {
-    if (!confirmPassword) return "Please confirm your password"
-    if (confirmPassword !== newPassword) return "Passwords do not match"
-    return undefined
-  }
-
+  /* ----------------------------- HANDLERS ----------------------------- */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const field = name as ResetField
 
-    if (touched[name as keyof TouchedFields]) {
-      const newErrors: FormErrors = { ...errors }
+    const updated = { ...formData, [field]: value }
+    setFormData(updated)
 
-      if (name === "newPassword") {
-        newErrors.newPassword = validatePassword(value)
-        if (touched.confirmPassword) {
-          newErrors.confirmPassword = validateConfirmPassword(
-            formData.confirmPassword,
-            value
-          )
-        }
-      } else if (name === "confirmPassword") {
-        newErrors.confirmPassword = validateConfirmPassword(value, formData.newPassword)
-      }
+    if (touched[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: validateField(field, updated),
+      }))
+    }
 
-      setErrors(newErrors)
+    if (field === "newPassword" && touched.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: validateField("confirmPassword", updated),
+      }))
     }
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = e.target
-    setTouched((prev) => ({ ...prev, [name]: true }))
+    const field = e.target.name as ResetField
 
-    const newErrors: FormErrors = { ...errors }
-
-    if (name === "newPassword") {
-      newErrors.newPassword = validatePassword(formData.newPassword)
-    } else if (name === "confirmPassword") {
-      newErrors.confirmPassword = validateConfirmPassword(
-        formData.confirmPassword,
-        formData.newPassword
-      )
+    if (!touched[field]) {
+      setTouched((prev) => ({ ...prev, [field]: true }))
     }
 
-    setErrors(newErrors)
+    setErrors((prev) => ({
+      ...prev,
+      [field]: validateField(field, formData),
+    }))
   }
 
-  const hasErrors = (): boolean => {
-    return (
-      !formData.newPassword ||
-      !formData.confirmPassword ||
-      !!errors.newPassword ||
-      !!errors.confirmPassword
-    )
-  }
+  const hasErrors =
+    !formData.newPassword ||
+    !formData.confirmPassword ||
+    !!errors.newPassword ||
+    !!errors.confirmPassword
 
-  const handleSubmit = (e: React.FormEvent) => {
+  /* --------------------------- FORM SUBMIT --------------------------- */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const newPasswordError = validatePassword(formData.newPassword)
-    const confirmPasswordError = validateConfirmPassword(
-      formData.confirmPassword,
-      formData.newPassword
-    )
+    if (!token) {
+      setTokenError("The reset link is invalid or expired. Please request a new one.")
+      return
+    }
 
-    if (newPasswordError || confirmPasswordError) {
+    const result = resetPasswordSchema.safeParse(formData)
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors
       setErrors({
-        newPassword: newPasswordError,
-        confirmPassword: confirmPasswordError,
+        newPassword: fieldErrors.newPassword?.[0],
+        confirmPassword: fieldErrors.confirmPassword?.[0],
       })
       setTouched({ newPassword: true, confirmPassword: true })
       return
     }
-    setIsResetSuccess(true)
+
+    setIsSubmitting(true)
+    setTokenError(null)
+
+    try {
+      await sendResetPasswordRequest({
+        token,
+        newPassword: formData.newPassword,
+      })
+
+      setIsSuccess(true)
+    } catch (err) {
+      console.error("Password reset failed:", err)
+      setTokenError("Failed to reset password. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
+
+  /* ----------------------------- UI ----------------------------- */
   return (
-    <section className="flex h-full flex-1 flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-6 sm:max-[1400px]:gap-[43px]">
-      {/* school logo */}
-      <Link href="/" className="flex items-center">
-        <picture>
-          <source
-            media="(min-width: 641px)"
-            srcSet="/assets/images/auth/desktop-school-logo.png"
-          />
+    <section className="flex min-h-screen w-full justify-center overflow-x-hidden bg-white">
+      <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-20">
+        {/* Logo */}
+        <div className="mb-8 sm:mb-12">
           <Image
-            className="min-[1400px]:h-[250px] min-[1400px]:w-[250px] sm:max-[1400px]:h-[152px] sm:max-[1400px]:w-[152px]"
-            src={"/assets/images/auth/school-logo.png"}
+            src="/assets/images/auth/desktop-school-logo.png"
             alt="School Logo"
-            width={56}
-            height={56}
+            width={130}
+            height={130}
+            className="h-20 w-20 sm:h-[100px] sm:w-[100px] lg:h-40 lg:w-40"
           />
-        </picture>
-      </Link>
+        </div>
 
-      {/* main content */}
-      <AnimatePresence mode="wait">
-        {!isResetSuccess ? (
-          <motion.div
-            key="form"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-[488px] md:max-lg:flex md:max-lg:flex-col md:max-lg:items-center"
-          >
-            <form onSubmit={handleSubmit} className="w-full">
-              {/* New Password Field */}
-              <div className="mb-6">
-                <div className="flex max-w-[488px] items-start justify-between">
-                  <label
-                    className="block font-sans text-[16px] leading-5 font-medium"
-                    htmlFor="new-password"
-                  >
-                    New Password
-                    <span className="ml-1 text-[#DA3743]">*</span>
-                  </label>
-                  {errors.newPassword && touched.newPassword && (
-                    <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                      {errors.newPassword}
-                    </span>
-                  )}
-                </div>
-                <div className="relative mt-2 max-w-[488px]">
-                  <Input
-                    className={`w-full pr-12 font-sans text-[14px] leading-5 ${
-                      errors.newPassword && touched.newPassword
-                        ? "border-[#DA3743] bg-[#FFF5F5]"
-                        : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-                    } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
-                    type={showNewPassword ? "text" : "password"}
-                    name="newPassword"
-                    id="new-password"
-                    placeholder="Enter new password"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
-                  >
-                    <Image
-                      src={
-                        showNewPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
-                      }
-                      alt="show password Icon"
-                      width={16}
-                      height={16}
-                    />
-                  </button>
-                </div>
-                <p className="mt-2 font-sans text-[12px] text-[#2D2D2D80]">
-                  Must be 8+ characters with uppercase, lowercase & number
-                </p>
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className="mb-6 max-w-[488px]">
-                <div className="flex items-start justify-between">
-                  <label
-                    className="block font-sans text-[16px] leading-5 font-medium"
-                    htmlFor="confirm-password"
-                  >
-                    Confirm Password
-                    <span className="ml-1 text-[#DA3743]">*</span>
-                  </label>
-                  {errors.confirmPassword && touched.confirmPassword && (
-                    <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                      {errors.confirmPassword}
-                    </span>
-                  )}
-                </div>
-                <div className="relative mt-2">
-                  <Input
-                    className={`pr-12 font-sans text-[14px] ${
-                      errors.confirmPassword && touched.confirmPassword
-                        ? "border-[#DA3743] bg-[#FFF5F5]"
-                        : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-                    } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    id="confirm-password"
-                    placeholder="Re-enter password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
-                  >
-                    <Image
-                      src={
-                        showConfirmPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
-                      }
-                      alt="show password Icon"
-                      width={16}
-                      height={16}
-                    />
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                type="submit"
-                className="mt-4 flex w-full max-w-[488px] disabled:cursor-not-allowed"
-                disabled={hasErrors()}
-              >
-                Reset Password
-                <MoveRight />
-              </Button>
-            </form>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <PasswordResetSuccess />
-          </motion.div>
+        {/* TOKEN ERROR */}
+        {tokenError && (
+          <div className="mb-6 w-full max-w-[464px] rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {tokenError}
+          </div>
         )}
-      </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          {!isSuccess ? (
+            <motion.div
+              key="form"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -25 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-[464px]"
+            >
+              <h1 className="mb-8 text-center text-[28px] font-bold text-[#2D2D2D]">
+                Reset Password
+              </h1>
+
+              <form onSubmit={handleSubmit}>
+                {/* NEW PASSWORD */}
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
+                    Enter New Password
+                  </label>
+
+                  <div className="relative">
+                    <Input
+                      type={showNewPassword ? "text" : "password"}
+                      name="newPassword"
+                      placeholder="••••••"
+                      value={formData.newPassword}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className={`pr-12 ${
+                        touched.newPassword && errors.newPassword
+                          ? "border-[#DA3743]"
+                          : "border-[#E0E0E0] focus:border-[#2D2D2D]"
+                      }`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword((s) => !s)}
+                      className="absolute top-1/2 right-4 -translate-y-1/2"
+                    >
+                      <Image
+                        src={
+                          showNewPassword
+                            ? "/assets/images/auth/show-password-icon.png"
+                            : "/assets/images/auth/hide-password-icon.png"
+                        }
+                        alt="Toggle"
+                        width={20}
+                        height={20}
+                      />
+                    </button>
+                  </div>
+
+                  {touched.newPassword && errors.newPassword && (
+                    <p className="mt-2 flex items-start gap-2 text-xs text-[#DA3743]">
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-[#DA3743] text-[10px] font-bold">
+                        !
+                      </span>
+                      {errors.newPassword}
+                    </p>
+                  )}
+                </div>
+
+                {/* CONFIRM PASSWORD */}
+                <div className="mb-6">
+                  <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
+                    Confirm New Password
+                  </label>
+
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      placeholder="••••••"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className={`pr-12 ${
+                        touched.confirmPassword && errors.confirmPassword
+                          ? "border-[#DA3743]"
+                          : "border-[#E0E0E0] focus:border-[#2D2D2D]"
+                      }`}
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((s) => !s)}
+                      className="absolute top-1/2 right-4 -translate-y-1/2"
+                    >
+                      <Image
+                        src={
+                          showConfirmPassword
+                            ? "/assets/images/auth/show-password-icon.png"
+                            : "/assets/images/auth/hide-password-icon.png"
+                        }
+                        alt="Toggle"
+                        width={20}
+                        height={20}
+                      />
+                    </button>
+                  </div>
+
+                  {touched.confirmPassword && errors.confirmPassword && (
+                    <p className="mt-2 flex items-start gap-2 text-xs text-[#DA3743]">
+                      <span className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-[#DA3743] text-[10px] font-bold">
+                        !
+                      </span>
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+
+                {/* REQUIREMENTS */}
+                <ul className="mb-8 list-inside list-disc space-y-2 text-xs text-[#6B6B6B]">
+                  <li>6 characters (20 max)</li>
+                  <li>1 letter, 1 number, 1 special character (# ? ! @ $)</li>
+                </ul>
+
+                <Button
+                  type="submit"
+                  disabled={hasErrors || isSubmitting}
+                  className="w-full py-3 text-[16px] font-semibold"
+                >
+                  {isSubmitting ? "Updating..." : "Reset Password"}
+                  <MoveRight />
+                </Button>
+              </form>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="success"
+              initial={{ opacity: 0, y: 25 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -25 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-[464px]"
+            >
+              <PasswordResetSuccess />
+
+              <Button asChild className="mt-8 w-full">
+                <Link href="/login">Go to Login</Link>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </section>
   )
 }
 
-export default PasswordReset
+export default function PasswordReset() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PasswordResetForm />
+    </Suspense>
+  )
+}

@@ -1,8 +1,12 @@
 "use client"
+
 import React, { useState } from "react"
 import Image from "next/image"
-import { Input } from "@/components/ui/input"
+import Link from "next/link"
+import { AlertCircle, Loader2Icon } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Dialog,
   DialogContent,
@@ -11,112 +15,137 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { AlertCircle, Loader2Icon } from "lucide-react"
-import Link from "next/link"
+import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
+import { useAuthStore } from "@/store/auth-store"
 import { loginUsingEmail } from "@/lib/api/auth"
 
-// Type definitions
-interface FormData {
-  email: string
-  password: string
-}
+type LoginField = keyof LoginFormValues
 
-interface FormErrors {
-  email?: string
-  password?: string
-}
-
-interface TouchedFields {
-  email: boolean
-  password: boolean
+const initialValues: LoginFormValues = {
+  email: "",
+  password: "",
 }
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    email: "",
-    password: "",
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [touched, setTouched] = useState<TouchedFields>({
+  const [formData, setFormData] = useState<LoginFormValues>(initialValues)
+  const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
+  const [touched, setTouched] = useState<Record<LoginField, boolean>>({
     email: false,
     password: false,
   })
 
   const [showPassword, setShowPassword] = useState(false)
-  // const [loginAttempts, setLoginAttempts] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
   const [showLockedModal, setShowLockedModal] = useState(false)
-  const [isLocked, _setIsLocked] = useState(false)
+  const [isLocked, setIsLocked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [attemptCount, setAttemptCount] = useState(0)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
+  const setAuthSession = useAuthStore((state) => state.setAuthSession)
+
+  const getFieldError = (field: LoginField, value: string) => {
+    const schema = loginSchema.shape[field]
+    if (!schema) return undefined
+    const result = schema.safeParse(value)
+    return result.success ? undefined : result.error.issues[0]?.message
+  }
+
+  const syncFieldError = (field: LoginField, value: string) => {
+    const message = getFieldError(field, value)
+    setErrors((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: message,
     }))
+  }
 
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }))
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    const field = name as LoginField
+    setFormData((prev) => ({ ...prev, [field]: value }))
+
+    if (touched[field]) {
+      syncFieldError(field, value)
     }
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
-    const { name } = e.target
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }))
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const field = event.target.name as LoginField
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    syncFieldError(field, formData[field])
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
     // Check if account is locked
     if (isLocked) {
       setShowLockedModal(true)
       return
     }
+
     // Mark all fields as touched
     setTouched({
       email: true,
       password: true,
     })
 
-    // Basic format validation only
-    const newErrors: FormErrors = {}
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is not valid"
-      setErrors(newErrors)
-      return
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email is not valid"
-      setErrors(newErrors)
+    // Validate form data
+    const validation = loginSchema.safeParse(formData)
+    if (!validation.success) {
+      const { fieldErrors } = validation.error.flatten()
+      setErrors({
+        email: fieldErrors.email?.[0],
+        password: fieldErrors.password?.[0],
+      })
       return
     }
 
-    if (!formData.password) {
-      newErrors.password = "Wrong password. Try again"
-      setErrors(newErrors)
-      return
-    }
     setIsLoading(true)
+    setErrors({})
+
     try {
-      // const data = await
-      // Successful login
-      await loginUsingEmail(formData)
+      const response = await loginUsingEmail(formData)
+
+      // Successful login - set auth session
+      // setAuthSession(response)
+
+      // Reset attempt count on success
+      setAttemptCount(0)
     } catch (error) {
       console.error("Login error:", error)
-      setErrors({ password: "An error occurred. Please try again." })
+
+      // Increment attempt count
+      const newAttemptCount = attemptCount + 1
+      setAttemptCount(newAttemptCount)
+
+      // Show warning after 3 attempts
+      if (newAttemptCount === 3) {
+        setShowWarningModal(true)
+      }
+
+      // Lock account after 5 attempts
+      if (newAttemptCount >= 5) {
+        setIsLocked(true)
+        setShowLockedModal(true)
+      }
+
+      // Set error message
+      setErrors({
+        password: "Wrong password. Try again",
+      })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const renderError = (field: LoginField) => {
+    if (!touched[field] || !errors[field]) return null
+    return (
+      <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
+        <AlertCircle className="h-4 w-4 shrink-0" />
+        <span>{errors[field]}</span>
+      </div>
+    )
   }
 
   return (
@@ -157,18 +186,14 @@ const LoginForm = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={isLoading}
+                  aria-invalid={touched.email && Boolean(errors.email)}
                   className={`w-full ${
                     errors.email && touched.email
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
                   } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
                 />
-                {errors.email && touched.email && (
-                  <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                    <AlertCircle className="h-4 w-4 shrink-0" />
-                    <span>{errors.email}</span>
-                  </div>
-                )}
+                {renderError("email")}
               </div>
             </div>
 
@@ -185,11 +210,12 @@ const LoginForm = () => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
-                  placeholder="••••••"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={isLoading}
+                  aria-invalid={touched.password && Boolean(errors.password)}
                   className={`w-full pr-10 ${
                     errors.password && touched.password
                       ? "border-red-500 bg-red-50"
@@ -198,33 +224,29 @@ const LoginForm = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                   disabled={isLoading}
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <Image
                       src="/assets/images/auth/show-password-icon.png"
-                      alt="Hide password"
+                      alt=""
                       width={16}
                       height={16}
                     />
                   ) : (
                     <Image
                       src="/assets/images/auth/hide-password-icon.png"
-                      alt="Show password"
+                      alt=""
                       width={16}
                       height={16}
                     />
                   )}
                 </button>
+                {renderError("password")}
               </div>
-              {errors.password && touched.password && (
-                <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
-                  <span>{errors.password}</span>
-                </div>
-              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
@@ -250,7 +272,7 @@ const LoginForm = () => {
               <div className="text-sm">
                 <Link
                   href="/forgot-password"
-                  className={`text-accent font-medium ${
+                  className={`text-accent font-medium hover:underline ${
                     isLoading ? "pointer-events-none opacity-50" : ""
                   }`}
                 >
@@ -265,8 +287,11 @@ const LoginForm = () => {
               disabled={isLoading}
               className="w-full disabled:cursor-not-allowed"
             >
-              {" "}
-              {isLoading ? <Loader2Icon className="mx-auto animate-spin" /> : "Sign In"}
+              {isLoading ? (
+                <Loader2Icon className="mx-auto h-5 w-5 animate-spin" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </div>
@@ -293,22 +318,14 @@ const LoginForm = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button
-              onClick={() => setShowWarningModal(false)}
-              className="w-full bg-red-600 text-white hover:bg-red-700"
-            >
+            <Button onClick={() => setShowWarningModal(false)} className="w-full">
               Try again
             </Button>
-            <Button
-              onClick={() => {
-                setShowWarningModal(false)
-                // Navigate to forgot password
-              }}
-              variant="outline"
-              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
-            >
-              Forgot Password
-            </Button>
+            <Link href="/forgot-password" className="w-full">
+              <Button variant="outline" className="w-full">
+                Forgot Password
+              </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -334,19 +351,15 @@ const LoginForm = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button
-              onClick={() => {
-                setShowLockedModal(false)
-                // Navigate to forgot password
-              }}
-              className="w-full bg-red-600 text-white hover:bg-red-700"
-            >
-              Forgot Password
-            </Button>
+            <Link href="/forgot-password" className="w-full">
+              <Button className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]">
+                Forgot Password
+              </Button>
+            </Link>
             <Button
               onClick={() => setShowLockedModal(false)}
               variant="outline"
-              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
+              className="w-full border border-[#DA3743] bg-white text-[#DA3743] hover:bg-red-50"
             >
               Sign in
             </Button>
