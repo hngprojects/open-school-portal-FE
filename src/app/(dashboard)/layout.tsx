@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="h-full w-full">
+      <main className="mt-[72px] h-full w-full">
         <DashboardHeader />
 
         {children}

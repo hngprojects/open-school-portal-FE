@@ -39,7 +39,7 @@ const StatData = [
 
 const StatCard = () => {
   return (
-    <div className="mt-[33px] grid h-[151px] grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-[33px] grid grid-cols-1 gap-6 md:grid-cols-2 lg:h-[151px] lg:grid-cols-4">
       {StatData.map((stat, i) => (
         <Card key={i}>
           <CardHeader className="flex items-center gap-1">
