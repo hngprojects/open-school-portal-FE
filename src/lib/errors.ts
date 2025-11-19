@@ -1,6 +1,5 @@
 /**
  * Standardized API Error class with consistent structure
- * Makes it easy to understand and handle errors throughout the application
  */
 export class ApiError extends Error {
   public readonly statusCode?: number
@@ -32,7 +31,6 @@ export class ApiError extends Error {
     this.userMessage = userMessage
     this.details = details
 
-    // Maintains proper stack trace for where our error was thrown (only available on V8)
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ApiError)
     }
@@ -55,15 +53,13 @@ export class ApiError extends Error {
 }
 
 /**
- * Check if an error (or serialized error object) is an ApiError
- * Handles both ApiError instances and serialized ApiError objects from server actions
+ * Check if an error is an ApiError instance or serialized ApiError
  */
 export function isApiError(error: unknown): error is ApiError | ApiErrorShape {
   if (error instanceof ApiError) {
     return true
   }
 
-  // Handle serialized ApiError from server actions
   if (
     typeof error === "object" &&
     error !== null &&
@@ -77,7 +73,7 @@ export function isApiError(error: unknown): error is ApiError | ApiErrorShape {
 }
 
 /**
- * Shape of serialized ApiError (when sent from server actions)
+ * Shape of serialized ApiError
  */
 interface ApiErrorShape {
   name?: string
@@ -91,21 +87,17 @@ interface ApiErrorShape {
 
 /**
  * Extract user-friendly error message from any error type
- * Handles ApiError instances, serialized ApiErrors, and regular Errors
  */
 export function getErrorMessage(error: unknown): string {
-  // Handle ApiError instances
   if (error instanceof ApiError) {
     return error.userMessage
   }
 
-  // Handle serialized ApiError from server actions (has userMessage property)
   if (isApiError(error)) {
     const apiError = error as ApiErrorShape
     return apiError.userMessage
   }
 
-  // Extract message from Error objects or plain objects with message property
   let message: string | undefined
 
   if (error instanceof Error) {
@@ -116,18 +108,14 @@ export function getErrorMessage(error: unknown): string {
     "message" in error &&
     typeof (error as { message: unknown }).message === "string"
   ) {
-    // Handle serialized error objects from Next.js server actions
     message = (error as { message: string }).message
   } else {
-    // Handle unknown error types
     message = String(error) || "Something unexpected happened"
   }
 
-  // Check if the message contains context prefix like "[fetchFn(/waitlist)]"
   const contextMatch = message.match(/^\[.*?\]\s*(.+)$/)
   if (contextMatch) {
     const actualMessage = contextMatch[1].trim()
-    // Try to get user-friendly message for the actual error
     return getUserFriendlyMessage(actualMessage)
   }
 
@@ -174,13 +162,11 @@ export function getUserFriendlyMessage(
   originalMessage: string,
   statusCode?: number
 ): string {
-  // Check for exact matches first
   const normalizedMessage = originalMessage.trim()
   if (ERROR_MESSAGE_MAP[normalizedMessage]) {
     return ERROR_MESSAGE_MAP[normalizedMessage]
   }
 
-  // Check for partial matches (case-insensitive)
   const lowerMessage = normalizedMessage.toLowerCase()
   for (const [key, value] of Object.entries(ERROR_MESSAGE_MAP)) {
     if (lowerMessage.includes(key.toLowerCase())) {
@@ -188,12 +174,10 @@ export function getUserFriendlyMessage(
     }
   }
 
-  // Check status code mapping
   if (statusCode && STATUS_CODE_MAP[statusCode]) {
     return STATUS_CODE_MAP[statusCode]
   }
 
-  // Default: return original message if no mapping found
   return originalMessage
 }
 
@@ -201,7 +185,6 @@ export function getUserFriendlyMessage(
  * Create an ApiError from an Axios error or other error
  */
 export function createApiError(error: unknown, context?: string): ApiError {
-  // Handle Axios errors
   if (typeof error === "object" && error !== null && "isAxiosError" in error) {
     const axiosError = error as {
       response?: { status: number; data?: unknown; statusText?: string }
@@ -214,7 +197,6 @@ export function createApiError(error: unknown, context?: string): ApiError {
       const statusCode = axiosError.response.status
       const responseData = axiosError.response.data
 
-      // Extract error message from response
       const errorMessage =
         (typeof responseData === "object" &&
           responseData !== null &&
@@ -253,7 +235,6 @@ export function createApiError(error: unknown, context?: string): ApiError {
     }
   }
 
-  // Handle regular Error objects
   if (error instanceof Error) {
     const userMessage = getUserFriendlyMessage(error.message)
     return new ApiError({
@@ -263,7 +244,6 @@ export function createApiError(error: unknown, context?: string): ApiError {
     })
   }
 
-  // Handle unknown error types
   const errorMessage = String(error) || "An unexpected error occurred"
   const userMessage = getUserFriendlyMessage(errorMessage)
   return new ApiError({

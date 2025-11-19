@@ -1,20 +1,14 @@
-import dotenv from "dotenv"
-
-dotenv.config({ path: ".env" })
-
-const config = {
+module.exports = {
   apps: [
     {
       name: "fe-staging",
       script: "pnpm",
-      args: "start",
+      args: "start --port 3002",
+      cwd: __dirname,
       env: {
         NODE_ENV: "production",
         PORT: 3002,
-        ...process.env,
       },
     },
   ],
 }
-
-export default config
