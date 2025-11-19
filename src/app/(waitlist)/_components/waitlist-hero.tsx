@@ -19,11 +19,11 @@ const HomeHero = () => {
           <div>
             <JoinWaitlistButton
               showArrow={true}
-              className="w-full gap-3 px-5 md:w-auto"
+              className="w-full gap-3 px-8 md:w-auto"
             />
           </div>
         </section>
-        <div className="animate-onrender flex aspect-[1083/602] w-full justify-center delay-600">
+        <div className="animate-onrender flex aspect-1083/602 w-full justify-center delay-600">
           <Image
             src="/assets/images/waitlist/admin-fees-management.png"
             alt="Hero Image"
