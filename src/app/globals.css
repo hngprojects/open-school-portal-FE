@@ -38,6 +38,7 @@ html {
   --color-foreground: var(--foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-tint: var(--tint);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -89,6 +90,7 @@ html {
   --muted-foreground: oklch(0.553 0.013 58.071);
   --accent: #da3743;
   --accent-foreground: oklch(0.216 0.006 56.043);
+  --tint: #fbebec;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(92.318% 0.00249 47.09);
   --input: #e7e5e4;

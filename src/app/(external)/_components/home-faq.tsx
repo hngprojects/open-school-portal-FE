@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 interface FAQItem {
@@ -61,13 +62,13 @@ export default function HomeFAQ() {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="rounded-md border border-[#999] px-4 py-1"
+                  className="rounded-md border border-gray-200 px-4 py-2"
                 >
                   <AccordionTrigger
                     className="w-full py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
                     style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
                   >
-                    <span className="block max-w-[500px]">{faq.question}</span>
+                    <span className="block max-w-[500px] text-2xl">{faq.question}</span>
                   </AccordionTrigger>
 
                   <AccordionContent className="flex flex-col gap-4">
@@ -110,12 +111,12 @@ export default function HomeFAQ() {
               </p>
 
               <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
-                <button
-                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200 hover:bg-gray-800"
+                <Button
+                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
                 >
                   Contact Super Team
-                </button>
+                </Button>
               </div>
             </div>
           </div>

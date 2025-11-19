@@ -3,7 +3,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/accordion" // make sure path matches your project
+} from "@/components/ui/accordion"
 
 export default function FAQAccordion() {
   const faqs = [

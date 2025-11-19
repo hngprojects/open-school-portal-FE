@@ -1,7 +1,7 @@
 import React from "react"
 import DashboardTitle from "../_components/dashboard-title"
 import StatCard from "../_components/dashboard/stat-card"
-// import TodayActivities from "../_components/dashboard/today-activities"
+import TodayActivities from "../_components/dashboard/today-activities"
 
 const page = () => {
   return (
@@ -17,7 +17,7 @@ const page = () => {
       <StatCard />
 
       {/* Today's activities */}
-      {/* <TodayActivities /> */}
+      <TodayActivities />
     </div>
   )
 }
