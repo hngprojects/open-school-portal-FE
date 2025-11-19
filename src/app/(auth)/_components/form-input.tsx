@@ -1,45 +1,52 @@
 "use client"
-
 import React, { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
-
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MoveRight, UserRound } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { AlertCircle } from "lucide-react"
+import Link from "next/link"
 
 // Type definitions
 interface FormData {
-  registrationNumber: string
+  email: string
   password: string
 }
 
 interface FormErrors {
-  registrationNumber?: string
+  email?: string
   password?: string
 }
 
 interface TouchedFields {
-  registrationNumber: boolean
+  email: boolean
   password: boolean
 }
-interface Form_input_Props {
-  label: string
-  input_placeholder: string
-}
-const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
+
+const LoginForm = () => {
   const [formData, setFormData] = useState<FormData>({
-    registrationNumber: "",
+    email: "",
     password: "",
   })
 
   const [errors, setErrors] = useState<FormErrors>({})
   const [touched, setTouched] = useState<TouchedFields>({
-    registrationNumber: false,
+    email: false,
     password: false,
   })
 
   const [showPassword, setShowPassword] = useState(false)
+  // const [loginAttempts, setLoginAttempts] = useState(0)
+  const [showWarningModal, setShowWarningModal] = useState(false)
+  const [showLockedModal, setShowLockedModal] = useState(false)
+  const [isLocked, _setIsLocked] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target
@@ -63,221 +70,333 @@ const Form_input = ({ label, input_placeholder }: Form_input_Props) => {
       ...prev,
       [name]: true,
     }))
-    validateField(name as keyof FormData, formData[name as keyof FormData])
   }
 
-  const validateField = (name: keyof FormData, value: string): void => {
-    let error = ""
-
-    switch (name) {
-      case "registrationNumber":
-        if (!value.trim()) {
-          error = "Registration number is required"
-        } else if (value.trim().length < 3) {
-          error = "Registration number must be at least 3 characters"
-        }
-        break
-      case "password":
-        if (!value) {
-          error = "Password is required"
-        } else if (value.length < 6) {
-          error = "Password must be at least 6 characters"
-        }
-        break
-      default:
-        break
-    }
-
-    setErrors((prev) => ({
-      ...prev,
-      [name]: error,
-    }))
-  }
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {}
-
-    if (!formData.registrationNumber.trim()) {
-      newErrors.registrationNumber = "Registration number is required"
-    } else if (formData.registrationNumber.trim().length < 3) {
-      newErrors.registrationNumber = "Registration number must be at least 3 characters"
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required"
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
+
+    // Check if account is locked
+    if (isLocked) {
+      setShowLockedModal(true)
+      return
+    }
 
     // Mark all fields as touched
     setTouched({
-      registrationNumber: true,
+      email: true,
       password: true,
     })
 
-    if (validateForm()) {
-      // Form is valid, proceed with login
-      console.log("Form submitted:", formData)
-      // Add your login logic here
+    // Basic format validation only
+    const newErrors: FormErrors = {}
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is not valid"
+      setErrors(newErrors)
+      return
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email is not valid"
+      setErrors(newErrors)
+      return
     }
+
+    if (!formData.password) {
+      newErrors.password = "Wrong password. Try again"
+      setErrors(newErrors)
+      return
+    }
+
+    // ============================================================
+    // TODO: API INTEGRATION REQUIRED
+    // ============================================================
+    // Replace this section with actual API call to your authentication endpoint
+    //
+    // Example API call structure:
+    //
+    // try {
+    //   const response = await fetch('/api/auth/login', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       email: formData.email,
+    //       password: formData.password
+    //     })
+    //   })
+    //
+    //   const data = await response.json()
+    //
+    //   if (response.ok) {
+    //     // Successful login
+    //     console.log("Login successful:", data)
+    //     setLoginAttempts(0)
+    //     // Redirect user to dashboard or store auth token
+    //     // Example: router.push('/dashboard')
+    //   } else {
+    //     // Failed login - increment attempts
+    //     const newAttempts = loginAttempts + 1
+    //     setLoginAttempts(newAttempts)
+    //
+    //     // Set error messages based on API response
+    //     const authErrors: FormErrors = {}
+    //     if (data.field === 'email') {
+    //       authErrors.email = data.message || "Email is not valid"
+    //     } else {
+    //       authErrors.password = data.message || "Wrong password. Try again"
+    //     }
+    //     setErrors(authErrors)
+    //
+    //     // Show warning modal after 3 failed attempts
+    //     if (newAttempts === 3) {
+    //       setShowWarningModal(true)
+    //     }
+    //     // Lock account after 5 failed attempts
+    //     else if (newAttempts >= 5) {
+    //       setIsLocked(true)
+    //       setShowLockedModal(true)
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error("Login error:", error)
+    //   setErrors({ password: "An error occurred. Please try again." })
+    // }
+    // ============================================================
   }
 
-  const hasErrors = (): boolean => {
-    return Object.values(errors).some((error) => error !== undefined && error !== "")
-  }
   return (
-    <section className="mx-auto flex h-full w-full max-w-[488px] flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-20 sm:max-[1400px]:gap-[43px] lg:pt-0 2xl:max-w-[65%] 2xl:pt-60">
-      {/* school logo */}
-      <div className="flex items-center">
-        <picture>
-          <source
-            media="(min-width: 641px)"
-            srcSet="/assets/images/auth/desktop-school-logo.png"
-          />
+    <>
+      <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
+        {/* School Logo */}
+        <div className="mb-8">
           <Image
-            className="min-[1400px]:h-[250px] min-[1400px]:w-[250px] sm:max-[1400px]:h-[152px] sm:max-[1400px]:w-[152px]"
-            src={"/assets/images/auth/school-logo.png"}
-            alt="School Logo"
-            width={56}
-            height={56}
+            src="/assets/images/auth/desktop-school-logo.png"
+            alt="StudyBridge Online School Logo"
+            width={100}
+            height={100}
+            className="h-40 w-40"
           />
-        </picture>
-      </div>
+        </div>
 
-      {/* main content */}
-      <div className="w-full pb-10">
-        <header className="mb-10">
-          {/* Login Header */}
-          <h3 className="font-sans font-semibold max-sm:mb-2 max-sm:text-[24px] max-sm:leading-8 min-[1400px]:text-[42px] sm:mb-3 sm:leading-[38px] sm:max-[1400px]:text-[36px]">
-            Welcome Back
-          </h3>
-          <p className="font-sans leading-6 font-normal text-[#2D2D2DB2] max-sm:text-[14px] sm:text-[16px]">
-            Sign in your account to continue
-          </p>
-        </header>
+        {/* Main Content */}
+        <div className="w-full max-w-md">
+          <header className="mb-8 text-center">
+            <h1 className="mb-2 text-2xl font-semibold text-gray-900">Welcome Back</h1>
+            <p className="text-sm text-gray-600">Sign in your account to continue</p>
+          </header>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit}>
-          {/* Registration Number Field */}
-          <div className="mb-6">
-            <div className="flex items-start justify-between">
-              <label
-                className="block font-sans text-[16px] leading-5 font-medium"
-                htmlFor="registration-number"
-              >
-                {label}
-                <span className="ml-1 text-[#DA3743]">*</span>
+          {/* Login Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-900">
+                Email Address
               </label>
-              {errors.registrationNumber && touched.registrationNumber && (
-                <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                  {errors.registrationNumber}
-                </span>
-              )}
+              <div className="mt-2">
+                <Input
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="admin@school.edu"
+                  value={formData.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isLocked}
+                  className={`w-full ${
+                    errors.email && touched.email
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300"
+                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                />
+                {errors.email && touched.email && (
+                  <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{errors.email}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <Input
-              type="text"
-              name="registrationNumber"
-              id="registration-number"
-              placeholder={input_placeholder}
-              value={formData.registrationNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              className={`mt-2 ${
-                errors.registrationNumber && touched.registrationNumber
-                  ? "border-[#DA3743] bg-[#FFF5F5]"
-                  : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-              }`}
-            />
-          </div>
 
-          {/* Password Field */}
-          <div className="mb-4">
-            <div className="flex items-start justify-between">
+            {/* Password Field */}
+            <div>
               <label
-                className="block font-sans text-[16px] leading-5 font-medium"
                 htmlFor="password"
+                className="block text-sm font-medium text-gray-900"
               >
                 Password
-                <span className="ml-1 text-[#DA3743]">*</span>
               </label>
+              <div className="relative mt-2">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  id="password"
+                  placeholder="••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={isLocked}
+                  className={`w-full pr-10 ${
+                    errors.password && touched.password
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300"
+                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={isLocked}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
+                >
+                  {showPassword ? (
+                    <Image
+                      src="/assets/images/auth/show-password-icon.png"
+                      alt="Hide password"
+                      width={16}
+                      height={16}
+                    />
+                  ) : (
+                    <Image
+                      src="/assets/images/auth/hide-password-icon.png"
+                      alt="Show password"
+                      width={16}
+                      height={16}
+                    />
+                  )}
+                </button>
+              </div>
               {errors.password && touched.password && (
-                <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                  {errors.password}
-                </span>
+                <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{errors.password}</span>
+                </div>
               )}
             </div>
-            <div className="relative mt-2">
-              <Input
-                className={`pr-12 ${
-                  errors.password && touched.password
-                    ? "border-[#DA3743] bg-[#FFF5F5]"
-                    : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-                } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                placeholder="********"
-                value={formData.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
 
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
-              >
-                {showPassword ? (
-                  <Image
-                    src={"/assets/images/auth/show-password-icon.png"}
-                    alt="Hide password"
-                    width={16}
-                    height={16}
-                  />
-                ) : (
-                  <Image
-                    src={"/assets/images/auth/hide-password-icon.png"}
-                    alt="Show password"
-                    width={16}
-                    height={16}
-                  />
-                )}
-              </button>
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  disabled={isLocked}
+                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 disabled:cursor-not-allowed"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className={`ml-2 block text-sm text-gray-900 ${
+                    isLocked ? "opacity-50" : ""
+                  }`}
+                >
+                  Remember me
+                </label>
+              </div>
+
+              <div className="text-sm">
+                <Link
+                  href="/forgot-password"
+                  className={`font-medium text-black hover:text-gray-800 ${
+                    isLocked ? "pointer-events-none opacity-50" : ""
+                  }`}
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
-            <Link
-              href="/change-password"
-              className="mt-2 flex cursor-pointer justify-end text-right font-sans text-[14px] leading-5 font-normal text-[#DA3743] transition-colors hover:text-[#c53030]"
-            >
-              Forgot Password?
-            </Link>
-          </div>
 
-          <Button
-            type="submit"
-            className="mt-4 w-full disabled:cursor-not-allowed"
-            disabled={hasErrors()}
-          >
-            {/* <Image
-              src={"/assets/images/auth/user-icon.png"}
-              alt="user icon"
-              width={16}
-              height={16}
-            /> */}
-            <UserRound className="" />
-            Login
-            <MoveRight />
-          </Button>
-        </form>
-      </div>
-    </section>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              disabled={!formData.email || !formData.password || isLocked}
+              className="w-full bg-red-600 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+            >
+              {isLocked ? "Account Locked" : "Sign In"}
+            </Button>
+          </form>
+        </div>
+      </section>
+
+      {/* Warning Modal - After 3 attempts */}
+      <Dialog open={showWarningModal} onOpenChange={setShowWarningModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4">
+              <Image
+                src="/assets/images/auth/desktop-school-logo.png"
+                alt="School Logo"
+                width={60}
+                height={60}
+              />
+            </div>
+            <DialogTitle className="text-center text-xl font-semibold">
+              Attention
+            </DialogTitle>
+            <DialogDescription className="text-center text-gray-600">
+              You have 5 attempts to enter a correct password before your account is
+              locked.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <Button
+              onClick={() => setShowWarningModal(false)}
+              className="w-full bg-red-600 text-white hover:bg-red-700"
+            >
+              Try again
+            </Button>
+            <Button
+              onClick={() => {
+                setShowWarningModal(false)
+                // Navigate to forgot password
+              }}
+              variant="outline"
+              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
+            >
+              Forgot Password
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Locked Out Modal - After 5 attempts */}
+      <Dialog open={showLockedModal} onOpenChange={setShowLockedModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4">
+              <Image
+                src="/assets/images/auth/desktop-school-logo.png"
+                alt="School Logo"
+                width={60}
+                height={60}
+              />
+            </div>
+            <DialogTitle className="text-center text-xl font-semibold">
+              Locked out
+            </DialogTitle>
+            <DialogDescription className="text-center text-gray-600">
+              Your account has been locked due to multiple incorrect password attempts.
+              You can reset your password now or try again in 01:59:59 hours
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <Button
+              onClick={() => {
+                setShowLockedModal(false)
+                // Navigate to forgot password
+              }}
+              className="w-full bg-red-600 text-white hover:bg-red-700"
+            >
+              Forgot Password
+            </Button>
+            <Button
+              onClick={() => setShowLockedModal(false)}
+              variant="outline"
+              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
+            >
+              Sign in
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
-export default Form_input
+export default LoginForm
