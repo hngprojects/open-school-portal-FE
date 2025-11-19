@@ -21,7 +21,7 @@ const buttonVariants = cva(
         tertiary: "text-accent bg-[#FAFAFA]",
       },
       size: {
-        default: "h-14 px-8 py-4 has-[>svg]:px-3",
+        default: "h-14 px-8 py-4 has-[>svg]:px-5",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
