@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 // interface FormData {
 //   email: string;
@@ -109,24 +110,27 @@ export default function ForgotPassword() {
               </div>
 
               {/* Submit Button */}
-              <Button
-                type="submit"
-                className="h-12 w-full rounded-lg bg-[#DA3743] text-lg font-medium text-white transition-all hover:bg-[#8B1126] hover:text-white"
-              >
-                Send Reset Link
-              </Button>
+              {/* this button should go straight to email before redirecting to reset-password, but for the demo, I'm redirecting it straight to reset-password*/}
+              <Link href={"/reset-password"}>
+                <Button
+                  type="submit"
+                  className="h-12 w-full rounded-lg bg-[#DA3743] text-lg font-medium text-white transition-all hover:bg-[#8B1126] hover:text-white"
+                >
+                  Send Reset Link
+                </Button>
+              </Link>
             </form>
           )}
 
           {/* Back to Login */}
           <div className="mt-8 text-center">
-            <a
+            <Link
               href="/login"
               className="inline-flex items-center gap-2 font-medium transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Login
-            </a>
+            </Link>
           </div>
         </div>
       </div>
