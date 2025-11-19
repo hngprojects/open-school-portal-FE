@@ -35,7 +35,7 @@ const items = [
   { title: "Attendance", url: "#", icon: File },
   { title: "Timetable", url: "#", icon: Table },
   { title: "Results", url: "#", icon: Table },
-  { title: "Fees Management", url: "#", icon: Banknote },
+  { title: "Fees Management", url: "/fees/add-new-fee", icon: Banknote },
 ]
 
 export function AppSidebar() {
