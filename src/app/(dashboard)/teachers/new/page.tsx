@@ -5,10 +5,15 @@ import Link from "next/link"
 
 export default function AddNewTeacher() {
   return (
-    <div className="mb-10 w-full space-y-8 bg-white p-4 py-6 md:p-10 md:py-14">
+    <div className="mb-10 w-full space-y-8 bg-white p-4 md:p-10">
       <div>
         <div className="mb-4 md:mb-0 md:hidden">
-          <Button asChild variant="ghost" size="icon">
+          <Button
+            asChild
+            variant="ghost"
+            className="bg-gray-100 hover:bg-gray-200"
+            size="icon"
+          >
             <Link href="/admin/teachers">
               <ArrowLeftIcon className="h-5 w-5" />
             </Link>
