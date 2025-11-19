@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { ArrowRight } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -8,7 +7,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useCheckWaitlist, useJoinWaitlist } from "../_hooks/use-waitlist"
+import { useJoinWaitlist } from "../_hooks/use-waitlist"
+import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 const WaitlistFormModal: React.FC<{
   isOpen: boolean
@@ -25,13 +26,6 @@ const WaitlistFormModal: React.FC<{
 
   const email = formData.email
   const fullName = formData.fullName
-
-  // Check if email exists in waitlist
-  const {
-    data: existsData,
-    isLoading: checking,
-    error: checkError,
-  } = useCheckWaitlist(email)
 
   // Mutation: Join waitlist
   const joinMutation = useJoinWaitlist()
@@ -50,18 +44,20 @@ const WaitlistFormModal: React.FC<{
     e.preventDefault()
 
     setLocalError(null)
-
-    if (existsData?.exists) {
-      setLocalError("This email is already on the waitlist.")
-      return
-    }
-
     setIsSubmitting(true)
+
     const [first_name, last_name] = fullName.trim().split(" ")
 
     try {
       await joinMutation.mutateAsync({ email, first_name, last_name })
       setSubmitted(true)
+
+      // Reset UI after 2 seconds
+      setTimeout(() => {
+        setSubmitted(false)
+        setFormData({ email: "", fullName: "" })
+        onClose()
+      }, 2000)
     } catch (err) {
       if (err instanceof Error) {
         setLocalError(err?.message || "Something went wrong.")
@@ -69,65 +65,44 @@ const WaitlistFormModal: React.FC<{
     }
 
     setIsSubmitting(false)
-
-    // Reset UI after 2 seconds
-    setTimeout(() => {
-      setSubmitted(false)
-      setFormData({ email: "", fullName: "" })
-      onClose()
-    }, 2000)
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="rounded-2xl p-8 sm:max-w-md">
+        <DialogHeader className={cn("space-y-3 text-left", submitted ? "sr-only" : "")}>
+          <DialogTitle className="text-2xl font-bold text-gray-900">
+            Secure Your Spot Now
+          </DialogTitle>
+          <DialogDescription className="text-sm text-gray-600">
+            Get monthly updates, early access to beta testing, and be the first to know
+            when we launch.
+          </DialogDescription>
+        </DialogHeader>
+
         {submitted ? (
           <div className="py-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <svg
-                className="h-8 w-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+            <div className="mx-auto mb-4 flex aspect-square w-[250px] items-center justify-center">
+              <Image
+                src="/assets/icons/verify.svg"
+                alt="Success"
+                width={250}
+                height={250}
+                className="w-full object-contain"
+              />
             </div>
-            <h3 className="mb-2 text-2xl font-bold text-gray-900">
+            <h3 className="mb-2 text-xl font-bold text-gray-900">
               You&apos;re on the list!
             </h3>
-            <p className="text-gray-600">We’ll notify you when we launch.</p>
+            <p className="text-gray-600">We&apos;ll notify you when we launch.</p>
           </div>
         ) : (
           <>
-            <DialogHeader className="space-y-3 text-left">
-              <DialogTitle className="text-2xl font-bold text-gray-900">
-                Secure Your Spot Now
-              </DialogTitle>
-              <DialogDescription className="text-sm text-gray-600">
-                Get monthly updates, early access to beta testing, and be the first to
-                know when we launch.
-              </DialogDescription>
-            </DialogHeader>
-
-            <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+            <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
               {/* 🔴 ERROR MESSAGE BEFORE FIRST INPUT */}
-              {(localError || checkError) && (
+              {!!localError && (
                 <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-                  {localError || checkError?.message || "Something went wrong."}
-                </p>
-              )}
-
-              {checking && <p className="text-sm text-gray-500">Checking email...</p>}
-
-              {existsData?.exists && (
-                <p className="text-sm text-red-600">
-                  This email is already on the waitlist.
+                  {localError || "Something went wrong."}
                 </p>
               )}
 
@@ -174,7 +149,7 @@ const WaitlistFormModal: React.FC<{
               {/* Submit Button */}
               <Button
                 type="submit"
-                disabled={isSubmitting || !email || !fullName || checking}
+                disabled={isSubmitting || !email || !fullName}
                 className="mt-6 w-full"
               >
                 {isSubmitting ? (
@@ -183,10 +158,7 @@ const WaitlistFormModal: React.FC<{
                     Joining...
                   </>
                 ) : (
-                  <>
-                    Join The Waitlist
-                    <ArrowRight className="h-5 w-5" />
-                  </>
+                  <>Join The Waitlist</>
                 )}
               </Button>
             </form>
