@@ -1,295 +1,303 @@
 "use client"
 
-import React, { useState } from "react"
-import Link from "next/link"
+import React, { useMemo, useState } from "react"
 import Image from "next/image"
-import { motion, AnimatePresence } from "motion/react"
+import Link from "next/link"
+import { AlertCircle } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
-import PasswordResetSuccess from "./password-reset-success"
-
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { MoveRight } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import PasswordResetSuccess from "./password-reset-success"
+import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
+import { useAuthStore } from "@/store/auth-store"
 
-interface FormErrors {
-  newPassword?: string
-  confirmPassword?: string
+type ResetPasswordField = keyof ResetPasswordFormValues
+
+const AUTH_SECTION_STYLES =
+  "flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8"
+const BUTTON_STYLES =
+  "w-full bg-[#DA3743] py-3 text-white hover:bg-[#C32F3A] disabled:bg-[#DA3743] disabled:text-white disabled:opacity-100"
+
+const initialValues: ResetPasswordFormValues = {
+  newPassword: "",
+  confirmPassword: "",
 }
 
-interface TouchedFields {
-  newPassword: boolean
-  confirmPassword: boolean
-}
-
-interface FormData {
-  newPassword: string
-  confirmPassword: string
-}
-
-const PasswordReset = () => {
-  const [formData, setFormData] = useState<FormData>({
-    newPassword: "",
-    confirmPassword: "",
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [touched, setTouched] = useState<TouchedFields>({
+const PasswordResetForm = () => {
+  const searchParams = useSearchParams()
+  const token = useMemo(() => {
+    const tokenParam = searchParams.get("token")
+    return tokenParam && tokenParam.trim().length > 0 ? tokenParam : undefined
+  }, [searchParams])
+  const [formData, setFormData] = useState(initialValues)
+  const [errors, setErrors] = useState<Partial<Record<ResetPasswordField, string>>>({})
+  const [touched, setTouched] = useState<Record<ResetPasswordField, boolean>>({
     newPassword: false,
     confirmPassword: false,
   })
-
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [tokenError, setTokenError] = useState<string | null>(null)
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null)
 
-  const [isResetSuccess, setIsResetSuccess] = useState(false)
+  const pendingEmail = useAuthStore((state) => state.pendingEmail)
+  const setPendingEmail = useAuthStore((state) => state.setPendingEmail)
 
-  const validatePassword = (password: string): string | undefined => {
-    if (!password) return "Password is required"
-    if (password.length < 8) return "Password must be at least 8 characters"
-    if (!/(?=.*[a-z])/.test(password)) return "Password must contain lowercase letter"
-    if (!/(?=.*[A-Z])/.test(password)) return "Password must contain uppercase letter"
-    if (!/(?=.*\d)/.test(password)) return "Password must contain a number"
-    return undefined
+  const getFieldError = (
+    field: ResetPasswordField,
+    candidate: ResetPasswordFormValues
+  ) => {
+    const validation = resetPasswordSchema.safeParse(candidate)
+    if (validation.success) {
+      return undefined
+    }
+    return validation.error.flatten().fieldErrors[field]?.[0]
   }
 
-  const validateConfirmPassword = (
-    confirmPassword: string,
-    newPassword: string
-  ): string | undefined => {
-    if (!confirmPassword) return "Please confirm your password"
-    if (confirmPassword !== newPassword) return "Passwords do not match"
-    return undefined
-  }
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    const field = name as ResetPasswordField
+    const nextValues = { ...formData, [field]: value }
+    setFormData(nextValues)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    if (touched[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: getFieldError(field, nextValues),
+      }))
+    }
 
-    if (touched[name as keyof TouchedFields]) {
-      const newErrors: FormErrors = { ...errors }
-
-      if (name === "newPassword") {
-        newErrors.newPassword = validatePassword(value)
-        if (touched.confirmPassword) {
-          newErrors.confirmPassword = validateConfirmPassword(
-            formData.confirmPassword,
-            value
-          )
-        }
-      } else if (name === "confirmPassword") {
-        newErrors.confirmPassword = validateConfirmPassword(value, formData.newPassword)
-      }
-
-      setErrors(newErrors)
+    if (field === "newPassword" && touched.confirmPassword) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: getFieldError("confirmPassword", nextValues),
+      }))
     }
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = e.target
-    setTouched((prev) => ({ ...prev, [name]: true }))
-
-    const newErrors: FormErrors = { ...errors }
-
-    if (name === "newPassword") {
-      newErrors.newPassword = validatePassword(formData.newPassword)
-    } else if (name === "confirmPassword") {
-      newErrors.confirmPassword = validateConfirmPassword(
-        formData.confirmPassword,
-        formData.newPassword
-      )
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const field = event.target.name as ResetPasswordField
+    if (!touched[field]) {
+      setTouched((prev) => ({ ...prev, [field]: true }))
     }
 
-    setErrors(newErrors)
+    setErrors((prev) => ({
+      ...prev,
+      [field]: getFieldError(field, formData),
+    }))
   }
 
-  const hasErrors = (): boolean => {
-    return (
-      !formData.newPassword ||
-      !formData.confirmPassword ||
-      !!errors.newPassword ||
-      !!errors.confirmPassword
-    )
-  }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setTouched({
+      newPassword: true,
+      confirmPassword: true,
+    })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const newPasswordError = validatePassword(formData.newPassword)
-    const confirmPasswordError = validateConfirmPassword(
-      formData.confirmPassword,
-      formData.newPassword
-    )
-
-    if (newPasswordError || confirmPasswordError) {
+    const validation = resetPasswordSchema.safeParse(formData)
+    if (!validation.success) {
+      const { fieldErrors } = validation.error.flatten()
       setErrors({
-        newPassword: newPasswordError,
-        confirmPassword: confirmPasswordError,
+        newPassword: fieldErrors.newPassword?.[0],
+        confirmPassword: fieldErrors.confirmPassword?.[0],
       })
-      setTouched({ newPassword: true, confirmPassword: true })
       return
     }
 
-    console.log("Password reset submitted:", formData)
-    setIsResetSuccess(true)
+    if (!token) {
+      setTokenError("The reset link is invalid or has expired. Please request a new one.")
+      return
+    }
+
+    setIsSubmitting(true)
+    setTokenError(null)
+    // TODO: integrate API call
+    setSubmittedEmail(pendingEmail ?? null)
+    setIsSuccess(true)
+    setIsSubmitting(false)
+    setPendingEmail(null)
+    setFormData(initialValues)
+    setTouched({
+      newPassword: false,
+      confirmPassword: false,
+    })
+    setErrors({})
   }
-  return (
-    <section className="flex h-full flex-1 flex-col px-4 max-[1400px]:items-center max-sm:gap-10 max-sm:pt-[60px] min-[1400px]:gap-1 sm:pt-6 sm:max-[1400px]:gap-[43px]">
-      {/* school logo */}
-      <Link href="/" className="flex items-center">
-        <picture>
-          <source
-            media="(min-width: 641px)"
-            srcSet="/assets/images/auth/desktop-school-logo.png"
-          />
+
+  const renderFieldError = (field: ResetPasswordField) => {
+    if (!touched[field] || !errors[field]) return null
+    return (
+      <p className="mt-2 flex items-center gap-2 text-sm text-red-600">
+        <AlertCircle className="h-4 w-4" />
+        <span>{errors[field]}</span>
+      </p>
+    )
+  }
+
+  if (isSuccess) {
+    return (
+      <section className={AUTH_SECTION_STYLES}>
+        <div className="mb-8">
           <Image
-            className="min-[1400px]:h-[250px] min-[1400px]:w-[250px] sm:max-[1400px]:h-[152px] sm:max-[1400px]:w-[152px]"
-            src={"/assets/images/auth/school-logo.png"}
-            alt="School Logo"
-            width={56}
-            height={56}
+            src="/assets/images/auth/desktop-school-logo.png"
+            alt="StudyBridge Online School Logo"
+            width={100}
+            height={100}
+            className="h-40 w-40"
           />
-        </picture>
-      </Link>
+        </div>
 
-      {/* main content */}
-      <AnimatePresence mode="wait">
-        {!isResetSuccess ? (
-          <motion.div
-            key="form"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="w-full max-w-[488px] md:max-lg:flex md:max-lg:flex-col md:max-lg:items-center"
-          >
-            <form onSubmit={handleSubmit} className="w-full">
-              {/* New Password Field */}
-              <div className="mb-6">
-                <div className="flex max-w-[488px] items-start justify-between">
-                  <label
-                    className="block font-sans text-[16px] leading-5 font-medium"
-                    htmlFor="new-password"
-                  >
-                    New Password
-                    <span className="ml-1 text-[#DA3743]">*</span>
-                  </label>
-                  {errors.newPassword && touched.newPassword && (
-                    <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                      {errors.newPassword}
-                    </span>
-                  )}
-                </div>
-                <div className="relative mt-2 max-w-[488px]">
-                  <Input
-                    className={`w-full pr-12 font-sans text-[14px] leading-5 ${
-                      errors.newPassword && touched.newPassword
-                        ? "border-[#DA3743] bg-[#FFF5F5]"
-                        : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-                    } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
-                    type={showNewPassword ? "text" : "password"}
-                    name="newPassword"
-                    id="new-password"
-                    placeholder="Enter new password"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+        <div className="w-full max-w-md">
+          <PasswordResetSuccess email={submittedEmail ?? pendingEmail ?? undefined} />
+          <Button asChild className={`${BUTTON_STYLES} mt-8`}>
+            <Link href="/login">Go to Login</Link>
+          </Button>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className={AUTH_SECTION_STYLES}>
+      <div className="mb-8">
+        <Image
+          src="/assets/images/auth/desktop-school-logo.png"
+          alt="StudyBridge Online School Logo"
+          width={100}
+          height={100}
+          className="h-40 w-40"
+        />
+      </div>
+
+      <div className="w-full max-w-md">
+        <header className="mb-8 text-center">
+          <h1 className="mb-2 text-2xl font-semibold text-gray-900">Reset Password</h1>
+          <p className="text-sm text-gray-600">
+            {pendingEmail
+              ? `Reset the password for ${pendingEmail}.`
+              : "Create a new password for your StudyBridge account."}
+          </p>
+        </header>
+
+        {tokenError ? (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {tokenError}
+          </div>
+        ) : null}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              className="block text-sm font-medium text-gray-900"
+              htmlFor="newPassword"
+            >
+              New Password
+            </label>
+            <div className="mt-2">
+              <div className="relative">
+                <Input
+                  type={showNewPassword ? "text" : "password"}
+                  name="newPassword"
+                  id="newPassword"
+                  placeholder="Enter a strong password"
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={Boolean(touched.newPassword && errors.newPassword)}
+                  className={`w-full pr-12 ${
+                    touched.newPassword && errors.newPassword
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <Image
+                    src={
+                      showNewPassword
+                        ? "/assets/images/auth/show-password-icon.png"
+                        : "/assets/images/auth/hide-password-icon.png"
+                    }
+                    alt="Toggle password visibility"
+                    width={18}
+                    height={18}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
-                  >
-                    <Image
-                      src={
-                        showNewPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
-                      }
-                      alt="show password Icon"
-                      width={16}
-                      height={16}
-                    />
-                  </button>
-                </div>
-                <p className="mt-2 font-sans text-[12px] text-[#2D2D2D80]">
-                  Must be 8+ characters with uppercase, lowercase & number
-                </p>
+                </button>
               </div>
+              {renderFieldError("newPassword")}
+            </div>
+          </div>
 
-              {/* Confirm Password Field */}
-              <div className="mb-6 max-w-[488px]">
-                <div className="flex items-start justify-between">
-                  <label
-                    className="block font-sans text-[16px] leading-5 font-medium"
-                    htmlFor="confirm-password"
-                  >
-                    Confirm Password
-                    <span className="ml-1 text-[#DA3743]">*</span>
-                  </label>
-                  {errors.confirmPassword && touched.confirmPassword && (
-                    <span className="max-w-[200px] text-right text-[12px] font-medium text-[#DA3743]">
-                      {errors.confirmPassword}
-                    </span>
+          <div>
+            <label
+              className="block text-sm font-medium text-gray-900"
+              htmlFor="confirmPassword"
+            >
+              Confirm Password
+            </label>
+            <div className="mt-2">
+              <div className="relative">
+                <Input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  id="confirmPassword"
+                  placeholder="Re-enter your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  aria-invalid={Boolean(
+                    touched.confirmPassword && errors.confirmPassword
                   )}
-                </div>
-                <div className="relative mt-2">
-                  <Input
-                    className={`pr-12 font-sans text-[14px] ${
-                      errors.confirmPassword && touched.confirmPassword
-                        ? "border-[#DA3743] bg-[#FFF5F5]"
-                        : "border-[#2D2D2D4D] hover:border-[#2D2D2D]"
-                    } transition-colors focus:border-transparent focus:ring-2 focus:ring-[#DA3743] focus:outline-none`}
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    id="confirm-password"
-                    placeholder="Re-enter password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                  className={`w-full pr-12 ${
+                    touched.confirmPassword && errors.confirmPassword
+                      ? "border-red-500 bg-red-50"
+                      : "border-gray-300"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <Image
+                    src={
+                      showConfirmPassword
+                        ? "/assets/images/auth/show-password-icon.png"
+                        : "/assets/images/auth/hide-password-icon.png"
+                    }
+                    alt="Toggle password visibility"
+                    width={18}
+                    height={18}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2 text-[#2D2D2D80] transition-colors hover:text-[#2D2D2D]"
-                  >
-                    <Image
-                      src={
-                        showConfirmPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
-                      }
-                      alt="show password Icon"
-                      width={16}
-                      height={16}
-                    />
-                  </button>
-                </div>
+                </button>
               </div>
+              {renderFieldError("confirmPassword")}
+            </div>
+          </div>
 
-              <Button
-                type="submit"
-                className="mt-4 flex w-full max-w-[488px] disabled:cursor-not-allowed"
-                disabled={hasErrors()}
-              >
-                Reset Password
-                <MoveRight />
-              </Button>
-            </form>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+          <ul className="ml-4 list-disc space-y-2 text-sm text-gray-600">
+            <li>6 characters minimum and 20 maximum</li>
+            <li>At least 1 letter, 1 number, and 1 special character (#?!@$%^&*-)</li>
+            <li>Use a password you haven&apos;t used elsewhere</li>
+          </ul>
+
+          <Button
+            type="submit"
+            disabled={!token || isSubmitting}
+            className={BUTTON_STYLES}
           >
-            <PasswordResetSuccess />
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {isSubmitting ? "Updating..." : "Update Password"}
+          </Button>
+        </form>
+      </div>
     </section>
   )
 }
 
-export default PasswordReset
+export default PasswordResetForm

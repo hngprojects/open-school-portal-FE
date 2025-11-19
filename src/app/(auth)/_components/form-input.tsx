@@ -1,8 +1,12 @@
 "use client"
+
 import React, { useState } from "react"
 import Image from "next/image"
-import { Input } from "@/components/ui/input"
+import Link from "next/link"
+import { AlertCircle } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   Dialog,
   DialogContent,
@@ -11,155 +15,100 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { AlertCircle } from "lucide-react"
-import Link from "next/link"
+import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
+import { useAuthStore } from "@/store/auth-store"
 
-// Type definitions
-interface FormData {
-  email: string
-  password: string
-}
+type LoginField = keyof LoginFormValues
 
-interface FormErrors {
-  email?: string
-  password?: string
-}
-
-interface TouchedFields {
-  email: boolean
-  password: boolean
+const initialValues: LoginFormValues = {
+  email: "",
+  password: "",
 }
 
 const LoginForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    email: "",
-    password: "",
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [touched, setTouched] = useState<TouchedFields>({
+  const [formData, setFormData] = useState<LoginFormValues>(initialValues)
+  const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
+  const [touched, setTouched] = useState<Record<LoginField, boolean>>({
     email: false,
     password: false,
   })
 
   const [showPassword, setShowPassword] = useState(false)
-  // const [loginAttempts, setLoginAttempts] = useState(0)
   const [showWarningModal, setShowWarningModal] = useState(false)
   const [showLockedModal, setShowLockedModal] = useState(false)
-  const [isLocked, _setIsLocked] = useState(false)
+  const [isLocked] = useState(false)
+  const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
+  const getFieldError = (field: LoginField, value: string) => {
+    const schema = loginSchema.shape[field]
+    if (!schema) return undefined
+    const result = schema.safeParse(value)
+    return result.success ? undefined : result.error.issues[0]?.message
+  }
+
+  const syncFieldError = (field: LoginField, value: string) => {
+    const message = getFieldError(field, value)
+    setErrors((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: message,
     }))
+  }
 
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }))
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    const field = name as LoginField
+    setFormData((prev) => ({ ...prev, [field]: value }))
+
+    if (touched[field]) {
+      syncFieldError(field, value)
     }
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>): void => {
-    const { name } = e.target
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }))
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const field = event.target.name as LoginField
+    setTouched((prev) => ({ ...prev, [field]: true }))
+    syncFieldError(field, formData[field])
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
 
-    // Check if account is locked
     if (isLocked) {
       setShowLockedModal(true)
       return
     }
 
-    // Mark all fields as touched
     setTouched({
       email: true,
       password: true,
     })
 
-    // Basic format validation only
-    const newErrors: FormErrors = {}
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is not valid"
-      setErrors(newErrors)
-      return
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Email is not valid"
-      setErrors(newErrors)
+    const validation = loginSchema.safeParse(formData)
+    if (!validation.success) {
+      const { fieldErrors } = validation.error.flatten()
+      setErrors({
+        email: fieldErrors.email?.[0],
+        password: fieldErrors.password?.[0],
+      })
       return
     }
 
-    if (!formData.password) {
-      newErrors.password = "Wrong password. Try again"
-      setErrors(newErrors)
-      return
-    }
+    setErrors({})
+    setAuthSession({ email: validation.data.email })
 
     // ============================================================
-    // TODO: API INTEGRATION REQUIRED
+    // TODO: Replace with API integration
     // ============================================================
-    // Replace this section with actual API call to your authentication endpoint
-    //
-    // Example API call structure:
-    //
-    // try {
-    //   const response = await fetch('/api/auth/login', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({
-    //       email: formData.email,
-    //       password: formData.password
-    //     })
-    //   })
-    //
-    //   const data = await response.json()
-    //
-    //   if (response.ok) {
-    //     // Successful login
-    //     console.log("Login successful:", data)
-    //     setLoginAttempts(0)
-    //     // Redirect user to dashboard or store auth token
-    //     // Example: router.push('/dashboard')
-    //   } else {
-    //     // Failed login - increment attempts
-    //     const newAttempts = loginAttempts + 1
-    //     setLoginAttempts(newAttempts)
-    //
-    //     // Set error messages based on API response
-    //     const authErrors: FormErrors = {}
-    //     if (data.field === 'email') {
-    //       authErrors.email = data.message || "Email is not valid"
-    //     } else {
-    //       authErrors.password = data.message || "Wrong password. Try again"
-    //     }
-    //     setErrors(authErrors)
-    //
-    //     // Show warning modal after 3 failed attempts
-    //     if (newAttempts === 3) {
-    //       setShowWarningModal(true)
-    //     }
-    //     // Lock account after 5 failed attempts
-    //     else if (newAttempts >= 5) {
-    //       setIsLocked(true)
-    //       setShowLockedModal(true)
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.error("Login error:", error)
-    //   setErrors({ password: "An error occurred. Please try again." })
-    // }
-    // ============================================================
+  }
+
+  const renderError = (field: LoginField) => {
+    if (!touched[field] || !errors[field]) return null
+    return (
+      <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
+        <AlertCircle className="h-4 w-4 shrink-0" />
+        <span>{errors[field]}</span>
+      </div>
+    )
   }
 
   return (
@@ -200,18 +149,14 @@ const LoginForm = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={isLocked}
+                  aria-invalid={touched.email && Boolean(errors.email)}
                   className={`w-full ${
                     errors.email && touched.email
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
                   } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
                 />
-                {errors.email && touched.email && (
-                  <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                    <AlertCircle className="h-4 w-4 shrink-0" />
-                    <span>{errors.email}</span>
-                  </div>
-                )}
+                {renderError("email")}
               </div>
             </div>
 
@@ -228,11 +173,12 @@ const LoginForm = () => {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   id="password"
-                  placeholder="••••••"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   disabled={isLocked}
+                  aria-invalid={touched.password && Boolean(errors.password)}
                   className={`w-full pr-10 ${
                     errors.password && touched.password
                       ? "border-red-500 bg-red-50"
@@ -241,7 +187,7 @@ const LoginForm = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((prev) => !prev)}
                   disabled={isLocked}
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
                 >
@@ -261,13 +207,8 @@ const LoginForm = () => {
                     />
                   )}
                 </button>
+                {renderError("password")}
               </div>
-              {errors.password && touched.password && (
-                <div className="mt-2 flex items-center gap-2 text-sm text-red-600">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
-                  <span>{errors.password}</span>
-                </div>
-              )}
             </div>
 
             {/* Remember Me & Forgot Password */}
@@ -305,8 +246,8 @@ const LoginForm = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={!formData.email || !formData.password || isLocked}
-              className="w-full bg-red-600 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              disabled={isLocked}
+              className="w-full bg-[#DA3743] py-3 text-white hover:bg-[#C32F3A] disabled:cursor-not-allowed disabled:bg-[#DA3743] disabled:text-white disabled:opacity-100"
             >
               {isLocked ? "Account Locked" : "Sign In"}
             </Button>
@@ -337,17 +278,16 @@ const LoginForm = () => {
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
             <Button
               onClick={() => setShowWarningModal(false)}
-              className="w-full bg-red-600 text-white hover:bg-red-700"
+              className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]"
             >
               Try again
             </Button>
             <Button
               onClick={() => {
                 setShowWarningModal(false)
-                // Navigate to forgot password
               }}
               variant="outline"
-              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
+              className="w-full border border-[#DA3743] bg-white text-[#DA3743] hover:bg-red-50"
             >
               Forgot Password
             </Button>
@@ -379,16 +319,15 @@ const LoginForm = () => {
             <Button
               onClick={() => {
                 setShowLockedModal(false)
-                // Navigate to forgot password
               }}
-              className="w-full bg-red-600 text-white hover:bg-red-700"
+              className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]"
             >
               Forgot Password
             </Button>
             <Button
               onClick={() => setShowLockedModal(false)}
               variant="outline"
-              className="w-full border border-red-600 bg-white text-red-600 hover:bg-red-50"
+              className="w-full border border-[#DA3743] bg-white text-[#DA3743] hover:bg-red-50"
             >
               Sign in
             </Button>
