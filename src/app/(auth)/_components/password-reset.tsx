@@ -281,7 +281,7 @@ const PasswordResetForm = () => {
             </div>
           </div>
 
-          <ul className="space-y-2 text-sm text-gray-600">
+          <ul className="ml-4 list-disc space-y-2 text-sm text-gray-600">
             <li>6 characters minimum and 20 maximum</li>
             <li>At least 1 letter, 1 number, and 1 special character (#?!@$%^&*-)</li>
             <li>Use a password you haven&apos;t used elsewhere</li>
@@ -295,13 +295,6 @@ const PasswordResetForm = () => {
             {isSubmitting ? "Updating..." : "Update Password"}
           </Button>
         </form>
-
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Return to{" "}
-          <Link href="/login" className="font-medium text-[#DA3743] hover:text-[#C32F3A]">
-            Sign in
-          </Link>
-        </p>
       </div>
     </section>
   )
