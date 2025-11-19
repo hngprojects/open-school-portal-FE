@@ -11,7 +11,6 @@ import PasswordResetSuccess from "./password-reset-success"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
-import { Suspense } from "react"
 
 import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
 
@@ -24,7 +23,7 @@ const initialValues: ResetPasswordFormValues = {
   confirmPassword: "",
 }
 
-const PasswordResetForm = () => {
+const PasswordReset = () => {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -307,10 +306,4 @@ const PasswordResetForm = () => {
   )
 }
 
-export default function PasswordReset() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PasswordResetForm />
-    </Suspense>
-  )
-}
+export default PasswordReset
