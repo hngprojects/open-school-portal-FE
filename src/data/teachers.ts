@@ -1,4 +1,3 @@
-// data/teachers.ts
 import { User } from "@/types/user"
 
 export const teachers: User[] = [
@@ -10,6 +9,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "2",
@@ -19,6 +20,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "3",
@@ -28,6 +31,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -38,6 +43,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "5",
@@ -47,6 +54,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "6",
@@ -56,6 +65,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -66,6 +77,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "8",
@@ -75,6 +88,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "9",
@@ -84,6 +99,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -94,6 +111,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "11",
@@ -103,6 +122,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "12",
@@ -112,6 +133,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -122,6 +145,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "14",
@@ -131,6 +156,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "15",
@@ -140,6 +167,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -150,6 +179,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "17",
@@ -159,6 +190,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "18",
@@ -168,6 +201,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 
   {
@@ -178,6 +213,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Mathematics Teacher",
     joinDate: "2022-01-15",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "20",
@@ -187,6 +224,8 @@ export const teachers: User[] = [
     status: "active",
     role: "Science Teacher",
     joinDate: "2021-08-22",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "21",
@@ -196,6 +235,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "22",
@@ -205,6 +246,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "23",
@@ -214,6 +257,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "24",
@@ -223,6 +268,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "25",
@@ -232,6 +279,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "26",
@@ -241,6 +290,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "27",
@@ -250,6 +301,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "28",
@@ -259,6 +312,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "29",
@@ -268,6 +323,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "30",
@@ -277,6 +334,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "31",
@@ -286,6 +345,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "32",
@@ -295,6 +356,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "33",
@@ -304,6 +367,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "34",
@@ -313,6 +378,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "35",
@@ -322,6 +389,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "36",
@@ -331,6 +400,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "37",
@@ -340,6 +411,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "38",
@@ -349,6 +422,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "39",
@@ -358,6 +433,8 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
   {
     id: "40",
@@ -367,5 +444,7 @@ export const teachers: User[] = [
     status: "inactive",
     role: "English Teacher",
     joinDate: "2023-03-10",
+    phone: "+234 810 942 3124",
+    employeeId: "EMP-2025-014",
   },
 ]

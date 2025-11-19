@@ -1,7 +1,6 @@
-// components/users/users-view.tsx
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { User, UserType } from "@/types/user"
 import { UsersTable } from "./users-table"
 import { UsersGrid } from "./users-grid"
@@ -25,8 +24,17 @@ export function UsersView({
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [isMobile, setIsMobile] = useState<boolean>(false)
 
-  // Filter users based on search query and status
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+    return () => window.removeEventListener("resize", checkMobile)
+  }, [])
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -38,16 +46,19 @@ export function UsersView({
     })
   }, [users, searchQuery, statusFilter])
 
-  // Pagination logic
-  const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : false
-  const itemsPerPage = isMobile ? pageSize.mobile : pageSize.desktop
-
+  const itemsPerPage =
+    filteredUsers.length <= pageSize.mobile
+      ? filteredUsers.length
+      : isMobile
+        ? pageSize.mobile
+        : pageSize.desktop
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
   const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage)
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
   return (
@@ -61,21 +72,24 @@ export function UsersView({
         onAddUser={() => console.log(`Add ${userType}`)}
       />
 
-      {/* Desktop Table View */}
       <div className="hidden md:block">
-        <UsersTable users={paginatedUsers} userType={userType} />
+        <UsersTable
+          users={paginatedUsers}
+          userType={userType}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+        />
       </div>
 
-      {/* Mobile Grid View */}
       <div className="block md:hidden">
         <UsersGrid users={paginatedUsers} userType={userType} />
       </div>
 
-      {/* Pagination */}
       {filteredUsers.length > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
+          totalItems={filteredUsers.length}
           onPageChange={handlePageChange}
           className="mt-6"
         />

@@ -1,4 +1,3 @@
-// types/user.ts
 export interface User {
   id: string
   name: string
@@ -6,7 +5,8 @@ export interface User {
   avatar?: string
   status: "active" | "inactive"
   role: string
+  phone: string
+  employeeId: string
   joinDate: string
 }
-
 export type UserType = "teachers" | "students"

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 import React from "react"
 
 const HomeHero = () => {
@@ -16,9 +17,12 @@ const HomeHero = () => {
         </div>
 
         <div className="flex w-full max-w-md flex-wrap items-center justify-center gap-3 sm:max-w-lg sm:gap-6 md:max-w-2xl">
-          <Button className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none">
-            Get Started
-          </Button>
+          <Link href={"/login"}>
+            <Button className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none">
+              Get Started
+            </Button>
+          </Link>
+
           <Button
             variant="outline"
             className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"

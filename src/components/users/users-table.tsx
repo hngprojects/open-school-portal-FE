@@ -1,4 +1,3 @@
-// components/users/users-table.tsx
 "use client"
 
 import {
@@ -11,22 +10,17 @@ import {
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MoreHorizontal, Mail } from "lucide-react"
+import { Edit3, Trash2 } from "lucide-react"
 import { User, UserType } from "@/types/user"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 interface UsersTableProps {
   users: User[]
   userType: UserType
+  currentPage: number
+  itemsPerPage: number
 }
 
-export function UsersTable({ users }: UsersTableProps) {
+export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps) {
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -35,8 +29,17 @@ export function UsersTable({ users }: UsersTableProps) {
       .toUpperCase()
   }
 
+  const startSN = (currentPage - 1) * itemsPerPage + 1
+
   const getStatusVariant = (status: User["status"]) => {
-    return status === "active" ? "default" : "secondary"
+    switch (status) {
+      case "active":
+        return "default"
+      case "inactive":
+        return "inactive"
+      default:
+        return "outline"
+    }
   }
 
   return (
@@ -44,17 +47,19 @@ export function UsersTable({ users }: UsersTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-16">S/N</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Employee Number</TableHead>
             <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Join Date</TableHead>
+            <TableHead>Phone Number</TableHead>
             <TableHead className="w-20">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {users.map((user, index) => (
             <TableRow key={user.id}>
+              <TableCell className="font-medium">{startSN + index}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
@@ -64,32 +69,23 @@ export function UsersTable({ users }: UsersTableProps) {
                   <span className="font-medium">{user.name}</span>
                 </div>
               </TableCell>
+              <TableCell>{user.employeeId}</TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
-                  <Mail className="text-muted-foreground h-4 w-4" />
-                  {user.email}
-                </div>
+                <div className="flex items-center gap-2">{user.email}</div>
               </TableCell>
-              <TableCell>{user.role}</TableCell>
               <TableCell>
                 <Badge variant={getStatusVariant(user.status)}>{user.status}</Badge>
               </TableCell>
-              <TableCell>{new Date(user.joinDate).toLocaleDateString()}</TableCell>
+              <TableCell>{user.phone}</TableCell>
               <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>View Profile</DropdownMenuItem>
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive">
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex items-center gap-1 text-[#da3743]">
+                  <span>
+                    <Trash2 className="cursor-pointer text-[14px]" />
+                  </span>
+                  <span>
+                    <Edit3 className="cursor-pointer text-[14px]" />
+                  </span>
+                </div>
               </TableCell>
             </TableRow>
           ))}

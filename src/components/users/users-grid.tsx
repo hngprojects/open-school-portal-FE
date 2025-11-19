@@ -1,11 +1,9 @@
-// components/users/users-grid.tsx
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Mail, MoreHorizontal } from "lucide-react"
+import { MoreVertical } from "lucide-react"
 import { User, UserType } from "@/types/user"
 import {
   DropdownMenu,
@@ -28,10 +26,6 @@ export function UsersGrid({ users }: UsersGridProps) {
       .toUpperCase()
   }
 
-  const getStatusVariant = (status: User["status"]) => {
-    return status === "active" ? "default" : "secondary"
-  }
-
   return (
     <div className="grid gap-4">
       {users.map((user) => (
@@ -46,16 +40,17 @@ export function UsersGrid({ users }: UsersGridProps) {
                 <div>
                   <h3 className="font-semibold">{user.name}</h3>
                   <div className="mt-1 flex items-center gap-1">
-                    <Mail className="text-muted-foreground h-3 w-3" />
-                    <span className="text-muted-foreground text-sm">{user.email}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {user.employeeId}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreHorizontal className="h-4 w-4" />
+                  <Button variant="link" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -66,22 +61,20 @@ export function UsersGrid({ users }: UsersGridProps) {
               </DropdownMenu>
             </div>
 
-            <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <span className="text-muted-foreground">Role:</span>
-                <p className="font-medium">{user.role}</p>
+            <div className="mt-4 grid grid-cols-1 gap-2 text-sm">
+              <div className="flex items-center justify-between pb-2">
+                <p className="text-muted-foreground">Email:</p>
+                <p className="text-right font-medium">{user.email}</p>
               </div>
-              <div>
-                <span className="text-muted-foreground">Status:</span>
-                <div className="mt-1">
-                  <Badge variant={getStatusVariant(user.status)}>{user.status}</Badge>
-                </div>
+
+              <div className="flex items-center justify-between pb-2">
+                <span className="text-muted-foreground">Subject:</span>
+                <p>{user.role}</p>
               </div>
-              <div className="col-span-2">
-                <span className="text-muted-foreground">Join Date:</span>
-                <p className="font-medium">
-                  {new Date(user.joinDate).toLocaleDateString()}
-                </p>
+
+              <div className="flex items-center justify-between pb-2">
+                <p className="text-muted-foreground">Phone No:</p>
+                <p className="font-medium">{user.phone}</p>
               </div>
             </div>
           </CardContent>
