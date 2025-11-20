@@ -1,21 +1,23 @@
-name: CI Pipeline
+name: CI Pipeline Dev
 on:
   pull_request:
     branches:
-      - staging
+      - dev
     paths-ignore:
       - "README.md"
       - ".github/workflows/**"
+      - "**/*.md"
   push:
     branches:
-      - staging
+      - dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  ci:
+    name: Lint, Type Check & Build
     runs-on: self-hosted
     timeout-minutes: 10
 
@@ -24,30 +26,65 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "pnpm"
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
 
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Lint code (strict mode - fails on warnings)
+        run: |
+          pnpm run lint --max-warnings 0
+        continue-on-error: false
+
+      - name: Check code formatting (strict)
+        run: |
+          pnpm run check-format --check-write
+        continue-on-error: false
+
+      - name: Check TypeScript types (strict)
+        run: |
+          pnpm run check-types --pretty
+        continue-on-error: false
 
       - name: Create environment file from GitHub secrets
         run: |
           echo "${{ secrets.ENV_AUTH }}" > .env
 
-      - name: Lint code
-        run: pnpm run lint
-
-      - name: Check code formatting
-        run: pnpm run check-format
-
-      - name: Check TypeScript types
-        run: pnpm run check-types
-
       - name: Build project
-        run: pnpm run build
+        run: |
+          pnpm run build
+        continue-on-error: false
+
+      - name: Check build output size
+        run: |
+          BUILD_SIZE=$(du -sh .next | cut -f1)
+          echo "Build size: $BUILD_SIZE"
+
+          BUILD_SIZE_BYTES=$(du -sb .next | cut -f1)
+          MAX_SIZE=$((500 * 1024 * 1024)) # 500MB
+          if [ "$BUILD_SIZE_BYTES" -gt "$MAX_SIZE" ]; then
+            echo "❌ Build size exceeds 500MB limit!"
+            exit 1
+          fi
+          echo "✅ Build size check passed"
