@@ -19,7 +19,7 @@ jobs:
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
             # 1. Go to the frontend directory
-            cd open-school/prod/open-school-portal-FE
+            cd /home/open-school/prod/open-school-portal-FE
             
             # 2. Extract the artifact
             tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
@@ -27,7 +27,10 @@ jobs:
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
             
-            # 4. Restart PM2 process using ecosystem config
+            # 4. Install/update dependencies
+            pnpm install --frozen-lockfile --prod
+            
+            # 5. Restart PM2 process using ecosystem config
             pm2 reload ecosystem.config.cjs || pm2 restart osp-fe-prod --update-env
             pm2 save
           '
