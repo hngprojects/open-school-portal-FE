@@ -6,6 +6,7 @@ import {
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
 import { useTeacherStore } from "@/store/general-auth-store"
 import { User } from "@/types/user"
+import { useRouter } from "next/navigation"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -117,6 +118,7 @@ export const teacherFormConfig: NewPersonFormConfig = {
 
 export default function NewTeacherForm() {
   const addTeacher = useTeacherStore((state) => state.addTeacher)
+  const router = useRouter()
 
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
@@ -143,7 +145,7 @@ export default function NewTeacherForm() {
     const newTeacher = {
       id,
       name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@school.com`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@openschoolportal.com`,
       subject: randomSubject, // Placeholder subject
       role: "teacher",
       employeeId: id,
@@ -153,6 +155,7 @@ export default function NewTeacherForm() {
     }
 
     await addTeacher(newTeacher)
+    router.push("/admin/teachers")
     console.log("Teacher added successfully!")
   }
 }
