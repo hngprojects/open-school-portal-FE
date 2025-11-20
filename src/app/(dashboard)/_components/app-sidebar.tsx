@@ -58,7 +58,6 @@ const items = [
       { title: "Record Payment", url: "/fees/record-payment" },
     ],
   },
-
 ]
 
 export function AppSidebar() {

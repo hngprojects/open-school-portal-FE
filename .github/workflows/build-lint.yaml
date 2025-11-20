@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: hng-13-runner
+    runs-on: self-hosted
     timeout-minutes: 10
 
     steps:
@@ -51,12 +51,3 @@ jobs:
 
       - name: Build project
         run: pnpm run build
-
-      - name: Archive Build Artifacts
-        run: |
-          tar -czf open-school-portal-fe.tar.gz .next public package.json next.config.ts tsconfig.json pnpm-lock.yaml ecosystem.config.mjs .env
-
-      - name: Copy Artifacts to Server
-        run: |
-          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/staging/open-school-portal-fe-artifact.tar.gz
-          rm -f open-school-portal-fe.tar.gz
