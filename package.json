@@ -6,12 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 3002",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "check-types": "tsc --noEmit",
+    "check-types": "tsc --noEmit --pretty",
+    "type-check": "tsc --noEmit --pretty",
     "commitlint": "commitlint --edit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ci": "pnpm run lint && pnpm run check-format && pnpm run check-types && pnpm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

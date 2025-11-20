@@ -20,7 +20,9 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
   const [subscribed, setSubscribed] = React.useState<boolean>(false)
 
   const handleNotify = () => {
-    if (!email) alert("Please enter your email address.")
+    if (!email) {
+      console.warn("Please enter your email address.")
+    }
 
     if (email) {
       setSubscribed(true)
