@@ -1,5 +1,5 @@
 import { apiFetch } from "./client"
-import type { AuthApiResponse, LoginPayload } from "@/types/auth"
+import type { AuthApiResponse, LoginPayload, SignUpPayload } from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"
 const REFRESH_PATH = "/api/auth/refresh"
@@ -9,6 +9,13 @@ export type RefreshResponse = AuthApiResponse<Record<string, unknown>>
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   return apiFetch<LoginResponse>(LOGIN_PATH, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+}
+
+export const signUp = async (payload: SignUpPayload): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>("/api/auth/signup", {
     method: "POST",
     body: JSON.stringify(payload),
   })
