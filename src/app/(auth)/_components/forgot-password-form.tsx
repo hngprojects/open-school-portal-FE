@@ -3,23 +3,21 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { AlertCircle, MailCheck } from "lucide-react"
+import { AlertCircle, MailCheck, Loader2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "@/lib/schemas/auth"
+import { sendForgotPasswordEmail } from "@/lib/api/auth"
 import { useAuthStore } from "@/store/auth-store"
 
 const AUTH_SECTION_STYLES =
   "flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8"
-const BUTTON_STYLES =
-  "w-full bg-[#DA3743] py-3 text-white hover:bg-[#C32F3A] disabled:bg-[#DA3743] disabled:text-white disabled:opacity-100"
+const BUTTON_STYLES = "w-full disabled:-cursor-not-allowed disabled:opacity-100"
 
-const initialValues: ForgotPasswordFormValues = {
-  email: "",
-}
+const initialValues: ForgotPasswordFormValues = { email: "" }
 
-const ForgotPasswordForm = () => {
+export default function ForgotPasswordForm() {
   const [formData, setFormData] = useState(initialValues)
   const [error, setError] = useState<string | undefined>(undefined)
   const [touched, setTouched] = useState(false)
@@ -35,8 +33,8 @@ const ForgotPasswordForm = () => {
     return result.success ? undefined : result.error.issues[0]?.message
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
     setFormData({ email: value })
 
     if (touched) {
@@ -45,16 +43,15 @@ const ForgotPasswordForm = () => {
   }
 
   const handleBlur = () => {
-    if (!touched) {
-      setTouched(true)
-    }
+    if (!touched) setTouched(true)
     setError(getEmailError(formData.email))
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setTouched(true)
 
+    // Validate with Zod
     const validation = forgotPasswordSchema.safeParse(formData)
     if (!validation.success) {
       setError(validation.error.flatten().fieldErrors.email?.[0])
@@ -63,9 +60,17 @@ const ForgotPasswordForm = () => {
 
     setIsSubmitting(true)
     setError(undefined)
-    setPendingEmail(validation.data.email)
-    setIsSubmitted(true)
-    setIsSubmitting(false)
+
+    try {
+      await sendForgotPasswordEmail(validation.data.email)
+      setPendingEmail(validation.data.email)
+      setIsSubmitted(true)
+    } catch {
+      setError("Failed to send reset link. Please try again later.")
+      setIsSubmitted(false)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const submittedEmail = pendingEmail ?? formData.email
@@ -99,9 +104,11 @@ const ForgotPasswordForm = () => {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600">
               <MailCheck className="h-8 w-8" />
             </div>
+
             <Button asChild className={BUTTON_STYLES}>
               <Link href="/login">Back to Login</Link>
             </Button>
+
             <p className="text-sm text-gray-600">
               Didn&apos;t receive the email? Check your spam folder or try again later.
             </p>
@@ -112,6 +119,7 @@ const ForgotPasswordForm = () => {
               <label htmlFor="email" className="block text-sm font-medium text-gray-900">
                 Email Address
               </label>
+
               <div className="mt-2">
                 <Input
                   id="email"
@@ -126,17 +134,25 @@ const ForgotPasswordForm = () => {
                     error && touched ? "border-red-500 bg-red-50" : "border-gray-300"
                   }`}
                 />
-                {touched && error ? (
+
+                {touched && error && (
                   <p className="mt-2 flex items-center gap-2 text-sm text-red-600">
                     <AlertCircle className="h-4 w-4" />
                     <span>{error}</span>
                   </p>
-                ) : null}
+                )}
               </div>
             </div>
 
             <Button type="submit" disabled={isSubmitting} className={BUTTON_STYLES}>
-              {isSubmitting ? "Sending..." : "Send Reset Link"}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
+                  Sending...
+                </div>
+              ) : (
+                "Send Reset Link"
+              )}
             </Button>
           </form>
         )}
@@ -151,5 +167,3 @@ const ForgotPasswordForm = () => {
     </section>
   )
 }
-
-export default ForgotPasswordForm
