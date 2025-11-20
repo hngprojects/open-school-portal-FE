@@ -43,6 +43,7 @@ const items = [
   { title: "Teachers", url: "/teachers", icon: Users },
   { title: "Students", url: "/students", icon: GraduationCap },
   { title: "Parents", url: "/parents", icon: User },
+
   { title: "Attendance", url: "/attendance", icon: File },
   { title: "Timetable", url: "/timetable", icon: Table },
   { title: "Results", url: "/results", icon: Table },
@@ -57,6 +58,7 @@ const items = [
       { title: "Record Payment", url: "/fees/record-payment" },
     ],
   },
+
 ]
 
 export function AppSidebar() {
