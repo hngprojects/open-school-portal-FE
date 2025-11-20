@@ -6,6 +6,7 @@ import { UsersTable } from "./users-table"
 import { UsersGrid } from "./users-grid"
 import { UsersToolbar } from "./users-toolbar"
 import { Pagination } from "../ui/pagination"
+import { useRouter } from "next/navigation"
 
 interface UsersViewProps {
   users: User[]
@@ -15,6 +16,8 @@ interface UsersViewProps {
     mobile: number
   }
   onAddUser: () => void
+  onEditUser?: (user: User) => void
+  onDeleteUser?: (user: User) => void
 }
 
 export function UsersView({
@@ -22,6 +25,8 @@ export function UsersView({
   userType,
   pageSize = { desktop: 10, mobile: 4 },
   onAddUser,
+  onEditUser,
+  onDeleteUser,
 }: UsersViewProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
@@ -62,6 +67,8 @@ export function UsersView({
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
+
+  const router = useRouter()
 
   return (
     <div className="mx-auto max-w-[1112px] p-4 md:p-6">

@@ -23,6 +23,7 @@ interface UsersToolbarProps {
 }
 
 export function UsersToolbar({
+  userType,
   searchQuery,
   onSearchChange,
   statusFilter,
@@ -31,42 +32,45 @@ export function UsersToolbar({
 }: UsersToolbarProps) {
   const [open, setOpen] = useState(false)
 
+  const isTeacher = userType === "teachers"
+  const title = isTeacher ? "Teachers" : "Students"
+  const description = isTeacher ? "Manage your teaching staff" : "Manage all students"
+  const placeholder = isTeacher ? "Search teachers..." : "Search students..."
+  const addButtonText = isTeacher ? "Add Teacher" : "Add Student"
+  const filterAllText = isTeacher ? "All Teachers" : "All Students"
+
   return (
     <div className="mt-2 mb-6 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Teachers</h1>
-          <p className="text-muted-foreground">Manage your teaching staff</p>
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          <p className="text-muted-foreground">{description}</p>
         </div>
-
         <Button
           onClick={onAddUser}
           className="w-full rounded-xl font-medium sm:w-auto lg:w-[357px]"
         >
           <Plus className="mr-2 h-5 w-5" />
-          Add Teacher
+          {addButtonText}
         </Button>
       </div>
-
       <div className="flex flex-row gap-3 sm:flex-row">
         <div className="relative flex-1">
           <Search className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
           <Input
-            placeholder="Search teachers..."
+            placeholder={placeholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="placeholder:text-muted-foreground/70 h-11 rounded-lg border bg-white pl-11 text-base sm:w-auto lg:w-[272px]"
           />
         </div>
-
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className={`h-12 justify-between rounded-lg border font-normal transition-colors ${open ? "bg-red-100" : ""} `}
+              className={`h-12 justify-between rounded-lg border font-normal transition-colors ${open ? "bg-red-100" : ""}`}
             >
               <ListFilter className="text-muted-foreground hidden h-4 w-4 lg:block" />
-
               {open ? (
                 <ChevronUp className="text-muted-foreground h-4 w-4 lg:hidden" />
               ) : (
@@ -74,13 +78,12 @@ export function UsersToolbar({
               )}
             </Button>
           </DropdownMenuTrigger>
-
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuRadioGroup
               value={statusFilter}
               onValueChange={onStatusFilterChange}
             >
-              <DropdownMenuRadioItem value="all">All Teachers</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="all">{filterAllText}</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="active">Active</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="inactive">Inactive</DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
