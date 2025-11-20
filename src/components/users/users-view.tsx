@@ -6,6 +6,7 @@ import { UsersTable } from "./users-table"
 import { UsersGrid } from "./users-grid"
 import { UsersToolbar } from "./users-toolbar"
 import { Pagination } from "../ui/pagination"
+import { useRouter } from "next/navigation"
 
 interface UsersViewProps {
   users: User[]
@@ -61,6 +62,8 @@ export function UsersView({
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const router = useRouter()
+
   return (
     <div className="mx-auto max-w-[1112px] p-4 md:p-6">
       <UsersToolbar
@@ -69,7 +72,9 @@ export function UsersView({
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        onAddUser={() => console.log(`Add ${userType}`)}
+        onAddUser={() =>
+          router.push(userType === "teachers" ? "/teachers/new" : "/students/new")
+        }
       />
 
       <div className="hidden md:block">

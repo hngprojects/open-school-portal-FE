@@ -20,7 +20,12 @@ interface UsersTableProps {
   itemsPerPage: number
 }
 
-export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps) {
+export function UsersTable({
+  users,
+  userType,
+  currentPage,
+  itemsPerPage,
+}: UsersTableProps) {
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -41,16 +46,17 @@ export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps
         return "outline"
     }
   }
-
+  const isTeacher = userType === "teachers"
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-16">S/N</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Employee Number</TableHead>
-            <TableHead>Email</TableHead>
+            <TableHead>{isTeacher ? "Name" : "Student"}</TableHead>
+            <TableHead>{isTeacher ? "Employee Number" : "Reg Number"}</TableHead>
+            {isTeacher ? <TableHead>Email</TableHead> : <TableHead>Class</TableHead>}
+            {!isTeacher && <TableHead>Address</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Phone Number</TableHead>
             <TableHead className="w-20">Actions</TableHead>
@@ -69,22 +75,23 @@ export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps
                   <span className="font-medium">{user.name}</span>
                 </div>
               </TableCell>
-              <TableCell>{user.employeeId}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">{user.email}</div>
-              </TableCell>
+              <TableCell>{isTeacher ? user.employeeId : user.regNumber}</TableCell>
+              {isTeacher ? (
+                <TableCell>{user.email}</TableCell>
+              ) : (
+                <>
+                  <TableCell>{user.class}</TableCell>
+                  <TableCell>{user.address}</TableCell>
+                </>
+              )}
               <TableCell>
                 <Badge variant={getStatusVariant(user.status)}>{user.status}</Badge>
               </TableCell>
               <TableCell>{user.phone}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1 text-[#da3743]">
-                  <span>
-                    <Trash2 className="cursor-pointer text-[14px]" />
-                  </span>
-                  <span>
-                    <Edit3 className="cursor-pointer text-[14px]" />
-                  </span>
+                  <Trash2 className="cursor-pointer text-[14px]" />
+                  <Edit3 className="cursor-pointer text-[14px]" />
                 </div>
               </TableCell>
             </TableRow>

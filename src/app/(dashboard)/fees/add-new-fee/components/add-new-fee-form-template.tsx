@@ -1,8 +1,9 @@
 "use client"
 
-import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm, useWatch } from "react-hook-form"
 import { z } from "zod"
-import { useState, useEffect } from "react"
+import { useMemo, useState } from "react"
 import { Save, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -35,7 +36,7 @@ const formSchema = z.object({
     .string()
     .regex(/^\d+$/, "Amount must be a number")
     .min(1, "Amount is required"),
-  status: z.boolean().default(true),
+  status: z.boolean(),
   description: z.string().optional(),
 })
 
@@ -44,24 +45,14 @@ type FormData = z.infer<typeof formSchema>
 export function AddNewFeeForm() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false)
 
-  const [summary, setSummary] = useState<
-    FormData & { className?: string; termName?: string }
-  >({
-    feeName: "Tuition",
-    termSession: "2024/2025",
-    class: "JSSB2",
-    amount: "175000",
-    status: true,
-    description: "",
-  })
-
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       feeName: "Tuition",
       termSession: "2024/2025",
@@ -73,26 +64,24 @@ export function AddNewFeeForm() {
   })
 
   // === Watch fields ===
-  const feeName = watch("feeName")
-  const termSession = watch("termSession")
-  const classValue = watch("class")
-  const amount = watch("amount")
-  const status = watch("status")
-  const description = watch("description")
+  const [feeName, termSession, classValue, amount, status, description] = useWatch({
+    control,
+    name: ["feeName", "termSession", "class", "amount", "status", "description"],
+  })
 
-  // === Update summary ===
-  useEffect(() => {
-    setSummary({
-      feeName,
-      termSession,
-      class: classValue,
-      amount,
-      status,
-      description,
-      className: classValue,
-      termName: termSession,
-    })
-  }, [feeName, termSession, classValue, amount, status, description])
+  const summary = useMemo(
+    () => ({
+      feeName: feeName ?? "",
+      termSession: termSession ?? "",
+      class: classValue ?? "",
+      amount: amount ?? "",
+      status: Boolean(status),
+      description: description ?? "",
+      className: classValue ?? "",
+      termName: termSession ?? "",
+    }),
+    [feeName, termSession, classValue, amount, status, description]
+  )
 
   const onSubmit = async (data: FormData) => {
     console.log("Fee created successfully:", data)

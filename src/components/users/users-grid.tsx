@@ -17,7 +17,7 @@ interface UsersGridProps {
   userType: UserType
 }
 
-export function UsersGrid({ users }: UsersGridProps) {
+export function UsersGrid({ users, userType }: UsersGridProps) {
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -25,6 +25,8 @@ export function UsersGrid({ users }: UsersGridProps) {
       .join("")
       .toUpperCase()
   }
+
+  const isTeacher = userType === "teachers"
 
   return (
     <div className="grid gap-4">
@@ -41,12 +43,11 @@ export function UsersGrid({ users }: UsersGridProps) {
                   <h3 className="font-semibold">{user.name}</h3>
                   <div className="mt-1 flex items-center gap-1">
                     <span className="text-muted-foreground text-sm">
-                      {user.employeeId}
+                      {isTeacher ? user.employeeId : user.regNumber}
                     </span>
                   </div>
                 </div>
               </div>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="link" className="h-8 w-8 p-0">
@@ -60,22 +61,35 @@ export function UsersGrid({ users }: UsersGridProps) {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
             <div className="mt-4 grid grid-cols-1 gap-2 text-sm">
-              <div className="flex items-center justify-between pb-2">
-                <p className="text-muted-foreground">Email:</p>
-                <p className="text-right font-medium">{user.email}</p>
-              </div>
-
-              <div className="flex items-center justify-between pb-2">
-                <span className="text-muted-foreground">Subject:</span>
-                <p>{user.role}</p>
-              </div>
-
+              {!isTeacher && (
+                <>
+                  <div className="flex items-center justify-between pb-2">
+                    <p className="text-muted-foreground">Class:</p>
+                    <p className="text-right font-medium">{user.class}</p>
+                  </div>
+                  <div className="flex items-center justify-between pb-2">
+                    <p className="text-muted-foreground">Guardian:</p>
+                    <p className="text-right font-medium">{user.guardian}</p>
+                  </div>
+                </>
+              )}
+              {isTeacher && (
+                <div className="flex items-center justify-between pb-2">
+                  <span className="text-muted-foreground">Subject:</span>
+                  <p>{user.role}</p>
+                </div>
+              )}
               <div className="flex items-center justify-between pb-2">
                 <p className="text-muted-foreground">Phone No:</p>
                 <p className="font-medium">{user.phone}</p>
               </div>
+              {!isTeacher && (
+                <div className="flex items-center justify-between pb-2">
+                  <p className="text-muted-foreground">Address:</p>
+                  <p className="text-right text-xs">{user.address}</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
