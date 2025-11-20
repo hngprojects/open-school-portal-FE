@@ -14,12 +14,14 @@ interface UsersViewProps {
     desktop: number
     mobile: number
   }
+  onAddUser: () => void
 }
 
 export function UsersView({
   users,
   userType,
   pageSize = { desktop: 10, mobile: 4 },
+  onAddUser,
 }: UsersViewProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
@@ -69,7 +71,7 @@ export function UsersView({
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        onAddUser={() => console.log(`Add ${userType}`)}
+        onAddUser={onAddUser}
       />
 
       <div className="hidden md:block">
