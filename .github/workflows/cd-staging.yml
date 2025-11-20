@@ -1,16 +1,16 @@
 name: Deployment Pipeline
 on:
   workflow_run:
-    workflows: ["CI Pipeline"]
+    workflows: ["CI Pipeline Staging"]
     types:
       - completed
     branches:
-      - dev
+      - staging
   workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: hng-13-runner
+    runs-on: self-hosted
     timeout-minutes: 10
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
@@ -19,7 +19,7 @@ jobs:
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
             # 1. Go to the frontend directory
-            cd /home/open-school-portal/fe-staging/open-school-portal-FE
+            cd open-school/staging/open-school-portal-FE
             
             # 2. Extract the artifact
             tar -xzf /tmp/open-school-portal-fe-artifact.tar.gz
@@ -27,6 +27,7 @@ jobs:
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
             
-            # 4. Restart PM2 process
-            pm2 restart fe-staging --update-env || (PORT=3002 pm2 start npm --name fe-staging -- run start && pm2 save)
+            # 4. Restart PM2 process using ecosystem config
+            pm2 reload ecosystem.config.cjs || pm2 restart osp-fe-staging --update-env
+            pm2 save
           '

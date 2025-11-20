@@ -1,14 +1,14 @@
-name: CI Pipeline
+name: CI Pipeline Staging
 on:
   pull_request:
     branches:
-      - dev
+      - staging
     paths-ignore:
       - "README.md"
       - ".github/workflows/**"
   push:
     branches:
-      - dev
+      - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
