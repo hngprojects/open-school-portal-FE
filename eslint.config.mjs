@@ -30,7 +30,7 @@ const eslintConfig = defineConfig([
       // Note: Most React rules are already included in nextVitals config
       // Next.js specific (these are safe to override)
       "@next/next/no-html-link-for-pages": "error",
-      "@next/next/no-img-element": "warn"
+      "@next/next/no-img-element": "warn",
     },
   },
 ])
