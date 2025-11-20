@@ -1,5 +1,6 @@
 import React from "react"
 import Image from "next/image"
+import Link from "next/link"
 
 const HomeDemo: React.FC = () => {
   return (
@@ -93,17 +94,19 @@ const HomeDemo: React.FC = () => {
                 It&apos;s just getting started
               </p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-                <button
-                  className="rounded-lg bg-white px-6 py-3 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100 sm:px-8"
-                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                >
-                  Get Started
-                </button>
+                <Link href="/login">
+                  <button
+                    className="rounded-lg bg-white px-6 py-3 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100 sm:px-8"
+                    style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
+                  >
+                    Get Started
+                  </button>
+                </Link>
                 <button
                   className="hover:bg-opacity-10 rounded-lg border border-white px-6 py-3 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white sm:px-8"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
-                  Watch Demo
+                  <Link href="/demo">Watch Demo</Link>
                 </button>
               </div>
             </div>

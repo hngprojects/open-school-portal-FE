@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: hng-13-runner
     timeout-minutes: 10
 
     steps:

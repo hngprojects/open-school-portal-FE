@@ -1,17 +1,17 @@
+import React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import React from "react"
 import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
 
 const quickLinks = [
-  { name: "Benefit", href: "/benefit" },
+  { name: "Benefit", href: "/coming-soon" },
   { name: "Features", href: "/features" },
-  { name: "Who it's for", href: "/who-its-for" },
+  { name: "Who it's for", href: "/coming-soon" },
 ]
 const support = [
-  { name: "FAQs", href: "/faq" },
-  { name: "Contact Us", href: "/contact-us" },
-  { name: "Mail Support", href: "/mail-support" },
+  { name: "FAQs", href: "/#faq" },
+  { name: "Contact Us", href: "/coming-soon" },
+  { name: "Mail Support", href: "/coming-soon" },
 ]
 
 const Footer = () => {
@@ -47,7 +47,7 @@ const Footer = () => {
           <h3 className="text-lg font-bold lg:text-xl">Quick Links</h3>
           <ul className="flex flex-col gap-4">
             {quickLinks.map((link) => (
-              <li key={link.href}>
+              <li key={`${link.name}-${link.href}`}>
                 <Link href={link.href}>{link.name}</Link>
               </li>
             ))}
@@ -57,7 +57,7 @@ const Footer = () => {
           <h3 className="text-lg font-bold lg:text-xl">Support</h3>
           <ul className="flex flex-col gap-4">
             {support.map((link) => (
-              <li key={link.href}>
+              <li key={`${link.name}-${link.href}`}>
                 <Link href={link.href}>{link.name}</Link>
               </li>
             ))}
