@@ -108,7 +108,7 @@ export function AddNewFeeForm() {
           <form className="space-y-8" onSubmit={handleSubmit(onSubmit)}>
             {/* Fee Name */}
             <div className="space-y-2">
-              <Label className="mb-5 text-[19px]">Fee Name</Label>
+              <Label className="mb-5 text-[16px] font-semibold">Fee Name</Label>
               <Select
                 defaultValue="Tuition"
                 onValueChange={(v) => setValue("feeName", v)}
@@ -129,7 +129,7 @@ export function AddNewFeeForm() {
             {/* Term & Class */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Term/Session</Label>
+                <Label className="text-[16px] font-semibold">Term/Session</Label>
                 <Select
                   defaultValue="2024/2025"
                   onValueChange={(v) => setValue("termSession", v)}
@@ -145,7 +145,7 @@ export function AddNewFeeForm() {
               </div>
 
               <div className="space-y-2">
-                <Label>Class</Label>
+                <Label className="text-[16px] font-semibold">Class</Label>
                 <Select defaultValue="JSSB2" onValueChange={(v) => setValue("class", v)}>
                   <SelectTrigger className="w-[150px] md:w-[240px]">
                     <SelectValue />
@@ -161,7 +161,7 @@ export function AddNewFeeForm() {
 
             {/* Amount */}
             <div className="space-y-2">
-              <Label>Amount</Label>
+              <Label className="p-2 font-semibold">Amount</Label>
               <Input
                 placeholder=""
                 {...register("amount")}
@@ -174,9 +174,11 @@ export function AddNewFeeForm() {
 
             {/* Status */}
             <div className="gap-4">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status" className="p-2 text-[16px] font-semibold">
+                Status
+              </Label>
 
-              <div className="flex justify-between pt-2">
+              <div className="flex justify-between pl-2">
                 <span className="text-muted-foreground text-sm">
                   Set the fee group as active or inactive
                 </span>
@@ -191,7 +193,9 @@ export function AddNewFeeForm() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label>Description (Optional)</Label>
+              <Label className="p-2 text-[16px] font-semibold">
+                Description <span className="font-normal">(Optional)</span>
+              </Label>
               <Textarea
                 placeholder="Add a short description for this fee group..."
                 rows={4}
@@ -201,10 +205,17 @@ export function AddNewFeeForm() {
 
             {/* Buttons */}
             <div className="flex gap-4 pt-8">
-              <Button type="button" variant="outline" className="px-8 text-[16px]">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 w-30 px-8 text-[16px]"
+              >
                 Cancel
               </Button>
-              <Button type="submit" className="bg-red-600 text-[16px] hover:bg-red-700">
+              <Button
+                type="submit"
+                className="h-12 w-30 bg-red-600 text-[16px] hover:bg-red-700"
+              >
                 <Save className="h-10 w-10" />
                 Save
               </Button>
@@ -241,7 +252,9 @@ export function AddNewFeeForm() {
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Status</span>
+                <span className="text-muted-foreground p-2 text-[16px] font-semibold">
+                  Status
+                </span>
                 <Badge
                   className={summary.status ? "bg-green-100" : "bg-red-200 text-red-600"}
                 >
@@ -263,7 +276,7 @@ export function AddNewFeeForm() {
       {/*  GLOBAL OVERLAY TO BLOCK SIDEBAR */}
 
       {isSuccessModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/10 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[100] bg-black/10 backdrop-blur-[2px]" />
       )}
 
       <Dialog open={isSuccessModalOpen} onOpenChange={setIsSuccessModalOpen}>
