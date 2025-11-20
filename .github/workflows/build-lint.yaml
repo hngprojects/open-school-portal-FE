@@ -2,13 +2,13 @@ name: CI Pipeline
 on:
   pull_request:
     branches:
-      - dev
+      - staging
     paths-ignore:
       - "README.md"
       - ".github/workflows/**"
   push:
     branches:
-      - dev
+      - staging
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: hng-13-runner
     timeout-minutes: 10
 
     steps:
@@ -58,5 +58,5 @@ jobs:
 
       - name: Copy Artifacts to Server
         run: |
-          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/open-school-portal-fe-artifact.tar.gz
+          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/staging/open-school-portal-fe-artifact.tar.gz
           rm -f open-school-portal-fe.tar.gz

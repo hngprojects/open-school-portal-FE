@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Loader2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { useAuthStore } from "@/store/auth-store"
+import { loginUsingEmail } from "@/lib/api/auth"
 
 type LoginField = keyof LoginFormValues
 
@@ -36,8 +36,11 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showWarningModal, setShowWarningModal] = useState(false)
   const [showLockedModal, setShowLockedModal] = useState(false)
-  const [isLocked] = useState(false)
-  const setAuthSession = useAuthStore((state) => state.setAuthSession)
+  const [isLocked, setIsLocked] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [attemptCount, setAttemptCount] = useState(0)
+
+  // const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
   const getFieldError = (field: LoginField, value: string) => {
     const schema = loginSchema.shape[field]
@@ -70,19 +73,22 @@ const LoginForm = () => {
     syncFieldError(field, formData[field])
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
+    // Check if account is locked
     if (isLocked) {
       setShowLockedModal(true)
       return
     }
 
+    // Mark all fields as touched
     setTouched({
       email: true,
       password: true,
     })
 
+    // Validate form data
     const validation = loginSchema.safeParse(formData)
     if (!validation.success) {
       const { fieldErrors } = validation.error.flatten()
@@ -93,12 +99,42 @@ const LoginForm = () => {
       return
     }
 
+    setIsLoading(true)
     setErrors({})
-    setAuthSession({ email: validation.data.email })
 
-    // ============================================================
-    // TODO: Replace with API integration
-    // ============================================================
+    try {
+      await loginUsingEmail(formData)
+
+      // Successful login - set auth session
+      // setAuthSession(response)
+
+      // Reset attempt count on success
+      setAttemptCount(0)
+    } catch (error) {
+      console.error("Login error:", error)
+
+      // Increment attempt count
+      const newAttemptCount = attemptCount + 1
+      setAttemptCount(newAttemptCount)
+
+      // Show warning after 3 attempts
+      if (newAttemptCount === 3) {
+        setShowWarningModal(true)
+      }
+
+      // Lock account after 5 attempts
+      if (newAttemptCount >= 5) {
+        setIsLocked(true)
+        setShowLockedModal(true)
+      }
+
+      // Set error message
+      setErrors({
+        password: "Wrong password. Try again",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const renderError = (field: LoginField) => {
@@ -148,13 +184,13 @@ const LoginForm = () => {
                   value={formData.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   aria-invalid={touched.email && Boolean(errors.email)}
                   className={`w-full ${
                     errors.email && touched.email
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
-                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                  } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
                 />
                 {renderError("email")}
               </div>
@@ -177,31 +213,32 @@ const LoginForm = () => {
                   value={formData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   aria-invalid={touched.password && Boolean(errors.password)}
                   className={`w-full pr-10 ${
                     errors.password && touched.password
                       ? "border-red-500 bg-red-50"
                       : "border-gray-300"
-                  } ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
+                  } ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  disabled={isLocked}
+                  disabled={isLoading}
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
                     <Image
                       src="/assets/images/auth/show-password-icon.png"
-                      alt="Hide password"
+                      alt=""
                       width={16}
                       height={16}
                     />
                   ) : (
                     <Image
                       src="/assets/images/auth/hide-password-icon.png"
-                      alt="Show password"
+                      alt=""
                       width={16}
                       height={16}
                     />
@@ -218,13 +255,13 @@ const LoginForm = () => {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  disabled={isLocked}
-                  className="h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                  className="accent-accent h-4 w-4 rounded"
                 />
                 <label
                   htmlFor="remember-me"
                   className={`ml-2 block text-sm text-gray-900 ${
-                    isLocked ? "opacity-50" : ""
+                    isLoading ? "opacity-50" : ""
                   }`}
                 >
                   Remember me
@@ -234,8 +271,8 @@ const LoginForm = () => {
               <div className="text-sm">
                 <Link
                   href="/forgot-password"
-                  className={`font-medium text-black hover:text-gray-800 ${
-                    isLocked ? "pointer-events-none opacity-50" : ""
+                  className={`text-accent font-medium hover:underline ${
+                    isLoading ? "pointer-events-none opacity-50" : ""
                   }`}
                 >
                   Forgot password?
@@ -246,10 +283,14 @@ const LoginForm = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              disabled={isLocked}
-              className="w-full bg-[#DA3743] py-3 text-white hover:bg-[#C32F3A] disabled:cursor-not-allowed disabled:bg-[#DA3743] disabled:text-white disabled:opacity-100"
+              disabled={isLoading}
+              className="w-full disabled:cursor-not-allowed"
             >
-              {isLocked ? "Account Locked" : "Sign In"}
+              {isLoading ? (
+                <Loader2Icon className="mx-auto h-5 w-5 animate-spin" />
+              ) : (
+                "Sign In"
+              )}
             </Button>
           </form>
         </div>
@@ -276,21 +317,14 @@ const LoginForm = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button
-              onClick={() => setShowWarningModal(false)}
-              className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]"
-            >
+            <Button onClick={() => setShowWarningModal(false)} className="w-full">
               Try again
             </Button>
-            <Button
-              onClick={() => {
-                setShowWarningModal(false)
-              }}
-              variant="outline"
-              className="w-full border border-[#DA3743] bg-white text-[#DA3743] hover:bg-red-50"
-            >
-              Forgot Password
-            </Button>
+            <Link href="/forgot-password" className="w-full">
+              <Button variant="outline" className="w-full">
+                Forgot Password
+              </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -316,14 +350,11 @@ const LoginForm = () => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button
-              onClick={() => {
-                setShowLockedModal(false)
-              }}
-              className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]"
-            >
-              Forgot Password
-            </Button>
+            <Link href="/forgot-password" className="w-full">
+              <Button className="w-full bg-[#DA3743] text-white hover:bg-[#C32F3A]">
+                Forgot Password
+              </Button>
+            </Link>
             <Button
               onClick={() => setShowLockedModal(false)}
               variant="outline"
