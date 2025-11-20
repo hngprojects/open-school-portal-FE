@@ -1,5 +1,6 @@
 import React from "react"
-import { Users, GraduationCap, File, Book, MoveUp } from "lucide-react"
+import { MoveUp } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 import {
   Card,
@@ -10,47 +11,35 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-const StatData = [
-  {
-    name: "Total Students",
-    quantity: 3.6,
-    percentage: 10,
-    icon: GraduationCap,
-  },
-  {
-    name: "Total Teachers",
-    quantity: 150,
-    percentage: 10,
-    icon: Users,
-  },
-  {
-    name: "Total Parents",
-    quantity: 300,
-    percentage: 10,
-    icon: File,
-  },
-  {
-    name: "Total Classes",
-    quantity: 50,
-    percentage: 10,
-    icon: Book,
-  },
-]
+// Define the shape of one stat item
+export interface StatItem {
+  name: string
+  quantity: number
+  percentage: number
+  icon: LucideIcon
+}
 
-const StatCard = () => {
+// Define the props for the component
+interface StatCardProps {
+  stats: StatItem[]
+}
+
+const StatCard: React.FC<StatCardProps> = ({ stats }) => {
   return (
     <div className="mt-[33px] grid grid-cols-1 gap-6 md:grid-cols-2 lg:h-[151px] lg:grid-cols-4">
-      {StatData.map((stat, i) => (
-        <Card key={i}>
+      {stats.map((stat, index) => (
+        <Card key={index}>
           <CardHeader className="flex items-center gap-1">
             <stat.icon className="text-accent text-2xl" />
             <CardTitle className="text-text-secondary text-xl">{stat.name}</CardTitle>
           </CardHeader>
+
           <CardContent>
             <CardDescription className="text-primary text-[28px] leading-9 font-semibold">
               {stat.quantity}
             </CardDescription>
           </CardContent>
+
           <CardFooter>
             <p className="flex size-1 w-full items-center gap-1 text-sm text-[#686868]">
               <MoveUp className="text-secondary size-3" />
