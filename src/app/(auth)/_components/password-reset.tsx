@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "motion/react"
 
 import PasswordResetSuccess from "./password-reset-success"
@@ -25,7 +25,6 @@ const initialValues: ResetPasswordFormValues = {
 
 const PasswordReset = () => {
   const searchParams = useSearchParams()
-  const router = useRouter()
 
   const token = useMemo(() => {
     const t = searchParams.get("token")

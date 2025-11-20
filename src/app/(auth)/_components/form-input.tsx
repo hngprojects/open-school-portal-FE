@@ -16,7 +16,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { useAuthStore } from "@/store/auth-store"
 import { loginUsingEmail } from "@/lib/api/auth"
 
 type LoginField = keyof LoginFormValues
@@ -41,7 +40,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  const setAuthSession = useAuthStore((state) => state.setAuthSession)
+  // const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
   const getFieldError = (field: LoginField, value: string) => {
     const schema = loginSchema.shape[field]
@@ -104,7 +103,7 @@ const LoginForm = () => {
     setErrors({})
 
     try {
-      const response = await loginUsingEmail(formData)
+      await loginUsingEmail(formData)
 
       // Successful login - set auth session
       // setAuthSession(response)

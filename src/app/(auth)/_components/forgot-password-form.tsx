@@ -65,7 +65,7 @@ export default function ForgotPasswordForm() {
       await sendForgotPasswordEmail(validation.data.email)
       setPendingEmail(validation.data.email)
       setIsSubmitted(true)
-    } catch (err) {
+    } catch {
       setError("Failed to send reset link. Please try again later.")
       setIsSubmitted(false)
     } finally {
