@@ -145,7 +145,7 @@ export default function NewTeacherForm() {
     const newTeacher = {
       id,
       name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@school.com`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@openschoolportal.com`,
       subject: randomSubject, // Placeholder subject
       role: "teacher",
       employeeId: id,

@@ -15,7 +15,7 @@ interface UsersViewProps {
     desktop: number
     mobile: number
   }
-  onAddUser: () => void
+  onAddUser?: () => void
   onEditUser?: (user: User) => void
   onDeleteUser?: (user: User) => void
 }
@@ -68,7 +68,10 @@ export function UsersView({
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  const router = useRouter()
+  const router = useRouter();
+  const navigate = ()=>{
+    router.push("/admin/" + userType)
+  }
 
   return (
     <div className="mx-auto max-w-[1112px] p-4 md:p-6">
@@ -78,7 +81,7 @@ export function UsersView({
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        onAddUser={onAddUser}
+        onAddUser={onAddUser ?? navigate}
       />
 
       <div className="hidden md:block">

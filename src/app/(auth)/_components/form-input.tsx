@@ -41,7 +41,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  const router = useRouter();
+  const router = useRouter()
 
   // const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
@@ -107,7 +107,7 @@ const LoginForm = () => {
 
     try {
       await loginUsingEmail(formData)
-      router.push("/admin");
+      router.push("/admin")
 
       // Successful login - set auth session
       // setAuthSession(response)
