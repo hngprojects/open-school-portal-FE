@@ -1,5 +1,14 @@
 import Image from "next/image"
-import { ArrowUpRight } from "lucide-react"
+import {
+  ArrowUpRight,
+  Users,
+  ClipboardCheck,
+  Monitor,
+  FileText,
+  ArrowRight,
+  Calendar,
+  CheckCircle,
+} from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,7 +29,7 @@ type StatItem = {
   label: string
   value: number
   delta: string
-  iconSrc: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 type ClassItem = {
@@ -45,7 +54,7 @@ type NotificationItem = {
   id: string
   title: string
   timeAgo: string
-  iconSrc: string
+  icon: React.ComponentType<{ className?: string }>
 }
 
 type PerformanceItem = {
@@ -56,36 +65,34 @@ type PerformanceItem = {
   accentTextClass: string
 }
 
-const arrowIconSrc = `${assetBasePath}/icons/icon-arrow-right.svg`
-
 const stats: StatItem[] = [
   {
     id: "attendance",
     label: "Take Attendance",
     value: 78,
     delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-attendance.svg`,
+    icon: Users,
   },
   {
     id: "result",
     label: "Result",
     value: 60,
     delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-result.svg`,
+    icon: ClipboardCheck,
   },
   {
     id: "classes",
     label: "Class",
     value: 10,
     delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-class.svg`,
+    icon: Monitor,
   },
   {
     id: "assignments",
     label: "Assignment",
     value: 8,
     delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-assignment.svg`,
+    icon: FileText,
   },
 ]
 
@@ -96,7 +103,7 @@ const todaysClasses: ClassItem[] = [
     className: "JSS2B",
     time: "09:00 AM - 10:00 AM",
     room: "Room 201",
-    image: `${assetBasePath}/mathematics-hero.png`,
+    image: `${assetBasePath}/classes/mathematics.png`,
   },
   {
     id: "physics",
@@ -104,7 +111,7 @@ const todaysClasses: ClassItem[] = [
     className: "SS2B",
     time: "11:00 AM - 12:00 PM",
     room: "Room 305",
-    image: `${assetBasePath}/physics-hero.png`,
+    image: `${assetBasePath}/classes/physics.png`,
   },
 ]
 
@@ -148,13 +155,13 @@ const notifications: NotificationItem[] = [
     id: "assembly",
     title: "School-wide assembly schedule for Friday, 10 AM",
     timeAgo: "2 hours ago",
-    iconSrc: `${assetBasePath}/icons/icon-notification-calendar.svg`,
+    icon: Calendar,
   },
   {
     id: "lab-approval",
     title: "Your supply request for new lab equipment has been approved",
     timeAgo: "Yesterday",
-    iconSrc: `${assetBasePath}/icons/icon-notification-approval.svg`,
+    icon: CheckCircle,
   },
 ]
 
@@ -209,7 +216,7 @@ export default function TeachersPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="relative flex size-10 items-center justify-center rounded-full bg-[#FBEBEC]">
-                  <Image src={stat.iconSrc} alt="" width={24} height={24} />
+                  <stat.icon className="size-6 text-[#E3383A]" />
                 </div>
                 <span className="text-lg font-medium text-[#535353]">{stat.label}</span>
               </div>
@@ -238,13 +245,7 @@ export default function TeachersPage() {
               className="group flex h-10 items-center gap-2 rounded-lg border border-[#D5D5D5] px-6 text-base font-medium text-[#535353]"
             >
               View All
-              <Image
-                src={arrowIconSrc}
-                alt=""
-                width={14}
-                height={8}
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              />
+              <ArrowRight className="size-3.5 text-[#2D2D2D] transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </div>
 
@@ -298,13 +299,7 @@ export default function TeachersPage() {
               className="group flex h-10 items-center gap-2 rounded-lg border border-[#D5D5D5] px-6 text-base font-medium text-[#535353]"
             >
               View All
-              <Image
-                src={arrowIconSrc}
-                alt=""
-                width={14}
-                height={8}
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              />
+              <ArrowRight className="size-3.5 text-[#2D2D2D] transition-transform duration-200 group-hover:translate-x-1" />
             </Button>
           </div>
           <div className="space-y-4 lg:hidden">
@@ -425,19 +420,25 @@ export default function TeachersPage() {
               Recent Notifications
             </h2>
             <div className="mt-6 space-y-6">
-              {notifications.map((notification) => (
-                <div key={notification.id} className="flex items-center gap-4">
-                  <div className="flex size-12 items-center justify-center rounded-full bg-[#FBEBEC]">
-                    <Image src={notification.iconSrc} alt="" width={26} height={26} />
+              {notifications.map((notification) => {
+                const Icon = notification.icon
+                const isApproval = notification.id === "lab-approval"
+                return (
+                  <div key={notification.id} className="flex items-center gap-4">
+                    <div className="flex size-12 items-center justify-center rounded-full bg-[#FBEBEC]">
+                      <Icon
+                        className={`size-6 ${isApproval ? "text-[#31C48D]" : "text-[#E3383A]"}`}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-lg leading-6 font-medium text-[#535353]">
+                        {notification.title}
+                      </p>
+                      <p className="text-sm text-[#6F6F6F]">{notification.timeAgo}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-lg leading-6 font-medium text-[#535353]">
-                      {notification.title}
-                    </p>
-                    <p className="text-sm text-[#6F6F6F]">{notification.timeAgo}</p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
 
