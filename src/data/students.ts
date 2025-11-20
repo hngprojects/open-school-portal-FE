@@ -1,5 +1,5 @@
 // data/students.ts
-import { User } from "@/types/user"
+import type { User } from "@/types/user"
 
 export const students: User[] = [
   {
