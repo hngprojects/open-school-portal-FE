@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
+import { getErrorMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -45,6 +46,12 @@ export async function apiFetch<TResponse>(
   const isJson =
     config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
 
+  const navigateTo = (path: string) => {
+    if (typeof window !== "undefined") {
+      window.location.href = path;
+    }
+  }
+
   if (!headers["Content-Type"] && isJson) {
     headers["Content-Type"] = "application/json"
   }
@@ -59,35 +66,17 @@ export async function apiFetch<TResponse>(
       headers,
     })
 
-    // Error handling for status codes
-    if (res.status === 403) {
-      throw new Error("Forbidden — you don't have permission.")
-    }
-
-    if (res.status === 404) {
-      throw new Error("Resource not found.")
-    }
-
-    if (res.status >= 400) {
-      const msg =
-        (typeof res.data === "object" && res.data?.message) ||
-        res.statusText ||
-        "An unexpected error occurred."
-
-      throw new Error(msg)
-    }
-
     return res.data as TResponse
   } catch (err) {
+    // Network or backend errors
+    
     if (err instanceof AxiosError) {
-      // Network or backend errors
-      const message =
-        err.response?.data?.message || err.message || "Unable to reach the server."
-
-      throw new Error(message)
+      // if unauthed
+      if (err.response?.status === 401) {
+        navigateTo('/login');
+      }
     }
-
-    // Unknown / unexpected
-    throw new Error(err instanceof Error ? err.message : "Unexpected error occurred.")
+    const errorMessage = getErrorMessage(err);
+    throw new Error(errorMessage);
   }
 }

@@ -107,7 +107,6 @@ const LoginForm = () => {
 
     try {
       await loginUsingEmail(formData)
-      console.log("login", formData)
       router.push("/admin")
 
       // Successful login - set auth session
@@ -140,7 +139,6 @@ const LoginForm = () => {
             ? error.message
             : "An unexpected error occurred. Please try again.",
       })
-    } finally {
       setIsLoading(false)
     }
   }

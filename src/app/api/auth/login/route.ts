@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   const backendResponse = await proxyAuthRequest(req, "/auth/login")
 
   const data = await backendResponse.json()
-  console.log(backendResponse, data)
 
   if (!data?.data) {
     return NextResponse.json(
