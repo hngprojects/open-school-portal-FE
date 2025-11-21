@@ -1,6 +1,6 @@
 import { User } from "@/types/user"
 import { apiFetch } from "./api/client"
-// EDITED
+
 export type CreateTeacherData = Omit<User, "id" | "avatar"> & {
   photo?: File
 }
