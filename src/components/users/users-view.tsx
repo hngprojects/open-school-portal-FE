@@ -6,6 +6,7 @@ import { UsersTable } from "./users-table"
 import { UsersGrid } from "./users-grid"
 import { UsersToolbar } from "./users-toolbar"
 import { Pagination } from "../ui/pagination"
+import { useRouter } from "next/navigation"
 
 interface UsersViewProps {
   users: User[]
@@ -14,12 +15,14 @@ interface UsersViewProps {
     desktop: number
     mobile: number
   }
+  onAddUser?: () => void
 }
 
 export function UsersView({
   users,
   userType,
   pageSize = { desktop: 10, mobile: 4 },
+  onAddUser,
 }: UsersViewProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
@@ -35,6 +38,7 @@ export function UsersView({
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
+
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -61,6 +65,11 @@ export function UsersView({
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  const router = useRouter()
+  const navigate = () => {
+    router.push(`/admin/${userType}/new`)
+  }
+
   return (
     <div className="mx-auto max-w-[1112px] p-4 md:p-6">
       <UsersToolbar
@@ -69,7 +78,7 @@ export function UsersView({
         onSearchChange={setSearchQuery}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
-        onAddUser={() => console.log(`Add ${userType}`)}
+        onAddUser={onAddUser ?? navigate}
       />
 
       <div className="hidden md:block">

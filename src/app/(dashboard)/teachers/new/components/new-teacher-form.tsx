@@ -4,6 +4,8 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
+import { useTeacherStore } from "@/store/general-auth-store"
+import { User } from "@/types/user"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -114,10 +116,41 @@ export const teacherFormConfig: NewPersonFormConfig = {
 }
 
 export default function NewTeacherForm() {
+  const addTeacher = useTeacherStore((state) => state.addTeacher)
+
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
-  async function handleSubmit() {
+  async function handleSubmit(formData: Record<string, unknown>) {
     console.log("Submitting new teacher form...")
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const firstName = formData.firstName as string
+    const lastName = formData.lastName as string
+    const id = formData.employmentId as string
+    const title = formData.title as string
+    const dateOfBirth = formData.dateOfBirth as string
+    const gender = formData.gender as string
+    const phoneNumber = formData.phoneNumber as string
+    const homeAddress = formData.homeAddress as string
+    const middleName = (formData.middleName as string) || ""
+
+    const newTeacher: User = {
+      id,
+      name: `${title} ${firstName} ${lastName}`,
+      title,
+      firstName,
+      lastName,
+      middleName,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@school.com`,
+      role: "Mathematics Teacher",
+      employeeId: id,
+      joinDate: new Date().toISOString().split("T")[0],
+      status: "active",
+      phone: phoneNumber,
+      dateOfBirth,
+      gender,
+      address: homeAddress,
+    }
+
+    await addTeacher(newTeacher)
+    console.log("Teacher added successfully!")
   }
 }

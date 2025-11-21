@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Edit3, Trash2 } from "lucide-react"
 import { User, UserType } from "@/types/user"
-
+import { useRouter } from "next/navigation"
+import { useTeacherStore } from "@/store/general-auth-store"
 interface UsersTableProps {
   users: User[]
   userType: UserType
@@ -20,7 +21,13 @@ interface UsersTableProps {
   itemsPerPage: number
 }
 
-export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps) {
+export function UsersTable({
+  users,
+  userType,
+  currentPage,
+  itemsPerPage,
+}: UsersTableProps) {
+  const deleteTeacher = useTeacherStore((state) => state.deleteTeacher)
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -41,6 +48,8 @@ export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps
         return "outline"
     }
   }
+  const isTeacher = userType === "teachers"
+  const router = useRouter()
 
   return (
     <div className="rounded-md border">
@@ -48,9 +57,10 @@ export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps
         <TableHeader>
           <TableRow>
             <TableHead className="w-16">S/N</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Employee Number</TableHead>
-            <TableHead>Email</TableHead>
+            <TableHead>{isTeacher ? "Name" : "Student"}</TableHead>
+            <TableHead>{isTeacher ? "Employee Number" : "Reg Number"}</TableHead>
+            {isTeacher ? <TableHead>Email</TableHead> : <TableHead>Class</TableHead>}
+            {!isTeacher && <TableHead>Address</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Phone Number</TableHead>
             <TableHead className="w-20">Actions</TableHead>
@@ -69,22 +79,33 @@ export function UsersTable({ users, currentPage, itemsPerPage }: UsersTableProps
                   <span className="font-medium">{user.name}</span>
                 </div>
               </TableCell>
-              <TableCell>{user.employeeId}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">{user.email}</div>
-              </TableCell>
+              <TableCell>{isTeacher ? user.employeeId : user.regNumber}</TableCell>
+              {isTeacher ? (
+                <TableCell>{user.email}</TableCell>
+              ) : (
+                <>
+                  <TableCell>{user.class}</TableCell>
+                  <TableCell>{user.address}</TableCell>
+                </>
+              )}
               <TableCell>
                 <Badge variant={getStatusVariant(user.status)}>{user.status}</Badge>
               </TableCell>
               <TableCell>{user.phone}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1 text-[#da3743]">
-                  <span>
-                    <Trash2 className="cursor-pointer text-[14px]" />
-                  </span>
-                  <span>
-                    <Edit3 className="cursor-pointer text-[14px]" />
-                  </span>
+                  <Trash2
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={async () => {
+                      if (confirm("Delete this teacher?")) {
+                        await deleteTeacher(user.id)
+                      }
+                    }}
+                  />
+                  <Edit3
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => router.push(`/admin/teachers/${user.id}`)}
+                  />
                 </div>
               </TableCell>
             </TableRow>
