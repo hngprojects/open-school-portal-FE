@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
+// import Image from "next/image"
 import {
   LayoutGrid,
   Users,
@@ -36,6 +36,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import Logo from "@/components/logo"
 
 // Menu items
 const items = [
@@ -83,7 +84,8 @@ export function AppSidebar() {
       <SidebarHeader>
         <div className="flex h-12 items-center justify-between px-2 py-4">
           <div>
-            <Image src="/assets/logo.png" alt="logo" width={50} height={50} />
+            <Logo />
+            {/* <Image src="/assets/logo.png" alt="logo" width={50} height={50} /> */}
           </div>
           <SidebarTrigger />
         </div>
