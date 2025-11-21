@@ -1,10 +1,11 @@
-import { fetchFn } from "@/lib/fetch-fn"
+import { apiFetch } from "@/lib/api/client"
 
 // Types
 export interface JoinWaitlistPayload {
   email: string
-  first_name: string
-  last_name: string
+  // reverts back to camel case on backend
+  firstName: string
+  lastName: string
 }
 
 export interface JoinWaitlistResponse {
@@ -13,10 +14,13 @@ export interface JoinWaitlistResponse {
 }
 
 // POST: Join Waitlist
-export async function joinWaitlist(payload: JoinWaitlistPayload) {
-  return fetchFn<JoinWaitlistResponse>("/waitlist", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  })
+export function joinWaitlist(payload: JoinWaitlistPayload) {
+  return apiFetch<JoinWaitlistResponse>(
+    "/waitlist",
+    {
+      method: "POST",
+      data: payload,
+    },
+    true // use backend proxy
+  )
 }

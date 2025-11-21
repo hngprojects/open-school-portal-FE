@@ -1,7 +1,9 @@
-import { ApiError } from "./error"
+import axios, { AxiosError, AxiosRequestConfig } from "axios"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
+const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
 const normalizeBackendPath = (path: string): string => {
   const trimmedBase = API_BASE_URL?.replace(/\/+$/, "") ?? ""
   const trimmedPath = path.replace(/^\/+/, "")
@@ -9,12 +11,13 @@ const normalizeBackendPath = (path: string): string => {
   return `${trimmedBase}/${trimmedPath}`
 }
 
-const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
-const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
-
-const resolveRequestUrl = (path: string): string => {
+const resolveRequestUrl = (path: string, proxy?: boolean): string => {
   if (isAbsoluteUrl(path) || isInternalApiPath(path)) {
     return path
+  }
+
+  if (proxy) {
+    return `/api/proxy-auth${path.startsWith("/") ? path : "/" + path}`
   }
 
   if (!API_BASE_URL) {
@@ -24,71 +27,67 @@ const resolveRequestUrl = (path: string): string => {
   return normalizeBackendPath(path)
 }
 
-const shouldAttachJsonHeader = (body: BodyInit | null | undefined): boolean => {
-  if (!body) return false
-  if (typeof body === "string") return true
-  if (body instanceof Blob) return false
-  if (body instanceof FormData) return false
-  if (body instanceof URLSearchParams) return true
-  return true
-}
-
-const parseJsonSafely = async (response: Response): Promise<unknown> => {
-  const contentType = response.headers.get("content-type") ?? ""
-  if (contentType.includes("application/json")) {
-    return response.json()
-  }
-
-  const text = await response.text()
-  if (!text) return null
-  return { message: text }
-}
+// Axios instance
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  validateStatus: () => true, // we manually check status codes
+})
 
 export async function apiFetch<TResponse>(
   path: string,
-  init?: RequestInit
+  config: AxiosRequestConfig = {},
+  proxy?: boolean
 ): Promise<TResponse> {
-  const headers = new Headers(init?.headers ?? undefined)
+  const headers = { ...(config.headers || {}) }
 
-  if (!headers.has("Content-Type") && shouldAttachJsonHeader(init?.body ?? null)) {
-    headers.set("Content-Type", "application/json")
+  // Only set JSON header for plain objects/strings
+  const isJson =
+    config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
+
+  if (!headers["Content-Type"] && isJson) {
+    headers["Content-Type"] = "application/json"
   }
 
+  const axiosInstance = proxy ? axios : api
+  const url = resolveRequestUrl(path, proxy)
+
   try {
-    const response = await fetch(resolveRequestUrl(path), {
-      ...init,
+    const res = await axiosInstance.request({
+      url,
+      ...config,
       headers,
     })
 
-    const data = await parseJsonSafely(response)
-
-    if (!response.ok) {
-      let message: string
-      if (
-        data &&
-        typeof data === "object" &&
-        "message" in data &&
-        typeof data.message === "string" &&
-        data.message
-      ) {
-        message = data.message
-      } else {
-        message = "An unexpected error occurred. Please try again."
-      }
-
-      throw new ApiError(message, response.status, data)
+    // Error handling for status codes
+    if (res.status === 403) {
+      throw new Error("Forbidden — you don't have permission.")
     }
 
-    return data as TResponse
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error
+    if (res.status === 404) {
+      throw new Error("Resource not found.")
     }
 
-    throw new ApiError(
-      "Unable to reach the server. Please try again.",
-      0,
-      error instanceof Error ? { message: error.message } : error
-    )
+    if (res.status >= 400) {
+      const msg =
+        (typeof res.data === "object" && res.data?.message) ||
+        res.statusText ||
+        "An unexpected error occurred."
+
+      throw new Error(msg)
+    }
+
+    return res.data as TResponse
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      // Network or backend errors
+      const message =
+        err.response?.data?.message || err.message || "Unable to reach the server."
+
+      throw new Error(message)
+    }
+
+    // Unknown / unexpected
+    throw new Error(err instanceof Error ? err.message : "Unexpected error occurred.")
   }
 }

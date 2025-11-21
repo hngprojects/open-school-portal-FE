@@ -39,23 +39,23 @@ import {
 
 // Menu items
 const items = [
-  { title: "Dashboard", url: "/dashboard-admin", icon: LayoutGrid },
-  { title: "Teachers", url: "/teachers", icon: Users },
-  { title: "Students", url: "/students", icon: GraduationCap },
-  { title: "Parents", url: "/parents", icon: User },
+  { title: "Dashboard", url: "/admin", icon: LayoutGrid },
+  { title: "Teachers", url: "/admin/teachers", icon: Users },
+  { title: "Students", url: "/admin/students", icon: GraduationCap },
+  { title: "Parents", url: "/admin/parents", icon: User },
 
-  { title: "Attendance", url: "/attendance", icon: File },
-  { title: "Timetable", url: "/timetable", icon: Table },
-  { title: "Results", url: "/results", icon: Table },
+  { title: "Attendance", url: "/admin/attendance", icon: File },
+  { title: "Timetable", url: "/admin/timetable", icon: Table },
+  { title: "Results", url: "/admin/results", icon: Table },
   {
     title: "Fees Management",
-    url: "/fee-management",
+    url: "/admin/fee-management",
     icon: Banknote,
     subItems: [
-      { title: "Add Fee Group", url: "/fees/add-group" },
-      { title: "Add Fee Category", url: "/fees/add-category" },
-      { title: "Allocate Invoice", url: "/fees/allocate-invoice" },
-      { title: "Record Payment", url: "/fees/record-payment" },
+      { title: "Add Fee Group", url: "/admin/fees/add-group" },
+      { title: "Add Fee Category", url: "/admin/fees/add-category" },
+      { title: "Allocate Invoice", url: "/admin/fees/allocate-invoice" },
+      { title: "Record Payment", url: "/admin/fees/record-payment" },
     ],
   },
 ]
@@ -136,7 +136,7 @@ export function AppSidebar() {
                           </CollapsibleTrigger>
                         </div>
                         <CollapsibleContent>
-                          <SidebarMenuSub className="mx-0 border-l-0 px-0">
+                          <SidebarMenuSub className="mx-0 ml-4 border-l-0 px-0">
                             {item.subItems.map((subItem) => {
                               const isSubActive = pathname === subItem.url
                               return (

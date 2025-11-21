@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { cookies as getCookies } from "next/headers"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -16,16 +17,20 @@ const buildBackendUrl = (pathname: string): string => {
   return `${base}/${cleanPath}`
 }
 
-const collectForwardHeaders = (req: Request): Headers => {
+const collectForwardHeaders = async (req: Request): Promise<Headers> => {
   const headers = new Headers()
+
   const contentType = req.headers.get("content-type")
-  if (contentType) {
-    headers.set("content-type", contentType)
-  }
+  if (contentType) headers.set("content-type", contentType)
 
   const cookie = req.headers.get("cookie")
-  if (cookie) {
-    headers.set("cookie", cookie)
+  if (cookie) headers.set("cookie", cookie)
+
+  // Add Bearer Authorization
+  const cookies = await getCookies()
+  const accessToken = cookies.get("access_token")?.value
+  if (accessToken) {
+    headers.set("Authorization", `Bearer ${accessToken}`)
   }
 
   return headers
@@ -58,10 +63,11 @@ export const proxyAuthRequest = async (
   try {
     const backendUrl = buildBackendUrl(pathname)
     const bodyText = await req.text()
+    const headers = await collectForwardHeaders(req)
 
     const backendResponse = await fetch(backendUrl, {
       method: req.method,
-      headers: collectForwardHeaders(req),
+      headers,
       body: bodyText.length > 0 ? bodyText : undefined,
       cache: "no-store",
       redirect: "manual",
