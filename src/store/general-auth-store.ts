@@ -1,40 +1,83 @@
-import { string } from "zod"
+// store/general-auth-store.ts
+
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { TeachersAPI } from "@/lib/teachers"
+import { User } from "@/types/user"
 
-export interface Teacher {
-  id: string
-  name: string
-  email: string
-  subject: string
-  status: string
-  role: string
-  phone: string
-  employeeId: string
-  joinDate: string
+interface TeacherState {
+  loading: boolean
+  error: string | null
+  teachers: User[]
+  fetchTeachers: () => Promise<void>
+  addTeacher: (teacher: User) => void
+  deleteTeacher: (id: string) => Promise<void>
+  updateTeacher: (id: string, updatedTeacher: Partial<User>) => Promise<void>
+  clearError: () => void
 }
 
-interface TeacherStore {
-  teachers: Partial<Teacher>[]
-  addTeacher: (teacher: Partial<Teacher>) => Promise<void>
-  removeTeacher: (id: string) => Promise<void>
-}
+export const useTeacherStore = create<TeacherState>((set, get) => ({
+  teachers: [],
+  loading: false,
+  error: null,
 
-export const useTeacherStore = create<TeacherStore>()(
-  persist(
-    (set) => ({
-      teachers: [],
-      addTeacher: async (teacher) => {
-        await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate delay
-        set((state) => ({ teachers: [...state.teachers, teacher] }))
-      },
-      removeTeacher: async (id) => {
-        await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate delay
-        set((state) => ({
-          teachers: state.teachers.filter((teacher) => teacher.id !== id),
-        }))
-      },
-    }),
-    { name: "teacher-store" } // Key for localStorage
-  )
-)
+  clearError: () => set({ error: null }),
+
+  fetchTeachers: async () => {
+    // Prevent multiple simultaneous fetches
+    if (get().loading) return
+
+    set({ loading: true, error: null })
+    try {
+      const data = await TeachersAPI.getAll()
+      set({ teachers: data, loading: false, error: null })
+    } catch (error) {
+      console.error("Failed to fetch teachers:", error)
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch teachers"
+
+      set({
+        loading: false,
+        error: errorMessage,
+        teachers: [], // Clear teachers on error
+      })
+    }
+  },
+
+  addTeacher: (teacher) => {
+    set((state) => ({ teachers: [...state.teachers, teacher] }))
+  },
+
+  deleteTeacher: async (id) => {
+    set({ error: null })
+    try {
+      await TeachersAPI.delete(id)
+      set((state) => ({
+        teachers: state.teachers.filter((t) => t.id !== id),
+        error: null,
+      }))
+    } catch (error) {
+      console.error("Failed to delete teacher:", error)
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete teacher"
+      set({ error: errorMessage })
+      throw error
+    }
+  },
+
+  updateTeacher: async (id, updatedTeacher) => {
+    set({ error: null })
+    try {
+      const updated = await TeachersAPI.update(id, updatedTeacher)
+      set((state) => ({
+        teachers: state.teachers.map((t) => (t.id === id ? { ...t, ...updated } : t)),
+        error: null,
+      }))
+    } catch (error) {
+      console.error("Failed to update teacher:", error)
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update teacher"
+      set({ error: errorMessage })
+      throw error
+    }
+  },
+}))

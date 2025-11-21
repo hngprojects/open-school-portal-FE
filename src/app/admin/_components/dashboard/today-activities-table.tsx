@@ -1,6 +1,6 @@
 import React from "react"
 
-import { activityData } from "../../_data/activity-data";
+import { activityData } from "../../_data/activity-data"
 import {
   Table,
   TableBody,

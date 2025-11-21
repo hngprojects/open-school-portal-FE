@@ -45,18 +45,20 @@ export interface NewPersonFormConfig {
 interface FormBuilderProps {
   config: NewPersonFormConfig
   onSubmit: (data: Record<string, unknown>) => Promise<void>
+  initialData?: Record<string, unknown>
 }
 
 export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   config,
   onSubmit,
+  initialData,
 }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
-    const initial: Record<string, unknown> = {}
-    config.fields.forEach((field) => {
-      initial[field.name] = ""
-    })
-    return initial
+    if (initialData) return initialData
+
+    const emptyState: Record<string, unknown> = {}
+    config.fields.forEach((field) => (emptyState[field.name] = ""))
+    return emptyState
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localError, setLocalError] = useState("")

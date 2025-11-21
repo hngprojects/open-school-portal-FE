@@ -16,8 +16,6 @@ interface UsersViewProps {
     mobile: number
   }
   onAddUser?: () => void
-  onEditUser?: (user: User) => void
-  onDeleteUser?: (user: User) => void
 }
 
 export function UsersView({
@@ -25,8 +23,6 @@ export function UsersView({
   userType,
   pageSize = { desktop: 10, mobile: 4 },
   onAddUser,
-  onEditUser,
-  onDeleteUser,
 }: UsersViewProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState("")
@@ -42,6 +38,7 @@ export function UsersView({
     window.addEventListener("resize", checkMobile)
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
+
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchesSearch =
@@ -68,9 +65,9 @@ export function UsersView({
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-  const router = useRouter();
-  const navigate = ()=>{
-    router.push("/admin/" + userType)
+  const router = useRouter()
+  const navigate = () => {
+    router.push(`/admin/${userType}/new`)
   }
 
   return (
