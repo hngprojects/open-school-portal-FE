@@ -1,37 +1,20 @@
-import React from "react"
-import Link from "next/link"
+"use client"
 
-const page = () => {
+import React, { forwardRef } from "react"
+
+type DemoVideoProps = React.ComponentProps<"video">
+
+const DemoVideo = forwardRef<HTMLVideoElement, DemoVideoProps>(({ ...props }, ref) => {
   return (
-    <div className="animate-onrender flex min-h-[85vh] items-center justify-center bg-gray-50 p-8">
-      <div className="text-center">
-        <h2 className="mb-8 text-3xl font-bold text-gray-900">
-          This Demo is coming Soon
-        </h2>
-
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link
-            href="/feature"
-            className="rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-700"
-          >
-            View Feature Page
-          </Link>
-          <Link
-            href="/modules"
-            className="rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-700"
-          >
-            View Modules Page
-          </Link>
-          <Link
-            href="/about"
-            className="rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-red-700"
-          >
-            View About Page
-          </Link>
-        </div>
-      </div>
+    <div id="demo-video">
+      <video ref={ref} controls loop width="100%" preload="metadata" {...props}>
+        <source src="/assets/videos/demo_video.MOV" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
   )
-}
+})
 
-export default page
+DemoVideo.displayName = "DemoVideo"
+
+export default DemoVideo

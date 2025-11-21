@@ -1,11 +1,11 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
 import React, { useState } from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import Logo from "./logo"
 
 const Navbar = () => {
   const pathname = usePathname()
@@ -29,15 +29,9 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-100 bg-[#fffbfc] py-4 lg:py-6">
       <div className="relative container flex items-center justify-between">
-        <Image
-          src="/assets/logo.png"
-          alt="Open School Portal Logo"
-          width={64}
-          height={64}
-          priority
-          sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-          className="size-12 md:size-14 lg:size-16"
-        />
+        <Link href="/">
+          <Logo />
+        </Link>
 
         {/* Desktop Navigation - Centered */}
         <section className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-lg font-medium lg:flex lg:gap-10">

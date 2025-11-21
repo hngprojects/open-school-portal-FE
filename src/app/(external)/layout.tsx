@@ -9,7 +9,7 @@ export default function ExternalLayout({
   return (
     <>
       <Navbar />
-      <main className="pt-20 md:pt-22 lg:pt-28">{children}</main>
+      <main className="pt-20 md:pt-22 lg:pt-24">{children}</main>
       <Footer />
     </>
   )
