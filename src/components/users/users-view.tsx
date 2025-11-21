@@ -40,7 +40,13 @@ export function UsersView({
   }, [])
 
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    const list = Array.isArray(users) ? users : []
+    if (!Array.isArray(users)) {
+      // Log once to help debugging when backend returns unexpected shape
+      console.warn("UsersView: expected 'users' to be an array but got:", users)
+    }
+
+    return list.filter((user) => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||

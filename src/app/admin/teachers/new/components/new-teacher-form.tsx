@@ -156,7 +156,15 @@ export default function NewTeacherForm() {
       address: formData.homeAddress as string,
     }
 
-    await TeachersAPI.create(newTeacher)
-    router.push("/admin/teachers")
+    try {
+      // Log payload so we can inspect what is sent to the backend
+      console.log("Creating teacher — payload:", newTeacher)
+      await TeachersAPI.create(newTeacher)
+      router.push("/admin/teachers")
+    } catch (err) {
+      // Surface error details in the console for debugging
+      console.error("Failed to create teacher:", err)
+      throw err
+    }
   }
 }

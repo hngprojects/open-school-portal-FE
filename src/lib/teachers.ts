@@ -1,5 +1,5 @@
-import { api } from "./api"
 import { User } from "@/types/user"
+import { apiFetch } from "./api/client"
 
 export type CreateTeacherData = Omit<User, "id" | "avatar"> & {
   photo?: File
@@ -8,20 +8,36 @@ export type CreateTeacherData = Omit<User, "id" | "avatar"> & {
 export type UpdateTeacherData = Partial<CreateTeacherData>
 
 export const TeachersAPI = {
-  getAll: (): Promise<User[]> => api("/teachers"),
-  getOne: (id: string): Promise<User> => api(`/teachers/${id}`),
+  getAll: (): Promise<User[]> => apiFetch("/teachers", undefined, true),
+
+  getOne: (id: string): Promise<User> => apiFetch(`/teachers/${id}`, undefined, true),
+
   create: (data: CreateTeacherData): Promise<User> =>
-    api("/teachers", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+    apiFetch(
+      "/teachers",
+      {
+        method: "POST",
+        data, // Axios handles JSON automatically
+      },
+      true
+    ),
+
   update: (id: string, data: UpdateTeacherData): Promise<User> =>
-    api(`/teachers/${id}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    }),
+    apiFetch(
+      `/teachers/${id}`,
+      {
+        method: "PATCH",
+        data,
+      },
+      true
+    ),
+
   delete: (id: string): Promise<void> =>
-    api(`/teachers/${id}`, {
-      method: "DELETE",
-    }),
+    apiFetch(
+      `/teachers/${id}`,
+      {
+        method: "DELETE",
+      },
+      true
+    ),
 }

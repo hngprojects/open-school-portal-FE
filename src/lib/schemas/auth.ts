@@ -11,7 +11,7 @@ export const emailSchema = z
 
 export const loginSchema = z.object({
   email: emailSchema,
-  password: z.string().min(1, "Wrong password. Try again"),
+  password: z.string().min(1, "You need to enter a password"),
 })
 
 export const forgotPasswordSchema = z.object({
