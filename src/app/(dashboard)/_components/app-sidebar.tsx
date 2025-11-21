@@ -53,7 +53,7 @@ const items = [
     icon: Banknote,
     subItems: [
       { title: "Add Fee Group", url: "/fees/add-group" },
-      { title: "Add Fee Category", url: "/fees/add-category" },
+      { title: "Add Fee Components", url: "/fees/add-fee-components" },
       { title: "Allocate Invoice", url: "/fees/allocate-invoice" },
       { title: "Record Payment", url: "/fees/record-payment" },
     ],
