@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 import { loginUsingEmail } from "@/lib/api/auth"
+import { useRouter } from "next/navigation"
 
 type LoginField = keyof LoginFormValues
 
@@ -39,6 +40,8 @@ const LoginForm = () => {
   const [isLocked, setIsLocked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
+
+  const router = useRouter()
 
   // const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
@@ -104,6 +107,7 @@ const LoginForm = () => {
 
     try {
       await loginUsingEmail(formData)
+      router.push("/admin")
 
       // Successful login - set auth session
       // setAuthSession(response)

@@ -4,8 +4,6 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { useTeacherStore } from "@/store/general-auth-store"
-import { User } from "@/types/user"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -16,7 +14,7 @@ const generatePassword = () => {
   return password
 }
 
-export const teacherFormConfig: NewPersonFormConfig = {
+const studentFormConfig: NewPersonFormConfig = {
   fields: [
     {
       name: "title",
@@ -27,8 +25,7 @@ export const teacherFormConfig: NewPersonFormConfig = {
         { value: "mr", label: "Mr." },
         { value: "miss", label: "Miss" },
         { value: "mrs", label: "Mrs." },
-        { value: "dr", label: "Dr." },
-        { value: "prof", label: "Prof." },
+        { value: "master", label: "Master" },
       ],
     },
     {
@@ -52,16 +49,10 @@ export const teacherFormConfig: NewPersonFormConfig = {
       placeholder: "Enter middle name",
     },
     {
-      name: "employmentId",
-      label: "Employment ID",
+      name: "identificationNumber",
+      label: "Identification Number",
       type: "text",
-      placeholder: "Enter employment ID",
-      required: true,
-    },
-    {
-      name: "dateOfBirth",
-      label: "Date of Birth",
-      type: "date",
+      placeholder: "Enter ID number",
       required: true,
     },
     {
@@ -76,6 +67,13 @@ export const teacherFormConfig: NewPersonFormConfig = {
       },
     },
     {
+      name: "class",
+      label: "Class",
+      type: "text",
+      placeholder: "Enter class",
+      required: true,
+    },
+    {
       name: "gender",
       label: "Gender",
       type: "select",
@@ -86,10 +84,9 @@ export const teacherFormConfig: NewPersonFormConfig = {
       ],
     },
     {
-      name: "phoneNumber",
-      label: "Phone Number",
-      type: "tel",
-      placeholder: "Enter phone number",
+      name: "dateOfBirth",
+      label: "Date of Birth",
+      type: "date",
       required: true,
     },
     {
@@ -97,6 +94,20 @@ export const teacherFormConfig: NewPersonFormConfig = {
       label: "Home Address",
       type: "text",
       placeholder: "Enter home address",
+      required: true,
+    },
+    {
+      name: "parentGuardianName",
+      label: "Parent/ Guardian Name",
+      type: "text",
+      placeholder: "Enter parent/guardian name",
+      required: true,
+    },
+    {
+      name: "parentGuardianPhone",
+      label: "Parent/Guardian Phone Number",
+      type: "tel",
+      placeholder: "Enter phone number",
       required: true,
     },
     {
@@ -110,49 +121,20 @@ export const teacherFormConfig: NewPersonFormConfig = {
   ],
   submitText: "Save",
   cancelText: "Cancel",
+  //   onSubmit: async (data) => {
+  //     console.log('Student form submitted:', data);
+  //     await new Promise(resolve => setTimeout(resolve, 1000));
+  //   },
   onCancel: () => {
     console.log("Form cancelled")
   },
 }
 
-export default function NewTeacherForm() {
-  const addTeacher = useTeacherStore((state) => state.addTeacher)
+export default function NewStudentForm() {
+  return <NewPersonFormBuilder config={studentFormConfig} onSubmit={handleSubmit} />
 
-  return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
-
-  async function handleSubmit(formData: Record<string, unknown>) {
-    console.log("Submitting new teacher form...")
-    const firstName = formData.firstName as string
-    const lastName = formData.lastName as string
-    const id = formData.employmentId as string
-    // assign subjeect randomly form list of 10
-    const subjects = [
-      "Mathematics",
-      "English",
-      "Science",
-      "History",
-      "Geography",
-      "Art",
-      "Physical Education",
-      "Music",
-      "Computer Science",
-      "Biology",
-    ]
-    const randomSubject = subjects[Math.floor(Math.random() * subjects.length)]
-
-    const newTeacher = {
-      id,
-      name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@school.com`,
-      subject: randomSubject, // Placeholder subject
-      role: "teacher",
-      employeeId: id,
-      joinDate: new Date().toISOString().split("T")[0],
-      status: "active",
-      phone: "+234 9022301155",
-    }
-
-    await addTeacher(newTeacher)
-    console.log("Teacher added successfully!")
+  async function handleSubmit() {
+    console.log("Submitting new student form...")
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   }
 }

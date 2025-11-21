@@ -1,3 +1,4 @@
+import React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { activityData } from "../../_data/activity-data"
 import { getActivityStatusStyles } from "../../_utils/activity-status"
