@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Edit3, Trash2 } from "lucide-react"
 import { User, UserType } from "@/types/user"
-
+import { useRouter } from "next/navigation"
+import { useTeacherStore } from "@/store/general-auth-store"
 interface UsersTableProps {
   users: User[]
   userType: UserType
@@ -26,6 +27,7 @@ export function UsersTable({
   currentPage,
   itemsPerPage,
 }: UsersTableProps) {
+  const deleteTeacher = useTeacherStore((state) => state.deleteTeacher)
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -47,6 +49,8 @@ export function UsersTable({
     }
   }
   const isTeacher = userType === "teachers"
+  const router = useRouter()
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -90,8 +94,18 @@ export function UsersTable({
               <TableCell>{user.phone}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1 text-[#da3743]">
-                  <Trash2 className="cursor-pointer text-[14px]" />
-                  <Edit3 className="cursor-pointer text-[14px]" />
+                  <Trash2
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={async () => {
+                      if (confirm("Delete this teacher?")) {
+                        await deleteTeacher(user.id)
+                      }
+                    }}
+                  />
+                  <Edit3
+                    className="h-3 w-3 cursor-pointer"
+                    onClick={() => router.push(`/admin/teachers/${user.id}`)}
+                  />
                 </div>
               </TableCell>
             </TableRow>

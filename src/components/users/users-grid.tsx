@@ -11,6 +11,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useRouter } from "next/navigation"
+import { useTeacherStore } from "@/store/general-auth-store"
 
 interface UsersGridProps {
   users: User[]
@@ -18,6 +20,7 @@ interface UsersGridProps {
 }
 
 export function UsersGrid({ users, userType }: UsersGridProps) {
+  const deleteTeacher = useTeacherStore((state) => state.deleteTeacher)
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -27,6 +30,7 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
   }
 
   const isTeacher = userType === "teachers"
+  const router = useRouter()
 
   return (
     <div className="grid gap-4">
@@ -56,8 +60,22 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>View Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => router.push(`/admin/teachers/${user.id}`)}
+                  >
+                    Edit
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      if (confirm("Delete teacher?")) {
+                        await deleteTeacher(user.id)
+                      }
+                    }}
+                    className="text-destructive"
+                  >
+                    Delete
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

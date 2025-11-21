@@ -4,9 +4,9 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { useTeacherStore } from "@/store/general-auth-store"
-import { User } from "@/types/user"
+import { TeachersAPI, CreateTeacherData } from "@/lib/teachers"
 import { useRouter } from "next/navigation"
+import { UserStatus } from "@/types/user"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -106,7 +106,6 @@ export const teacherFormConfig: NewPersonFormConfig = {
       type: "file",
       accept: "image/*",
       buttonText: "Select file",
-      required: true,
     },
   ],
   submitText: "Save",
@@ -117,17 +116,15 @@ export const teacherFormConfig: NewPersonFormConfig = {
 }
 
 export default function NewTeacherForm() {
-  const addTeacher = useTeacherStore((state) => state.addTeacher)
   const router = useRouter()
 
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
   async function handleSubmit(formData: Record<string, unknown>) {
-    console.log("Submitting new teacher form...")
     const firstName = formData.firstName as string
     const lastName = formData.lastName as string
     const id = formData.employmentId as string
-    // assign subjeect randomly form list of 10
+
     const subjects = [
       "Mathematics",
       "English",
@@ -142,20 +139,24 @@ export default function NewTeacherForm() {
     ]
     const randomSubject = subjects[Math.floor(Math.random() * subjects.length)]
 
-    const newTeacher = {
-      id,
+    const newTeacher: CreateTeacherData = {
       name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
+      title: formData.title as string,
+      firstName: formData.firstName as string,
+      lastName: formData.lastName as string,
+      middleName: formData.middleName as string,
       email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@openschoolportal.com`,
-      subject: randomSubject, // Placeholder subject
-      role: "teacher",
+      role: randomSubject,
       employeeId: id,
       joinDate: new Date().toISOString().split("T")[0],
-      status: "active",
-      phone: "+234 9022301155",
+      status: "active" as UserStatus,
+      phone: formData.phoneNumber as string,
+      dateOfBirth: formData.dateOfBirth as string,
+      gender: formData.gender as string,
+      address: formData.homeAddress as string,
     }
 
-    await addTeacher(newTeacher)
+    await TeachersAPI.create(newTeacher)
     router.push("/admin/teachers")
-    console.log("Teacher added successfully!")
   }
 }

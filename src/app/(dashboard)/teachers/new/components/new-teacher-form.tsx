@@ -125,31 +125,29 @@ export default function NewTeacherForm() {
     const firstName = formData.firstName as string
     const lastName = formData.lastName as string
     const id = formData.employmentId as string
-    // assign subjeect randomly form list of 10
-    const subjects = [
-      "Mathematics",
-      "English",
-      "Science",
-      "History",
-      "Geography",
-      "Art",
-      "Physical Education",
-      "Music",
-      "Computer Science",
-      "Biology",
-    ]
-    const randomSubject = subjects[Math.floor(Math.random() * subjects.length)]
+    const title = formData.title as string
+    const dateOfBirth = formData.dateOfBirth as string
+    const gender = formData.gender as string
+    const phoneNumber = formData.phoneNumber as string
+    const homeAddress = formData.homeAddress as string
+    const middleName = (formData.middleName as string) || ""
 
-    const newTeacher = {
+    const newTeacher: User = {
       id,
-      name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
+      name: `${title} ${firstName} ${lastName}`,
+      title,
+      firstName,
+      lastName,
+      middleName,
       email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@school.com`,
-      subject: randomSubject, // Placeholder subject
-      role: "teacher",
+      role: "Mathematics Teacher",
       employeeId: id,
       joinDate: new Date().toISOString().split("T")[0],
       status: "active",
-      phone: "+234 9022301155",
+      phone: phoneNumber,
+      dateOfBirth,
+      gender,
+      address: homeAddress,
     }
 
     await addTeacher(newTeacher)
