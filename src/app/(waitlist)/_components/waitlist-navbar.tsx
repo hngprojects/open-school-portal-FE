@@ -6,6 +6,7 @@ import React, { useState } from "react"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import JoinWaitlistButton from "./join-waitlist-button"
+import Logo from "@/components/logo"
 
 const Navbar = () => {
   const pathname = usePathname()
@@ -78,7 +79,7 @@ const Navbar = () => {
         )}
 
         <Link href="/waitlist">
-          <Image
+          {/* <Image
             src="/assets/logo.png"
             alt="Open School Portal Logo"
             width={64}
@@ -86,7 +87,8 @@ const Navbar = () => {
             priority
             sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
             className="hidden size-12 md:block md:size-14 lg:size-16"
-          />
+          /> */}
+          <Logo />
         </Link>
 
         {/* Desktop Navigation - Centered */}
