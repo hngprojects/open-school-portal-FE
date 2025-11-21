@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
-
+// EDITED
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)

@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api/client"
-
+// EDITED
 // Types
 export interface JoinWaitlistPayload {
   email: string
