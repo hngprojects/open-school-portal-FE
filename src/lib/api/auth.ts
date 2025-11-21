@@ -7,59 +7,83 @@ const REFRESH_PATH = "/api/auth/refresh"
 export type LoginResponse = AuthApiResponse<Record<string, unknown>>
 export type RefreshResponse = AuthApiResponse<Record<string, unknown>>
 
-export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
-  return apiFetch<LoginResponse>(LOGIN_PATH, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  })
+// ------------------------------
+// Auth
+// ------------------------------
+
+export const login = (payload: LoginPayload): Promise<LoginResponse> => {
+  return apiFetch<LoginResponse>(
+    LOGIN_PATH,
+    {
+      method: "POST",
+      data: payload,
+    },
+    true // use proxy
+  )
 }
 
-export const signUp = async (payload: SignUpPayload): Promise<AuthApiResponse<null>> => {
-  return apiFetch<AuthApiResponse<null>>("/api/auth/signup", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  })
-}
-
-export const refresh = async (): Promise<RefreshResponse> => {
-  return apiFetch<RefreshResponse>(REFRESH_PATH, {
-    method: "POST",
-  })
-}
-
-interface EmailLoginPayload {
+export const loginUsingEmail = (payload: {
   email: string
   password: string
+}): Promise<LoginResponse> => {
+  return apiFetch<LoginResponse>(
+    LOGIN_PATH,
+    {
+      method: "POST",
+      data: payload,
+    },
+    true // use proxy
+  )
 }
 
-export const loginUsingEmail = async (
-  payload: EmailLoginPayload
-): Promise<LoginResponse> => {
-  return apiFetch<LoginResponse>(LOGIN_PATH, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  })
+export const signUp = (payload: SignUpPayload): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>(
+    "/api/auth/signup",
+    {
+      method: "POST",
+      data: payload,
+    },
+    true // use proxy
+  )
 }
 
-export const sendForgotPasswordEmail = async (
+export const refresh = (): Promise<RefreshResponse> => {
+  return apiFetch<RefreshResponse>(
+    REFRESH_PATH,
+    {
+      method: "POST",
+    },
+    true // use proxy
+  )
+}
+
+// ------------------------------
+// Forgot Password
+// ------------------------------
+
+export const sendForgotPasswordEmail = (
   email: string
 ): Promise<AuthApiResponse<null>> => {
-  return apiFetch<AuthApiResponse<null>>("/api/proxy-auth/auth/forgot-password", {
-    method: "POST",
-    body: JSON.stringify({ email }),
-  })
+  return apiFetch<AuthApiResponse<null>>(
+    "/auth/forgot-password",
+    {
+      method: "POST",
+      data: { email },
+    },
+    true // use proxy
+  )
 }
 
-interface ResetPasswordPayload {
+export const sendResetPasswordRequest = (payload: {
   token: string
   newPassword: string
-}
-
-export const sendResetPasswordRequest = async (
-  payload: ResetPasswordPayload
-): Promise<AuthApiResponse<null>> => {
-  return apiFetch<AuthApiResponse<null>>("/api/proxy-auth/auth/forgot-password", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  })
+}): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>(
+    "/auth/reset-password",
+    {
+      method: "POST",
+      data: payload,
+    },
+    true
+  )
 }

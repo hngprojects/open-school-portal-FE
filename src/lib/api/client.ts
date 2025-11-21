@@ -1,7 +1,10 @@
-import { ApiError } from "./error"
+import axios, { AxiosError, AxiosRequestConfig } from "axios"
+import { getErrorMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
+const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
 const normalizeBackendPath = (path: string): string => {
   const trimmedBase = API_BASE_URL?.replace(/\/+$/, "") ?? ""
   const trimmedPath = path.replace(/^\/+/, "")
@@ -9,12 +12,13 @@ const normalizeBackendPath = (path: string): string => {
   return `${trimmedBase}/${trimmedPath}`
 }
 
-const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
-const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
-
-const resolveRequestUrl = (path: string): string => {
+const resolveRequestUrl = (path: string, proxy?: boolean): string => {
   if (isAbsoluteUrl(path) || isInternalApiPath(path)) {
     return path
+  }
+
+  if (proxy) {
+    return `/api/proxy-auth${path.startsWith("/") ? path : "/" + path}`
   }
 
   if (!API_BASE_URL) {
@@ -24,71 +28,55 @@ const resolveRequestUrl = (path: string): string => {
   return normalizeBackendPath(path)
 }
 
-const shouldAttachJsonHeader = (body: BodyInit | null | undefined): boolean => {
-  if (!body) return false
-  if (typeof body === "string") return true
-  if (body instanceof Blob) return false
-  if (body instanceof FormData) return false
-  if (body instanceof URLSearchParams) return true
-  return true
-}
-
-const parseJsonSafely = async (response: Response): Promise<unknown> => {
-  const contentType = response.headers.get("content-type") ?? ""
-  if (contentType.includes("application/json")) {
-    return response.json()
-  }
-
-  const text = await response.text()
-  if (!text) return null
-  return { message: text }
-}
+// Axios instance
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  validateStatus: () => true, // we manually check status codes
+})
 
 export async function apiFetch<TResponse>(
   path: string,
-  init?: RequestInit
+  config: AxiosRequestConfig = {},
+  proxy?: boolean
 ): Promise<TResponse> {
-  const headers = new Headers(init?.headers ?? undefined)
+  const headers = { ...(config.headers || {}) }
 
-  if (!headers.has("Content-Type") && shouldAttachJsonHeader(init?.body ?? null)) {
-    headers.set("Content-Type", "application/json")
+  // Only set JSON header for plain objects/strings
+  const isJson =
+    config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
+
+  const navigateTo = (path: string) => {
+    if (typeof window !== "undefined") {
+      window.location.href = path;
+    }
   }
 
+  if (!headers["Content-Type"] && isJson) {
+    headers["Content-Type"] = "application/json"
+  }
+
+  const axiosInstance = proxy ? axios : api
+  const url = resolveRequestUrl(path, proxy)
+
   try {
-    const response = await fetch(resolveRequestUrl(path), {
-      ...init,
+    const res = await axiosInstance.request({
+      url,
+      ...config,
       headers,
     })
 
-    const data = await parseJsonSafely(response)
-
-    if (!response.ok) {
-      let message: string
-      if (
-        data &&
-        typeof data === "object" &&
-        "message" in data &&
-        typeof data.message === "string" &&
-        data.message
-      ) {
-        message = data.message
-      } else {
-        message = "An unexpected error occurred. Please try again."
+    return res.data as TResponse
+  } catch (err) {
+    // Network or backend errors
+    
+    if (err instanceof AxiosError) {
+      // if unauthed
+      if (err.response?.status === 401) {
+        navigateTo('/login');
       }
-
-      throw new ApiError(message, response.status, data)
     }
-
-    return data as TResponse
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error
-    }
-
-    throw new ApiError(
-      "Unable to reach the server. Please try again.",
-      0,
-      error instanceof Error ? { message: error.message } : error
-    )
+    const errorMessage = getErrorMessage(err);
+    throw new Error(errorMessage);
   }
 }

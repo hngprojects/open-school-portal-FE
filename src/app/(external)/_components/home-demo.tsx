@@ -1,8 +1,18 @@
-import React from "react"
+"use client"
+
+import React, { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+// import DemoVideo from "../demo/page"
+import { playVideoAndScroll } from "../_utils/watchdemo"
 
 const HomeDemo: React.FC = () => {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // const handleWatchDemo = () => {
+  //   playVideoAndScroll(videoRef, "demo-video")
+  // }
   return (
     <section className="font-outfit w-full bg-white py-6 sm:py-8 lg:py-24">
       <div className="flex items-center justify-center lg:hidden">
@@ -95,19 +105,21 @@ const HomeDemo: React.FC = () => {
               </p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
                 <Link href="/login">
-                  <button
-                    className="rounded-lg bg-white px-6 py-3 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100 sm:px-8"
+                  <Button
+                    className="bg-white text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
                     style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                   >
                     Get Started
-                  </button>
+                  </Button>
                 </Link>
-                <button
-                  className="hover:bg-opacity-10 rounded-lg border border-white px-6 py-3 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white sm:px-8"
+                <Button
+                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
+                  variant="outline"
+                  className="hover:bg-border-white/90 border-white px-6 py-3 text-white"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
-                  <Link href="/demo">Watch Demo</Link>
-                </button>
+                  <Link href="/#demo-video">Watch Demo</Link>
+                </Button>
               </div>
             </div>
           </div>

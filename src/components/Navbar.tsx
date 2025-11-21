@@ -29,15 +29,23 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-100 bg-[#fffbfc] py-4 lg:py-6">
       <div className="relative container flex items-center justify-between">
-        <Image
-          src="/assets/logo.png"
-          alt="Open School Portal Logo"
-          width={64}
-          height={64}
-          priority
-          sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-          className="size-12 md:size-14 lg:size-16"
-        />
+        <Link href="/" className="flex items-center">
+          <div className="relative h-8 w-12 overflow-hidden">
+            <Image
+              src="/assets/school-folio.svg"
+              alt="Open School Portal Logo"
+              // fill
+              width={80}
+              height={80}
+              priority
+              // sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
+              className="-mt-2 size-12 object-cover md:size-14 lg:size-16"
+            />
+          </div>
+          <span className="text-accent -mt-2 -ml-2.5 text-sm font-bold tracking-wider uppercase md:text-base lg:mt-2">
+            schoolfolio
+          </span>
+        </Link>
 
         {/* Desktop Navigation - Centered */}
         <section className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-lg font-medium lg:flex lg:gap-10">

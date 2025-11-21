@@ -134,9 +134,11 @@ const LoginForm = () => {
 
       // Set error message
       setErrors({
-        password: "Wrong password. Try again",
+        password:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
       })
-    } finally {
       setIsLoading(false)
     }
   }
@@ -248,8 +250,8 @@ const LoginForm = () => {
                     />
                   )}
                 </button>
-                {renderError("password")}
               </div>
+              {renderError("password")}
             </div>
 
             {/* Remember Me & Forgot Password */}

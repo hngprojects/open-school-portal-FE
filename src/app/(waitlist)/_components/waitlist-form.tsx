@@ -47,10 +47,11 @@ const WaitlistFormModal: React.FC<{
     setLocalError(null)
     setIsSubmitting(true)
 
-    const [first_name, last_name] = fullName.trim().split(" ")
+    // const [first_name, last_name] = fullName.trim().split(" ")
+    const [firstName, lastName] = fullName.trim().split(" ")
 
     try {
-      await joinMutation.mutateAsync({ email, first_name, last_name })
+      await joinMutation.mutateAsync({ email, firstName, lastName })
       setSubmitted(true)
 
       // Reset UI after 2 seconds
