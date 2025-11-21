@@ -32,8 +32,8 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
   }
 
   return (
-    <div className="animate-onrender flex min-h-[85vh] items-center justify-center bg-linear-to-b from-gray-50 to-white px-4">
-      <div className="w-full max-w-2xl text-center">
+    <div className="flex min-h-[85vh] items-center justify-center bg-linear-to-b from-gray-50 to-white px-4">
+      <div className="animate-onrender w-full max-w-2xl text-center">
         {/* Back Button */}
         {onBackClick && (
           <button
