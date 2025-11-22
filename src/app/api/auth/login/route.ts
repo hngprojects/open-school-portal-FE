@@ -14,7 +14,8 @@ export async function POST(req: Request) {
     )
   }
 
-  const { access_token, refresh_token } = data.data
+  const { access_token, refresh_token, session_id, session_expires_at, user: {id: user_id} } = data.data;
+  const expiresAt = new Date(session_expires_at);
 
   // Create response with original backend data
   const response = NextResponse.json(data, {
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
     secure: true,
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60, // 1 hour
+    expires: expiresAt,
   })
 
   response.cookies.set("refresh_token", refresh_token, {
@@ -36,6 +37,23 @@ export async function POST(req: Request) {
     sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days
+  })
+
+  // Set cookies — HTTP-only for security
+  response.cookies.set("session_id", session_id, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: Infinity,
+  })
+
+  response.cookies.set("user_id", user_id, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: Infinity,
   })
 
   return response

@@ -2,6 +2,7 @@ import { apiFetch } from "./client"
 import type { AuthApiResponse, LoginPayload, SignUpPayload } from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"
+const LOGOUT_PATH = "/api/auth/logout"
 const REFRESH_PATH = "/api/auth/refresh"
 
 export type LoginResponse = AuthApiResponse<Record<string, unknown>>
@@ -85,5 +86,41 @@ export const sendResetPasswordRequest = (payload: {
       data: payload,
     },
     true
+  )
+}
+
+export type UserData = {
+  id: string;               // UUID
+  email: string;
+  first_name: string;
+  last_name: string;
+  role: string[];           // array of roles
+  middle_name: string;
+  gender: string;
+  dob: string;              // ISO date (YYYY-MM-DD)
+  phone: string;
+  is_active: boolean;
+  created_at: string;       // ISO datetime
+  updated_at: string;       // ISO datetime
+}
+
+
+export const getUserData = (): Promise<AuthApiResponse<UserData>> => {
+  return apiFetch<AuthApiResponse<UserData>>(
+    "/api/auth/me",
+    {
+      method: "GET",
+    },
+    true // use proxy
+  )
+}
+
+export const sendLogoutRequest = (): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>(
+    LOGOUT_PATH,
+    {
+      method: "POST",
+    },
+    true // use proxy
   )
 }

@@ -74,12 +74,16 @@ export function useDeleteTeacher() {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: TEACHERS_KEY })
 
-      const previous = queryClient.getQueryData<User[]>(TEACHERS_KEY)
+      // Snapshot previous teachers list (User[])
+      const previous = queryClient.getQueryData(TEACHERS_KEY) as unknown;
 
+      // Optimistically update UI
       if (previous) {
+        const previousData = previous as { data?: { data?: User[] } }
+        const previousFiltered = previousData.data?.data?.filter( teacher => teacher.id !== id)
         queryClient.setQueryData<User[]>(
           TEACHERS_KEY,
-          previous.filter((t) => t.id !== id)
+          previousFiltered
         )
       }
 
