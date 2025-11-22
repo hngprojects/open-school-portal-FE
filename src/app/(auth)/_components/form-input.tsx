@@ -16,8 +16,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { loginUsingEmail } from "@/lib/api/auth"
+import { loginUsingEmail, getProfile } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/store/auth-store"
 
 type LoginField = keyof LoginFormValues
 

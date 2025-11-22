@@ -1,5 +1,10 @@
 import { apiFetch } from "./client"
-import type { AuthApiResponse, LoginPayload, SignUpPayload } from "@/types/auth"
+import type {
+  AuthApiResponse,
+  LoginPayload,
+  SignUpPayload,
+  UserProfile,
+} from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"
 const REFRESH_PATH = "/api/auth/refresh"
@@ -44,6 +49,16 @@ export const signUp = (payload: SignUpPayload): Promise<AuthApiResponse<null>> =
       data: payload,
     },
     true // use proxy
+  )
+}
+
+export const getProfile = (): Promise<AuthApiResponse<UserProfile>> => {
+  return apiFetch<AuthApiResponse<UserProfile>>(
+    "/api/auth/me",
+    {
+      method: "GET",
+    },
+    true
   )
 }
 

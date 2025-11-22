@@ -17,3 +17,18 @@ export interface AuthApiResponse<Data = unknown> {
   data?: Data
   [key: string]: unknown
 }
+
+export interface UserProfile {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  middle_name: string | null
+  gender: string
+  dob: string
+  phone: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+  role: string[] // ["STUDENT"] | ["ADMIN"] | ["TEACHER"] | etc
+}
