@@ -8,7 +8,13 @@ import { AlertCircle, RefreshCw } from "lucide-react"
 import { useGetTeachers } from "./_hooks/use-teachers"
 
 export default function TeachersPage() {
-  const { data: teachers, isLoading, isError, error, refetch: refetchTeachers } = useGetTeachers();
+  const {
+    data: teachers,
+    isLoading,
+    isError,
+    error,
+    refetch: refetchTeachers,
+  } = useGetTeachers()
 
   if (isLoading) {
     return (

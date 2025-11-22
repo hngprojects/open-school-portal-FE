@@ -115,7 +115,6 @@ export const teacherFormConfig: NewPersonFormConfig = {
 }
 
 export default function NewTeacherForm() {
-
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
   async function handleSubmit(formData: Record<string, unknown>) {

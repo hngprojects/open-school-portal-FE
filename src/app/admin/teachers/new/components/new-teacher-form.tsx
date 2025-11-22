@@ -125,9 +125,15 @@ export const teacherFormConfig: NewPersonFormConfig = {
 
 export default function NewTeacherForm() {
   const router = useRouter()
-  const createNewTeacher = useCreateTeacher().mutateAsync;
+  const createNewTeacher = useCreateTeacher().mutateAsync
 
-  return <NewPersonFormBuilder key={"new-teacher"} config={teacherFormConfig} onSubmit={handleSubmit} />
+  return (
+    <NewPersonFormBuilder
+      key={"new-teacher"}
+      config={teacherFormConfig}
+      onSubmit={handleSubmit}
+    />
+  )
 
   async function handleSubmit(formData: Record<string, unknown>) {
     // const subjects = [

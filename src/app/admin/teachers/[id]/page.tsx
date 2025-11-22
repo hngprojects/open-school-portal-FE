@@ -29,7 +29,13 @@ const generatePassword = () => {
 export default function EditTeacherPage() {
   const { id } = useParams()
   const router = useRouter()
-  const { data: teacher, isLoading, isError, refetch, error } = useGetTeacher(id as string);
+  const {
+    data: teacher,
+    isLoading,
+    isError,
+    refetch,
+    error,
+  } = useGetTeacher(id as string)
 
   // Create edit form config matching the create form
   const editTeacherConfig: NewPersonFormConfig = {

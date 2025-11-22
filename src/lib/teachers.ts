@@ -1,16 +1,27 @@
-import { User } from "@/types/user"
+import { SnakeUser as User } from "@/types/user"
 import { apiFetch } from "./api/client"
 
-export type CreateTeacherData = Omit<User, "id" | "avatar"> & {
+export type CreateTeacherData = Omit<User, "id" | "avatar" | "role" | "status"> & {
   photo?: File
 }
 
 export type UpdateTeacherData = Partial<CreateTeacherData>
 
-export const TeachersAPI = {
-  getAll: (): Promise<User[]> => apiFetch("/teachers", undefined, true),
+type ResponsePack<T> = {
+  data: T
+  message: string
+}
 
-  getOne: (id: string): Promise<User> => apiFetch(`/teachers/${id}`, undefined, true),
+export const TeachersAPI = {
+  getAll: (onlyActive?: boolean) =>
+    apiFetch<ResponsePack<ResponsePack<User[]>>>(
+      "/teachers",
+      { params: { active: onlyActive } },
+      true
+    ),
+
+  getOne: (id: string) =>
+    apiFetch<ResponsePack<User>>(`/teachers/${id}`, undefined, true),
 
   create: (data: CreateTeacherData): Promise<User> =>
     apiFetch(

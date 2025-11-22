@@ -63,14 +63,14 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localError, setLocalError] = useState("")
-  
+
   // show inital data
   const initialDataShape = JSON.stringify(initialData)
   useEffect(() => {
     if (initialData) {
       setFormData(initialData)
     }
-  }, [initialDataShape]);
+  }, [initialDataShape])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target

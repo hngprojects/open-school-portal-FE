@@ -10,12 +10,12 @@ const TEACHERS_KEY = ["teachers"]
 // ----------------------------
 // 🔍 GET ALL TEACHERS
 // ----------------------------
-export function useGetTeachers(onlyActive=true) {
+export function useGetTeachers(onlyActive = true) {
   return useQuery({
     queryKey: TEACHERS_KEY,
     queryFn: () => TeachersAPI.getAll(onlyActive),
     select: (data) => data.data?.data as User[],
-    staleTime: 1000 * 60 * 20
+    staleTime: 1000 * 60 * 20,
   })
 }
 
@@ -25,10 +25,10 @@ export function useGetTeachers(onlyActive=true) {
 export function useGetTeacher(id?: string) {
   return useQuery({
     queryKey: [...TEACHERS_KEY, id],
-    queryFn: () => TeachersAPI.getOne(id || ''),
+    queryFn: () => TeachersAPI.getOne(id || ""),
     enabled: !!id,
     select: (data) => data.data as User,
-    staleTime: 1000 * 60 * 20
+    staleTime: 1000 * 60 * 20,
   })
 }
 
