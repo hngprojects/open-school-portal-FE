@@ -107,20 +107,19 @@ export const sendResetPasswordRequest = (payload: {
 }
 
 export type UserData = {
-  id: string;               // UUID
-  email: string;
-  first_name: string;
-  last_name: string;
-  role: string[];           // array of roles
-  middle_name: string;
-  gender: string;
-  dob: string;              // ISO date (YYYY-MM-DD)
-  phone: string;
-  is_active: boolean;
-  created_at: string;       // ISO datetime
-  updated_at: string;       // ISO datetime
+  id: string // UUID
+  email: string
+  first_name: string
+  last_name: string
+  role: string[] // array of roles
+  middle_name: string
+  gender: string
+  dob: string // ISO date (YYYY-MM-DD)
+  phone: string
+  is_active: boolean
+  created_at: string // ISO datetime
+  updated_at: string // ISO datetime
 }
-
 
 export const getUserData = (): Promise<AuthApiResponse<UserData>> => {
   return apiFetch<AuthApiResponse<UserData>>(

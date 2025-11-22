@@ -75,16 +75,15 @@ export function useDeleteTeacher() {
       await queryClient.cancelQueries({ queryKey: TEACHERS_KEY })
 
       // Snapshot previous teachers list (User[])
-      const previous = queryClient.getQueryData(TEACHERS_KEY) as unknown;
+      const previous = queryClient.getQueryData(TEACHERS_KEY) as unknown
 
       // Optimistically update UI
       if (previous) {
         const previousData = previous as { data?: { data?: User[] } }
-        const previousFiltered = previousData.data?.data?.filter( teacher => teacher.id !== id)
-        queryClient.setQueryData<User[]>(
-          TEACHERS_KEY,
-          previousFiltered
+        const previousFiltered = previousData.data?.data?.filter(
+          (teacher) => teacher.id !== id
         )
+        queryClient.setQueryData<User[]>(TEACHERS_KEY, previousFiltered)
       }
 
       return { previous }

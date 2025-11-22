@@ -14,8 +14,14 @@ export async function POST(req: Request) {
     )
   }
 
-  const { access_token, refresh_token, session_id, session_expires_at, user: {id: user_id} } = data.data;
-  const expiresAt = new Date(session_expires_at);
+  const {
+    access_token,
+    refresh_token,
+    session_id,
+    session_expires_at,
+    user: { id: user_id },
+  } = data.data
+  const expiresAt = new Date(session_expires_at)
 
   // Create response with original backend data
   const response = NextResponse.json(data, {

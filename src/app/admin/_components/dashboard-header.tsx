@@ -15,14 +15,14 @@ import { useLogout } from "../_hooks/use-user-data"
 const DashboardHeader = () => {
   const user = useAuthStore((state) => state.user)
   const { state, isMobile, openMobile } = useSidebar()
-  const sendLogoutRequest = useLogout().mutateAsync;
+  const sendLogoutRequest = useLogout().mutateAsync
 
   const showDesktopTrigger = !isMobile && state === "collapsed"
   const showMobileTrigger = isMobile && !openMobile
   const showTrigger = showDesktopTrigger || showMobileTrigger
 
   const handleLogout = async () => {
-    await sendLogoutRequest();
+    await sendLogoutRequest()
   }
 
   return (
@@ -37,35 +37,25 @@ const DashboardHeader = () => {
         </div>
 
         {/* avatar container */}
-        <div className="flex items-center gap-1 rounded-[0.625rem] border px-3.5 py-1 transition-all duration-200 ease-in-out hover:shadow">
-          <div>
-            <Image
-              src="/assets/images/dashboard/avatar.svg"
-              alt="avatar"
-              width={32}
-              height={32}
-            />
-          </div>
-          <p className="space-x-2">
-            <span>{user?.first_name || "User"}</span>
-            <span>{user?.last_name || "Name"}</span>
-          </p>
-
-          <Play className="fill-text-secondary size-2 rotate-90" />
-        </div>
         {/* avatar dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-1 rounded-[0.625rem] border px-3.5 py-1 transition-all duration-200 ease-in-out hover:shadow hover:cursor-pointer">
-              <Image
-                src="/assets/images/dashboard/avatar.svg"
-                alt="avatar"
-                width={32}
-                height={32}
-              />
-              Sophia Alkija
+            <div className="flex cursor-pointer items-center gap-1 rounded-[0.625rem] border px-3.5 py-1 transition-all duration-200 ease-in-out hover:shadow">
+              <div>
+                <Image
+                  src="/assets/images/dashboard/avatar.svg"
+                  alt="avatar"
+                  width={32}
+                  height={32}
+                />
+              </div>
+              <p className="space-x-2">
+                <span>{user?.first_name || "User"}</span>
+                <span>{user?.last_name || "Name"}</span>
+              </p>
+
               <Play className="fill-text-secondary size-2 rotate-90" />
-            </button>
+            </div>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="w-40" align="end">
