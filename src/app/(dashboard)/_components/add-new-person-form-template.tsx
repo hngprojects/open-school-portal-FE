@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react"
+import React, { useState, ChangeEvent, FormEvent } from "react"
 import { Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -65,12 +65,12 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   const [localError, setLocalError] = useState("")
 
   // show inital data
-  const initialDataShape = JSON.stringify(initialData)
+  /*const initialData = JSON.stringify(initialData)
   useEffect(() => {
     if (initialData) {
       setFormData(initialData)
     }
-  }, [initialDataShape])
+  }, [initialData])*/
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target

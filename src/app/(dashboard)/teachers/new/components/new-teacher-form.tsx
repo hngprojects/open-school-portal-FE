@@ -5,6 +5,7 @@ import {
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
 import { User } from "@/types/user"
+//import { User } from "@/types/user"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
