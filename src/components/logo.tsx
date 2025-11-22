@@ -1,26 +1,54 @@
-import React from "react"
-import Image from "next/image"
+import { LogoSvg } from "../../public/svgs/logo-svg"
 
-const Logo = () => {
+interface LogoProps {
+  size?: number
+  iconColor?: string
+  textColor?: string
+  className?: string
+}
+
+const Logo: React.FC<LogoProps> = ({
+  size = 28,
+  iconColor = "#DA3743",
+  textColor = "#DA3743",
+  className = "",
+}) => {
   return (
-    <div className="flex items-center">
-      <div className="relative h-8 w-12 overflow-hidden">
-        <Image
-          src="/assets/school-folio.svg"
-          alt="Open School Portal Logo"
-          // fill
-          width={80}
-          height={80}
-          priority
-          // sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-          className="-mt-2 size-12 object-cover md:size-14 lg:size-16"
-        />
-      </div>
-      <span className="text-accent -mt-2 -ml-2.5 text-sm font-bold tracking-wider uppercase md:text-base lg:mt-2">
-        schoolfolio
+    <div className={`flex items-center gap-2 ${className}`}>
+      <LogoSvg width={size} height={size} color={iconColor} className="shrink-0" />
+
+      <span
+        className="font-bold tracking-wider uppercase"
+        style={{ color: textColor, fontSize: size * 0.5 }}
+      >
+        schoolbase
       </span>
     </div>
   )
 }
 
 export default Logo
+
+// import React from "react"
+// import { LogoSvg } from "../../public/svgs/logo-svg"
+
+// interface LogoProps {
+//   size?: number
+//   iconColor?: string
+//   textColor?: string
+//   className?: string
+// }
+
+// const Logo: React.FC<LogoProps> = () => {
+//   return (
+//     <div className="flex items-center">
+//       <LogoSvg className="h-7 w-7" />
+
+//       <span className="text-accent text-sm font-bold tracking-wider uppercase md:text-base">
+//         schoolbase
+//       </span>
+//     </div>
+//   )
+// }
+
+// export default Logo

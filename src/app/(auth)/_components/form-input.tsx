@@ -16,8 +16,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { loginUsingEmail } from "@/lib/api/auth"
+import { loginUsingEmail, getProfile } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/store/auth-store"
 
 type LoginField = keyof LoginFormValues
 
@@ -27,6 +28,8 @@ const initialValues: LoginFormValues = {
 }
 
 const LoginForm = () => {
+  const setUser = useAuthStore((state) => state.setUser)
+
   const [formData, setFormData] = useState<LoginFormValues>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
   const [touched, setTouched] = useState<Record<LoginField, boolean>>({
@@ -102,12 +105,30 @@ const LoginForm = () => {
       return
     }
 
+    // all roles
+    const roleToRoute: Record<string, string> = {
+      ADMIN: "admin",
+      // SUPER_ADMIN: "super-admin",
+      TEACHER: "teacher",
+      // STUDENT: "student",
+      // PARENT: "parent",
+    }
+
     setIsLoading(true)
     setErrors({})
 
     try {
       await loginUsingEmail(formData)
-      router.push("/admin")
+
+      // fetch profile after successful login
+      const user = await getProfile()
+      setUser(user)
+
+      const role = user.role[0]
+      const route = roleToRoute[role] ?? "login"
+      // console.log("profile", user)
+      router.push(`/${route}`)
+      // router.push("/admin")
 
       // Successful login - set auth session
       // setAuthSession(response)
@@ -157,15 +178,20 @@ const LoginForm = () => {
     <>
       <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
         {/* School Logo */}
-        <div className="mb-8">
-          <Image
-            src="/assets/images/auth/desktop-school-logo.png"
-            alt="StudyBridge Online School Logo"
-            width={100}
-            height={100}
-            className="h-40 w-40"
-          />
-        </div>
+        <Link href="/">
+          <div className="-gap-1.5 mb-8 flex flex-col items-center justify-center">
+            <Image
+              src="/assets/logo.svg"
+              alt="School Base Logo"
+              width={50}
+              height={50}
+              // className="h-40 w-40"
+            />
+            <span className="text-accent text-sm font-bold tracking-wider uppercase">
+              school base
+            </span>
+          </div>
+        </Link>
 
         {/* Main Content */}
         <div className="w-full max-w-md">

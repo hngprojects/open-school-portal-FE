@@ -8,9 +8,9 @@ import {
 export default function FAQAccordion() {
   const faqs = [
     {
-      question: "What is the open school portal?",
+      question: "What is the school base?",
       answer:
-        "The Open School Portal is a comprehensive all-in-one school management system designed to streamline administrative tasks. It helps schools manage students, track attendance, process fees, generate reports, and integrate NFC smart ID cards for secure access and tracking. The platform centralizes all your school's operations in one easy-to-use interface.",
+        "The School Base is a comprehensive all-in-one school management system designed to streamline administrative tasks. It helps schools manage students, track attendance, process fees, generate reports, and integrate NFC smart ID cards for secure access and tracking. The platform centralizes all your school's operations in one easy-to-use interface.",
     },
     {
       question: "Is there a cost to join waitlist?",

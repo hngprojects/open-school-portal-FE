@@ -4,15 +4,11 @@ import React, { useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-// import DemoVideo from "../demo/page"
 import { playVideoAndScroll } from "../_utils/watchdemo"
 
 const HomeDemo: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // const handleWatchDemo = () => {
-  //   playVideoAndScroll(videoRef, "demo-video")
-  // }
   return (
     <section className="font-outfit w-full bg-white py-6 sm:py-8 lg:py-24">
       <div className="flex items-center justify-center lg:hidden">
@@ -24,7 +20,7 @@ const HomeDemo: React.FC = () => {
         >
           <Image
             src="/demo/demo-mobile.png"
-            alt="Open School Portal Dashboard"
+            alt="School Base Dashboard"
             width={500}
             height={550}
             className="h-full w-full object-contain"
@@ -81,7 +77,7 @@ const HomeDemo: React.FC = () => {
               >
                 <Image
                   src="/demo/demo-mobile.png"
-                  alt="Open School Portal Dashboard"
+                  alt="School Base Dashboard"
                   width={500}
                   height={550}
                   className="h-full w-full object-contain"
@@ -115,7 +111,7 @@ const HomeDemo: React.FC = () => {
                 <Button
                   onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
                   variant="outline"
-                  className="hover:bg-border-white/90 border-white px-6 py-3 text-white"
+                  className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
                   <Link href="/#demo-video">Watch Demo</Link>

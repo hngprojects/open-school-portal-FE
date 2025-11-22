@@ -11,11 +11,11 @@ export default function HomeTestimonial() {
             className="mb-4 leading-tight font-semibold text-gray-900"
             style={{ fontSize: "clamp(28px, 5vw, 40px)" }}
           >
-            What Students, Staff & Parents Say About Open School Portal
+            What Students, Staff & Parents Say About School Base
           </h2>
           <p className="mx-auto max-w-3xl text-gray-600 lg:mx-0">
-            Real stories from people who use Open School Portal every day to learn, teach,
-            and stay organized
+            Real stories from people who use School Base every day to learn, teach, and
+            stay organized
           </p>
         </div>
 

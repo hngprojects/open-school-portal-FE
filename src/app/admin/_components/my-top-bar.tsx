@@ -1,6 +1,9 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { BellIcon, ChevronDownIcon } from "lucide-react"
 import Image from "next/image"
+import { useAuthStore } from "@/store/auth-store"
 
 export default function Topbar() {
   return (
@@ -14,6 +17,8 @@ export default function Topbar() {
 }
 
 function ProfileButton() {
+  const { profile } = useAuthStore()
+
   return (
     <button className="flex cursor-pointer items-center gap-2 rounded-xl border bg-white px-3 py-1.5 text-sm transition hover:bg-gray-50">
       <Image
@@ -24,7 +29,10 @@ function ProfileButton() {
         className="h-6 w-6 rounded-full object-cover"
       />
 
-      <span className="font-medium text-gray-800">Sophia Alakija</span>
+      <p className="flex items-center gap-0.5 font-medium text-gray-800">
+        <span>{profile?.firstName || "User"}</span>
+        <span>{profile?.lastName || "Name"}</span>
+      </p>
 
       <ChevronDownIcon className="h-4 w-4 text-gray-600" />
     </button>

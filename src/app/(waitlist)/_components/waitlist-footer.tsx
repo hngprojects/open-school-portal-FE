@@ -52,7 +52,7 @@ const Footer = () => {
 
         <footer>
           <p className="text-center text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} Open School Portal. All rights reserved.
+            &copy; {new Date().getFullYear()} School Base. All rights reserved.
           </p>
         </footer>
       </div>
