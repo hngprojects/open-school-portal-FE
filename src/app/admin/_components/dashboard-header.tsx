@@ -17,7 +17,7 @@ const DashboardHeader = () => {
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
-      <div>{showTrigger && <SidebarTrigger />}</div>
+      <div className="relative z-100">{showTrigger && <SidebarTrigger />}</div>
 
       <aside className="flex items-center gap-4">
         {/* bell icon */}
