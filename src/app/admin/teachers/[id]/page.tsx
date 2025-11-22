@@ -2,14 +2,13 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
 import { TeachersAPI, UpdateTeacherData } from "@/lib/teachers"
 import { useParams, useRouter } from "next/navigation"
 import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { User } from "@/types/user"
+
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -33,7 +32,7 @@ export default function EditTeacherPage() {
     data: teacher,
     isLoading,
     isError,
-    refetch,
+
     error,
   } = useGetTeacher(id as string)
 
