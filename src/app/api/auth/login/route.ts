@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     )
   }
 
-  const { access_token, refresh_token, session_expires_at } = data.data
+  const { access_token, refresh_token } = data.data
 
   // Create response with original backend data
   const response = NextResponse.json(data, {
@@ -40,4 +40,3 @@ export async function POST(req: Request) {
 
   return response
 }
-
