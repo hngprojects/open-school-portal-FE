@@ -1,7 +1,13 @@
 import { apiFetch } from "./client"
-import type { AuthApiResponse, LoginPayload, SignUpPayload } from "@/types/auth"
+import type {
+  AuthApiResponse,
+  LoginPayload,
+  SignUpPayload,
+  UserProfileResponse,
+} from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"
+const ME_PATH = "/auth/me"
 const REFRESH_PATH = "/api/auth/refresh"
 
 export type LoginResponse = AuthApiResponse<Record<string, unknown>>
@@ -45,6 +51,17 @@ export const signUp = (payload: SignUpPayload): Promise<AuthApiResponse<null>> =
     },
     true // use proxy
   )
+}
+
+// Get current user profile
+export const getProfile = async (): Promise<UserProfileResponse> => {
+  const res = await apiFetch<AuthApiResponse<UserProfileResponse>>(
+    ME_PATH,
+    { method: "GET" },
+    true
+  )
+  if (!res.data) throw new Error("Failed to fetch profile")
+  return res.data
 }
 
 export const refresh = (): Promise<RefreshResponse> => {

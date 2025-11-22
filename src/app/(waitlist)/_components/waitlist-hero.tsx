@@ -8,8 +8,8 @@ const HomeHero = () => {
         <section className="flex w-full flex-col gap-6 py-4 text-center md:gap-8 md:py-6">
           <div className="flex flex-col items-center gap-4 md:gap-6">
             <h1 className="text-text-primary animate-onrender text-3xl leading-tight font-bold md:text-6xl md:leading-18">
-              Get Early Access to <br className="md:hidden" /> Open{" "}
-              <br className="hidden md:block" /> School Portal
+              Get Early Access to <br className="md:hidden" /> School{" "}
+              <br className="hidden md:block" /> Base
             </h1>
             <p className="text-text-secondary animate-onrender text-base leading-7 delay-300 md:text-xl md:leading-8 lg:max-w-132 lg:text-2xl lg:leading-9.5">
               The one-in-all system for managing students, attendance, fees reports and

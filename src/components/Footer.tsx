@@ -1,7 +1,7 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import Logo from "./logo"
 
 const quickLinks = [
   { name: "Benefit", href: "/coming-soon" },
@@ -20,16 +20,7 @@ const Footer = () => {
       <div className="container flex flex-col gap-8 py-8 lg:flex-row lg:justify-between lg:py-12">
         <section className="flex w-full max-w-100 flex-col gap-5 lg:justify-center">
           <div className="flex items-center gap-4">
-            <Image
-              src="/assets/logo.png"
-              alt="Open School Portal Logo"
-              width={56}
-              height={56}
-              sizes="56px"
-              loading="lazy"
-              className="size-14 brightness-0 invert"
-            />
-            <h2 className="text-2xl font-bold">Open School Portal</h2>
+            <Logo iconColor="white" textColor="white" size={40} />
           </div>
           <p className="text-lg leading-8 lg:text-xl">
             The Modern Way School Run In Nigeria. Manage attendance, results, timetables,
@@ -68,7 +59,7 @@ const Footer = () => {
           <ul className="flex flex-col gap-4">
             <li className="flex items-center gap-3">
               <Mail className="size-5 shrink-0" />
-              <span className="wrap-break-word">info@openschoolportal.com</span>
+              <span className="wrap-break-word">info@schoolbase.com</span>
             </li>
             <li className="flex items-center gap-3">
               <Phone className="size-5 shrink-0" />
