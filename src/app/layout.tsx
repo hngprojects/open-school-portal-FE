@@ -9,9 +9,10 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    default: "Open School Portal",
-    template: "%s | Open School Portal",
+    default: "School Base",
+    template: "%s | School Base",
   },
+
   description:
     "The modern way schools run in Nigeria. Manage attendance, results, timetables, fees, and NFC all in one place. Connect students, teachers, parents, and administrators.",
 }

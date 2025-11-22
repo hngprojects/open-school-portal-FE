@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import React, { useState } from "react"
 import { usePathname } from "next/navigation"
@@ -16,7 +15,6 @@ const Navbar = () => {
   const navItems = [
     { label: "Home", path: "/waitlist" },
     { label: "How It works", path: "/how-it-works" },
-    // { label: "Waitlist", path: "/waitlist" },
   ]
 
   const toggleMobileMenu = () => {
@@ -79,15 +77,6 @@ const Navbar = () => {
         )}
 
         <Link href="/waitlist">
-          {/* <Image
-            src="/assets/logo.png"
-            alt="Open School Portal Logo"
-            width={64}
-            height={64}
-            priority
-            sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-            className="hidden size-12 md:block md:size-14 lg:size-16"
-          /> */}
           <Logo />
         </Link>
 

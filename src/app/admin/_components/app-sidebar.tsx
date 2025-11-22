@@ -3,17 +3,18 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-// import Image from "next/image"
+
 import {
   LayoutGrid,
-  Users,
+  // Users,
   GraduationCap,
   User,
-  Table,
-  File,
-  Banknote,
   ChevronDown,
   ChevronRight,
+  NotebookPen,
+  CalendarDays,
+  FileBadge,
+  Wallet,
 } from "lucide-react"
 
 import {
@@ -40,30 +41,30 @@ import Logo from "@/components/logo"
 
 // Menu items
 const items = [
-  { title: "Dashboard", url: "/dashboard-admin", icon: LayoutGrid },
-  { title: "Teachers", url: "/teachers", icon: Users },
-  { title: "Students", url: "/students", icon: GraduationCap },
-  { title: "Parents", url: "/parents", icon: User },
+  { title: "Dashboard", url: "/admin", icon: LayoutGrid },
+  { title: "Teachers", url: "/admin/teachers", icon: User },
+  { title: "Students", url: "/admin/students", icon: GraduationCap },
+  { title: "Parents", url: "/admin/parents", icon: User },
 
-  { title: "Attendance", url: "/attendance", icon: File },
-  { title: "Timetable", url: "/timetable", icon: Table },
-  { title: "Results", url: "/results", icon: Table },
+  { title: "Attendance", url: "/admin/attendance", icon: NotebookPen },
+  { title: "Timetable", url: "/admin/timetable", icon: CalendarDays },
+  { title: "Results", url: "/admin/results", icon: FileBadge },
   {
     title: "Fees Management",
-    url: "/fee-management",
-    icon: Banknote,
+    url: "/admin/fee-management",
+    icon: Wallet,
     subItems: [
-      { title: "Add Fee Group", url: "/fees/add-group" },
-      { title: "Add Fee Category", url: "/fees/add-category" },
-      { title: "Allocate Invoice", url: "/fees/allocate-invoice" },
-      { title: "Record Payment", url: "/fees/record-payment" },
+      { title: "Add Fee Group", url: "/admin/fees/add-group" },
+      { title: "Add Fee Category", url: "/admin/fees/add-category" },
+      { title: "Allocate Invoice", url: "/admin/fees/allocate-invoice" },
+      { title: "Record Payment", url: "/admin/fees/record-payment" },
     ],
   },
 ]
 
 export function AppSidebar() {
   const pathname = usePathname()
-  const [openItems, setOpenItems] = useState<string[]>(["Fees Management"])
+  const [openItems, setOpenItems] = useState<string[]>([])
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -82,10 +83,9 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex h-12 items-center justify-between px-2 py-4">
+        <div className="flex h-7 items-center justify-between px-2 py-4">
           <div>
             <Logo />
-            {/* <Image src="/assets/logo.png" alt="logo" width={50} height={50} /> */}
           </div>
           <SidebarTrigger />
         </div>
