@@ -31,7 +31,8 @@ export const useTeacherStore = create<TeacherState>((set, get) => ({
       const data = await TeachersAPI.getAll()
       set({ teachers: data, loading: false, error: null })
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to fetch teachers"
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to fetch teachers"
       set({
         loading: false,
         error: errorMessage,
@@ -53,8 +54,9 @@ export const useTeacherStore = create<TeacherState>((set, get) => ({
         error: null,
       }))
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to delete teachers"
-      set({ error: errorMessage });
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete teachers"
+      set({ error: errorMessage })
     }
   },
 
@@ -67,7 +69,8 @@ export const useTeacherStore = create<TeacherState>((set, get) => ({
         error: null,
       }))
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update teachers"
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to update teachers"
       set({ error: errorMessage })
       throw error
     }

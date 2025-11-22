@@ -40,9 +40,8 @@ const collectForwardHeaders = async (req: Request): Promise<Headers> => {
 
 /** Copy incoming set-cookie headers to NextResponse */
 const appendSetCookies = (source: Response, target: NextResponse): void => {
-  const getSetCookie = (
-    source.headers as unknown as { getSetCookie?: () => string[] }
-  ).getSetCookie
+  const getSetCookie = (source.headers as unknown as { getSetCookie?: () => string[] })
+    .getSetCookie
 
   const cookies = getSetCookie?.call(source.headers)
 
@@ -73,7 +72,7 @@ const forwardRequestToBackend = async (
 }
 
 /** Attempts refresh token */
-const tryRefresh = async (req: Request): Promise<Response | null> => {
+const tryRefresh = async (): Promise<Response | null> => {
   const refreshUrl = buildBackendUrl("/auth/refresh")
 
   const cookies = await getCookies()
@@ -109,7 +108,7 @@ export const proxyAuthRequest = async (
 
     /** 2. If unauthorized → try refresh */
     if (backendResponse.status === 401) {
-      const refreshResponse = await tryRefresh(req)
+      const refreshResponse = await tryRefresh()
 
       if (refreshResponse) {
         // Apply refreshed cookies
@@ -131,17 +130,14 @@ export const proxyAuthRequest = async (
 
     /** 3. Prepare final response */
     const responseBody = await backendResponse.text()
-    const nextResponse = new NextResponse(
-      responseBody.length > 0 ? responseBody : null,
-      {
-        status: backendResponse.status,
-        headers: {
-          "content-type":
-            backendResponse.headers.get("content-type") ??
-            "application/json; charset=utf-8",
-        },
-      }
-    )
+    const nextResponse = new NextResponse(responseBody.length > 0 ? responseBody : null, {
+      status: backendResponse.status,
+      headers: {
+        "content-type":
+          backendResponse.headers.get("content-type") ??
+          "application/json; charset=utf-8",
+      },
+    })
 
     // Apply cookies (from login or refresh)
     appendSetCookies(backendResponse, nextResponse)
