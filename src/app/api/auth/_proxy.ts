@@ -72,7 +72,7 @@ const forwardRequestToBackend = async (
 }
 
 /** Attempts refresh token */
-const tryRefresh = async (req: Request): Promise<Response | null> => {
+const tryRefresh = async (): Promise<Response | null> => {
   const refreshUrl = buildBackendUrl("/auth/refresh")
 
   const cookies = await getCookies()
@@ -108,7 +108,7 @@ export const proxyAuthRequest = async (
 
     /** 2. If unauthorized → try refresh */
     if (backendResponse.status === 401) {
-      const refreshResponse = await tryRefresh(req)
+      const refreshResponse = await tryRefresh()
 
       if (refreshResponse) {
         // Apply refreshed cookies
