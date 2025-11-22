@@ -20,7 +20,6 @@ export function middleware(req: NextRequest) {
   return NextResponse.next()
 }
 
-// Only apply to these patterns
 export const config = {
-  matcher: ["/admin/:path*", "/students/:path*", "/teachers/:path*"],
+  matcher: "/:path*",
 }
