@@ -28,6 +28,8 @@ const initialValues: LoginFormValues = {
 }
 
 const LoginForm = () => {
+  const setUser = useAuthStore((state) => state.setUser)
+
   const [formData, setFormData] = useState<LoginFormValues>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
   const [touched, setTouched] = useState<Record<LoginField, boolean>>({
@@ -103,12 +105,30 @@ const LoginForm = () => {
       return
     }
 
+    // all roles
+    const roleToRoute: Record<string, string> = {
+      ADMIN: "admin",
+      // SUPER_ADMIN: "super-admin",
+      TEACHER: "teacher",
+      // STUDENT: "student",
+      // PARENT: "parent",
+    }
+
     setIsLoading(true)
     setErrors({})
 
     try {
       await loginUsingEmail(formData)
-      router.push("/admin")
+
+      // fetch profile after successful login
+      const user = await getProfile()
+      setUser(user)
+
+      const role = user.role[0]
+      const route = roleToRoute[role] ?? "login"
+      // console.log("profile", user)
+      router.push(`/${route}`)
+      // router.push("/admin")
 
       // Successful login - set auth session
       // setAuthSession(response)

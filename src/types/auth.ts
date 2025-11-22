@@ -18,7 +18,7 @@ export interface AuthApiResponse<Data = unknown> {
   [key: string]: unknown
 }
 
-export interface UserProfile {
+export interface UserProfileResponse {
   id: string
   email: string
   first_name: string

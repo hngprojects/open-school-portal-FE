@@ -1,4 +1,3 @@
-// import { AdminQueryProvider } from "@/providers/admin-query-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AdminSidebar } from "./_components/admin-sidebar"
 // import Topbar from "./_components/my-top-bar"
