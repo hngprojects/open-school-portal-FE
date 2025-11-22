@@ -11,9 +11,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Edit3, Trash2 } from "lucide-react"
-import { User, UserType } from "@/types/user"
+import { SnakeUser as User, UserType } from "@/types/user"
 import { useRouter } from "next/navigation"
-import { useTeacherStore } from "@/store/general-auth-store"
+import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
 interface UsersTableProps {
   users: User[]
   userType: UserType
@@ -27,13 +27,20 @@ export function UsersTable({
   currentPage,
   itemsPerPage,
 }: UsersTableProps) {
-  const deleteTeacher = useTeacherStore((state) => state.deleteTeacher)
-  const getInitials = (name: string) => {
-    return name
+  const deleteTeacher = useDeleteTeacher().mutateAsync
+  const getFullName = (user: User) =>
+    user.full_name || `${user.first_name} ${user.last_name}`
+  const getInitials = (user: User) => {
+    const fullName = getFullName(user)
+    return fullName
       .split(" ")
       .map((part) => part[0])
       .join("")
       .toUpperCase()
+  }
+
+  const getID = (user: User) => {
+    return user.employment_id || user.reg_number || "N/A"
   }
 
   const startSN = (currentPage - 1) * itemsPerPage + 1
@@ -73,19 +80,19 @@ export function UsersTable({
               <TableCell>
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    <AvatarImage src={user.avatar} alt={getFullName(user)} />
+                    <AvatarFallback>{getInitials(user)}</AvatarFallback>
                   </Avatar>
-                  <span className="font-medium">{user.name}</span>
+                  <span className="font-medium">{getFullName(user)}</span>
                 </div>
               </TableCell>
-              <TableCell>{isTeacher ? user.employeeId : user.regNumber}</TableCell>
+              <TableCell>{getID(user)}</TableCell>
               {isTeacher ? (
                 <TableCell>{user.email}</TableCell>
               ) : (
                 <>
                   <TableCell>{user.class}</TableCell>
-                  <TableCell>{user.address}</TableCell>
+                  <TableCell>{user.home_address}</TableCell>
                 </>
               )}
               <TableCell>

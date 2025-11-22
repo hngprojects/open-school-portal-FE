@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { User, UserType } from "@/types/user"
+import { SnakeUser as User, UserType } from "@/types/user"
 import { UsersTable } from "./users-table"
 import { UsersGrid } from "./users-grid"
 import { UsersToolbar } from "./users-toolbar"
@@ -40,9 +40,15 @@ export function UsersView({
   }, [])
 
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    const list = Array.isArray(users) ? users : []
+    if (!Array.isArray(users)) {
+      // Log once to help debugging when backend returns unexpected shape
+      console.warn("UsersView: expected 'users' to be an array but got:", users)
+    }
+    return list.filter((user) => {
+      const fullName = user.full_name || `${user.first_name} ${user.last_name}`
       const matchesSearch =
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.role.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesStatus = statusFilter === "all" || user.status === statusFilter

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from "react"
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react"
 import { Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -32,6 +32,7 @@ export interface FormField {
     onGenerate: () => string
   }
   accept?: string
+  pattern?: string
   buttonText?: string
 }
 
@@ -62,6 +63,14 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localError, setLocalError] = useState("")
+
+  // show inital data
+  const initialDataShape = JSON.stringify(initialData)
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData)
+    }
+  }, [initialDataShape])
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -231,6 +240,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
             onChange={handleChange}
             placeholder={field.placeholder}
             className={commonInputClasses}
+            pattern={field.pattern}
           />
         )
     }
