@@ -1,6 +1,6 @@
 import { AdminQueryProvider } from "@/providers/admin-query-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { AppSidebar } from "./_components/app-sidebar"
+import { AdminSidebar } from "./_components/admin-sidebar"
 import Topbar from "./_components/my-top-bar"
 
 export const metadata = {
@@ -13,7 +13,7 @@ export default function WaitlistLayout({ children }: { children: React.ReactNode
       <SidebarProvider>
         <div className="grid h-screen w-screen grid-cols-[0fr_5fr] grid-rows-[64px_auto] overflow-hidden md:grid-cols-[1fr_5fr]">
           <div className="relative row-span-2 border-r bg-white">
-            <AppSidebar />
+            <AdminSidebar />
           </div>
           <header className="border-b bg-white">
             <Topbar />

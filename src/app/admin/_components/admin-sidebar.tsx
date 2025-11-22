@@ -30,6 +30,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -61,7 +62,7 @@ const items = [
   },
 ]
 
-export function AppSidebar() {
+export function AdminSidebar() {
   const pathname = usePathname()
   const [openItems, setOpenItems] = useState<string[]>([])
 
@@ -137,7 +138,7 @@ export function AppSidebar() {
                           </CollapsibleTrigger>
                         </div>
                         <CollapsibleContent>
-                          <SidebarMenuSub className="mx-0 border-l-0 px-0">
+                          <SidebarMenuSub className="mx-0 ml-4 border-l-0 px-0">
                             {item.subItems.map((subItem) => {
                               const isSubActive = pathname === subItem.url
                               return (
@@ -185,6 +186,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>Log Out</SidebarFooter>
     </Sidebar>
   )
 }

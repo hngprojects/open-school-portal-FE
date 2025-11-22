@@ -107,7 +107,6 @@ const LoginForm = () => {
 
     try {
       await loginUsingEmail(formData)
-      // console.log("login", formData)
       router.push("/admin")
 
       // Successful login - set auth session
@@ -135,9 +134,11 @@ const LoginForm = () => {
 
       // Set error message
       setErrors({
-        password: "Wrong password. Try again",
+        password:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
       })
-    } finally {
       setIsLoading(false)
     }
   }
@@ -156,15 +157,20 @@ const LoginForm = () => {
     <>
       <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
         {/* School Logo */}
-        <div className="mb-8">
-          <Image
-            src="/assets/images/auth/desktop-school-logo.png"
-            alt="StudyBridge Online School Logo"
-            width={100}
-            height={100}
-            className="h-40 w-40"
-          />
-        </div>
+        <Link href="/">
+          <div className="-gap-1.5 mb-8 flex flex-col items-center justify-center">
+            <Image
+              src="/assets/logo.svg"
+              alt="School Base Logo"
+              width={50}
+              height={50}
+              // className="h-40 w-40"
+            />
+            <span className="text-accent text-sm font-bold tracking-wider uppercase">
+              school base
+            </span>
+          </div>
+        </Link>
 
         {/* Main Content */}
         <div className="w-full max-w-md">
@@ -249,8 +255,8 @@ const LoginForm = () => {
                     />
                   )}
                 </button>
-                {renderError("password")}
               </div>
+              {renderError("password")}
             </div>
 
             {/* Remember Me & Forgot Password */}

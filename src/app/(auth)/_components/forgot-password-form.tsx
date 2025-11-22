@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "@/lib/schemas/auth"
 import { sendForgotPasswordEmail } from "@/lib/api/auth"
 import { useAuthStore } from "@/store/auth-store"
+import SchoolLogo from "./school-logo"
 
 const AUTH_SECTION_STYLES =
   "flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8"
@@ -77,7 +78,8 @@ export default function ForgotPasswordForm() {
 
   return (
     <section className={AUTH_SECTION_STYLES}>
-      <div className="mb-8">
+      <SchoolLogo />
+      {/* <div className="mb-8">
         <Image
           src="/assets/images/auth/desktop-school-logo.png"
           alt="StudyBridge Online School Logo"
@@ -85,7 +87,7 @@ export default function ForgotPasswordForm() {
           height={100}
           className="h-40 w-40"
         />
-      </div>
+      </div> */}
 
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">
