@@ -71,6 +71,34 @@ export async function apiFetch<TResponse>(
       headers,
     })
 
+    // Check for error status codes (4xx, 5xx)
+    // Note: 204 No Content is a success status for DELETE requests
+    if (res.status >= 400) {
+      const errorMessage =
+        (typeof res.data === "object" &&
+          res.data !== null &&
+          ("message" in res.data
+            ? String(res.data.message)
+            : "error" in res.data
+              ? String(res.data.error)
+              : undefined)) ||
+        res.statusText ||
+        `Request failed with status ${res.status}`
+
+      // Handle 401 unauthorized
+      if (res.status === 401) {
+        navigateTo("/login")
+      }
+
+      const friendlyMessage = getErrorMessage(new Error(errorMessage))
+      throw new Error(friendlyMessage)
+    }
+
+    // Handle 204 No Content (common for DELETE requests)
+    if (res.status === 204) {
+      return undefined as TResponse
+    }
+
     return res.data as TResponse
   } catch (err) {
     // Network or backend errors

@@ -3,6 +3,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { TeachersAPI, CreateTeacherData, UpdateTeacherData } from "@/lib/teachers"
 import type { SnakeUser as User } from "@/types/user"
+import { toast } from "sonner"
+
+type ResponsePack<T> = {
+  data: T
+  message: string
+}
+
+type TeachersResponse = ResponsePack<ResponsePack<User[]>>
 
 // The main list query key
 const TEACHERS_KEY = ["teachers"]
@@ -42,6 +50,10 @@ export function useCreateTeacher() {
     mutationFn: (data: CreateTeacherData) => TeachersAPI.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
+      toast.success("Teacher created successfully")
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to create teacher")
     },
   })
 }
@@ -57,6 +69,10 @@ export function useUpdateTeacher(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
       queryClient.invalidateQueries({ queryKey: [...TEACHERS_KEY, id] })
+      toast.success("Teacher updated successfully")
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update teacher")
     },
   })
 }
@@ -74,29 +90,41 @@ export function useDeleteTeacher() {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: TEACHERS_KEY })
 
-      // Snapshot previous teachers list (User[])
-      const previous = queryClient.getQueryData(TEACHERS_KEY) as unknown
+      // Get the raw query data (before select transformation)
+      // The query uses select, so getQueryData returns the raw response structure
+      const previousRaw = queryClient.getQueryData(TEACHERS_KEY)
 
-      // Optimistically update UI
-      if (previous) {
-        const previousData = previous as { data?: { data?: User[] } }
-        const previousFiltered = previousData.data?.data?.filter(
-          (teacher) => teacher.id !== id
-        )
-        queryClient.setQueryData<User[]>(TEACHERS_KEY, previousFiltered)
-      }
+      // Update the cache with filtered data, maintaining the response structure
+      queryClient.setQueryData(TEACHERS_KEY, (old: TeachersResponse | undefined) => {
+        if (!old) return old
 
-      return { previous }
+        // Handle the response structure: { data: { data: User[] } }
+        if (old.data?.data && Array.isArray(old.data.data)) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              data: old.data.data.filter((t) => t.id !== id),
+            },
+          }
+        }
+
+        return old
+      })
+
+      return { previous: previousRaw }
     },
 
-    onError: (_err, _id, ctx) => {
+    onError: (error, _id, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(TEACHERS_KEY, ctx.previous)
       }
+      toast.error(error instanceof Error ? error.message : "Failed to delete teacher")
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
+      toast.success("Teacher deleted successfully")
     },
   })
 }
