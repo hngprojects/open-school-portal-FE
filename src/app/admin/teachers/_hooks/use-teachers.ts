@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { TeachersAPI, CreateTeacherData, UpdateTeacherData } from "@/lib/teachers"
 import type { SnakeUser as User } from "@/types/user"
+import { toast } from "sonner"
 
 // The main list query key
 const TEACHERS_KEY = ["teachers"]
@@ -42,6 +43,10 @@ export function useCreateTeacher() {
     mutationFn: (data: CreateTeacherData) => TeachersAPI.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
+      toast.success("Teacher created successfully")
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to create teacher")
     },
   })
 }
@@ -57,6 +62,10 @@ export function useUpdateTeacher(id: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
       queryClient.invalidateQueries({ queryKey: [...TEACHERS_KEY, id] })
+      toast.success("Teacher updated successfully")
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to update teacher")
     },
   })
 }
@@ -74,26 +83,46 @@ export function useDeleteTeacher() {
     onMutate: async (id: string) => {
       await queryClient.cancelQueries({ queryKey: TEACHERS_KEY })
 
-      const previous = queryClient.getQueryData<User[]>(TEACHERS_KEY)
+      // Get the raw query data (before select transformation)
+      // The query uses select, so getQueryData returns the raw response structure
+      const previousRaw = queryClient.getQueryData(TEACHERS_KEY)
 
-      if (previous) {
-        queryClient.setQueryData<User[]>(
-          TEACHERS_KEY,
-          previous.filter((t) => t.id !== id)
-        )
-      }
+      // Update the cache with filtered data, maintaining the response structure
+      queryClient.setQueryData(TEACHERS_KEY, (old: any) => {
+        if (!old) return old
 
-      return { previous }
+        // Handle the response structure: { data: { data: User[] } }
+        if (old.data?.data && Array.isArray(old.data.data)) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              data: old.data.data.filter((t: User) => t.id !== id),
+            },
+          }
+        }
+
+        // Fallback: if it's already an array (shouldn't happen, but just in case)
+        if (Array.isArray(old)) {
+          return old.filter((t: User) => t.id !== id)
+        }
+
+        return old
+      })
+
+      return { previous: previousRaw }
     },
 
-    onError: (_err, _id, ctx) => {
+    onError: (error, _id, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(TEACHERS_KEY, ctx.previous)
       }
+      toast.error(error instanceof Error ? error.message : "Failed to delete teacher")
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
+      toast.success("Teacher deleted successfully")
     },
   })
 }
