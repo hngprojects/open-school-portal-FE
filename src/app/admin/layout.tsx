@@ -1,8 +1,9 @@
-import { AdminQueryProvider } from "@/providers/admin-query-provider"
+// import { AdminQueryProvider } from "@/providers/admin-query-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { AdminSidebar } from "./_components/admin-sidebar"
 // import Topbar from "./_components/my-top-bar"
 import DashboardHeader from "./_components/dashboard-header"
+import { GeneralQueryProvider } from "@/providers/general-query-provider"
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -10,19 +11,16 @@ export const metadata = {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AdminQueryProvider>
+    <GeneralQueryProvider>
       <SidebarProvider>
         <AdminSidebar />
-
-        <main className="w-full pt-20 lg:pt-16">
+        <main className="mt-[72px] h-full w-full">
           <DashboardHeader />
 
-          {/* Main content */}
           {children}
         </main>
       </SidebarProvider>
-      {/* </div> */}
-    </AdminQueryProvider>
+    </GeneralQueryProvider>
   )
 }
 

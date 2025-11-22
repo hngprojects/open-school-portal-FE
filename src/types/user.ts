@@ -6,6 +6,7 @@ export interface User {
   name: string
   title: string
   firstName: string
+  fullName?: string
   lastName: string
   middleName?: string
   email: string
@@ -20,5 +21,28 @@ export interface User {
   dateOfBirth: string
   gender: string
   address: string
+  avatar?: string
+}
+
+export interface SnakeUser {
+  // snake case user
+  id: string
+  title: string
+  first_name: string
+  full_name?: string
+  last_name: string
+  middle_name?: string
+  email: string
+  role: string
+  employment_id?: string
+  reg_number?: string
+  class?: string
+  guardian?: string
+  join_date?: string
+  status: UserStatus
+  phone: string
+  date_of_birth: string
+  gender: string
+  home_address: string
   avatar?: string
 }

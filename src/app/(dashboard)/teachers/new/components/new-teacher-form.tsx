@@ -4,7 +4,6 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { useTeacherStore } from "@/store/general-auth-store"
 import { User } from "@/types/user"
 
 const generatePassword = () => {
@@ -116,8 +115,6 @@ export const teacherFormConfig: NewPersonFormConfig = {
 }
 
 export default function NewTeacherForm() {
-  const addTeacher = useTeacherStore((state) => state.addTeacher)
-
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
   async function handleSubmit(formData: Record<string, unknown>) {
@@ -150,7 +147,6 @@ export default function NewTeacherForm() {
       address: homeAddress,
     }
 
-    await addTeacher(newTeacher)
     console.log("Teacher added successfully!")
   }
 }
