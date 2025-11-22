@@ -2,139 +2,20 @@
 
 "use client"
 
-import { useEffect, useState } from "react"
-import { TeachersAPI, UpdateTeacherData } from "@/lib/teachers"
 import { useParams, useRouter } from "next/navigation"
-import {
-  NewPersonFormBuilder,
-  NewPersonFormConfig,
-} from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { User } from "@/types/user"
+import { UpdateTeacherData } from "@/lib/teachers"
+import { NewPersonFormBuilder } from "@/app/(dashboard)/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useGetTeacher } from "../_hooks/use-teachers"
+import { useGetTeacher, useUpdateTeacher } from "../_hooks/use-teachers"
 import { teacherFormConfig } from "../new/components/new-teacher-form"
-
-// Import generatePassword function
-const generatePassword = () => {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-  let password = ""
-  for (let i = 0; i < 8; i++) {
-    password += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return password
-}
 
 export default function EditTeacherPage() {
   const { id } = useParams()
   const router = useRouter()
-  const {
-    data: teacher,
-    isLoading,
-    isError,
-    refetch,
-    error,
-  } = useGetTeacher(id as string)
-
-  // Create edit form config matching the create form
-  const editTeacherConfig: NewPersonFormConfig = {
-    fields: [
-      {
-        name: "title",
-        label: "Select Title",
-        type: "select",
-        required: true,
-        options: [
-          { value: "mr", label: "Mr." },
-          { value: "miss", label: "Miss" },
-          { value: "mrs", label: "Mrs." },
-          { value: "dr", label: "Dr." },
-          { value: "prof", label: "Prof." },
-        ],
-      },
-      {
-        name: "firstName",
-        label: "First Name",
-        type: "text",
-        placeholder: "Enter first name",
-        required: true,
-      },
-      {
-        name: "lastName",
-        label: "Last Name",
-        type: "text",
-        placeholder: "Enter last name",
-        required: true,
-      },
-      {
-        name: "middleName",
-        label: "Middle Name",
-        type: "text",
-        placeholder: "Enter middle name",
-      },
-      {
-        name: "employmentId",
-        label: "Employment ID",
-        type: "text",
-        placeholder: "Enter employment ID",
-        required: true,
-      },
-      {
-        name: "dateOfBirth",
-        label: "Date of Birth",
-        type: "date",
-        required: true,
-      },
-      {
-        name: "generatedPassword",
-        label: "Generate Password",
-        type: "password-generate",
-        placeholder: "emp1234",
-        required: false, // Not required for edit
-        generateButton: {
-          text: "Generate",
-          onGenerate: generatePassword,
-        },
-      },
-      {
-        name: "gender",
-        label: "Gender",
-        type: "select",
-        required: true,
-        options: [
-          { value: "male", label: "Male" },
-          { value: "female", label: "Female" },
-        ],
-      },
-      {
-        name: "phoneNumber",
-        label: "Phone Number",
-        type: "tel",
-        placeholder: "Enter phone number",
-        required: true,
-      },
-      {
-        name: "homeAddress",
-        label: "Home Address",
-        type: "text",
-        placeholder: "Enter home address",
-        required: true,
-      },
-      {
-        name: "photo",
-        label: "Upload Photo (150x150)",
-        type: "file",
-        accept: "image/*",
-        buttonText: "Select file",
-      },
-    ],
-    submitText: "Save Changes",
-    cancelText: "Cancel",
-    onCancel: () => {
-      router.push("/admin/teachers")
-    },
-  }
+  const { data: teacher, isLoading, isError, error } = useGetTeacher(id as string)
+  const updateTeacherMutation = useUpdateTeacher(id as string)
 
   async function handleSubmit(formData: Record<string, unknown>) {
     if (!id) return
@@ -152,10 +33,13 @@ export default function EditTeacherPage() {
         home_address: formData.homeAddress as string,
       }
 
-      await TeachersAPI.update(id as string, updateData)
-      router.push("/admin/teachers")
+      await updateTeacherMutation.mutateAsync(updateData)
+      // Small delay to ensure toast shows before navigation
+      setTimeout(() => {
+        router.push("/admin/teachers")
+      }, 300)
     } catch (err) {
-      console.error(err)
+      // Error toast is handled in the hook
       throw err // Let the form handle the error
     }
   }
