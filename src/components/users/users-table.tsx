@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import { Edit3, Trash2 } from "lucide-react"
 import { SnakeUser as User, UserType } from "@/types/user"
 import { useRouter } from "next/navigation"
 import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 interface UsersTableProps {
   users: User[]
   userType: UserType
@@ -27,7 +29,10 @@ export function UsersTable({
   currentPage,
   itemsPerPage,
 }: UsersTableProps) {
-  const deleteTeacher = useDeleteTeacher().mutateAsync
+  const deleteTeacherMutation = useDeleteTeacher()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+
   const getFullName = (user: User) =>
     user.full_name || `${user.first_name} ${user.last_name}`
   const getInitials = (user: User) => {
@@ -57,6 +62,16 @@ export function UsersTable({
   }
   const isTeacher = userType === "teachers"
   const router = useRouter()
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete) return
+    await deleteTeacherMutation.mutateAsync(userToDelete.id)
+  }
 
   return (
     <div className="rounded-md border">
@@ -103,11 +118,7 @@ export function UsersTable({
                 <div className="flex items-center gap-1 text-[#da3743]">
                   <Trash2
                     className="h-3 w-3 cursor-pointer"
-                    onClick={async () => {
-                      if (confirm("Delete this teacher?")) {
-                        await deleteTeacher(user.id)
-                      }
-                    }}
+                    onClick={() => handleDeleteClick(user)}
                   />
                   <Edit3
                     className="h-3 w-3 cursor-pointer"
@@ -119,6 +130,20 @@ export function UsersTable({
           ))}
         </TableBody>
       </Table>
+      {userToDelete && (
+        <DeleteConfirmationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={isTeacher ? "Delete Teacher" : "Delete Student"}
+          description={
+            isTeacher
+              ? "Are you sure you want to delete this teacher? This action cannot be undone."
+              : "Are you sure you want to delete this student? This action cannot be undone."
+          }
+          itemName={getFullName(userToDelete)}
+        />
+      )}
     </div>
   )
 }

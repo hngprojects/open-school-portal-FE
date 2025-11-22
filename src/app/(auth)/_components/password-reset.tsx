@@ -15,6 +15,7 @@ import { MoveRight } from "lucide-react"
 import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
 
 import { sendResetPasswordRequest } from "@/lib/api/auth"
+import SchoolLogo from "./school-logo"
 
 type ResetField = keyof ResetPasswordFormValues
 
@@ -137,7 +138,8 @@ const PasswordReset = () => {
     <section className="flex min-h-screen w-full justify-center overflow-x-hidden bg-white">
       <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-20">
         {/* Logo */}
-        <div className="mb-8 sm:mb-12">
+        <SchoolLogo />
+        {/* <div className="mb-8 sm:mb-12">
           <Image
             src="/assets/images/auth/desktop-school-logo.png"
             alt="School Logo"
@@ -145,7 +147,7 @@ const PasswordReset = () => {
             height={130}
             className="h-20 w-20 sm:h-[100px] sm:w-[100px] lg:h-40 lg:w-40"
           />
-        </div>
+        </div> */}
 
         {/* TOKEN ERROR */}
         {tokenError && (

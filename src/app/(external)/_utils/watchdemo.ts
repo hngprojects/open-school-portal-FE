@@ -20,18 +20,3 @@ export function playVideoAndScroll(
     })
   }
 }
-
-// export function playVideoAndScroll(
-//   videoRef: React.RefObject<HTMLVideoElement | null>,
-//   elementId: string
-// ) {
-//   const video = videoRef.current
-//   if (video) {
-//     video.play()
-
-//     // Smooth scroll
-//     document.getElementById(elementId)?.scrollIntoView({
-//       behavior: "smooth",
-//     })
-//   }
-// }

@@ -39,7 +39,7 @@ const HomeForWho = () => {
         <section className="flex w-full max-w-[1296px] flex-col gap-3 px-4 text-left md:gap-4">
           <h2 className="text-2xl font-semibold md:text-3xl">Who is it for?</h2>
           <p className="text-base leading-7 md:text-lg md:leading-8 lg:text-xl">
-            With Open School Portal, students, teachers, parents, and administrators stay
+            With School Base, students, teachers, parents, and administrators stay
             connected to everything they need learning, communication, and school
             management anytime, anywhere.
           </p>

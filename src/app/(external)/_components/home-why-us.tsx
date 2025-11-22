@@ -40,7 +40,7 @@ const HomeWhyUs = () => {
             className="text-3xl leading-tight font-bold text-gray-900 uppercase sm:text-4xl lg:text-5xl"
             style={{ fontSize: "clamp(20px, 4vw, 32px)" }}
           >
-            Why You Should Use Open School Portal
+            Why You Should Use School Base
           </h2>
           <p
             className="mt-4 max-w-3xl text-left text-lg text-gray-600"

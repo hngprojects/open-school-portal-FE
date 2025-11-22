@@ -13,10 +13,14 @@ type ResponsePack<T> = {
 }
 
 export const TeachersAPI = {
-  getAll: (onlyActive?: boolean) =>
+  getAll: (onlyActive = true) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
       "/teachers",
-      { params: { active: onlyActive } },
+      {
+        params: {
+          is_active: onlyActive,
+        },
+      },
       true
     ),
 

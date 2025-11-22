@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
 import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 
 interface UsersGridProps {
   users: User[]
@@ -20,7 +22,10 @@ interface UsersGridProps {
 }
 
 export function UsersGrid({ users, userType }: UsersGridProps) {
-  const deleteTeacher = useDeleteTeacher().mutateAsync
+  const deleteTeacherMutation = useDeleteTeacher()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<User | null>(null)
+
   const getFullName = (user: User) =>
     user.full_name || `${user.first_name} ${user.last_name}`
   const getInitials = (user: User) => {
@@ -34,6 +39,16 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
 
   const isTeacher = userType === "teachers"
   const router = useRouter()
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (!userToDelete) return
+    await deleteTeacherMutation.mutateAsync(userToDelete.id)
+  }
 
   return (
     <div className="grid gap-4">
@@ -70,11 +85,7 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    onClick={async () => {
-                      if (confirm("Delete teacher?")) {
-                        await deleteTeacher(user.id)
-                      }
-                    }}
+                    onClick={() => handleDeleteClick(user)}
                     className="text-destructive"
                   >
                     Delete
@@ -115,6 +126,20 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
           </CardContent>
         </Card>
       ))}
+      {userToDelete && (
+        <DeleteConfirmationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={isTeacher ? "Delete Teacher" : "Delete Student"}
+          description={
+            isTeacher
+              ? "Are you sure you want to delete this teacher? This action cannot be undone."
+              : "Are you sure you want to delete this student? This action cannot be undone."
+          }
+          itemName={getFullName(userToDelete)}
+        />
+      )}
     </div>
   )
 }
