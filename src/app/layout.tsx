@@ -28,7 +28,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${outfit.variable} font-outfit antialiased`}>
           {children}
-          <Toaster position="top-right" richColors />
+          <Toaster position="bottom-right" richColors />
         </body>
       </html>
     </GeneralQueryProvider>
