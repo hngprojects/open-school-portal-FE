@@ -1,7 +1,7 @@
 "use client"
 
 import { AlertCircle, LogOut } from "lucide-react"
-import {Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 
 export default function UnauthorizedPage() {
@@ -18,9 +18,7 @@ export default function UnauthorizedPage() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
           <AlertCircle className="h-8 w-8 text-yellow-600" />
         </div>
-        <h2 className="mb-2 text-xl font-bold text-gray-900">
-          Unauthorized Access
-        </h2>
+        <h2 className="mb-2 text-xl font-bold text-gray-900">Unauthorized Access</h2>
         <p className="mb-6 text-gray-600">
           You do not have permission to view this page.
         </p>

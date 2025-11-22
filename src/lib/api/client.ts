@@ -48,7 +48,7 @@ export async function apiFetch<TResponse>(
 
   const navigateTo = (path: string) => {
     if (typeof window !== "undefined") {
-      window.location.href = path;
+      window.location.href = path
     }
   }
 
@@ -69,14 +69,14 @@ export async function apiFetch<TResponse>(
     return res.data as TResponse
   } catch (err) {
     // Network or backend errors
-    
+
     if (err instanceof AxiosError) {
       // if unauthed
       if (err.response?.status === 401) {
-        navigateTo('/login');
+        navigateTo("/login")
       }
     }
-    const errorMessage = getErrorMessage(err);
-    throw new Error(errorMessage);
+    const errorMessage = getErrorMessage(err)
+    throw new Error(errorMessage)
   }
 }
