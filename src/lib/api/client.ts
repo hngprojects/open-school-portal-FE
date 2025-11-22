@@ -3,6 +3,11 @@ import { getErrorMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
+type APIResponse<T> = {
+  data: T
+  message?: string
+}
+
 const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
 const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
 const normalizeBackendPath = (path: string): string => {

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { MoreVertical } from "lucide-react"
-import { User, UserType } from "@/types/user"
+import { SnakeUser as User, UserType } from "@/types/user"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
-import { useTeacherStore } from "@/store/general-auth-store"
+import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
 
 interface UsersGridProps {
   users: User[]
@@ -20,9 +20,12 @@ interface UsersGridProps {
 }
 
 export function UsersGrid({ users, userType }: UsersGridProps) {
-  const deleteTeacher = useTeacherStore((state) => state.deleteTeacher)
-  const getInitials = (name: string) => {
-    return name
+  const deleteTeacher = useDeleteTeacher().mutateAsync
+  const getFullName = (user: User) =>
+    user.full_name || `${user.first_name} ${user.last_name}`
+  const getInitials = (user: User) => {
+    const fullName = getFullName(user)
+    return fullName
       .split(" ")
       .map((part) => part[0])
       .join("")
@@ -40,14 +43,14 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                  <AvatarImage src={user.avatar} alt={getFullName(user)} />
+                  <AvatarFallback>{getInitials(user)}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold">{user.name}</h3>
+                  <h3 className="font-semibold">{getFullName(user)}</h3>
                   <div className="mt-1 flex items-center gap-1">
                     <span className="text-muted-foreground text-sm">
-                      {isTeacher ? user.employeeId : user.regNumber}
+                      {isTeacher ? user.employment_id : user.reg_number}
                     </span>
                   </div>
                 </div>
@@ -105,7 +108,7 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
               {!isTeacher && (
                 <div className="flex items-center justify-between pb-2">
                   <p className="text-muted-foreground">Address:</p>
-                  <p className="text-right text-xs">{user.address}</p>
+                  <p className="text-right text-xs">{user.home_address}</p>
                 </div>
               )}
             </div>

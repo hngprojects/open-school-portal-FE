@@ -4,9 +4,9 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { TeachersAPI, CreateTeacherData } from "@/lib/teachers"
+import { CreateTeacherData } from "@/lib/teachers"
 import { useRouter } from "next/navigation"
-import { UserStatus } from "@/types/user"
+import { useCreateTeacher } from "../../_hooks/use-teachers"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -25,11 +25,11 @@ export const teacherFormConfig: NewPersonFormConfig = {
       type: "select",
       required: true,
       options: [
-        { value: "mr", label: "Mr." },
-        { value: "miss", label: "Miss" },
-        { value: "mrs", label: "Mrs." },
-        { value: "dr", label: "Dr." },
-        { value: "prof", label: "Prof." },
+        { value: "Mr", label: "Mr." },
+        { value: "Miss", label: "Miss" },
+        { value: "Mrs", label: "Mrs." },
+        { value: "Dr", label: "Dr." },
+        { value: "Prof", label: "Prof." },
       ],
     },
     {
@@ -53,11 +53,19 @@ export const teacherFormConfig: NewPersonFormConfig = {
       placeholder: "Enter middle name",
     },
     {
+      name: "email",
+      label: "Email Address",
+      type: "email",
+      placeholder: "Enter email address",
+    },
+    {
       name: "employmentId",
       label: "Employment ID",
       type: "text",
-      placeholder: "Enter employment ID",
+      placeholder: "EMP-YYYY-XXX",
       required: true,
+      // add regex checker
+      pattern: "EMP-\\d{4}-\\d{3}",
     },
     {
       name: "dateOfBirth",
@@ -117,46 +125,53 @@ export const teacherFormConfig: NewPersonFormConfig = {
 
 export default function NewTeacherForm() {
   const router = useRouter()
+  const createNewTeacher = useCreateTeacher().mutateAsync
 
-  return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
+  return (
+    <NewPersonFormBuilder
+      key={"new-teacher"}
+      config={teacherFormConfig}
+      onSubmit={handleSubmit}
+    />
+  )
 
   async function handleSubmit(formData: Record<string, unknown>) {
-    const firstName = formData.firstName as string
-    const lastName = formData.lastName as string
-    const id = formData.employmentId as string
-
-    const subjects = [
-      "Mathematics",
-      "English",
-      "Science",
-      "History",
-      "Geography",
-      "Art",
-      "Physical Education",
-      "Music",
-      "Computer Science",
-      "Biology",
-    ]
-    const randomSubject = subjects[Math.floor(Math.random() * subjects.length)]
+    // const subjects = [
+    //   "Mathematics",
+    //   "English",
+    //   "Science",
+    //   "History",
+    //   "Geography",
+    //   "Art",
+    //   "Physical Education",
+    //   "Music",
+    //   "Computer Science",
+    //   "Biology",
+    // ]
+    // const randomSubject = subjects[Math.floor(Math.random() * subjects.length)]
 
     const newTeacher: CreateTeacherData = {
-      name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
       title: formData.title as string,
-      firstName: formData.firstName as string,
-      lastName: formData.lastName as string,
-      middleName: formData.middleName as string,
-      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@openschoolportal.com`,
-      role: randomSubject,
-      employeeId: id,
-      joinDate: new Date().toISOString().split("T")[0],
-      status: "active" as UserStatus,
+      first_name: formData.firstName as string,
+      last_name: formData.lastName as string,
+      middle_name: formData.middleName as string,
+      email: formData.email as string,
+      employment_id: formData.employmentId as string,
       phone: formData.phoneNumber as string,
-      dateOfBirth: formData.dateOfBirth as string,
+      date_of_birth: formData.dateOfBirth as string,
       gender: formData.gender as string,
-      address: formData.homeAddress as string,
+      home_address: formData.homeAddress as string,
     }
 
-    await TeachersAPI.create(newTeacher)
-    router.push("/admin/teachers")
+    try {
+      // Log payload so we can inspect what is sent to the backend
+      console.log("Creating teacher — payload:", newTeacher)
+      await createNewTeacher(newTeacher)
+      router.push("/admin/teachers")
+    } catch (err) {
+      // Surface error details in the console for debugging
+      console.error("Failed to create teacher:", err)
+      throw err
+    }
   }
 }
