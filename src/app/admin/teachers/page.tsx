@@ -2,20 +2,15 @@
 
 "use client"
 
-import { useEffect } from "react"
 import { UsersView } from "@/components/users/users-view"
-import { useTeacherStore } from "@/store/general-auth-store"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, RefreshCw } from "lucide-react"
+import { useGetTeachers } from "./_hooks/use-teachers"
 
 export default function TeachersPage() {
-  const { teachers, fetchTeachers, loading, error, clearError } = useTeacherStore()
+  const { data: teachers, isLoading, isError, error, refetch: refetchTeachers } = useGetTeachers();
 
-  useEffect(() => {
-    fetchTeachers()
-  }, [fetchTeachers])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center p-6">
         <div className="text-center">
@@ -26,7 +21,7 @@ export default function TeachersPage() {
     )
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="flex min-h-[400px] items-center justify-center p-6">
         <div className="max-w-md text-center">
@@ -36,12 +31,11 @@ export default function TeachersPage() {
           <h2 className="mb-2 text-xl font-bold text-gray-900">
             Failed to Load Teachers
           </h2>
-          <p className="mb-6 text-gray-600">{error}</p>
+          <p className="mb-6 text-gray-600">{error.message}</p>
           <div className="space-y-3">
             <Button
               onClick={() => {
-                clearError()
-                fetchTeachers()
+                refetchTeachers()
               }}
               className="w-full"
             >
@@ -66,5 +60,5 @@ export default function TeachersPage() {
     )
   }
 
-  return <UsersView users={teachers} userType="teachers" />
+  return <UsersView users={teachers || []} userType="teachers" />
 }

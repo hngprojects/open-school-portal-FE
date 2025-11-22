@@ -13,6 +13,8 @@ import { User } from "@/types/user"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useGetTeacher } from "../_hooks/use-teachers"
+import { teacherFormConfig } from "../new/components/new-teacher-form"
 
 // Import generatePassword function
 const generatePassword = () => {
@@ -27,30 +29,7 @@ const generatePassword = () => {
 export default function EditTeacherPage() {
   const { id } = useParams()
   const router = useRouter()
-  const [teacher, setTeacher] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!id) return
-
-    const loadTeacher = async () => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        const data = await TeachersAPI.getOne(id as string)
-        setTeacher(data)
-      } catch (err) {
-        console.error(err)
-        setError(err instanceof Error ? err.message : "Failed to load teacher")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadTeacher()
-  }, [id])
+  const { data: teacher, isLoading, isError, refetch, error } = useGetTeacher(id as string);
 
   // Create edit form config matching the create form
   const editTeacherConfig: NewPersonFormConfig = {
@@ -157,15 +136,14 @@ export default function EditTeacherPage() {
     try {
       const updateData: UpdateTeacherData = {
         title: formData.title as string,
-        firstName: formData.firstName as string,
-        lastName: formData.lastName as string,
-        middleName: formData.middleName as string,
-        name: `${formData.title} ${formData.firstName} ${formData.lastName}`,
-        employeeId: formData.employmentId as string,
+        first_name: formData.firstName as string,
+        last_name: formData.lastName as string,
+        middle_name: formData.middleName as string,
+        employment_id: formData.employmentId as string,
         phone: formData.phoneNumber as string,
-        dateOfBirth: formData.dateOfBirth as string,
+        date_of_birth: formData.dateOfBirth as string,
         gender: formData.gender as string,
-        address: formData.homeAddress as string,
+        home_address: formData.homeAddress as string,
       }
 
       await TeachersAPI.update(id as string, updateData)
@@ -176,7 +154,7 @@ export default function EditTeacherPage() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="mb-10 w-full space-y-8 bg-white p-4 md:p-10">
         <div className="flex min-h-[400px] items-center justify-center">
@@ -189,7 +167,7 @@ export default function EditTeacherPage() {
     )
   }
 
-  if (error || !teacher) {
+  if (isError || !teacher) {
     return (
       <div className="mb-10 w-full space-y-8 bg-white p-4 md:p-10">
         <div className="flex min-h-[400px] items-center justify-center">
@@ -198,10 +176,10 @@ export default function EditTeacherPage() {
               <AlertCircle className="h-8 w-8 text-red-600" />
             </div>
             <h2 className="mb-2 text-xl font-bold text-gray-900">
-              {error || "Teacher Not Found"}
+              {error?.message || "Teacher Not Found"}
             </h2>
             <p className="mb-6 text-gray-600">
-              {error || "The teacher you're looking for doesn't exist."}
+              {error?.message || "The teacher you're looking for doesn't exist."}
             </p>
             <Button asChild>
               <Link href="/admin/teachers">Back to Teachers</Link>
@@ -215,14 +193,14 @@ export default function EditTeacherPage() {
   // Prepare initial data for the form
   const initialData = {
     title: teacher.title,
-    firstName: teacher.firstName,
-    lastName: teacher.lastName,
-    middleName: teacher.middleName || "",
-    employmentId: teacher.employeeId,
-    dateOfBirth: teacher.dateOfBirth,
+    firstName: teacher.first_name,
+    lastName: teacher.last_name,
+    middleName: teacher.middle_name || "",
+    employmentId: teacher.employment_id,
+    dateOfBirth: teacher.date_of_birth,
     gender: teacher.gender,
     phoneNumber: teacher.phone,
-    homeAddress: teacher.address,
+    homeAddress: teacher.home_address,
     generatedPassword: "", // Empty for security
   }
 
@@ -246,7 +224,7 @@ export default function EditTeacherPage() {
       </div>
       <div className="md:px-8">
         <NewPersonFormBuilder
-          config={editTeacherConfig}
+          config={teacherFormConfig}
           onSubmit={handleSubmit}
           initialData={initialData}
         />
