@@ -118,9 +118,6 @@ export const teacherFormConfig: NewPersonFormConfig = {
   ],
   submitText: "Save",
   cancelText: "Cancel",
-  onCancel: () => {
-    console.log("Form cancelled")
-  },
 }
 
 export default function NewTeacherForm() {
@@ -131,9 +128,14 @@ export default function NewTeacherForm() {
     <NewPersonFormBuilder
       key={"new-teacher"}
       config={teacherFormConfig}
+      onCancel={handleCancel}
       onSubmit={handleSubmit}
     />
   )
+
+  async function handleCancel() {
+    router.push("/admin/teachers")
+  }
 
   async function handleSubmit(formData: Record<string, unknown>) {
     // const subjects = [

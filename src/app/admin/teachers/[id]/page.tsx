@@ -17,6 +17,10 @@ export default function EditTeacherPage() {
   const { data: teacher, isLoading, isError, error } = useGetTeacher(id as string)
   const updateTeacherMutation = useUpdateTeacher(id as string)
 
+  async function handleCancel() {
+    router.push("/admin/teachers")
+  }
+
   async function handleSubmit(formData: Record<string, unknown>) {
     if (!id) return
 
@@ -116,6 +120,7 @@ export default function EditTeacherPage() {
         <NewPersonFormBuilder
           config={teacherFormConfig}
           onSubmit={handleSubmit}
+          onCancel={handleCancel}
           initialData={initialData}
         />
       </div>

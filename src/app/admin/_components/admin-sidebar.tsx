@@ -31,6 +31,7 @@ import {
   SidebarMenuSubButton,
   //SidebarFooter,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -38,6 +39,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import Logo from "@/components/logo"
+import { useLogout } from "../_hooks/use-user-data"
+import { LogoutDialog } from "./logout-confirmation-dialog"
 
 // Menu items
 const items = [
@@ -64,6 +67,7 @@ export function AdminSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -86,6 +90,12 @@ export function AdminSidebar() {
       return item.subItems.some((subItem) => pathname === subItem.url)
     }
     return false
+  }
+
+  const sendLogoutRequest = useLogout().mutateAsync
+
+  const handleLogout = async () => {
+    await sendLogoutRequest()
   }
 
   return (
@@ -204,6 +214,14 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+        Log Out
+      </SidebarFooter>
+      <LogoutDialog
+        open={showLogoutDialog}
+        onOpenChange={setShowLogoutDialog}
+        onConfirm={handleLogout}
+      />
     </Sidebar>
   )
 }
