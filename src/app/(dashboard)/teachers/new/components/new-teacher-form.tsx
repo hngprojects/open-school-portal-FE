@@ -130,7 +130,7 @@ export default function NewTeacherForm() {
     const homeAddress = formData.homeAddress as string
     const middleName = (formData.middleName as string) || ""
 
-    const newTeacher: User = {
+    /*const newTeacher: User = {
       id,
       name: `${title} ${firstName} ${lastName}`,
       title,
@@ -146,7 +146,7 @@ export default function NewTeacherForm() {
       dateOfBirth,
       gender,
       address: homeAddress,
-    }
+    }*/
 
     console.log("Teacher added successfully!")
   }
