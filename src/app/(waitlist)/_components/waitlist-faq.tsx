@@ -8,9 +8,9 @@ import {
 export default function FAQAccordion() {
   const faqs = [
     {
-      question: "What is the school base?",
+      question: "What is school base?",
       answer:
-        "The School Base is a comprehensive all-in-one school management system designed to streamline administrative tasks. It helps schools manage students, track attendance, process fees, generate reports, and integrate NFC smart ID cards for secure access and tracking. The platform centralizes all your school's operations in one easy-to-use interface.",
+        "School Base is a comprehensive all-in-one school management system designed to streamline administrative tasks. It helps schools manage students, track attendance, process fees, generate reports, and integrate NFC smart ID cards for secure access and tracking. The platform centralizes all your school's operations in one easy-to-use interface.",
     },
     {
       question: "Is there a cost to join waitlist?",
@@ -50,30 +50,4 @@ export default function FAQAccordion() {
       </div>
     </div>
   )
-}
-
-{
-  /* <div className="border border-gray-200 rounded-lg overflow-hidden bg-white">
-<button
-  onClick={onToggle}
-  className="w-full flex items-center justify-between p-3 md:p-6 text-left hover:bg-gray-50 transition-colors"
->
-  <h3 className="text-lg font-semibold text-gray-900 pr-4">
-    {question}
-  </h3>
-  <ChevronDown
-    className={`w-6 h-6 text-gray-600 flex-shrink-0 transition-transform duration-300 ${
-      isOpen ? 'rotate-180' : ''
-    }`}
-  />
-</button>
-<div
-  className={`transition-all duration-300 ease-in-out overflow-hidden ${
-    isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-  }`}
->
-  <div className="px-6 pb-6 text-gray-600 leading-relaxed">
-    {answer}
-  </div>
-</div> */
 }

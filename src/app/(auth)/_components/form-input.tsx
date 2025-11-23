@@ -19,6 +19,7 @@ import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 import { loginUsingEmail, getProfile } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/store/auth-store"
+import SchoolLogo from "./school-logo"
 
 type LoginField = keyof LoginFormValues
 
@@ -178,7 +179,8 @@ const LoginForm = () => {
     <>
       <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
         {/* School Logo */}
-        <Link href="/">
+        <SchoolLogo />
+        {/* <Link href="/">
           <div className="-gap-1.5 mb-8 flex flex-col items-center justify-center">
             <Image
               src="/assets/logo.svg"
@@ -191,7 +193,7 @@ const LoginForm = () => {
               school base
             </span>
           </div>
-        </Link>
+        </Link> */}
 
         {/* Main Content */}
         <div className="w-full max-w-md">

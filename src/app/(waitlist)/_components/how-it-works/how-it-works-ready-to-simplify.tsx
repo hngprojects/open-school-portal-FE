@@ -9,8 +9,8 @@ const ReadyToSimplify = () => {
             Ready to Simplify Your School?
           </h1>
           <p className="text-center leading-[120%] font-normal text-pretty text-[#EBEBEB] max-md:text-sm md:text-[24px]">
-            Join hundreds of schools who have streamlined their operations with Open
-            School Portal. Get started today.
+            Join hundreds of schools who have streamlined their operations with School
+            Base. Get started today.
           </p>
         </div>
 

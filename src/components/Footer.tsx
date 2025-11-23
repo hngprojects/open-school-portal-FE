@@ -1,11 +1,11 @@
 import React from "react"
 import Link from "next/link"
-import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import { Mail, Phone, Home, Facebook, Instagram, Twitter } from "lucide-react"
 import Logo from "./logo"
 
 const quickLinks = [
   { name: "Benefit", href: "/coming-soon" },
-  { name: "Features", href: "/features" },
+  { name: "Features", href: "/feature" },
   { name: "Who it's for", href: "/coming-soon" },
 ]
 const support = [
@@ -27,10 +27,28 @@ const Footer = () => {
             fees, and NFC, all in one place
           </p>
           <div className="flex items-center gap-4">
-            <Facebook className="size-5 fill-white text-white" />
-            <Instagram className="size-5 text-white" />
-            <Linkedin className="size-5 text-white" />
-            <Twitter className="size-5 text-white" />
+            <Link
+              href="https://www.facebook.com/share/17MGU2hVmP/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Facebook className="size-5 fill-white text-white" />
+            </Link>
+            <Link
+              href="https://www.instagram.com/schoolbase.ng?igsh=MXRxczAxcWszcWNsMQ=="
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Instagram className="size-5 text-white" />
+            </Link>
+            {/* <Linkedin className="size-5 text-white" /> */}
+            <Link
+              href="https://x.com/school_baseng?t=YPepx9_DRCqqo5dh0DeEbQ&s=09"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Twitter className="size-5 text-white" />
+            </Link>
           </div>
           <p className="text-[#fafafa]">Copyright © 2025</p>
         </section>

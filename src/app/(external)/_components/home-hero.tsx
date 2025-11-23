@@ -2,7 +2,6 @@
 
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
-// import Image from "next/image"
 import Link from "next/link"
 import DemoVideo from "./demo-video"
 import { playVideoAndScroll } from "../_utils/watchdemo"

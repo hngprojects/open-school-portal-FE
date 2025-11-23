@@ -15,7 +15,7 @@ export const testimonials: Testimonial[] = [
     image: "/testimonials/t-student.png",
     title: "Learning and being a student has never been this easy!",
     content:
-      "Open School Portal helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
+      "School Base helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ export const testimonials: Testimonial[] = [
     image: "/testimonials/t-teacher.png",
     title: "Teaching and class management made simple!",
     content:
-      "Open School Portal helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
+      "School Base helps me follow my lessons, submit assignments easily, and track my progress. I love how everything is in one place.",
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ export const testimonials: Testimonial[] = [
     image: "/testimonials/t-admin.png",
     title: "A powerful tool for modern schools, Reliable, fast, and built for growth!",
     content:
-      "Open School Portal has improved communication, record keeping, and student management. Our staff and parents love it.",
+      "School Base has improved communication, record keeping, and student management. Our staff and parents love it.",
   },
   {
     id: 4,
@@ -42,6 +42,6 @@ export const testimonials: Testimonial[] = [
     image: "/testimonials/t-parent.png",
     title: "I can finally monitor my child's education and progress!",
     content:
-      "With Open School Portal, I see my son's attendance, results, and school updates in real time. It keeps me involved and gives me peace of mind.",
+      "With School Base, I see my son's attendance, results, and school updates in real time. It keeps me involved and gives me peace of mind.",
   },
 ]

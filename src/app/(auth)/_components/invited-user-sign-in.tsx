@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
 import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
-import SchoolLogo from "./school-logo"
 
 type ResetField = keyof ResetPasswordFormValues
 
@@ -19,8 +18,13 @@ const initialValues: ResetPasswordFormValues = {
 }
 
 const InvitedUserSignIn = () => {
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [step, setStep] = useState<1 | 2>(1)
+
+  // 👇 Added email state back
   const [email, setEmail] = useState("")
+  const [emailTouched, setEmailTouched] = useState(false)
+  const isValidEmail = /^\S+@\S+\.\S+$/.test(email)
+
   const [formData, setFormData] = useState(initialValues)
   const [errors, setErrors] = useState<Partial<Record<ResetField, string>>>({})
   const [touched, setTouched] = useState<Record<ResetField, boolean>>({
@@ -41,43 +45,60 @@ const InvitedUserSignIn = () => {
     const field = name as ResetField
     const updated = { ...formData, [field]: value }
     setFormData(updated)
-    if (touched[field])
-      setErrors((prev) => ({ ...prev, [field]: validateField(field, updated) }))
+
+    if (touched[field]) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: validateField(field, updated),
+      }))
+    }
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const field = e.target.name as ResetField
     setTouched((prev) => ({ ...prev, [field]: true }))
-    setErrors((prev) => ({ ...prev, [field]: validateField(field, formData) }))
+    setErrors((prev) => ({
+      ...prev,
+      [field]: validateField(field, formData),
+    }))
   }
 
-  const hasErrors =
-    !formData.newPassword ||
-    !formData.confirmPassword ||
-    !!errors.newPassword ||
-    !!errors.confirmPassword
-
-  const handleSubmitStep2 = (e: React.FormEvent) => {
+  const handleSubmitStep1 = (e: React.FormEvent) => {
     e.preventDefault()
-    // Directly go to success page
-    setStep(3)
+
+    // validate passwords
+    const result = resetPasswordSchema.safeParse(formData)
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors
+      setErrors({
+        newPassword: fieldErrors.newPassword?.[0],
+        confirmPassword: fieldErrors.confirmPassword?.[0],
+      })
+      setTouched({ newPassword: true, confirmPassword: true })
+      return
+    }
+
+    // validate email first
+    if (!isValidEmail) {
+      setEmailTouched(true)
+      return
+    }
+
+    setStep(2)
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-20">
-      <SchoolLogo />
-      {/* <div className="mb-8 sm:mb-12">
-        <Image
-          src="/assets/images/auth/desktop-school-logo.png"
-          alt="School Logo"
-          width={130}
-          height={130}
-          className="h-20 w-20 sm:h-[100px] sm:w-[100px] lg:h-40 lg:w-40"
-        />
-      </div> */}
+    <div className="flex min-h-screen w-full flex-col items-center justify-center overflow-y-auto px-4 sm:px-8 lg:px-12 xl:px-20">
+      <Link href="/">
+        <div className="-gap-1.5 mb-8 flex flex-col items-center justify-center">
+          <Image src="/assets/logo.svg" alt="School Base Logo" width={50} height={50} />
+          <span className="text-accent text-sm font-bold tracking-wider uppercase">
+            school base
+          </span>
+        </div>
+      </Link>
 
       <AnimatePresence mode="wait">
-        {/* STEP 1: Email */}
         {step === 1 && (
           <motion.div
             key="step1"
@@ -88,61 +109,44 @@ const InvitedUserSignIn = () => {
             className="w-full max-w-[464px]"
           >
             <h1 className="mb-2 text-center text-[28px] font-bold text-[#2D2D2D]">
-              Welcome!
+              {" "}
+              Welcome!{" "}
             </h1>
-            <p className="mb-8 text-center text-sm text-[#6B6B6B]">
+            <p className="mb-1 text-center text-sm text-[#6B6B6B]">
               You&apos;ve been invited as a teacher.
             </p>
+            <p className="mb-8 text-center text-sm text-[#6B6B6B]">
+              Finish setup to enter your school portal.
+            </p>
 
-            <div className="mb-6">
-              <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
-                Email Address
-              </label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="jamesjackendfornd@gmail.com"
-              />
-            </div>
-
-            <Button
-              disabled={!email}
-              onClick={() => setStep(2)}
-              className="w-full py-3 text-[16px] font-semibold"
-            >
-              Continue <MoveRight />
-            </Button>
-          </motion.div>
-        )}
-
-        {/* STEP 2: Password */}
-        {step === 2 && (
-          <motion.div
-            key="step2"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -25 }}
-            transition={{ duration: 0.4 }}
-            className="w-full max-w-[464px]"
-          >
-            <h1 className="mb-2 text-center text-[28px] font-bold text-[#2D2D2D]">
-              Set your password
-            </h1>
-
-            <form onSubmit={handleSubmitStep2}>
+            <form onSubmit={handleSubmitStep1}>
+              {/* EMAIL */}
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
                   Email Address
                 </label>
+
                 <Input
                   type="email"
                   value={email}
-                  readOnly
-                  className="border-[#E0E0E0] bg-[#F5F5F5] text-[#6B6B6B]"
+                  onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => setEmailTouched(true)}
+                  placeholder="jamesjackendfornd@gmail.com"
+                  className={`bg-[#FBEBEC] ${
+                    emailTouched && !isValidEmail
+                      ? "border-[#DA3743]"
+                      : "border-[#E0E0E0] focus:border-[#2D2D2D]"
+                  }`}
                 />
+
+                {emailTouched && !isValidEmail && (
+                  <p className="mt-1 text-sm text-[#DA3743]">
+                    Please enter a valid email address.
+                  </p>
+                )}
               </div>
 
+              {/* NEW PASSWORD */}
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
                   Enter New Password
@@ -155,7 +159,11 @@ const InvitedUserSignIn = () => {
                     value={formData.newPassword}
                     onChange={handlePasswordChange}
                     onBlur={handleBlur}
-                    className={`pr-12 ${touched.newPassword && errors.newPassword ? "border-[#DA3743]" : "border-[#E0E0E0] focus:border-[#2D2D2D]"}`}
+                    className={`pr-12 ${
+                      touched.newPassword && errors.newPassword
+                        ? "border-[#DA3743]"
+                        : "border-[#E0E0E0]"
+                    }`}
                   />
                   <button
                     type="button"
@@ -174,8 +182,12 @@ const InvitedUserSignIn = () => {
                     />
                   </button>
                 </div>
+                {touched.newPassword && errors.newPassword && (
+                  <p className="mt-1 text-sm text-[#DA3743]">{errors.newPassword}</p>
+                )}
               </div>
 
+              {/* CONFIRM PASSWORD */}
               <div className="mb-6">
                 <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
                   Confirm New Password
@@ -188,7 +200,11 @@ const InvitedUserSignIn = () => {
                     value={formData.confirmPassword}
                     onChange={handlePasswordChange}
                     onBlur={handleBlur}
-                    className={`pr-12 ${touched.confirmPassword && errors.confirmPassword ? "border-[#DA3743]" : "border-[#E0E0E0] focus:border-[#2D2D2D]"}`}
+                    className={`pr-12 ${
+                      touched.confirmPassword && errors.confirmPassword
+                        ? "border-[#DA3743]"
+                        : "border-[#E0E0E0]"
+                    }`}
                   />
                   <button
                     type="button"
@@ -207,35 +223,30 @@ const InvitedUserSignIn = () => {
                     />
                   </button>
                 </div>
+                {touched.confirmPassword && errors.confirmPassword && (
+                  <p className="mt-1 text-sm text-[#DA3743]">{errors.confirmPassword}</p>
+                )}
               </div>
 
-              <Button
-                type="submit"
-                disabled={hasErrors}
-                className="w-full py-3 text-[16px] font-semibold"
-              >
+              <Button type="submit" className="w-full py-3 text-[16px] font-semibold">
                 Create Account <MoveRight />
               </Button>
             </form>
           </motion.div>
         )}
 
-        {/* STEP 3: Success */}
-        {step === 3 && (
+        {/* STEP 2 SUCCESS */}
+        {step === 2 && (
           <motion.div
-            key="step3"
+            key="step2"
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -25 }}
             transition={{ duration: 0.4 }}
             className="flex w-full max-w-[464px] flex-col items-center text-center"
           >
-            <h1 className="mb-4 text-2xl font-bold text-[#2D2D2D]">Account Created!</h1>
-            <p className="mb-8 text-sm text-[#6B6B6B]">
-              Your account has been successfully created. You can now log in to continue.
-            </p>
-
-            <div className="mb-8">
+            {/* MOBILE: vector above, LARGE: vector below */}
+            <div className="order-1 mb-8 md:order-3">
               <Image
                 src="/assets/images/invited-user/vector.png"
                 alt="Success"
@@ -244,7 +255,18 @@ const InvitedUserSignIn = () => {
               />
             </div>
 
-            <Button asChild className="w-full py-3 text-[16px] font-semibold">
+            <h1 className="order-2 mb-4 text-2xl font-bold text-[#2D2D2D] md:order-1">
+              Your Account Has Been Created Successfully!
+            </h1>
+
+            <p className="order-3 mb-8 text-sm text-[#6B6B6B] md:order-2">
+              Account has been activated successfully.
+            </p>
+
+            <Button
+              asChild
+              className="order-4 w-full py-3 text-[16px] font-semibold md:order-4"
+            >
               <Link href="/login">Go to Login</Link>
             </Button>
           </motion.div>
