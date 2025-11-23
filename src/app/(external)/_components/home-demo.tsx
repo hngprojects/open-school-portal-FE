@@ -108,14 +108,16 @@ const HomeDemo: React.FC = () => {
                     Get Started
                   </Button>
                 </Link>
-                <Button
-                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
-                  variant="outline"
-                  className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
-                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                >
-                  <Link href="/#demo-video">Watch Demo</Link>
-                </Button>
+                <Link href="/#demo-video">
+                  <Button
+                    onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
+                    variant="outline"
+                    className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
+                    style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
+                  >
+                    Watch Demo
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
