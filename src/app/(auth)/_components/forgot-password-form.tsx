@@ -78,15 +78,6 @@ export default function ForgotPasswordForm() {
   return (
     <section className={AUTH_SECTION_STYLES}>
       <SchoolLogo />
-      {/* <div className="mb-8">
-        <Image
-          src="/assets/images/auth/desktop-school-logo.png"
-          alt="StudyBridge Online School Logo"
-          width={100}
-          height={100}
-          className="h-40 w-40"
-        />
-      </div> */}
 
       <div className="w-full max-w-md">
         <header className="mb-8 text-center">

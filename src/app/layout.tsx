@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Outfit } from "next/font/google"
 import "./globals.css"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
+import { Toaster } from "sonner"
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -26,7 +27,10 @@ export default function RootLayout({
   return (
     <GeneralQueryProvider>
       <html lang="en">
-        <body className={`${outfit.variable} font-outfit antialiased`}>{children}</body>
+        <body className={`${outfit.variable} font-outfit antialiased`}>
+          {children}
+          <Toaster position="bottom-right" richColors />
+        </body>
       </html>
     </GeneralQueryProvider>
   )

@@ -14,7 +14,7 @@ export default function WaitlistLayout({
   return (
     <WaitlistProvider>
       <Navbar />
-      <main className="bg-[#F5F5F5] px-0 pt-20 md:pt-22 lg:pt-28">{children}</main>
+      <main className="bg-[#F5F5F5] px-0 pt-20 md:pt-22">{children}</main>
       <Footer />
     </WaitlistProvider>
   )

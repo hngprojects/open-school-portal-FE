@@ -18,7 +18,7 @@ export default function AuthLayout({
             className="object-cover"
           />
         </div>
-        <div className="scrollbar-hide flex h-full w-full overflow-y-auto px-4 py-8 sm:px-8 lg:items-center lg:justify-center lg:px-16">
+        <div className="scrollbar-hide flex h-full w-full overflow-y-auto px-4 sm:px-8 lg:items-center lg:justify-center lg:px-16">
           <div className="w-full lg:max-w-[556px]">{children}</div>
         </div>
       </main>
