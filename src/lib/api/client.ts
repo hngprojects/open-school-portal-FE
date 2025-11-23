@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
-import { getErrorMessage } from "../errors"
+import { getUserFriendlyMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -37,7 +37,7 @@ const resolveRequestUrl = (path: string, proxy?: boolean): string => {
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  validateStatus: (status) => status >= 200 && status < 400
+  validateStatus: (status) => status >= 200 && status < 400,
 })
 
 export async function apiFetch<TResponse>(
@@ -77,7 +77,6 @@ export async function apiFetch<TResponse>(
     }
 
     return res.data as TResponse
-
   } catch (err) {
     // Network or backend errors
 
@@ -86,8 +85,35 @@ export async function apiFetch<TResponse>(
       if (err.response?.status === 401) {
         navigateTo("/login")
       }
-      throw new Error(err.response?.data?.message || "An unexpected error occured. Please try again later")
+      const errorMessage = getErrorMessage(err)
+      throw new Error(errorMessage)
     }
     throw new Error("An unexpected error occured. Please try again later")
   }
+}
+
+const getErrorMessage = (error: unknown): string => {
+  const defaultMessage = "An unexpected error occurred. Please try again later."
+
+  if (error instanceof AxiosError) {
+    const handledError = error.response?.data?.message as string | undefined
+
+    if (handledError) {
+      const lowercaseHandledError = handledError.toLowerCase()
+
+      if (lowercaseHandledError.includes("invalid credentials")) {
+        return "Invalid Email address and/or Password."
+      }
+
+      if (error.response?.status === 409) {
+        return "An account with this details already exists."
+      }
+    }
+
+    if (error.response) {
+      return getUserFriendlyMessage(error.response?.statusText, error.response?.status)
+    }
+  }
+
+  return defaultMessage
 }
