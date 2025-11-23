@@ -10,7 +10,7 @@ import {
 import { Bell, Play, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useAuthStore } from "@/store/auth-store"
-import { useLogout } from "../_hooks/use-user-data"
+import { useLogout } from "../../app/admin/_hooks/use-user-data"
 
 const DashboardHeader = () => {
   const user = useAuthStore((state) => state.user)
