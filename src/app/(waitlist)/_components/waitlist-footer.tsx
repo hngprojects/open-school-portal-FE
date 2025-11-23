@@ -7,7 +7,7 @@ const sitemapLinks = [
   { name: "Home", href: "/waitlist" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/coming-soon" },
-  { name: "Privacy Policy", href: "/coming-soon" },
+  { name: "Privacy Policy", href: "/privacy" },
   { name: "Terms & Conditions", href: "/coming-soon" },
 ]
 
