@@ -1,13 +1,13 @@
 "use client"
 
 import React, { useState } from "react"
-import Image from "next/image"
 import { AlertCircle, Loader2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuthStore } from "@/store/auth-store"
 import { activateSchoolPortal, ActivationFormValues, activationSchema } from "@/lib/auth"
+import SchoolLogo from "../../_components/school-logo"
 
 type ActivationField = keyof ActivationFormValues
 
@@ -28,17 +28,9 @@ const ActivationForm = () => {
   const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
+    <section className="flex min-h-screen flex-col items-center justify-center px-6 lg:px-8">
       {/* School Logo */}
-      <div className="mb-8">
-        <Image
-          src="/assets/images/auth/desktop-school-logo.png"
-          alt="School Logo"
-          width={120}
-          height={120}
-          className="h-20 w-20"
-        />
-      </div>
+      <SchoolLogo />
 
       {/* Main Content */}
       <div className="w-full max-w-md">

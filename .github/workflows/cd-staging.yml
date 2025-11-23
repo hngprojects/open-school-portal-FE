@@ -19,7 +19,7 @@ jobs:
         run: |
           sshpass -p '${{ secrets.PASSWORD }}' ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
             # 1. Go to the frontend directory
-            cd /home/open-school/staging/open-school-portal-FE
+            cd open-school/staging/open-school-portal-FE
             
             # 2. Extract the artifact
             tar -xzf /tmp/staging/open-school-portal-fe-artifact.tar.gz

@@ -139,15 +139,6 @@ const PasswordReset = () => {
       <div className="flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-8 lg:px-12 xl:px-20">
         {/* Logo */}
         <SchoolLogo />
-        {/* <div className="mb-8 sm:mb-12">
-          <Image
-            src="/assets/images/auth/desktop-school-logo.png"
-            alt="School Logo"
-            width={130}
-            height={130}
-            className="h-20 w-20 sm:h-[100px] sm:w-[100px] lg:h-40 lg:w-40"
-          />
-        </div> */}
 
         {/* TOKEN ERROR */}
         {tokenError && (
