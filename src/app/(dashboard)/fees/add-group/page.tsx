@@ -8,7 +8,6 @@ export default function AddNewFeePage() {
         <h1 className="text-[24px] font-bold">Add New Fee</h1>
         <p className="text-muted-foreground">Create a new fee group for students</p>
       </div>
-
       <AddNewFeeForm />
     </div>
   )

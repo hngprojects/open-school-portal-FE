@@ -54,7 +54,7 @@ const items = [
     icon: Banknote,
     subItems: [
       { title: "Add Fee Group", url: "/fees/add-group" },
-      { title: "Add Fee Category", url: "/fees/add-category" },
+      { title: "Add Category", url: "/fees/add-fee-components" },
       { title: "Allocate Invoice", url: "/fees/allocate-invoice" },
       { title: "Record Payment", url: "/fees/record-payment" },
     ],
@@ -90,7 +90,7 @@ export function AppSidebar() {
           <SidebarTrigger />
         </div>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="overflow-hidden">
         <SidebarGroup>
           <SidebarGroupLabel className="sr-only">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
