@@ -6,9 +6,9 @@ import { FacebookIcon, TwitterIcon, InstagramIcon } from "lucide-react"
 const sitemapLinks = [
   { name: "Home", href: "/waitlist" },
   { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: "Contact", href: "/coming-soon" },
   { name: "Privacy Policy", href: "/privacy" },
-  { name: "Terms & Conditions", href: "/terms" },
+  { name: "Terms & Conditions", href: "/coming-soon" },
 ]
 
 const Footer = () => {

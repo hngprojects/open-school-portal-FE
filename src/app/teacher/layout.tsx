@@ -2,7 +2,7 @@ import React from "react"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { TeacherSidebar } from "./_components/teacher-sidebar"
-import DashboardHeader from "../(dashboard)/_components/dashboard-header"
+import DashboardHeader from "@/components/dashboard/dashboard-header"
 
 export default function Teacherlayout({ children }: { children: React.ReactNode }) {
   return (

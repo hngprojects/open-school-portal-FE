@@ -53,8 +53,8 @@ const items = [
     url: "/admin/fee-management",
     icon: Wallet,
     subItems: [
-      { title: "Add Fee Group", url: "/admin/fee-management/add-fees" },
-      { title: "Allocate Invoice", url: "/admin/fee-management/allocate-invoice" },
+      { title: "Add Fee Group", url: "/admin/fee-management/add-group" },
+      { title: "Add Fee Components", url: "/admin/fee-management/add-fee-components" },
       { title: "Record Payment", url: "/admin/fee-management/record-payment" },
     ],
   },
