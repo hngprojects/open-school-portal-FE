@@ -69,7 +69,6 @@ export function AdminSidebar() {
   const [openItems, setOpenItems] = useState<string[]>([])
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
-
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
       prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]
@@ -96,7 +95,7 @@ export function AdminSidebar() {
   const sendLogoutRequest = useLogout().mutateAsync
 
   const handleLogout = async () => {
-    await sendLogoutRequest();
+    await sendLogoutRequest()
   }
 
   return (
@@ -135,12 +134,13 @@ export function AdminSidebar() {
                             <SidebarMenuButton
                               asChild
                               isActive={isActive}
-                              className={`flex-1 ${isActive
+                              className={`flex-1 ${
+                                isActive
                                   ? "bg-[#DA3743]/10 text-[#DA3743]"
                                   : hasActiveChild
                                     ? ""
                                     : "text-gray-700 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                                }`}
+                              }`}
                             >
                               <Link
                                 href={item.url || "#"}
@@ -167,10 +167,11 @@ export function AdminSidebar() {
                                   <SidebarMenuSubButton
                                     asChild
                                     isActive={isSubActive}
-                                    className={`my-1.5 ${isSubActive
+                                    className={`my-1.5 ${
+                                      isSubActive
                                         ? "bg-[#DA3743]/10 text-[#DA3743]"
                                         : "text-gray-600 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                                      }`}
+                                    }`}
                                   >
                                     <Link href={subItem.url} onClick={handleLinkClick}>
                                       {subItem.title}

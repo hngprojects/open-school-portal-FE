@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useState } from "react"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 interface LogoutDialogProps {
   open: boolean
@@ -20,7 +21,7 @@ export function LogoutDialog({
   open,
   onOpenChange,
   onConfirm,
-  logoutFrom = 'Open school portal',
+  logoutFrom = "Open school portal",
 }: LogoutDialogProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -28,12 +29,12 @@ export function LogoutDialog({
   const handleLogout = async () => {
     setIsLoggingOut(true)
     setError(null)
-    
+
     try {
       await onConfirm()
       onOpenChange(false)
-    } catch (err) {
-      setError('A network error occured. Please check your connection and try again')
+    } catch {
+      setError("A network error occured. Please check your connection and try again")
       setIsLoggingOut(false)
     }
   }
@@ -53,10 +54,11 @@ export function LogoutDialog({
   if (isLoggingOut) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[425px] p-0 gap-0 border-0">
-          <div className="flex flex-col items-center justify-center py-12 px-6">
-            <div className="relative w-12 h-12 mb-4">
-              <Loader2 className="w-12 h-12 animate-spin text-red-500" />
+        <DialogOverlay className="z-60" />
+        <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+          <div className="flex flex-col items-center justify-center px-6 py-12">
+            <div className="relative mb-4 h-12 w-12">
+              <Loader2 className="h-12 w-12 animate-spin text-red-500" />
             </div>
             <p className="text-base font-normal text-gray-700">Logging Out</p>
           </div>
@@ -69,12 +71,13 @@ export function LogoutDialog({
   if (error) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[425px] p-0 gap-0 border-0">
-          <DialogHeader className="px-6 pt-8 pb-6 space-y-3">
-            <DialogTitle className="text-2xl font-semibold text-center">
+        <DialogOverlay className="z-60" />
+        <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+          <DialogHeader className="space-y-3 px-6 pt-8 pb-6">
+            <DialogTitle className="text-center text-2xl font-semibold">
               Log Out Failed
             </DialogTitle>
-            <DialogDescription className="text-base text-gray-600 text-center">
+            <DialogDescription className="text-center text-base text-gray-600">
               {error}
             </DialogDescription>
           </DialogHeader>
@@ -89,7 +92,7 @@ export function LogoutDialog({
             <Button
               variant="ghost"
               onClick={handleTryAgain}
-              className="h-14 rounded-none text-red-500 hover:text-red-600 text-base font-normal hover:bg-gray-50"
+              className="h-14 rounded-none text-base font-normal text-red-500 hover:bg-gray-50 hover:text-red-600"
             >
               Try Again
             </Button>
@@ -102,13 +105,14 @@ export function LogoutDialog({
   // Default confirmation state
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] p-0 gap-0 border-0">
-        <DialogHeader className="px-6 pt-8 pb-6 space-y-3">
-          <DialogTitle className="text-2xl font-semibold text-center">
+      <DialogOverlay className="z-60" />
+      <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+        <DialogHeader className="space-y-3 px-6 pt-8 pb-6">
+          <DialogTitle className="text-center text-2xl font-semibold">
             Log Out?
           </DialogTitle>
-          <DialogDescription className="text-base text-gray-600 text-center">
-            You'll log out from {logoutFrom}.
+          <DialogDescription className="text-center text-base text-gray-600">
+            You&apos;ll log out from {logoutFrom}.
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-2 border-t">
@@ -122,7 +126,7 @@ export function LogoutDialog({
           <Button
             variant="ghost"
             onClick={handleLogout}
-            className="h-14 rounded-none text-red-500 hover:text-red-600 text-base font-normal hover:bg-gray-50"
+            className="h-14 rounded-none text-base font-normal text-red-500 hover:bg-gray-50 hover:text-red-600"
           >
             Log out
           </Button>

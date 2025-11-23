@@ -128,7 +128,6 @@ const LoginForm = () => {
       const route = roleToRoute[role] ?? "login"
       router.push(`/${route}`)
       setAttemptCount(0)
-      
     } catch (error) {
       console.error("Login error:", error)
 
