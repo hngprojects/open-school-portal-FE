@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
-import { getErrorMessage } from "../errors"
+import { getUserFriendlyMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -37,7 +37,7 @@ const resolveRequestUrl = (path: string, proxy?: boolean): string => {
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  validateStatus: () => true, // we manually check status codes
+  validateStatus: (status) => status >= 200 && status < 400,
 })
 
 export async function apiFetch<TResponse>(
@@ -52,7 +52,7 @@ export async function apiFetch<TResponse>(
     config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
 
   const navigateTo = (path: string) => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && window.location.pathname !== path) {
       window.location.href = path
     }
   }
@@ -71,29 +71,6 @@ export async function apiFetch<TResponse>(
       headers,
     })
 
-    // Check for error status codes (4xx, 5xx)
-    // Note: 204 No Content is a success status for DELETE requests
-    if (res.status >= 400) {
-      const errorMessage =
-        (typeof res.data === "object" &&
-          res.data !== null &&
-          ("message" in res.data
-            ? String(res.data.message)
-            : "error" in res.data
-              ? String(res.data.error)
-              : undefined)) ||
-        res.statusText ||
-        `Request failed with status ${res.status}`
-
-      // Handle 401 unauthorized
-      if (res.status === 401) {
-        navigateTo("/login")
-      }
-
-      const friendlyMessage = getErrorMessage(new Error(errorMessage))
-      throw new Error(friendlyMessage)
-    }
-
     // Handle 204 No Content (common for DELETE requests)
     if (res.status === 204) {
       return undefined as TResponse
@@ -108,8 +85,35 @@ export async function apiFetch<TResponse>(
       if (err.response?.status === 401) {
         navigateTo("/login")
       }
+      const errorMessage = getErrorMessage(err)
+      throw new Error(errorMessage)
     }
-    const errorMessage = getErrorMessage(err)
-    throw new Error(errorMessage)
+    throw new Error("An unexpected error occured. Please try again later")
   }
+}
+
+const getErrorMessage = (error: unknown): string => {
+  const defaultMessage = "An unexpected error occurred. Please try again later."
+
+  if (error instanceof AxiosError) {
+    const handledError = error.response?.data?.message as string | undefined
+
+    if (handledError) {
+      const lowercaseHandledError = handledError.toLowerCase()
+
+      if (lowercaseHandledError.includes("invalid credentials")) {
+        return "Invalid Email address and/or Password."
+      }
+
+      if (error.response?.status === 409) {
+        return "An account with this details already exists."
+      }
+    }
+
+    if (error.response) {
+      return getUserFriendlyMessage(error.response?.statusText, error.response?.status)
+    }
+  }
+
+  return defaultMessage
 }

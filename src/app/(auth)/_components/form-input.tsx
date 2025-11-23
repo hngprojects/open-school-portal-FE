@@ -127,14 +127,7 @@ const LoginForm = () => {
 
       const role = user.role[0]
       const route = roleToRoute[role] ?? "login"
-      // console.log("profile", user)
       router.push(`/${route}`)
-      // router.push("/admin")
-
-      // Successful login - set auth session
-      // setAuthSession(response)
-
-      // Reset attempt count on success
       setAttemptCount(0)
     } catch (error) {
       console.error("Login error:", error)
