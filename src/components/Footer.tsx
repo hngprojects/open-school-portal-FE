@@ -5,7 +5,7 @@ import Logo from "./logo"
 
 const quickLinks = [
   { name: "Benefit", href: "/coming-soon" },
-  { name: "Features", href: "/features" },
+  { name: "Features", href: "/coming-soon" },
   { name: "Who it's for", href: "/coming-soon" },
 ]
 const support = [

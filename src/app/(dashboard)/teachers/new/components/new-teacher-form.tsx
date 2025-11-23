@@ -4,7 +4,8 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(dashboard)/_components/add-new-person-form-template"
-import { User } from "@/types/user"
+//import { User } from "@/types/user"
+//import { User } from "@/types/user"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -117,9 +118,9 @@ export const teacherFormConfig: NewPersonFormConfig = {
 export default function NewTeacherForm() {
   return <NewPersonFormBuilder config={teacherFormConfig} onSubmit={handleSubmit} />
 
-  async function handleSubmit(formData: Record<string, unknown>) {
+  async function handleSubmit(/*_formData: Record<string, unknown>*/) {
     console.log("Submitting new teacher form...")
-    const firstName = formData.firstName as string
+    /* const firstName = formData.firstName as string
     const lastName = formData.lastName as string
     const id = formData.employmentId as string
     const title = formData.title as string
@@ -128,8 +129,8 @@ export default function NewTeacherForm() {
     const phoneNumber = formData.phoneNumber as string
     const homeAddress = formData.homeAddress as string
     const middleName = (formData.middleName as string) || ""
-
-    const newTeacher: User = {
+*/
+    /*const newTeacher: User = {
       id,
       name: `${title} ${firstName} ${lastName}`,
       title,
@@ -145,7 +146,7 @@ export default function NewTeacherForm() {
       dateOfBirth,
       gender,
       address: homeAddress,
-    }
+    }*/
 
     console.log("Teacher added successfully!")
   }
