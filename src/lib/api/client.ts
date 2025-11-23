@@ -37,7 +37,7 @@ const resolveRequestUrl = (path: string, proxy?: boolean): string => {
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  validateStatus: () => true, // we manually check status codes
+  validateStatus: (status) => status >= 200 && status < 400
 })
 
 export async function apiFetch<TResponse>(
@@ -52,7 +52,7 @@ export async function apiFetch<TResponse>(
     config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
 
   const navigateTo = (path: string) => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && window.location.pathname !== path) {
       window.location.href = path
     }
   }
@@ -71,35 +71,13 @@ export async function apiFetch<TResponse>(
       headers,
     })
 
-    // Check for error status codes (4xx, 5xx)
-    // Note: 204 No Content is a success status for DELETE requests
-    if (res.status >= 400) {
-      const errorMessage =
-        (typeof res.data === "object" &&
-          res.data !== null &&
-          ("message" in res.data
-            ? String(res.data.message)
-            : "error" in res.data
-              ? String(res.data.error)
-              : undefined)) ||
-        res.statusText ||
-        `Request failed with status ${res.status}`
-
-      // Handle 401 unauthorized
-      if (res.status === 401) {
-        navigateTo("/login")
-      }
-
-      const friendlyMessage = getErrorMessage(new Error(errorMessage))
-      throw new Error(friendlyMessage)
-    }
-
     // Handle 204 No Content (common for DELETE requests)
     if (res.status === 204) {
       return undefined as TResponse
     }
 
     return res.data as TResponse
+
   } catch (err) {
     // Network or backend errors
 
@@ -108,8 +86,8 @@ export async function apiFetch<TResponse>(
       if (err.response?.status === 401) {
         navigateTo("/login")
       }
+      throw new Error(err.response?.data?.message || "An unexpected error occured. Please try again later")
     }
-    const errorMessage = getErrorMessage(err)
-    throw new Error(errorMessage)
+    throw new Error("An unexpected error occured. Please try again later")
   }
 }

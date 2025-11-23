@@ -31,6 +31,7 @@ import {
   SidebarMenuSubButton,
   //SidebarFooter,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -38,6 +39,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import Logo from "@/components/logo"
+import { useLogout } from "../_hooks/use-user-data"
+import { LogoutDialog } from "./logout-confirmation-dialog"
 
 // Menu items
 const items = [
@@ -64,6 +67,8 @@ export function AdminSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -86,6 +91,12 @@ export function AdminSidebar() {
       return item.subItems.some((subItem) => pathname === subItem.url)
     }
     return false
+  }
+
+  const sendLogoutRequest = useLogout().mutateAsync
+
+  const handleLogout = async () => {
+    await sendLogoutRequest();
   }
 
   return (
@@ -124,13 +135,12 @@ export function AdminSidebar() {
                             <SidebarMenuButton
                               asChild
                               isActive={isActive}
-                              className={`flex-1 ${
-                                isActive
+                              className={`flex-1 ${isActive
                                   ? "bg-[#DA3743]/10 text-[#DA3743]"
                                   : hasActiveChild
                                     ? ""
                                     : "text-gray-700 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                              }`}
+                                }`}
                             >
                               <Link
                                 href={item.url || "#"}
@@ -157,11 +167,10 @@ export function AdminSidebar() {
                                   <SidebarMenuSubButton
                                     asChild
                                     isActive={isSubActive}
-                                    className={`my-1.5 ${
-                                      isSubActive
+                                    className={`my-1.5 ${isSubActive
                                         ? "bg-[#DA3743]/10 text-[#DA3743]"
                                         : "text-gray-600 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                                    }`}
+                                      }`}
                                   >
                                     <Link href={subItem.url} onClick={handleLinkClick}>
                                       {subItem.title}
@@ -204,6 +213,14 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+        Log Out
+      </SidebarFooter>
+      <LogoutDialog
+        open={showLogoutDialog}
+        onOpenChange={setShowLogoutDialog}
+        onConfirm={handleLogout}
+      />
     </Sidebar>
   )
 }
