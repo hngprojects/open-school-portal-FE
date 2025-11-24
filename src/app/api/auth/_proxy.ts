@@ -16,7 +16,6 @@ const extractAccessTokenFromSetCookie = (
   setCookieHeader: string | null
 ): string | null => {
   if (!setCookieHeader) return null
-
   const match = setCookieHeader.match(/access_token=([^;]+)/)
   return match ? match[1] : null
 }
@@ -36,7 +35,7 @@ const forwardRequest = async (
   })
 }
 
-/* REFRESH ATTEMPT */
+/* Attempt Refresh Token */
 const attemptRefresh = async (): Promise<{
   ok: boolean
   newAccessToken: string | null
@@ -44,13 +43,13 @@ const attemptRefresh = async (): Promise<{
 }> => {
   const refreshUrl = buildBackendUrl("auth/refresh")
   const cookieStore = await getCookies()
-  const token = cookieStore.get("refresh_token")?.value
+  const refreshToken = cookieStore.get("refresh_token")?.value
 
-  if (!token) return { ok: false, newAccessToken: null, refreshResponse: null }
+  if (!refreshToken) return { ok: false, newAccessToken: null, refreshResponse: null }
 
   const res = await fetch(refreshUrl, {
     method: "POST",
-    headers: { cookie: `refresh_token=${token}` },
+    headers: { cookie: `refresh_token=${refreshToken}` },
     cache: "no-store",
   })
 
@@ -59,11 +58,7 @@ const attemptRefresh = async (): Promise<{
   const setCookie = res.headers.get("set-cookie")
   const newAccessToken = extractAccessTokenFromSetCookie(setCookie)
 
-  return {
-    ok: true,
-    newAccessToken,
-    refreshResponse: res,
-  }
+  return { ok: true, newAccessToken, refreshResponse: res }
 }
 
 /* MAIN PROXY */
@@ -76,16 +71,17 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
 
     // Prepare headers
     const headers = new Headers()
-    const cookie = req.headers.get("cookie")
-    if (cookie) headers.set("cookie", cookie)
+    const incomingCookies = req.headers.get("cookie")
+    if (incomingCookies) headers.set("cookie", incomingCookies)
     const contentType = req.headers.get("content-type")
     if (contentType) headers.set("content-type", contentType)
 
+    // Attach access token if present
     const cookieStore = await getCookies()
-    const access = cookieStore.get("access_token")?.value
-    if (access) headers.set("Authorization", `Bearer ${access}`)
+    const accessToken = cookieStore.get("access_token")?.value
+    if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`)
 
-    /* FIRST CALL */
+    // --- FIRST CALL ---
     let backendRes = await forwardRequest(
       backendUrl,
       req.method,
@@ -93,14 +89,12 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
       headers
     )
 
-    /* If unauthorized — try refresh */
+    // --- REFRESH IF UNAUTHORIZED ---
     if (backendRes.status === 401) {
       const refresh = await attemptRefresh()
-
       if (refresh.ok && refresh.newAccessToken) {
         headers.set("Authorization", `Bearer ${refresh.newAccessToken}`)
-
-        // retry call
+        // Retry the original request
         backendRes = await forwardRequest(
           backendUrl,
           req.method,
@@ -110,7 +104,7 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
       }
     }
 
-    /* Return response back to browser */
+    // --- BUILD RESPONSE ---
     const responseText = await backendRes.text()
     const nextRes = new NextResponse(responseText || null, {
       status: backendRes.status,
@@ -120,9 +114,13 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
       },
     })
 
-    // propagate cookies from backend to client
-    const setCookie = backendRes.headers.get("set-cookie")
-    if (setCookie) nextRes.headers.append("set-cookie", setCookie)
+    // --- PROPAGATE ALL COOKIES ---
+    const setCookieHeader = backendRes.headers.get("set-cookie")
+    if (setCookieHeader) {
+      setCookieHeader.split(/,(?=[^ ]+=)/g).forEach((cookie) => {
+        if (cookie) nextRes.headers.append("set-cookie", cookie.trim())
+      })
+    }
 
     return nextRes
   } catch (err) {
