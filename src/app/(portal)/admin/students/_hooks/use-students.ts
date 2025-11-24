@@ -2,11 +2,12 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
-  TeachersAPI,
-  CreateTeacherData,
-  UpdateTeacherData,
-  GetTeachersParams,
-} from "@/lib/teachers"
+  StudentsAPI,
+  CreateStudentData,
+  UpdateStudentData,
+  GetStudentsParams,
+} from "@/lib/api/students"
+
 import type { SnakeUser as User } from "@/types/user"
 import { toast } from "sonner"
 
@@ -15,18 +16,18 @@ type ResponsePack<T> = {
   message: string
 }
 
-type TeachersResponse = ResponsePack<ResponsePack<User[]>>
+type StudentsResponse = ResponsePack<ResponsePack<User[]>>
 
 // The main list query key
-const TEACHERS_KEY = ["teachers"]
+const STUDENTS_KEY = ["students"]
 
 // ----------------------------
-// 🔍 GET ALL TEACHERS
+// 🔍 GET ALL STUDENTS
 // ----------------------------
-export function useGetTeachers(filters?: GetTeachersParams) {
+export function useGetStudents(filters?: GetStudentsParams) {
   return useQuery({
-    queryKey: [...TEACHERS_KEY, filters],
-    queryFn: () => TeachersAPI.getAll(filters),
+    queryKey: [...STUDENTS_KEY, filters],
+    queryFn: () => StudentsAPI.getAll(filters),
     select: (data) => data.data?.data as User[],
     staleTime: 1000 * 60 * 20,
     retry: 1,
@@ -37,10 +38,10 @@ export function useGetTeachers(filters?: GetTeachersParams) {
 // ----------------------------
 // 🔍 GET TEACHER BY ID
 // ----------------------------
-export function useGetTeacher(id?: string) {
+export function useGetStudent(id?: string) {
   return useQuery({
-    queryKey: [...TEACHERS_KEY, id],
-    queryFn: () => TeachersAPI.getOne(id || ""),
+    queryKey: [...STUDENTS_KEY, id],
+    queryFn: () => StudentsAPI.getOne(id || ""),
     enabled: !!id,
     select: (data) => data.data as User,
     staleTime: 1000 * 60 * 20,
@@ -50,14 +51,14 @@ export function useGetTeacher(id?: string) {
 // ----------------------------
 // ➕ CREATE TEACHER
 // ----------------------------
-export function useCreateTeacher() {
+export function useCreateStudent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: CreateTeacherData) => TeachersAPI.create(data),
+    mutationFn: (data: CreateStudentData) => StudentsAPI.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
-      toast.success("Teacher created successfully")
+      queryClient.invalidateQueries({ queryKey: STUDENTS_KEY })
+      toast.success("Student created successfully")
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to create teacher")
@@ -68,15 +69,15 @@ export function useCreateTeacher() {
 // ----------------------------
 // ✏ UPDATE TEACHER
 // ----------------------------
-export function useUpdateTeacher(id: string) {
+export function useUpdateStudent(id: string) {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateTeacherData) => TeachersAPI.update(id, data),
+    mutationFn: (data: UpdateStudentData) => StudentsAPI.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
-      queryClient.invalidateQueries({ queryKey: [...TEACHERS_KEY, id] })
-      toast.success("Teacher updated successfully")
+      queryClient.invalidateQueries({ queryKey: STUDENTS_KEY })
+      queryClient.invalidateQueries({ queryKey: [...STUDENTS_KEY, id] })
+      toast.success("Student updated successfully")
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to update teacher")
@@ -87,22 +88,22 @@ export function useUpdateTeacher(id: string) {
 // ----------------------------
 // ❌ DELETE TEACHER (Optimistic Update)
 // ----------------------------
-export function useDeleteTeacher() {
+export function useDeleteStudent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => TeachersAPI.delete(id),
+    mutationFn: (id: string) => StudentsAPI.delete(id),
 
     // Optimistic update for snappy UI
     onMutate: async (id: string) => {
-      await queryClient.cancelQueries({ queryKey: TEACHERS_KEY })
+      await queryClient.cancelQueries({ queryKey: STUDENTS_KEY })
 
       // Get the raw query data (before select transformation)
       // The query uses select, so getQueryData returns the raw response structure
-      const previousRaw = queryClient.getQueryData(TEACHERS_KEY)
+      const previousRaw = queryClient.getQueryData(STUDENTS_KEY)
 
       // Update the cache with filtered data, maintaining the response structure
-      queryClient.setQueryData(TEACHERS_KEY, (old: TeachersResponse | undefined) => {
+      queryClient.setQueryData(STUDENTS_KEY, (old: StudentsResponse | undefined) => {
         if (!old) return old
 
         // Handle the response structure: { data: { data: User[] } }
@@ -124,14 +125,14 @@ export function useDeleteTeacher() {
 
     onError: (error, _id, ctx) => {
       if (ctx?.previous) {
-        queryClient.setQueryData(TEACHERS_KEY, ctx.previous)
+        queryClient.setQueryData(STUDENTS_KEY, ctx.previous)
       }
       toast.error(error instanceof Error ? error.message : "Failed to delete teacher")
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: TEACHERS_KEY })
-      toast.success("Teacher deleted successfully")
+      queryClient.invalidateQueries({ queryKey: STUDENTS_KEY })
+      toast.success("Student deleted successfully")
     },
   })
 }
