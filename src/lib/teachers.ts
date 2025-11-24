@@ -1,7 +1,7 @@
 import { SnakeUser as User } from "@/types/user"
 import { apiFetch } from "./api/client"
 
-export type CreateTeacherData = Omit<User, "id" | "avatar" | "role" | "status"> & {
+export type CreateTeacherData = Omit<User, "id" | "avatar" | "role" | "is_active"> & {
   photo?: File
 }
 
@@ -12,14 +12,18 @@ type ResponsePack<T> = {
   message: string
 }
 
+export interface GetTeachersParams {
+  is_active?: boolean
+  page?: number
+  search?: string
+}
+
 export const TeachersAPI = {
-  getAll: (onlyActive = true) =>
+  getAll: (params?: GetTeachersParams) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
       "/teachers",
       {
-        params: {
-          is_active: onlyActive,
-        },
+        params,
       },
       true
     ),

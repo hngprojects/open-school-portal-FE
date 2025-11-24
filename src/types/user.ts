@@ -39,7 +39,7 @@ export interface SnakeUser {
   class?: string
   guardian?: string
   join_date?: string
-  status: UserStatus
+  is_active: boolean
   phone: string
   date_of_birth: string
   gender: string

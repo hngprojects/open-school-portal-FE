@@ -1,7 +1,12 @@
 "use client"
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { TeachersAPI, CreateTeacherData, UpdateTeacherData } from "@/lib/teachers"
+import {
+  TeachersAPI,
+  CreateTeacherData,
+  UpdateTeacherData,
+  GetTeachersParams,
+} from "@/lib/teachers"
 import type { SnakeUser as User } from "@/types/user"
 import { toast } from "sonner"
 
@@ -18,12 +23,13 @@ const TEACHERS_KEY = ["teachers"]
 // ----------------------------
 // 🔍 GET ALL TEACHERS
 // ----------------------------
-export function useGetTeachers(onlyActive = true) {
+export function useGetTeachers(filters?: GetTeachersParams) {
   return useQuery({
-    queryKey: TEACHERS_KEY,
-    queryFn: () => TeachersAPI.getAll(onlyActive),
+    queryKey: [...TEACHERS_KEY, filters],
+    queryFn: () => TeachersAPI.getAll(filters),
     select: (data) => data.data?.data as User[],
     staleTime: 1000 * 60 * 20,
+    enabled: !!filters,
   })
 }
 
