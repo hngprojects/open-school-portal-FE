@@ -1,5 +1,5 @@
 import { WaitlistProvider } from "@/providers/waitlist-provider"
-import WaitListFooter from "./_components/waitlist-footer"
+import WaitlistFooter from "./_components/waitlist-footer"
 import WaitlistNavbar from "./_components/waitlist-navbar"
 
 export const metadata = {
@@ -15,7 +15,7 @@ export default function WaitlistLayout({
     <WaitlistProvider>
       <WaitlistNavbar />
       <main className="bg-[#F5F5F5] px-0 pt-20 md:pt-22">{children}</main>
-      <WaitListFooter />
+      <WaitlistFooter />
     </WaitlistProvider>
   )
 }
