@@ -26,8 +26,11 @@ jobs:
             
             # 3. Remove the artifact file
             rm -f /tmp/open-school-portal-fe-artifact.tar.gz
+
+            # 4. Update packages/Dependencies
+            pnpm i
             
-            # 4. Restart PM2 process using ecosystem config
+            # 5. Restart PM2 process using ecosystem config
             pm2 reload ecosystem.config.cjs || pm2 restart osp-fe-prod --update-env
             pm2 save
           '
