@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Edit3, Trash2 } from "lucide-react"
 import { SnakeUser as User, UserType } from "@/types/user"
 import { useRouter } from "next/navigation"
-import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { useDeleteTeacher } from "@/app/(portal)/admin/teachers/_hooks/use-teachers"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { getInitials } from "@/lib/utils"
 

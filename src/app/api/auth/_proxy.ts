@@ -1,154 +1,131 @@
 import { NextResponse } from "next/server"
 import { cookies as getCookies } from "next/headers"
+import { splitCookiesString } from "set-cookie-parser"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-/** Ensure backend URL exists */
-const ensureApiBaseUrl = (): string => {
-  if (!API_BASE_URL) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured.")
-  }
-  return API_BASE_URL
+/* Helpers */
+const ensureApiBaseUrl = () => {
+  if (!API_BASE_URL) throw new Error("API base url missing")
+  return API_BASE_URL.replace(/\/+$/, "")
 }
 
-/** Build backend URL */
-const buildBackendUrl = (pathname: string): string => {
-  const base = ensureApiBaseUrl().replace(/\/+$/, "")
-  const cleanPath = pathname.replace(/^\/+/, "")
-  return `${base}/${cleanPath}`
+const buildBackendUrl = (path: string) =>
+  `${ensureApiBaseUrl()}/${path.replace(/^\/+/, "")}`
+
+const extractAccessTokenFromSetCookie = (
+  setCookieHeader: string | null
+): string | null => {
+  if (!setCookieHeader) return null
+  const match = setCookieHeader.match(/access_token=([^;]+)/)
+  return match ? match[1] : null
 }
 
-/** Collect request + cookie headers */
-const collectForwardHeaders = async (req: Request): Promise<Headers> => {
-  const headers = new Headers()
-
-  const contentType = req.headers.get("content-type")
-  if (contentType) headers.set("content-type", contentType)
-
-  const cookie = req.headers.get("cookie")
-  if (cookie) headers.set("cookie", cookie)
-
-  // Add Bearer Authorization from cookies
-  const cookies = await getCookies()
-  const accessToken = cookies.get("access_token")?.value
-  if (accessToken) {
-    headers.set("Authorization", `Bearer ${accessToken}`)
-  }
-
-  return headers
-}
-
-/** Copy incoming set-cookie headers to NextResponse */
-const appendSetCookies = (source: Response, target: NextResponse): void => {
-  const getSetCookie = (source.headers as unknown as { getSetCookie?: () => string[] })
-    .getSetCookie
-
-  const cookies = getSetCookie?.call(source.headers)
-
-  if (cookies?.length) {
-    cookies.forEach((cookie) => target.headers.append("set-cookie", cookie))
-    return
-  }
-
-  const singleCookie = source.headers.get("set-cookie")
-  if (singleCookie) target.headers.append("set-cookie", singleCookie)
-}
-
-/** Calls backend */
-const forwardRequestToBackend = async (
-  req: Request,
+const forwardRequest = async (
   backendUrl: string,
+  method: string,
+  body: string | undefined,
   headers: Headers
-) => {
-  const bodyText = await req.text()
-
+): Promise<Response> => {
   return fetch(backendUrl, {
-    method: req.method,
+    method,
     headers,
-    body: bodyText.length > 0 ? bodyText : undefined,
+    body,
     cache: "no-store",
     redirect: "manual",
   })
 }
 
-/** Attempts refresh token */
-const tryRefresh = async (): Promise<Response | null> => {
-  const refreshUrl = buildBackendUrl("/auth/refresh")
+/* Attempt Refresh Token */
+const attemptRefresh = async (): Promise<{
+  ok: boolean
+  newAccessToken: string | null
+  refreshResponse: Response | null
+}> => {
+  const refreshUrl = buildBackendUrl("auth/refresh")
+  const cookieStore = await getCookies()
+  const refreshToken = cookieStore.get("refresh_token")?.value
 
-  const cookies = await getCookies()
-  const refreshToken = cookies.get("refresh_token")?.value
+  if (!refreshToken) return { ok: false, newAccessToken: null, refreshResponse: null }
 
-  if (!refreshToken) return null
-
-  const headers = new Headers()
-  headers.set("cookie", `refresh_token=${refreshToken}`)
-
-  const refreshRes = await fetch(refreshUrl, {
+  const res = await fetch(refreshUrl, {
     method: "POST",
-    headers,
+    headers: { cookie: `refresh_token=${refreshToken}` },
     cache: "no-store",
   })
 
-  if (!refreshRes.ok) return null
+  if (!res.ok) return { ok: false, newAccessToken: null, refreshResponse: res }
 
-  return refreshRes
+  const setCookie = res.headers.get("set-cookie")
+  const newAccessToken = extractAccessTokenFromSetCookie(setCookie)
+
+  return { ok: true, newAccessToken, refreshResponse: res }
 }
 
-/** MASTER PROXY with auto-refresh + retry */
-export const proxyAuthRequest = async (
-  req: Request,
-  pathname: string
-): Promise<NextResponse> => {
+/* MAIN PROXY */
+export const proxyAuthRequest = async (req: Request, pathname: string) => {
   try {
     const backendUrl = buildBackendUrl(pathname)
-    const headers = await collectForwardHeaders(req)
 
-    /** 1. FIRST CALL */
-    let backendResponse = await forwardRequestToBackend(req, backendUrl, headers)
+    // Read body ONCE
+    const rawBody = await req.text()
 
-    /** 2. If unauthorized → try refresh */
-    if (backendResponse.status === 401) {
-      const refreshResponse = await tryRefresh()
+    // Prepare headers
+    const headers = new Headers(req.headers)
+    headers.delete("host")
 
-      if (refreshResponse) {
-        // Apply refreshed cookies
-        const nextRefreshCookies = new NextResponse(null)
-        appendSetCookies(refreshResponse, nextRefreshCookies)
+    // Attach access token if present
+    const cookieStore = await getCookies()
+    const accessToken = cookieStore.get("access_token")?.value
+    if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`)
 
-        // Extract new access token and retry original request
-        const newCookies = await getCookies()
-        const newAccessToken = newCookies.get("access_token")?.value
+    // --- FIRST CALL ---
+    let backendRes = await forwardRequest(
+      backendUrl,
+      req.method,
+      rawBody.length ? rawBody : undefined,
+      headers
+    )
 
-        if (newAccessToken) {
-          headers.set("Authorization", `Bearer ${newAccessToken}`)
-        }
-
-        // retry request
-        backendResponse = await forwardRequestToBackend(req, backendUrl, headers)
+    // --- REFRESH IF UNAUTHORIZED ---
+    if (backendRes.status === 401) {
+      const refresh = await attemptRefresh()
+      if (refresh.ok && refresh.newAccessToken) {
+        headers.set("Authorization", `Bearer ${refresh.newAccessToken}`)
+        // Retry the original request
+        backendRes = await forwardRequest(
+          backendUrl,
+          req.method,
+          rawBody.length ? rawBody : undefined,
+          headers
+        )
       }
     }
 
-    /** 3. Prepare final response */
-    const responseBody = await backendResponse.text()
-    const nextResponse = new NextResponse(responseBody.length > 0 ? responseBody : null, {
-      status: backendResponse.status,
+    // --- BUILD RESPONSE ---
+    const responseText = await backendRes.text()
+    const nextRes = new NextResponse(responseText || null, {
+      status: backendRes.status,
       headers: {
         "content-type":
-          backendResponse.headers.get("content-type") ??
-          "application/json; charset=utf-8",
+          backendRes.headers.get("content-type") ?? "application/json; charset=utf-8",
       },
     })
 
-    // Apply cookies (from login or refresh)
-    appendSetCookies(backendResponse, nextResponse)
+    // --- PROPAGATE ALL COOKIES ---
+    const setCookieHeader = backendRes.headers.get("set-cookie")
+    if (setCookieHeader) {
+      const cookies = splitCookiesString(setCookieHeader)
+      cookies.forEach((cookie) => {
+        nextRes.headers.append("set-cookie", cookie)
+      })
+    }
 
-    return nextResponse
-  } catch (error) {
-    console.error("Auth proxy error:", error)
+    return nextRes
+  } catch (err) {
+    console.error("proxy error:", err)
     return NextResponse.json(
-      {
-        message: "Unable to reach authentication service. Please try again later.",
-      },
+      { message: "Proxy error. Please try again later." },
       { status: 502 }
     )
   }

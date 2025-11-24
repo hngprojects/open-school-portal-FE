@@ -33,7 +33,7 @@ const HomeWhyUs = () => {
   ]
 
   return (
-    <section className="w-full bg-white py-16 lg:py-24">
+    <section id="benefits" className="w-full scroll-mt-16 bg-white py-16 lg:py-24">
       <div className="mx-auto max-w-[1305px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-left lg:mb-16">
           <h2
