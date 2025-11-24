@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { cookies as getCookies } from "next/headers"
+import { splitCookiesString } from "set-cookie-parser"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -70,11 +71,8 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
     const rawBody = await req.text()
 
     // Prepare headers
-    const headers = new Headers()
-    const incomingCookies = req.headers.get("cookie")
-    if (incomingCookies) headers.set("cookie", incomingCookies)
-    const contentType = req.headers.get("content-type")
-    if (contentType) headers.set("content-type", contentType)
+    const headers = new Headers(req.headers)
+    headers.delete("host")
 
     // Attach access token if present
     const cookieStore = await getCookies()
@@ -117,8 +115,9 @@ export const proxyAuthRequest = async (req: Request, pathname: string) => {
     // --- PROPAGATE ALL COOKIES ---
     const setCookieHeader = backendRes.headers.get("set-cookie")
     if (setCookieHeader) {
-      setCookieHeader.split(/,(?=[^ ]+=)/g).forEach((cookie) => {
-        if (cookie) nextRes.headers.append("set-cookie", cookie.trim())
+      const cookies = splitCookiesString(setCookieHeader)
+      cookies.forEach((cookie) => {
+        nextRes.headers.append("set-cookie", cookie)
       })
     }
 
