@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
-import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { useDeleteTeacher } from "@/app/(portal)/admin/teachers/_hooks/use-teachers"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
 import { getInitials } from "@/lib/utils"
 

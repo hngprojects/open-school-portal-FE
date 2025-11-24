@@ -4,7 +4,7 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateTeacherData } from "@/lib/teachers"
-import { NewPersonFormBuilder } from "@/app/admin/_components/add-new-person-form-template"
+import { NewPersonFormBuilder } from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

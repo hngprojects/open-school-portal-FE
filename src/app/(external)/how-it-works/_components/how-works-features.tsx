@@ -2,8 +2,8 @@
 
 import React, { CSSProperties } from "react"
 import Image from "next/image"
-import { HowItWorksFeatures } from "../../_data/features"
-import { useMediaQuery } from "@/app/(waitlist)/_hooks/use-media-query"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { HowItWorksFeatures } from "../_data/features"
 
 const HowItWorksFeaturesPage = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)")
