@@ -3,17 +3,19 @@ import HomeForWho from "./_components/home-for-who"
 import HomeHero from "./_components/home-hero"
 import HomeTestimonial from "./_components/home-testimonial"
 import HomeWhyUs from "./_components/home-why-us"
-import HomeFAQ from "./_components/home-faq"
+import HomeAboutSection from "./_components/home-about-us"
+import HomeHowItWorks from "./_components/home-how-it-works"
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       <HomeHero />
+      <HomeAboutSection />
+      <HomeHowItWorks />
       <HomeWhyUs />
       <HomeForWho />
       <HomeTestimonial />
       <HomeDemo />
-      <HomeFAQ />
     </div>
   )
 }

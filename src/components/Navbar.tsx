@@ -13,8 +13,8 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", path: "/" },
-    { label: "Feature", path: "/feature" },
-    { label: "Modules", path: "/modules" },
+    { label: "Features", path: "/features" },
+    { label: "How it works", path: "/how-it-works" },
     { label: "About", path: "/about" },
   ]
 
@@ -52,7 +52,12 @@ const Navbar = () => {
         {/* Desktop Button */}
         <div className="hidden lg:block">
           <Link href="/login">
-            <Button>Get Started</Button>
+            <Button
+              variant="outline"
+              className="border-accent text-accent bg-primary-hover"
+            >
+              Get Started
+            </Button>
           </Link>
         </div>
 
@@ -103,7 +108,11 @@ const Navbar = () => {
                   })}
                   <div className="mt-2 px-4">
                     <Link href="/login">
-                      <Button className="w-full" onClick={closeMobileMenu}>
+                      <Button
+                        variant="outline"
+                        className="border-accent text-accent bg-primary-hover w-full"
+                        onClick={closeMobileMenu}
+                      >
                         Get Started
                       </Button>
                     </Link>
