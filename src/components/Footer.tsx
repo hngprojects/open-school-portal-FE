@@ -1,16 +1,17 @@
 import React from "react"
 import Link from "next/link"
-import { Mail, Phone, Home, Facebook, Instagram, Twitter } from "lucide-react"
+import { Mail, Phone, Home } from "lucide-react"
 import Logo from "./logo"
+import SocialLinks from "./social-links"
 
 const quickLinks = [
-  { name: "Benefit", href: "/coming-soon" },
+  { name: "Benefit", href: "/#benefits" },
   { name: "Features", href: "/feature" },
-  { name: "Who it's for", href: "/coming-soon" },
+  { name: "Who it's for", href: "/#for-who" },
 ]
 const support = [
   { name: "FAQs", href: "/#faq" },
-  { name: "Contact Us", href: "/coming-soon" },
+  { name: "Contact Us", href: "/contact-us" },
   { name: "Mail Support", href: "/coming-soon" },
 ]
 
@@ -26,31 +27,10 @@ const Footer = () => {
             The Modern Way School Run In Nigeria. Manage attendance, results, timetables,
             fees, and NFC, all in one place
           </p>
-          <div className="flex items-center gap-4">
-            <Link
-              href="https://www.facebook.com/share/17MGU2hVmP/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Facebook className="size-5 fill-white text-white" />
-            </Link>
-            <Link
-              href="https://www.instagram.com/schoolbase.ng?igsh=MXRxczAxcWszcWNsMQ=="
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Instagram className="size-5 text-white" />
-            </Link>
-            {/* <Linkedin className="size-5 text-white" /> */}
-            <Link
-              href="https://x.com/school_baseng?t=YPepx9_DRCqqo5dh0DeEbQ&s=09"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Twitter className="size-5 text-white" />
-            </Link>
-          </div>
-          <p className="text-[#fafafa]">Copyright © 2025</p>
+
+          <SocialLinks />
+
+          <p className="text-[#fafafa]">Copyright &copy; {new Date().getFullYear()}</p>
         </section>
         <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
           <h3 className="text-lg font-bold lg:text-xl">Quick Links</h3>
@@ -77,7 +57,13 @@ const Footer = () => {
           <ul className="flex flex-col gap-4">
             <li className="flex items-center gap-3">
               <Mail className="size-5 shrink-0" />
-              <span className="wrap-break-word">info@schoolbase.com</span>
+
+              <Link
+                href="mailto:openschoolportalhq@gmail.com"
+                className="wrap-break-word transition-all duration-200 ease-in-out hover:text-white/90 hover:underline"
+              >
+                openschoolportalhq@gmail.com
+              </Link>
             </li>
             <li className="flex items-center gap-3">
               <Phone className="size-5 shrink-0" />

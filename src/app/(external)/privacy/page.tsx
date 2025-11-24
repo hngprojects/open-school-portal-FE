@@ -1,3 +1,4 @@
+import Link from "next/link"
 import React from "react"
 
 const PrivacyPolicy = () => {
@@ -175,7 +176,15 @@ const PrivacyPolicy = () => {
           </p>
           <p className="text-text-secondary ml-5 font-medium">
             SchoolBase – Privacy Team
-            <br /> Email: schoolbase@gmail.com
+            <span className="block">
+              Email:
+              <Link
+                href="mailto:openschoolportalhq@gmail.com"
+                className="pl-1.5 hover:underline"
+              >
+                openschoolportalhq@gmail.com
+              </Link>
+            </span>
           </p>
         </section>
       </article>
