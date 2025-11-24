@@ -1,18 +1,11 @@
 "use client"
 
-import { useRef } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import DemoVideo from "./demo-video"
-import { playVideoAndScroll } from "../_utils/watchdemo"
+import Image from "next/image"
+import WatchDemoButton from "./watch-demo-button"
 
 const HomeHero = () => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  const handleWatchDemo = () => {
-    playVideoAndScroll(videoRef, "demo-video", 130)
-  }
-
   return (
     <section className="w-full bg-[#f5f5f5] pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0">
       <div className="container flex flex-col items-center gap-6 text-center sm:gap-8 md:gap-10">
@@ -32,18 +25,20 @@ const HomeHero = () => {
             </Button>
           </Link>
 
-          <Button
-            variant="outline"
-            onClick={handleWatchDemo}
-            className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"
-          >
-            Watch Demo
-          </Button>
+          <WatchDemoButton />
         </div>
 
         <div className="w-full px-4 pt-6 sm:px-0">
-          <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-t-3xl rounded-b-none border border-white/70 bg-white sm:max-w-3xl md:max-w-5xl lg:max-w-6xl">
-            <DemoVideo ref={videoRef} />
+          <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-t-3xl rounded-b-none border border-white/70 bg-white shadow-none sm:max-w-3xl sm:shadow-none md:max-w-5xl md:rounded-t-4xl md:rounded-b-none md:border-0 md:shadow-none lg:max-w-6xl lg:rounded-t-[36px] lg:rounded-b-none">
+            <Image
+              src="/assets/Hero-img (2).png"
+              alt="Open School Portal dashboard preview"
+              width={1440}
+              height={820}
+              priority
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
+              className="h-auto w-full rounded-t-3xl rounded-b-none object-cover md:rounded-t-4xl md:rounded-b-none lg:rounded-t-[36px] lg:rounded-b-none"
+            />
           </div>
         </div>
       </div>
