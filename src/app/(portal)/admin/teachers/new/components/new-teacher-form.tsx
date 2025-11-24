@@ -3,7 +3,7 @@
 import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
-} from "@/app/admin/_components/add-new-person-form-template"
+} from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { CreateTeacherData } from "@/lib/teachers"
 import { useRouter } from "next/navigation"
 import { useCreateTeacher } from "../../_hooks/use-teachers"

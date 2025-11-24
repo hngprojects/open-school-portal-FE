@@ -1,8 +1,8 @@
 import HomeWhyUs from "@/app/(external)/_components/home-why-us"
 import Image from "next/image"
-import JoinWaitlistButton from "../_components/join-waitlist-button"
-import FAQAccordion from "../_components/waitlist-faq"
-import WaitlistHero from "../_components/waitlist-hero"
+import FAQAccordion from "./_components/waitlist-faq"
+import WaitlistHero from "./_components/waitlist-hero"
+import JoinWaitlistButton from "./_components/join-waitlist-button"
 
 export default function Home() {
   return (

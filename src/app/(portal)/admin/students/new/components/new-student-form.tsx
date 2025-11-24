@@ -3,7 +3,7 @@
 import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
-} from "@/app/admin/_components/add-new-person-form-template"
+} from "@/app/(portal)/admin/_components/add-new-person-form-template"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"

@@ -113,7 +113,7 @@ const InvitedUserSignIn = () => {
               Welcome!{" "}
             </h1>
             <p className="mb-1 text-center text-sm text-[#6B6B6B]">
-              You&apos;ve been invited as a <span className="font-bold">Teacher</span>.
+              You&apos;ve been invited as a <span className="font-bold">Admin</span>.
             </p>
             <p className="mb-8 text-center text-sm text-[#6B6B6B]">
               Finish setup to enter your school portal.
