@@ -13,7 +13,7 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
         Welcome to SchoolBase
       </h1>
       <p className="mb-8 text-center text-gray-600">
-        Follow the steps to complete the set up process for your school's new portal.
+        Follow the steps to complete the set up process for your school&apos;s new portal.
       </p>
 
       <div className="mb-8">
