@@ -6,14 +6,14 @@ type DemoVideoProps = React.ComponentProps<"video">
 
 const DemoVideo = forwardRef<HTMLVideoElement, DemoVideoProps>(({ ...props }, ref) => {
   return (
-    <div id="demo-video" className="h-full max-h-[500px] w-full overflow-hidden">
+    <div id="demo-video" className="h-full w-full">
       <video
         ref={ref}
         controls
         loop
         preload="metadata"
         {...props}
-        className="h-full max-h-[500px] w-full object-cover"
+        className="h-full w-full object-cover"
       >
         <source src="/assets/videos/demo-video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
