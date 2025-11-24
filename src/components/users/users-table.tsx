@@ -14,8 +14,10 @@ import { Badge } from "@/components/ui/badge"
 import { Edit3, Trash2 } from "lucide-react"
 import { SnakeUser as User, UserType } from "@/types/user"
 import { useRouter } from "next/navigation"
-import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { useDeleteTeacher } from "@/app/(portal)/admin/teachers/_hooks/use-teachers"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
+import { getInitials } from "@/lib/utils"
+
 interface UsersTableProps {
   users: User[]
   userType: UserType
@@ -35,14 +37,6 @@ export function UsersTable({
 
   const getFullName = (user: User) =>
     user.full_name || `${user.first_name} ${user.last_name}`
-  const getInitials = (user: User) => {
-    const fullName = getFullName(user)
-    return fullName
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-  }
 
   const getID = (user: User) => {
     return user.employment_id || user.reg_number || "N/A"
@@ -50,15 +44,9 @@ export function UsersTable({
 
   const startSN = (currentPage - 1) * itemsPerPage + 1
 
-  const getStatusVariant = (status: User["status"]) => {
-    switch (status) {
-      case "active":
-        return "default"
-      case "inactive":
-        return "inactive"
-      default:
-        return "outline"
-    }
+  const getStatusVariant = (isActive: boolean) => {
+    if (isActive) return "default"
+    return "inactive"
   }
   const isTeacher = userType === "teachers"
   const router = useRouter()
@@ -96,7 +84,9 @@ export function UsersTable({
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatar} alt={getFullName(user)} />
-                    <AvatarFallback>{getInitials(user)}</AvatarFallback>
+                    <AvatarFallback>
+                      {getInitials(user.first_name, user.last_name)}
+                    </AvatarFallback>
                   </Avatar>
                   <span className="font-medium">{getFullName(user)}</span>
                 </div>
@@ -111,7 +101,9 @@ export function UsersTable({
                 </>
               )}
               <TableCell>
-                <Badge variant={getStatusVariant(user.status)}>{user.status}</Badge>
+                <Badge variant={getStatusVariant(user.is_active)}>
+                  {user.is_active ? "Active" : "Inactive"}
+                </Badge>
               </TableCell>
               <TableCell>{user.phone}</TableCell>
               <TableCell>

@@ -1,5 +1,5 @@
 // src/app/(dashboard)/fees/add-new/page.tsx
-import { AddNewFeeForm } from "./components/add-new-fee-form-template"
+import { AddNewFeeForm } from "../add-group/components/add-new-fee-form-template"
 
 export default function AddNewFeePage() {
   return (

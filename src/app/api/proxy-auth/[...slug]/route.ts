@@ -1,74 +1,29 @@
+import { NextResponse } from "next/server"
 import { proxyAuthRequest } from "../../auth/_proxy"
 
-// this file is [...slug]/route.ts and not just [slug]/route.ts to capture all sub-paths
-// note that ths should also handle forwards different enpoint optiosn
+async function methodHandler(
+  req: Request,
+  { params }: { params: Promise<{ slug: string[] }> }
+) {
+  const resolvedParams = await params
+  const slugPath = "/" + resolvedParams.slug.join("/")
+  const reqUrl = new URL(req.url)
+  const pathWithQuery = slugPath + reqUrl.search
 
-export async function POST(req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
-  const { slug } = await ctx.params
-  const path = `/${slug.join("/")}`
+  const backendRes = await proxyAuthRequest(req, pathWithQuery)
 
-  // Extract query parameters from the request URL
-  const url = new URL(req.url)
-  const queryString = url.search
+  const body = await backendRes.text() // read once safely
 
-  // Append query string to path if it exists
-  const pathWithQuery = queryString ? `${path}${queryString}` : path
+  const response = new NextResponse(body, {
+    status: backendRes.status,
+    headers: backendRes.headers, // preserves content-type, etc.
+  })
 
-  return proxyAuthRequest(req, pathWithQuery)
+  return response
 }
 
-export async function GET(req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
-  const { slug } = await ctx.params
-  const path = `/${slug.join("/")}`
-
-  // Extract query parameters from the request URL
-  const url = new URL(req.url)
-  const queryString = url.search
-
-  // Append query string to path if it exists
-  const pathWithQuery = queryString ? `${path}${queryString}` : path
-
-  return proxyAuthRequest(req, pathWithQuery)
-}
-
-export async function PUT(req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
-  const { slug } = await ctx.params
-  const path = `/${slug.join("/")}`
-
-  // Extract query parameters from the request URL
-  const url = new URL(req.url)
-  const queryString = url.search
-
-  // Append query string to path if it exists
-  const pathWithQuery = queryString ? `${path}${queryString}` : path
-
-  return proxyAuthRequest(req, pathWithQuery)
-}
-
-export async function DELETE(req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
-  const { slug } = await ctx.params
-  const path = `/${slug.join("/")}`
-
-  // Extract query parameters from the request URL
-  const url = new URL(req.url)
-  const queryString = url.search
-
-  // Append query string to path if it exists
-  const pathWithQuery = queryString ? `${path}${queryString}` : path
-
-  return proxyAuthRequest(req, pathWithQuery)
-}
-
-export async function PATCH(req: Request, ctx: { params: Promise<{ slug: string[] }> }) {
-  const { slug } = await ctx.params
-  const path = `/${slug.join("/")}`
-
-  // Extract query parameters from the request URL
-  const url = new URL(req.url)
-  const queryString = url.search
-
-  // Append query string to path if it exists
-  const pathWithQuery = queryString ? `${path}${queryString}` : path
-
-  return proxyAuthRequest(req, pathWithQuery)
-}
+export { methodHandler as GET }
+export { methodHandler as POST }
+export { methodHandler as PUT }
+export { methodHandler as DELETE }
+export { methodHandler as PATCH }

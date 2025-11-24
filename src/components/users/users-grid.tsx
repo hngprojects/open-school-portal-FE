@@ -13,8 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
-import { useDeleteTeacher } from "@/app/admin/teachers/_hooks/use-teachers"
+import { useDeleteTeacher } from "@/app/(portal)/admin/teachers/_hooks/use-teachers"
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog"
+import { getInitials } from "@/lib/utils"
 
 interface UsersGridProps {
   users: User[]
@@ -28,14 +29,6 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
 
   const getFullName = (user: User) =>
     user.full_name || `${user.first_name} ${user.last_name}`
-  const getInitials = (user: User) => {
-    const fullName = getFullName(user)
-    return fullName
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-  }
 
   const isTeacher = userType === "teachers"
   const router = useRouter()
@@ -59,7 +52,9 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src={user.avatar} alt={getFullName(user)} />
-                  <AvatarFallback>{getInitials(user)}</AvatarFallback>
+                  <AvatarFallback>
+                    {getInitials(user.first_name, user.last_name)}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="font-semibold">{getFullName(user)}</h3>
