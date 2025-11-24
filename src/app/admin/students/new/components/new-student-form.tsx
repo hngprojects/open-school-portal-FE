@@ -3,7 +3,7 @@
 import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
-} from "@/app/(dashboard)/_components/add-new-person-form-template"
+} from "@/app/admin/_components/add-new-person-form-template"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -125,13 +125,23 @@ const studentFormConfig: NewPersonFormConfig = {
   //     console.log('Student form submitted:', data);
   //     await new Promise(resolve => setTimeout(resolve, 1000));
   //   },
-  onCancel: () => {
-    console.log("Form cancelled")
-  },
+  // onCancel: () => {
+  //   console.log("Form cancelled")
+  // },
 }
 
 export default function NewStudentForm() {
-  return <NewPersonFormBuilder config={studentFormConfig} onSubmit={handleSubmit} />
+  return (
+    <NewPersonFormBuilder
+      config={studentFormConfig}
+      onSubmit={handleSubmit}
+      onCancel={handleCancel}
+    />
+  )
+
+  async function handleCancel() {
+    console.log("New student form cancelled")
+  }
 
   async function handleSubmit() {
     console.log("Submitting new student form...")

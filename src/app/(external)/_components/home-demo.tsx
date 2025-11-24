@@ -100,24 +100,22 @@ const HomeDemo: React.FC = () => {
                 It&apos;s just getting started
               </p>
               <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-                <Link href="/login">
-                  <Button
-                    className="bg-white text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
-                    style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                  >
-                    Get Started
-                  </Button>
-                </Link>
-                <Link href="/#demo-video">
-                  <Button
-                    onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
-                    variant="outline"
-                    className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
-                    style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                  >
-                    Watch Demo
-                  </Button>
-                </Link>
+                <Button
+                  asChild
+                  className="bg-white text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
+                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
+                >
+                  <Link href="/login">Get Started</Link>
+                </Button>
+                <Button
+                  asChild
+                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
+                  variant="outline"
+                  className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
+                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
+                >
+                  <Link href="/#demo-video">Watch Demo</Link>
+                </Button>
               </div>
             </div>
           </div>
@@ -137,18 +135,21 @@ const HomeDemo: React.FC = () => {
                 It&apos;s just getting started
               </p>
               <div className="flex items-center justify-center gap-1 sm:flex-row sm:gap-2">
-                <button
-                  className="rounded-md bg-white px-4 py-2 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
+                <Button
+                  asChild
+                  className="bg-white px-4 py-2 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
-                  Get Started
-                </button>
-                <button
+                  <Link href="/login">Get Started</Link>
+                </Button>
+                <Button
+                  asChild
+                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
                   className="hover:bg-opacity-10 rounded-md border border-white px-4 py-2 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
                   Watch Demo
-                </button>
+                </Button>
               </div>
             </div>
           </div>

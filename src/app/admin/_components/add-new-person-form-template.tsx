@@ -40,17 +40,18 @@ export interface NewPersonFormConfig {
   fields: FormField[]
   submitText: string
   cancelText?: string
-  onCancel?: () => void
 }
 
 interface FormBuilderProps {
   config: NewPersonFormConfig
   onSubmit: (data: Record<string, unknown>) => Promise<void>
+  onCancel: () => void
   initialData?: Record<string, unknown>
 }
 
 export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   config,
+  onCancel,
   onSubmit,
   initialData,
 }) => {
@@ -270,13 +271,8 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
       </div>
 
       <div className="flex justify-center gap-3 pt-4 md:justify-end">
-        {config.cancelText && config.onCancel && (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={config.onCancel}
-            className="px-12"
-          >
+        {config.cancelText && onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel} className="px-12">
             {config.cancelText}
           </Button>
         )}
@@ -416,9 +412,9 @@ export const studentFormConfig: NewPersonFormConfig = {
   //     console.log('Student form submitted:', data);
   //     await new Promise(resolve => setTimeout(resolve, 1000));
   //   },
-  onCancel: () => {
-    console.log("Form cancelled")
-  },
+  // onCancel: () => {
+  //   console.log("Form cancelled")
+  // },
 }
 
 // staffForm.config.ts
@@ -520,9 +516,9 @@ export const staffFormConfig: NewPersonFormConfig = {
   //     console.log('Staff form submitted:', data);
   //     await new Promise(resolve => setTimeout(resolve, 1000));
   //   },
-  onCancel: () => {
-    console.log("Form cancelled")
-  },
+  // onCancel: () => {
+  //   console.log("Form cancelled")
+  // },
 }
 
 // Usage Example:

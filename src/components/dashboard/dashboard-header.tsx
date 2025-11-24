@@ -3,8 +3,10 @@
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
 import { Bell, Play } from "lucide-react"
 import Image from "next/image"
+import { useAuthStore } from "@/store/auth-store"
 
 const DashboardHeader = () => {
+  const user = useAuthStore((state) => state.user)
   const { state, isMobile, openMobile } = useSidebar()
 
   // Desktop: show trigger when collapsed
@@ -17,7 +19,7 @@ const DashboardHeader = () => {
 
   return (
     <header className="fixed top-0 right-0 left-0 z-50 flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
-      <div>{showTrigger && <SidebarTrigger />}</div>
+      <div className="relative z-100">{showTrigger && <SidebarTrigger />}</div>
 
       <aside className="flex items-center gap-4">
         {/* bell icon */}
@@ -36,7 +38,11 @@ const DashboardHeader = () => {
               height={32}
             />
           </div>
-          Sophia Alkija
+          <p className="space-x-2">
+            <span>{user?.first_name || "User"}</span>
+            <span>{user?.last_name || "Name"}</span>
+          </p>
+
           <Play className="fill-text-secondary size-2 rotate-90" />
         </div>
       </aside>

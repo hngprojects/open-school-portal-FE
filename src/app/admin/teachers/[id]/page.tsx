@@ -4,7 +4,7 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateTeacherData } from "@/lib/teachers"
-import { NewPersonFormBuilder } from "@/app/(dashboard)/_components/add-new-person-form-template"
+import { NewPersonFormBuilder } from "@/app/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -16,6 +16,10 @@ export default function EditTeacherPage() {
   const router = useRouter()
   const { data: teacher, isLoading, isError, error } = useGetTeacher(id as string)
   const updateTeacherMutation = useUpdateTeacher(id as string)
+
+  async function handleCancel() {
+    router.push("/admin/teachers")
+  }
 
   async function handleSubmit(formData: Record<string, unknown>) {
     if (!id) return
@@ -116,6 +120,7 @@ export default function EditTeacherPage() {
         <NewPersonFormBuilder
           config={teacherFormConfig}
           onSubmit={handleSubmit}
+          onCancel={handleCancel}
           initialData={initialData}
         />
       </div>
