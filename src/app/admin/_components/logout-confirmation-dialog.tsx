@@ -21,7 +21,7 @@ export function LogoutDialog({
   open,
   onOpenChange,
   onConfirm,
-  logoutFrom = "Open school portal",
+  logoutFrom = "School Base",
 }: LogoutDialogProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)

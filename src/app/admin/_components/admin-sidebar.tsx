@@ -29,7 +29,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-  //SidebarFooter,
   useSidebar,
   SidebarFooter,
 } from "@/components/ui/sidebar"

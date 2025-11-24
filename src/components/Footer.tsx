@@ -5,9 +5,9 @@ import Logo from "./logo"
 import SocialLinks from "./social-links"
 
 const quickLinks = [
-  { name: "Benefit", href: "/coming-soon" },
+  { name: "Benefit", href: "/#benefits" },
   { name: "Features", href: "/feature" },
-  { name: "Who it's for", href: "/coming-soon" },
+  { name: "Who it's for", href: "/#for-who" },
 ]
 const support = [
   { name: "FAQs", href: "/#faq" },
