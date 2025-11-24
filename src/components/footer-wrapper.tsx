@@ -3,7 +3,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation"
 import Footer from "@/components/Footer"
-import WaitlistFooter from "@/app/(waitlist)/_components/waitlist-footer"
+import WaitlistFooter from "@/app/(external)/waitlist/_components/waitlist-footer"
 
 export default function FooterWrapper() {
   const pathname = usePathname()

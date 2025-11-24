@@ -13,9 +13,9 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", path: "/" },
-    { label: "Feature", path: "/feature" },
-    { label: "Modules", path: "/modules" },
-    { label: "About", path: "/about" },
+    { label: "Feature", path: "/#feature" },
+    { label: "How it works", path: "/how-it-works" },
+    { label: "About", path: "/#about" },
   ]
 
   const toggleMobileMenu = () => {

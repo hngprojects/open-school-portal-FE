@@ -1,7 +1,7 @@
 "use client"
 
 import { GraduationCap } from "lucide-react"
-import { ReuseableBarChart } from "../dashboard/bar-chart" // adjust path as needed
+import { ReuseableBarChart } from "./bar-chart" // adjust path as needed
 import { TypedChartConfig } from "@/types/chart"
 
 // -------------------
