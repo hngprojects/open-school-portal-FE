@@ -3,11 +3,15 @@
 import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { z } from "zod"
+import { Input } from "@/components/ui/input"
 
 const contactSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^\+?[\d\s-]{10,15}$/, "Please enter a valid phone number"),
   message: z.string().min(1, "Message cannot be empty"),
 })
 
@@ -62,48 +66,60 @@ export default function ContactForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="mb-1 block font-medium">Name</label>
-        <input
+        <label htmlFor="name" className="mb-1 block font-medium">
+          Name
+        </label>
+        <Input
+          id="name"
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className="w-full rounded border px-3 py-2"
+          className="w-full"
         />
         {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block font-medium">Email</label>
-        <input
+        <label htmlFor="email" className="mb-1 block font-medium">
+          Email
+        </label>
+        <Input
+          id="email"
           type="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full rounded border px-3 py-2"
+          className="w-full"
         />
         {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block font-medium">Phone</label>
-        <input
+        <label htmlFor="phone" className="mb-1 block font-medium">
+          Phone
+        </label>
+        <Input
+          id="phone"
           type="text"
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full rounded border px-3 py-2"
+          className="w-full"
         />
         {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block font-medium">Message</label>
+        <label htmlFor="message" className="mb-1 block font-medium">
+          Message
+        </label>
         <textarea
+          id="message"
           name="message"
           value={formData.message}
           onChange={handleChange}
-          className="w-full rounded border px-3 py-2"
+          className="w-full rounded-xl border px-3 py-2"
           rows={4}
         />
         {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
