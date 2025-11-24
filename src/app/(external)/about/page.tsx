@@ -1,14 +1,15 @@
 import React from "react"
-
-import ComingSoon from "@/components/coming-soon"
+import AboutHero from "./_components/about-hero"
+import AboutPerks from "./_components/about-perks"
+import AboutValues from "./_components/about-values"
 
 const page = () => {
   return (
-    <ComingSoon
-      pageTitle="About Us"
-      message="Learn more about our story and mission. This page is being crafted with care."
-      showNotifyButton={false}
-    />
+    <div>
+      <AboutHero />
+      <AboutPerks />
+      <AboutValues />
+    </div>
   )
 }
 

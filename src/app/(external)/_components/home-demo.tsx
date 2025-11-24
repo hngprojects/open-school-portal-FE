@@ -1,14 +1,12 @@
 "use client"
 
-import React, { useRef } from "react"
+import React from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { playVideoAndScroll } from "../_utils/watchdemo"
+import WatchDemoButton from "./watch-demo-button"
 
 const HomeDemo: React.FC = () => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
   return (
     <section className="font-outfit w-full bg-white py-6 sm:py-8 lg:py-24">
       <div className="flex items-center justify-center lg:hidden">
@@ -107,15 +105,7 @@ const HomeDemo: React.FC = () => {
                 >
                   <Link href="/login">Get Started</Link>
                 </Button>
-                <Button
-                  asChild
-                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
-                  variant="outline"
-                  className="hover:bg-accent border-white px-6 py-3 text-white hover:border-white/90"
-                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                >
-                  <Link href="/#demo-video">Watch Demo</Link>
-                </Button>
+                <WatchDemoButton className="hover:bg-accent border-white px-6 py-3 text-sm text-white hover:border-white/90" />
               </div>
             </div>
           </div>
@@ -142,14 +132,7 @@ const HomeDemo: React.FC = () => {
                 >
                   <Link href="/login">Get Started</Link>
                 </Button>
-                <Button
-                  asChild
-                  onClick={() => playVideoAndScroll(videoRef, "video-demo", 130)}
-                  className="hover:bg-opacity-10 rounded-md border border-white px-4 py-2 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white"
-                  style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
-                >
-                  Watch Demo
-                </Button>
+                <WatchDemoButton className="hover:bg-opacity-10 rounded-md border border-white px-4 py-2 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white" />
               </div>
             </div>
           </div>
