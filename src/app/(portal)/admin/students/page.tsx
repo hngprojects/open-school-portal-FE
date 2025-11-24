@@ -1,16 +1,46 @@
-// app/admin/students/page.tsx
 "use client"
 
 import { UsersView } from "@/components/users/users-view"
-import { students } from "@/data/students"
-import { useRouter } from "next/navigation"
+import { useGetStudents } from "./_hooks/use-students"
+import { useState } from "react"
+import { students as dummyStudents } from "@/data/students"
 
 export default function StudentsPage() {
-  const router = useRouter()
+  const [currentPage, setCurrentPage] = useState<number>()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string>("active")
 
-  const handleAddStudent = () => {
-    router.push("/admin/students/new")
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
   }
 
-  return <UsersView users={students} userType="students" onAddUser={handleAddStudent} />
+  const {
+    // data: students,
+    isLoading,
+    // isError, // uncmment when api is integrated
+    error,
+    // refetch: refetchStudents,
+  } = useGetStudents({
+    page: currentPage,
+    search: searchQuery,
+    is_active: statusFilter ? statusFilter === "active" : undefined,
+  })
+
+  return (
+    <UsersView
+      isLoading={isLoading}
+      // isError={isError}
+      error={error?.message}
+      // users={students || []}
+      isError={false}
+      users={dummyStudents}
+      userType="students"
+      searchQuery={searchQuery}
+      statusFilter={statusFilter}
+      currentPage={currentPage || 1}
+      onSearchChange={setSearchQuery}
+      onStatusFilterChange={setStatusFilter}
+      onPageChange={handlePageChange}
+    />
+  )
 }

@@ -4,6 +4,9 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import { useRouter } from "next/navigation"
+import { useCreateStudent } from "../../_hooks/use-students"
+import { CreateStudentData } from "@/lib/api/students"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -14,7 +17,7 @@ const generatePassword = () => {
   return password
 }
 
-const studentFormConfig: NewPersonFormConfig = {
+export const studentFormConfig: NewPersonFormConfig = {
   fields: [
     {
       name: "title",
@@ -121,30 +124,48 @@ const studentFormConfig: NewPersonFormConfig = {
   ],
   submitText: "Save",
   cancelText: "Cancel",
-  //   onSubmit: async (data) => {
-  //     console.log('Student form submitted:', data);
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //   },
-  // onCancel: () => {
-  //   console.log("Form cancelled")
-  // },
 }
 
 export default function NewStudentForm() {
+  const router = useRouter()
+  const createNewStudent = useCreateStudent().mutateAsync
+
   return (
     <NewPersonFormBuilder
+      key={"new-student"}
       config={studentFormConfig}
-      onSubmit={handleSubmit}
       onCancel={handleCancel}
+      onSubmit={handleSubmit}
     />
   )
 
   async function handleCancel() {
-    console.log("New student form cancelled")
+    router.push("/admin/students")
   }
 
-  async function handleSubmit() {
-    console.log("Submitting new student form...")
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  async function handleSubmit(formData: Record<string, unknown>) {
+    const newStudent: CreateStudentData = {
+      title: formData.title as string,
+      first_name: formData.firstName as string,
+      last_name: formData.lastName as string,
+      middle_name: formData.middleName as string,
+      email: formData.email as string,
+      employment_id: formData.employmentId as string,
+      phone: formData.phoneNumber as string,
+      date_of_birth: formData.dateOfBirth as string,
+      gender: formData.gender as string,
+      home_address: formData.homeAddress as string,
+    }
+
+    try {
+      // Log payload so we can inspect what is sent to the backend
+      console.log("Creating student — payload:", newStudent)
+      await createNewStudent(newStudent)
+      router.push("/admin/students")
+    } catch (err) {
+      // Surface error details in the console for debugging
+      console.error("Failed to create student:", err)
+      throw err
+    }
   }
 }
