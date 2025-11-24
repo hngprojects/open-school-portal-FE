@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react"
 import JoinWaitlistButton from "./join-waitlist-button"
 import Logo from "@/components/logo"
 
-const Navbar = () => {
+const WaitlistNavbar = () => {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuBarRef = React.useRef<HTMLDivElement>(null)
@@ -105,4 +105,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default WaitlistNavbar

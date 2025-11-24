@@ -1,3 +1,4 @@
+import Link from "next/link"
 import {
   Accordion,
   AccordionContent,
@@ -44,7 +45,7 @@ export default function HomeFAQ() {
   return (
     <section
       id="faq"
-      className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
+      className="font-outfit mb-8 h-full w-full scroll-mt-20 bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
     >
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
         <h2
@@ -118,7 +119,7 @@ export default function HomeFAQ() {
                   className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
                   style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
                 >
-                  Contact Super Team
+                  <Link href="/contact-us">Contact Super Team</Link>
                 </Button>
               </div>
             </div>
