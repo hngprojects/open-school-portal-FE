@@ -22,12 +22,14 @@ export interface User {
   gender: string
   address: string
   avatar?: string
+  photo_url?: string
+  password?: string
 }
 
 export interface SnakeUser {
   // snake case user
   id: string
-  title: string
+  title?: string
   first_name: string
   full_name?: string
   last_name: string
@@ -45,4 +47,6 @@ export interface SnakeUser {
   gender: string
   home_address: string
   avatar?: string
+  photo_url?: string
+  password?: string
 }
