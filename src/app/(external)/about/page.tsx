@@ -5,7 +5,7 @@ import AboutValues from "./_components/about-values"
 
 const page = () => {
   return (
-    <div>
+    <div className="min-h-screen">
       <AboutHero />
       <AboutPerks />
       <AboutValues />

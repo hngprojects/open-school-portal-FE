@@ -70,7 +70,7 @@ const faqData: FAQItem[] = [
 
 const Faq = () => {
   return (
-    <div className="container flex flex-col gap-6 bg-white py-8 md:gap-8 md:py-12">
+    <div className="container flex min-h-screen flex-col gap-6 bg-white py-8 md:gap-8 md:py-12">
       <div className="mx-auto flex max-w-220 flex-col gap-4">
         <h1 className="text-center text-2xl font-semibold text-[#2d2d2d] md:text-3xl">
           Frequency Asked Question

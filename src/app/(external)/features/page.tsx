@@ -4,7 +4,7 @@ import FeatureSection from "./_components/feature-section"
 
 const page = () => {
   return (
-    <div className="pt-15">
+    <div className="min-h-screen pt-15">
       <div className="container flex flex-col gap-8">
         <div className="flex flex-col items-center gap-2.5 text-center">
           <h1 className="text-lg font-medium text-[#2d2d2d] uppercase md:text-2xl lg:text-3xl">
