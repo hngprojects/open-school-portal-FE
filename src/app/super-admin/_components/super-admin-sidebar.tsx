@@ -53,6 +53,7 @@ const items = [
   { title: "Teachers", url: "/super-admin/teachers", icon: User },
   { title: "Students", url: "/super-admin/students", icon: GraduationCap },
   { title: "Parents", url: "/super-admin/parents", icon: User },
+
   {
     title: "Classes and Sessions",
     url: "/super-admin/classes-and-sessions",
@@ -109,7 +110,7 @@ export function SuperAdminSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader id="main-sidebar">
         <div className="flex h-7 items-center justify-between px-2 py-4">
           <div className={isCollapsed ? "hidden" : ""}>
             <Logo />
@@ -234,6 +235,7 @@ export function SuperAdminSidebar() {
       <SidebarFooter className="cursor-pointer">
         <div className="flex items-center gap-2">
           <Settings className="h-4 w-4" />
+
           <span>Settings</span>
         </div>
       </SidebarFooter>

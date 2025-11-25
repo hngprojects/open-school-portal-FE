@@ -232,10 +232,12 @@ export function SuperAdminSidebar() {
       </SidebarFooter>
 
       <SidebarFooter className="cursor-pointer">
-        <div className="flex items-center gap-2 text-sm">
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </div>
+        <Link href={"/super-admin/settings"}>
+          <div className="flex items-center gap-2 text-sm">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </div>
+        </Link>
       </SidebarFooter>
       <SidebarFooter className="cursor-pointer">
         <div className="flex items-center gap-1 rounded-[0.625rem] border px-3.5 py-1 text-sm transition-all duration-200 ease-in-out hover:shadow">
