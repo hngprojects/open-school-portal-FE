@@ -1,7 +1,6 @@
 import { SnakeUser as User } from "@/types/user"
 import { apiFetch } from "./api/client"
 
-// src/lib/students.ts
 export type CreateStudentData = Omit<
   User,
   "id" | "avatar" | "role" | "employment_id" | "join_date"
