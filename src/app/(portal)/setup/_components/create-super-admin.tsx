@@ -144,8 +144,17 @@ export function AdminAccountForm({
         >
           <div
             className="absolute top-1/2 right-2 -translate-y-1/2 md:right-4"
+            role="button"
+            tabIndex={0}
+            aria-label={showPassword ? "Hide password" : "Show password"}
             onClick={() => {
               setShowPassword((a) => !a)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                setShowPassword((a) => !a);
+              }
             }}
           >
             {showPassword ? (
