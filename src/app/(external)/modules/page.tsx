@@ -9,7 +9,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Wallet,
   CalendarCheck,
@@ -19,8 +18,6 @@ import {
   MessageSquare,
   Smartphone,
   ArrowRight,
-  Undo2,
-  X,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 

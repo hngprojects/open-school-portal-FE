@@ -1,6 +1,4 @@
-import Image from "next/image"
 import { FaUserEdit } from "react-icons/fa"
-import React from "react"
 
 const HomeHowItWorks = () => {
   return (

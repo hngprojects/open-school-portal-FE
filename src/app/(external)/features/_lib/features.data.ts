@@ -25,7 +25,7 @@ export const featuresData: FeatureProps[] = [
     listItems: [
       "Daily student attendance",
       "Teacher check-in via web or NFC tap",
-      "NFC attend4nce using the mobile ap",
+      "NFC attendance using the mobile app",
       "Offline attendance queue + auto-sync",
       "Admin dashboard for attendance summaries",
       "Edit logs with full audit history",
@@ -44,7 +44,7 @@ export const featuresData: FeatureProps[] = [
       "Record full or part payments",
       "Fee reminders and notifications",
       "Individual ledger per student",
-      "Complete payment audit trailer student",
+      "Complete payment audit trail per student",
     ],
   },
   {

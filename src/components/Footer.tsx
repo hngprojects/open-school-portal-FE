@@ -78,7 +78,7 @@ const Footer = () => {
           <p className="text-[#fafafa]">Copyright &copy; {new Date().getFullYear()}</p>
           <div className="flex items-center gap-6 text-[#FAFAFA] [&_p]:cursor-pointer">
             <Link href={"/terms"}>
-              <p>Term & Conditions</p>
+              <p>Terms & Conditions</p>
             </Link>
 
             <Link href={"/privacy"}>

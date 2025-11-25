@@ -73,7 +73,7 @@ const Faq = () => {
     <div className="container flex min-h-screen flex-col gap-6 bg-white py-8 md:gap-8 md:py-12">
       <div className="mx-auto flex max-w-220 flex-col gap-4">
         <h1 className="text-center text-2xl font-semibold text-[#2d2d2d] md:text-3xl">
-          Frequency Asked Question
+          Frequently Asked Question
         </h1>
         <p className="text-center text-sm text-[#535353] sm:text-xl md:text-2xl">
           Everything you need to know about how Open School Portal works for schools,
