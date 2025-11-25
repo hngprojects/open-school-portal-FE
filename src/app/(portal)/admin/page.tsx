@@ -39,7 +39,7 @@ const dashboardStats: StatItem[] = [
 
 const page = () => {
   return (
-    <div className="bg-[#FAFAFA] px-2 pt-4 lg:px-10">
+    <div className="bg-[#FAFAFA] px-2 pt-4 md:px-10">
       {/* Header */}
 
       <DashboardTitle

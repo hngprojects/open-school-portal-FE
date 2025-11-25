@@ -4,12 +4,51 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateTeacherData } from "@/lib/teachers"
-import { NewPersonFormBuilder } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import { FormField, NewPersonFormBuilder, NewPersonFormConfig } from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useGetTeacher, useUpdateTeacher } from "../_hooks/use-teachers"
 import { teacherFormConfig } from "../new/components/new-teacher-form"
+
+const replacements = [
+  {
+    name: "employmentId",
+    label: "Employment ID",
+    type: "text",
+    placeholder: "EMP-YYYY-XXX",
+    required: true,
+    readonly: true,
+    pattern: "EMP-\\d{4}-\\d{3}",
+    disabled: true,
+  },
+  {
+    name: "email",
+    label: "Email Address",
+    type: "email",
+    placeholder: "Enter email address",
+    readonly: true,
+    disabled: true,
+  }
+]
+const exclusions = ["generatedPassword"]
+
+const editFormFields = teacherFormConfig.fields.map((field: FormField) => {
+  const replacement = replacements.find((r) => r.name === field.name)
+  if (replacement) {
+    return { ...field, ...replacement }
+  }
+  if (exclusions.includes(field.name)) {
+    return null
+  }
+  return field
+}).filter((field): field is FormField => field !== null)
+
+const editTeacherFormConfig = {
+  fields: editFormFields,
+  cancelText: "Cancel",
+  submitText: "Update",
+} as NewPersonFormConfig
 
 export default function EditTeacherPage() {
   const { id } = useParams()
@@ -89,6 +128,7 @@ export default function EditTeacherPage() {
     title: teacher.title,
     firstName: teacher.first_name,
     lastName: teacher.last_name,
+    email: teacher.email,
     middleName: teacher.middle_name || "",
     employmentId: teacher.employment_id,
     dateOfBirth: teacher.date_of_birth,
@@ -116,9 +156,9 @@ export default function EditTeacherPage() {
         <h1 className="mb-2 text-xl font-bold text-gray-900">Edit Teacher</h1>
         <p className="text-gray-600">Update teacher details.</p>
       </div>
-      <div className="md:px-8">
+      <div>
         <NewPersonFormBuilder
-          config={teacherFormConfig}
+          config={editTeacherFormConfig}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={initialData}

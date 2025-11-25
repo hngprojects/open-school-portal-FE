@@ -22,7 +22,7 @@ export default function AddNewParent() {
         <h1 className="mb-2 text-xl font-bold text-gray-900">Add New Parent</h1>
         <p className="text-gray-600">Enter details of the new parent.</p>
       </div>
-      <div className="md:px-8">
+      <div>
         <NewParentForm />
       </div>
     </div>
