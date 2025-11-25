@@ -47,11 +47,11 @@ const items = [
 
   {
     title: "Class Management",
-    url: "#",
+    url: "/admin/class-management/class",
     icon: FaRegUser,
     subItems: [
-      { title: "Class & Session", url: "#" },
-      { title: "Session", url: "#" },
+      { title: "Class", url: "/admin/class-management/class" },
+      { title: "Session", url: "/admin/class-management/session" },
       { title: "Subject", url: "#" },
       { title: "Timetable Setup", url: "#" },
       { title: "Result Management", url: "#" },

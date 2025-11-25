@@ -1,3 +1,4 @@
+// src/app/(portal)/admin/parents/[id]/page.tsx
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
@@ -28,11 +29,11 @@ export default function EditParentPage() {
         last_name: formData.last_name as string,
         middle_name: formData.middle_name as string,
         email: formData.email as string,
-        relationship: formData.relationship as string,
         gender: formData.gender as string,
         phone: formData.phone as string,
         date_of_birth: formData.date_of_birth as string,
         home_address: formData.home_address as string,
+        photo_url: formData.photo_url as string,
       }
 
       await updateParentMutation.mutateAsync(updateData)
@@ -80,22 +81,16 @@ export default function EditParentPage() {
     )
   }
 
-  const editConfig = {
-    ...parentFormConfig,
-    submitText: "Update",
-    cancelText: "Cancel",
-  }
-
   const initialData = {
     first_name: parent.first_name,
     last_name: parent.last_name,
     middle_name: parent.middle_name || "",
     email: parent.email,
-    relationship: parent.role || "", // Using role for relationship
     gender: parent.gender,
     phone: parent.phone,
     date_of_birth: parent.date_of_birth,
     home_address: parent.home_address,
+    photo_url: parent.photo_url || "",
   }
 
   return (
@@ -118,7 +113,7 @@ export default function EditParentPage() {
       </div>
       <div className="md:px-8">
         <NewPersonFormBuilder
-          config={editConfig}
+          config={parentFormConfig}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={initialData}

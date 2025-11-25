@@ -6,7 +6,6 @@ export type CreateParentData = Omit<
   | "id"
   | "avatar"
   | "role"
-  | "is_active"
   | "employment_id"
   | "join_date"
   | "reg_number"
@@ -14,7 +13,10 @@ export type CreateParentData = Omit<
   | "guardian"
 > & {
   photo?: File
-  relationship: string
+  relationship?: string
+  password: string
+  photo_url?: string
+  title?: string
 }
 
 export type UpdateParentData = Partial<CreateParentData>
