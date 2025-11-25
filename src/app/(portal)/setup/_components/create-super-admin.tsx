@@ -136,7 +136,7 @@ export function AdminAccountForm({
         <FormField
           label="Password"
           required
-          type={showPassword ? "" : "password"}
+          type={showPassword ? "text" : "password"}
           error={errors.password}
           value={formData.admin.password}
           onChange={(e) => handleChange("admin", "password", e.target.value)}
