@@ -1,5 +1,5 @@
-import InvitedUserSignIn from "../_components/invited-parent-sign-in"
+import InvitedUserSignIn from "../_components/invited-user-sign-in"
 
-export default function InvitedUserSignInPage() {
-  return <InvitedUserSignIn />
+export default function ParentSignInPage() {
+  return <InvitedUserSignIn userType="parent" />
 }
