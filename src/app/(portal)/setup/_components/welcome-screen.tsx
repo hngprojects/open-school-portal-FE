@@ -4,12 +4,13 @@ import { DatabaseIcon, ListChecksIcon, SchoolIcon, ShieldUserIcon } from "lucide
 interface StepItemProps {
   icon: React.ReactNode
   label: string
+  index: number
 }
 
 export function WelcomeScreen({ onStart }: { onStart: () => void }) {
   return (
     <div className="p-2 md:p-12">
-      <h1 className="mb-3 text-center text-3xl font-semibold text-gray-900">
+      <h1 className="animate-onrender mb-3 text-center text-3xl font-semibold text-gray-900">
         Welcome to SchoolBase
       </h1>
       <p className="mb-8 text-center text-gray-600">
@@ -22,18 +23,22 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
           <StepItem
             icon={<ListChecksIcon className="h-5 w-5" />}
             label="Prerequisites Check"
+            index={1}
           />
           <StepItem
             icon={<DatabaseIcon className="h-5 w-5" />}
             label="Database Configuration"
+            index={2}
           />
           <StepItem
             icon={<ShieldUserIcon className="h-5 w-5" />}
             label="Super Admin Account Creation"
+            index={3}
           />
           <StepItem
             icon={<SchoolIcon className="h-5 w-5" />}
             label="School Details Setup"
+            index={4}
           />
         </div>
       </div>
@@ -45,12 +50,21 @@ export function WelcomeScreen({ onStart }: { onStart: () => void }) {
   )
 }
 
-function StepItem({ icon, label }: StepItemProps) {
-  // if if first, no top border, if last, no bottom border
+function StepItem({ icon, label, index }: StepItemProps) {
+  const styles = { transitionDelay: `${index * 100}ms` }
+
   return (
+    // let all children have the animate-onrender class but delay based on wt nth child the parent is
     <div className="flex items-center gap-3 border-b border-gray-300 p-4 last:border-b-0">
-      <div className="text-accent rounded-full bg-red-100 p-3">{icon}</div>
-      <span className="text-gray-700">{label}</span>
+      <div
+        className="text-accent animate-onrender rounded-full bg-red-100 p-3"
+        style={styles}
+      >
+        {icon}
+      </div>
+      <span className="animate-onrender text-gray-700" style={styles}>
+        {label}
+      </span>
     </div>
   )
 }

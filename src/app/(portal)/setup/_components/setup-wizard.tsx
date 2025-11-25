@@ -3,45 +3,21 @@
 import { useState } from "react"
 import { WelcomeScreen } from "./welcome-screen"
 import Image from "next/image"
-
-interface DatabaseConfig {
-  name: string
-  host: string
-  username: string
-  password: string
-}
-
-interface SchoolInfo {
-  logo: File | null
-  name: string
-  brandColor: string
-  phone: string
-  address: string
-}
-
-interface AdminAccount {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  confirmPassword: string
-}
-
-interface FormData {
-  database: DatabaseConfig
-  school: SchoolInfo
-  admin: AdminAccount
-}
-
-interface InstallationStep {
-  label: string
-  completed: boolean
-}
+import {
+  AdminAccount,
+  DatabaseConfig,
+  FormData,
+  InstallationStep,
+  SchoolInfo,
+} from "../_types/setup"
+import { DatabaseConfigForm } from "./database-configuration"
+import { SchoolInfoForm } from "./school-info"
+import { AdminAccountForm } from "./create-super-admin"
 
 export default function SchoolSetupWizard() {
   const [currentStep, setCurrentStep] = useState<number>(0)
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
-  const [installProgress, setInstallProgress] = useState<number>(0)
+  const [, setInstallProgress] = useState<number>(0)
   const [installationSteps, setInstallationSteps] = useState<InstallationStep[]>([
     { label: "Validating Account Information", completed: false },
     { label: "Creating Database Schema", completed: false },
@@ -49,7 +25,7 @@ export default function SchoolSetupWizard() {
     { label: "Configuring Your School Profile", completed: false },
     { label: "Finalizing Setup", completed: false },
   ])
-  const [isComplete, setIsComplete] = useState<boolean>(false)
+  const [, setIsComplete] = useState<boolean>(false)
 
   const [formData, setFormData] = useState<FormData>({
     database: {
@@ -113,11 +89,11 @@ export default function SchoolSetupWizard() {
     return new Promise((resolve) => setTimeout(resolve, 300))
   }
 
-  // function handleBack(): void {
-  //     if (currentStep > 0) {
-  //         setCurrentStep(prev => prev - 1);
-  //     }
-  // }
+  function handleBack(): void {
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1)
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
@@ -131,8 +107,42 @@ export default function SchoolSetupWizard() {
           </div>
         </div>
 
-        <WelcomeScreen onStart={handleNext} />
+        {currentStep === 0 && <WelcomeScreen onStart={handleNext} />}
+        {currentStep === 1 && (
+          <DatabaseConfigForm
+            formData={formData}
+            updateFormData={updateFormData}
+            onSubmit={handleNext}
+            onCancel={handleBack}
+          />
+        )}
+        {currentStep === 2 && (
+          <SchoolInfoForm
+            formData={formData}
+            updateFormData={updateFormData}
+            onSubmit={handleNext}
+            onCancel={handleBack}
+          />
+        )}
+        {currentStep === 3 && !isInstalling && (
+          <AdminAccountForm
+            formData={formData}
+            updateFormData={updateFormData}
+            onSubmit={handleInstallation}
+            onCancel={handleBack}
+          />
+        )}
       </div>
     </div>
   )
+
+  function updateFormData(section: keyof FormData, field: string, value: string | File) {
+    setFormData((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value,
+      },
+    }))
+  }
 }
