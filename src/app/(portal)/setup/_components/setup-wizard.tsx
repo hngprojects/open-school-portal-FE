@@ -6,7 +6,6 @@ import Image from "next/image"
 import {
   AdminAccount,
   DatabaseConfig,
-  FormData,
   InstallationStep,
   SchoolInfo,
 } from "../_types/setup"
