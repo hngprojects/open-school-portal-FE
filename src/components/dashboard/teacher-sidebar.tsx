@@ -10,6 +10,7 @@ import {
   NotebookPen,
   CalendarDays,
   FileBadge,
+  Settings,
 } from "lucide-react"
 
 import {
@@ -24,6 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar"
 
 import Logo from "@/components/logo"
@@ -108,6 +110,15 @@ export function TeacherSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="cursor-pointer">
+        <Link href={"/teacher/settings"}>
+          <div className="flex items-center gap-2 text-sm">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </div>
+        </Link>
+      </SidebarFooter>
     </Sidebar>
   )
 }

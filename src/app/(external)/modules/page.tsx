@@ -312,9 +312,6 @@ const ModulesPage = () => {
           <h1 className="text-center text-2xl font-medium text-[#2d2d2d] md:text-3xl">
             Modules
           </h1>
-          <p className="text-center text-sm text-[#535353] sm:text-xl md:text-2xl">
-            The major building blocks of the system (pages/apps within SchoolBase).
-          </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

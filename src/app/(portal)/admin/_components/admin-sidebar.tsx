@@ -13,6 +13,7 @@ import {
   CalendarDays,
   FileBadge,
   Wallet,
+  Settings,
 } from "lucide-react"
 
 import {
@@ -213,6 +214,16 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="cursor-pointer">
+        <Link href={"/admin/settings"}>
+          <div className="flex items-center gap-2 text-sm">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </div>
+        </Link>
+      </SidebarFooter>
+
       <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
         Log Out
       </SidebarFooter>

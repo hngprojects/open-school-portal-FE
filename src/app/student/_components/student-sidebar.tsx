@@ -110,10 +110,12 @@ export function StudentSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="cursor-pointer">
-        <div className="flex items-center gap-2">
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </div>
+        <Link href={"/student/settings"}>
+          <div className="flex items-center gap-2 text-sm">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </div>
+        </Link>
       </SidebarFooter>
 
       <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">

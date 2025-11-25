@@ -13,6 +13,7 @@ import {
   CalendarDays,
   FileBadge,
   Wallet,
+  // LogOut,
 } from "lucide-react"
 
 import {
@@ -40,6 +41,7 @@ import {
 import Logo from "@/components/logo"
 import { useLogout } from "@/hooks/use-user-data"
 import { LogoutDialog } from "./logout-confirmation-dialog"
+import { Settings } from "lucide-react"
 
 const items = [
   { title: "Dashboard", url: "/parent", icon: LayoutGrid, exactMatch: true },
@@ -211,7 +213,18 @@ export function ParentSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="cursor-pointer">
+        <Link href={"/parent/settings"}>
+          <div className="flex items-center gap-2 text-sm">
+            <Settings className="h-4 w-4" />
+            <span>Settings</span>
+          </div>
+        </Link>
+      </SidebarFooter>
+
       <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+        {/* <LogOut className="h-4 w-4" /> */}
         Log Out
       </SidebarFooter>
       <LogoutDialog
