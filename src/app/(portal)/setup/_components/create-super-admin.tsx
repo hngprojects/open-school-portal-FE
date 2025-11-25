@@ -143,7 +143,7 @@ export function AdminAccountForm({
           placeholder="Create a strong password"
         >
           <div
-            className="absolute top-1/2 right-2 -translate-y-1/2 md:right-4"
+            className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer md:right-4"
             role="button"
             tabIndex={0}
             aria-label={showPassword ? "Hide password" : "Show password"}
