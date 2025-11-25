@@ -4,9 +4,9 @@ import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(portal)/admin/_components/add-new-person-form-template"
-import { CreateStudentData } from "@/lib/students"
+import { CreateParentData } from "@/lib/parents"
 import { useRouter } from "next/navigation"
-import { useCreateStudent } from "../../_hooks/use-students"
+import { useCreateParent } from "../../_hooks/use-parents"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -17,20 +17,8 @@ const generatePassword = () => {
   return password
 }
 
-export const studentFormConfig: NewPersonFormConfig = {
+export const parentFormConfig: NewPersonFormConfig = {
   fields: [
-    {
-      name: "title",
-      label: "Select Title",
-      type: "select",
-      required: true,
-      options: [
-        { value: "mr", label: "Mr." },
-        { value: "miss", label: "Miss" },
-        { value: "mrs", label: "Mrs." },
-        { value: "master", label: "Master" },
-      ],
-    },
     {
       name: "first_name",
       label: "First Name",
@@ -52,11 +40,23 @@ export const studentFormConfig: NewPersonFormConfig = {
       placeholder: "Enter middle name",
     },
     {
-      name: "identification_number",
-      label: "Identification Number",
-      type: "text",
-      placeholder: "Enter ID number",
+      name: "email",
+      label: "Email Address",
+      type: "email",
+      placeholder: "Enter email address",
       required: true,
+    },
+    {
+      name: "relationship",
+      label: "Relationship",
+      type: "select",
+      required: true,
+      options: [
+        { value: "father", label: "Father" },
+        { value: "mother", label: "Mother" },
+        { value: "guardian", label: "Guardian" },
+        { value: "other", label: "Other" },
+      ],
     },
     {
       name: "generated_password",
@@ -68,13 +68,6 @@ export const studentFormConfig: NewPersonFormConfig = {
         text: "Generate",
         onGenerate: generatePassword,
       },
-    },
-    {
-      name: "class",
-      label: "Class",
-      type: "text",
-      placeholder: "Enter class",
-      required: true,
     },
     {
       name: "gender",
@@ -93,24 +86,17 @@ export const studentFormConfig: NewPersonFormConfig = {
       required: true,
     },
     {
+      name: "phone",
+      label: "Phone Number",
+      type: "tel",
+      placeholder: "Enter phone number",
+      required: true,
+    },
+    {
       name: "home_address",
       label: "Home Address",
       type: "text",
       placeholder: "Enter home address",
-      required: true,
-    },
-    {
-      name: "parent_guardian_name",
-      label: "Parent/ Guardian Name",
-      type: "text",
-      placeholder: "Enter parent/guardian name",
-      required: true,
-    },
-    {
-      name: "parent_guardian_phone",
-      label: "Parent/Guardian Phone Number",
-      type: "tel",
-      placeholder: "Enter phone number",
       required: true,
     },
     {
@@ -125,48 +111,43 @@ export const studentFormConfig: NewPersonFormConfig = {
   cancelText: "Cancel",
 }
 
-export default function NewStudentForm() {
+export default function NewParentForm() {
   const router = useRouter()
-  const createNewStudent = useCreateStudent().mutateAsync
+  const createNewParent = useCreateParent().mutateAsync
 
   return (
     <NewPersonFormBuilder
-      key={"new-student"}
-      config={studentFormConfig}
+      key={"new-parent"}
+      config={parentFormConfig}
       onCancel={handleCancel}
       onSubmit={handleSubmit}
     />
   )
 
   async function handleCancel() {
-    router.push("/admin/students")
+    router.push("/admin/parents")
   }
 
   async function handleSubmit(formData: Record<string, unknown>) {
-    const newStudent: CreateStudentData = {
+    const newParent: CreateParentData = {
       title: formData.title as string,
       first_name: formData.first_name as string,
       last_name: formData.last_name as string,
       middle_name: formData.middle_name as string,
       email: formData.email as string,
-      identification_number: formData.identification_number as string,
-      class: formData.class as string,
-      phone: formData.parent_guardian_phone as string,
-      date_of_birth: formData.date_of_birth as string,
+      relationship: formData.relationship as string,
       gender: formData.gender as string,
+      phone: formData.phone as string,
+      date_of_birth: formData.date_of_birth as string,
       home_address: formData.home_address as string,
-      parent_guardian_name: formData.parent_guardian_name as string,
-      parent_guardian_phone: formData.parent_guardian_phone as string,
     }
 
     try {
-      // Log payload so we can inspect what is sent to the backend
-      console.log("Creating student — payload:", newStudent)
-      await createNewStudent(newStudent)
-      router.push("/admin/students")
+      console.log("Creating parent — payload:", newParent)
+      await createNewParent(newParent)
+      router.push("/admin/parents")
     } catch (err) {
-      // Surface error details in the console for debugging
-      console.error("Failed to create student:", err)
+      console.error("Failed to create parent:", err)
       throw err
     }
   }
