@@ -1,6 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { StudentSidebar } from "@/components/dashboard/student-sidebar"
-import DashboardHeader from "../../components/dashboard/dashboard-header"
+import DashboardHeader from "@/components/dashboard/dashboard-header"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
 
 export const metadata = {
