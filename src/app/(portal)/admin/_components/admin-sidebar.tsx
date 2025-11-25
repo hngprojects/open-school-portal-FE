@@ -3,17 +3,12 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import {
-  LayoutGrid,
-  GraduationCap,
-  User,
-  ChevronDown,
-  ChevronRight,
-  NotebookPen,
-  CalendarDays,
-  FileBadge,
-  Wallet,
-} from "lucide-react"
+import { Menu, GraduationCap, ChevronDown, ChevronRight } from "lucide-react"
+import { PiMoneyWavyBold } from "react-icons/pi"
+import { FaRegUser } from "react-icons/fa6"
+import { AiOutlinePieChart } from "react-icons/ai"
+import NotePad from "../../../../../public/svgs/note-pad"
+import Users from "../../../../../public/svgs/users"
 
 import {
   Sidebar,
@@ -43,23 +38,26 @@ import { LogoutDialog } from "./logout-confirmation-dialog"
 
 // Menu items
 const items = [
-  { title: "Dashboard", url: "/admin", icon: LayoutGrid, exactMatch: true },
-  { title: "Teachers", url: "/admin/teachers", icon: User },
+  { title: "Dashboard", url: "/admin", icon: Menu, exactMatch: true },
+  { title: "Fees", url: "/admin/fee-management", icon: PiMoneyWavyBold },
+  { title: "Attendance", url: "/admin/attendance", icon: NotePad },
+  { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
-  { title: "Parents", url: "/admin/parents", icon: User },
-  { title: "Attendance", url: "/admin/attendance", icon: NotebookPen },
-  { title: "Timetable", url: "/admin/timetable", icon: CalendarDays },
-  { title: "Results", url: "/admin/results", icon: FileBadge },
+  { title: "Parents", url: "/admin/parents", icon: FaRegUser },
+
   {
-    title: "Fees Management",
-    url: "/admin/fee-management",
-    icon: Wallet,
+    title: "Class Management",
+    url: "#",
+    icon: FaRegUser,
     subItems: [
-      { title: "Add Fee Group", url: "/admin/fee-management/add-fees" },
-      { title: "Allocate Invoice", url: "/admin/fee-management/allocate-invoice" },
-      { title: "Record Payment", url: "/admin/fee-management/record-payment" },
+      { title: "Class & Session", url: "#" },
+      { title: "Session", url: "#" },
+      { title: "Subject", url: "#" },
+      { title: "Timetable Setup", url: "#" },
+      { title: "Result Management", url: "#" },
     ],
   },
+  { title: "User Configuration", url: "#", icon: AiOutlinePieChart },
 ]
 
 export function AdminSidebar() {

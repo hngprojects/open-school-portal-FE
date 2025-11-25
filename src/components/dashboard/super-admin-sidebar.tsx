@@ -4,18 +4,18 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import {
-  LayoutGrid,
+  Menu,
   GraduationCap,
   User,
   ChevronDown,
   ChevronRight,
   NotebookPen,
   CalendarDays,
-  Wallet,
   Settings,
   LifeBuoy,
   LogOut,
 } from "lucide-react"
+import { PiMoneyWavyBold } from "react-icons/pi"
 
 import {
   Sidebar,
@@ -48,7 +48,7 @@ import { useAuthStore } from "@/store/auth-store"
 
 // Menu items
 const items = [
-  { title: "Dashboard", url: "/super-admin", icon: LayoutGrid, exactMatch: true },
+  { title: "Dashboard", url: "/super-admin", icon: Menu, exactMatch: true },
   { title: "Admins", url: "/super-admin/admins", icon: User },
   { title: "Teachers", url: "/super-admin/teachers", icon: User },
   { title: "Students", url: "/super-admin/students", icon: GraduationCap },
@@ -61,7 +61,7 @@ const items = [
   {
     title: "Fees",
     url: "/super-admin/fees",
-    icon: Wallet,
+    icon: PiMoneyWavyBold,
     subItems: [
       { title: "Add Fee Group", url: "/super-admin/fees/add-fees" },
       { title: "Allocate Invoice", url: "/super-admin/fees/allocate-invoice" },
