@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Menu, GraduationCap, ChevronDown, ChevronRight } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
-import { AiOutlinePieChart } from "react-icons/ai"
+import { TbSettingsCog } from "react-icons/tb"
 import NotePad from "../../../../../public/svgs/note-pad"
 import Users from "../../../../../public/svgs/users"
 
@@ -57,7 +57,7 @@ const items = [
       { title: "Result Management", url: "#" },
     ],
   },
-  { title: "User Configuration", url: "#", icon: AiOutlinePieChart },
+  { title: "User Configuration", url: "/admin/user-configuration", icon: TbSettingsCog },
 ]
 
 export function AdminSidebar() {

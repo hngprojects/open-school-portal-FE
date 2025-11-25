@@ -126,6 +126,7 @@ export function SchoolInfoForm({
           value={formData.school.phone}
           onChange={(e) => handleChange("school", "phone", e.target.value)}
           placeholder="+234 900 000 0000"
+          inputMode="tel"
         />
 
         <FormField
