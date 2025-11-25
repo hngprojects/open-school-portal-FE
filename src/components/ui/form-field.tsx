@@ -40,7 +40,7 @@ export const FormField = (props: FormFieldProps) => (
     </div>
 
     {props.error && (
-      <p className="mt-1 flex items-center text-sm text-red-500">
+      <p className="mt-1 flex gap-2 items-center text-sm text-red-500">
         {" "}
         <AlertCircleIcon /> {props.error}{" "}
       </p>
