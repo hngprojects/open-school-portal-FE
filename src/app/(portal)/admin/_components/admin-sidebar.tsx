@@ -5,19 +5,20 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import {
-  LayoutGrid,
   GraduationCap,
   User,
   ChevronDown,
   ChevronRight,
-  NotebookPen,
-  Wallet,
-  UserCog,
-  HelpCircle,
   Settings,
   LogOut,
   BookIcon,
+  Menu
 } from "lucide-react"
+import { PiMoneyWavyBold } from "react-icons/pi"
+import { FaRegUser } from "react-icons/fa6"
+import { AiOutlinePieChart } from "react-icons/ai"
+import NotePad from "../../../../../public/svgs/note-pad"
+import Users from "../../../../../public/svgs/users"
 
 import {
   Sidebar,
@@ -48,12 +49,12 @@ import { titleCase } from "@/lib/utils"
 
 // Menu items
 const mainItems = [
-  { title: "Dashboard", url: "/admin", icon: LayoutGrid, exactMatch: true },
-  { title: "Fees", url: "/admin/fee-management", icon: Wallet },
-  { title: "Attendance", url: "/admin/attendance", icon: NotebookPen },
-  { title: "Teachers", url: "/admin/teachers", icon: User },
+  { title: "Dashboard", url: "/admin", icon: Menu, exactMatch: true },
+  { title: "Fees", url: "/admin/fee-management", icon: PiMoneyWavyBold },
+  { title: "Attendance", url: "/admin/attendance", icon: NotePad },
+  { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
-  { title: "Parents", url: "/admin/parents", icon: User },
+  { title: "Parents", url: "/admin/parents", icon: FaRegUser },
   {
     title: "Class Management",
     url: "/admin/class-management",
@@ -66,7 +67,7 @@ const mainItems = [
       { title: "Result Management", url: "/admin/class-management/result-management" },
     ],
   },
-  // { title: "User Configuration", url: "/admin/user-configuration", icon: UserCog },
+  // { title: "User Configuration", url: "/admin/user-configuration", icon: AiOutlinePieChart },
 ]
 
 const bottomItems = [

@@ -134,3 +134,16 @@ export function useDeleteTeacher() {
     },
   })
 }
+
+// ----------------------------
+// COUNT TEACHERS
+// --------------------------
+export function useTeachersCount() {
+  return useQuery({
+    queryKey: ["teachers_count"],
+    queryFn: async () => {
+      const res = await TeachersAPI.getTotal({ limit: 1, page: 1 })
+      return res.data?.total ?? 0
+    },
+  })
+}

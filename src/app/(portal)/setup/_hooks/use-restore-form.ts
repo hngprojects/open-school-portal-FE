@@ -106,9 +106,16 @@ export function useSetupWizardPersistence(defaultFormData: FormData) {
 
   // Save updates to IndexedDB
   useEffect(() => {
-    if (isLoaded) {
-      idbSet(KEY, formData)
+    async function save() {
+      if (isLoaded) {
+        try {
+          await idbSet(KEY, formData)
+        } catch (error) {
+          console.error("Failed to save form data to IndexedDB:", error)
+        }
+      }
     }
+    save()
   }, [formData, isLoaded])
 
   // Update form data
