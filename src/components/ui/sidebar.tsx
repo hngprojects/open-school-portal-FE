@@ -3,7 +3,8 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Menu } from "lucide-react"
+
+import { HiOutlineMenuAlt2 } from "react-icons/hi"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -263,14 +264,14 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7 hover:bg-transparent", className)}
+      className={cn("size-10 hover:bg-transparent", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <Menu />
+      <HiOutlineMenuAlt2 />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

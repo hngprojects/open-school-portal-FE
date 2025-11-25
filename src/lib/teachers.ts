@@ -16,11 +16,30 @@ export interface GetTeachersParams {
   is_active?: boolean
   page?: number
   search?: string
+  limit?: number
+  total?: number
+}
+
+export interface TeachersListResponse {
+  data: User[]
+  total: number
+  page: number
+  limit: number
+  total_pages: number
 }
 
 export const TeachersAPI = {
   getAll: (params?: GetTeachersParams) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
+      "/teachers",
+      {
+        params,
+      },
+      true
+    ),
+
+  getTotal: (params?: GetTeachersParams) =>
+    apiFetch<ResponsePack<TeachersListResponse>>(
       "/teachers",
       {
         params,

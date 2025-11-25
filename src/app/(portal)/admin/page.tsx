@@ -1,3 +1,6 @@
+"use client"
+
+import React, { useMemo } from "react"
 import DashboardTitle from "./_components/dashboard-title"
 import StatCard, { StatItem } from "./_components/dashboard/stat-card"
 import TodayActivities from "./_components/dashboard/today-activities-table"
@@ -6,51 +9,67 @@ import FeesReportChart from "./_components/dashboard/fees-report-chart"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Activity, Search } from "lucide-react"
+import { Activity, Search, Users, GraduationCap, File, Book } from "lucide-react"
 import TodayActivityGrid from "./_components/dashboard/today-activity-grid"
-import { Users, GraduationCap, File, Book } from "lucide-react"
 
-const dashboardStats: StatItem[] = [
-  {
-    name: "Total Students",
-    quantity: 3.6,
-    percentage: 10,
-    icon: GraduationCap,
-  },
-  {
-    name: "Total Teachers",
-    quantity: 150,
-    percentage: 10,
-    icon: Users,
-  },
-  {
-    name: "Total Parents",
-    quantity: 300,
-    percentage: 10,
-    icon: File,
-  },
-  {
-    name: "Total Classes",
-    quantity: 50,
-    percentage: 10,
-    icon: Book,
-  },
-]
+import { useTeachersCount } from "./teachers/_hooks/use-teachers"
 
-const page = () => {
+const Page = () => {
+  const { data: teacherTotal, isLoading } = useTeachersCount()
+
+  // format numbers like 1K, 1.5K etc
+  function formatNumber(num: number) {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K"
+    }
+    return num.toString()
+  }
+
+  const formattedTeachers = teacherTotal ? formatNumber(teacherTotal) : "0"
+
+  // 🧠 Memoize dashboard stats → prevents needless re-renders
+  const dashboardStats: StatItem[] = useMemo(
+    () => [
+      {
+        name: "Total Students",
+        quantity: 3.6,
+        percentage: 10,
+        icon: GraduationCap,
+      },
+      {
+        name: "Total Teachers",
+        quantity: isLoading ? 0 : formattedTeachers,
+        percentage: 10,
+        icon: Users,
+      },
+      {
+        name: "Total Parents",
+        quantity: 300,
+        percentage: 10,
+        icon: File,
+      },
+      {
+        name: "Total Classes",
+        quantity: 50,
+        percentage: 10,
+        icon: Book,
+      },
+    ],
+    [isLoading, formattedTeachers]
+  )
+
   return (
     <div className="bg-[#FAFAFA] px-2 pt-4 lg:px-10">
       {/* Header */}
-
       <DashboardTitle
         heading="Dashboard"
         description="Welcome back! Here is an overview of your school"
       />
 
       {/* Stat card */}
-      <StatCard stats={dashboardStats} />
+      <StatCard stats={dashboardStats} isLoading={isLoading} />
 
-      {/* student growth and fees report*/}
+      {/* student growth and fees report */}
       <section className="mt-10 grid grid-cols-1 gap-[72px] lg:grid-cols-2">
         <StudentGrowthChart />
         <FeesReportChart />
@@ -85,4 +104,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
