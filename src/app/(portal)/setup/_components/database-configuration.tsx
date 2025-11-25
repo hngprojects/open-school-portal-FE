@@ -10,7 +10,15 @@ const databaseSchema = z.object({
   name: z.string().min(1, "Database name is required"),
   host: z.string().min(1, "Database host is required"),
   username: z.string().min(1, "Database username is required"),
-  password: z.string().min(1, "Database password is required"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/[a-zA-Z]/, "Password must contain at least one letter")
+    .regex(/\d/, "Password must contain at least one number")
+    .regex(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character"
+    ),
 })
 
 interface DatabaseConfigFormProps {
@@ -81,7 +89,7 @@ export function DatabaseConfigForm({
       </div>
 
       <div className="grid grid-cols-[1fr_2fr] gap-2 md:grid-cols-2 md:gap-4">
-        <Button onClick={onCancel} variant="outline" className="px-4 py-3">
+        <Button type="button" onClick={onCancel} variant="outline" className="px-4 py-3">
           Cancel
         </Button>
         <Button type="submit" className="px-4 py-3">

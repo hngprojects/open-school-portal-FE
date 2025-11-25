@@ -1,3 +1,4 @@
+// src/app/(portal)/admin/students/[id]/page.tsx
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
@@ -24,28 +25,23 @@ export default function EditStudentPage() {
 
     try {
       const updateData: UpdateStudentData = {
-        title: formData.title as string,
         first_name: formData.first_name as string,
         last_name: formData.last_name as string,
         middle_name: formData.middle_name as string,
-        identification_number: formData.identification_number as string,
-        class: formData.class as string,
-        phone: formData.parent_guardian_phone as string,
-        date_of_birth: formData.date_of_birth as string,
+        email: formData.email as string,
         gender: formData.gender as string,
+        phone: formData.phone as string,
+        date_of_birth: formData.date_of_birth as string,
         home_address: formData.home_address as string,
-        parent_guardian_name: formData.parent_guardian_name as string,
-        parent_guardian_phone: formData.parent_guardian_phone as string,
+        photo_url: formData.photo_url as string,
       }
 
       await updateStudentMutation.mutateAsync(updateData)
-      // Small delay to ensure toast shows before navigation
       setTimeout(() => {
         router.push("/admin/students")
       }, 300)
     } catch (err) {
-      // Error toast is handled in the hook
-      throw err // Let the form handle the error
+      throw err
     }
   }
 
@@ -85,20 +81,16 @@ export default function EditStudentPage() {
     )
   }
 
-  // Prepare initial data for the form
   const initialData = {
-    title: student.title,
     first_name: student.first_name,
     last_name: student.last_name,
     middle_name: student.middle_name || "",
-    identification_number: student.reg_number || "",
-    class: student.class || "",
-    date_of_birth: student.date_of_birth,
+    email: student.email,
     gender: student.gender,
-    parent_guardian_phone: student.phone,
+    phone: student.phone,
+    date_of_birth: student.date_of_birth,
     home_address: student.home_address,
-    parent_guardian_name: student.guardian || "",
-    generated_password: "", // Empty for security
+    photo_url: student.photo_url || "",
   }
 
   return (
