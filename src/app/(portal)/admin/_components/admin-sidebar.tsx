@@ -6,17 +6,16 @@ import Link from "next/link"
 import Image from "next/image"
 import {
   GraduationCap,
-  User,
   ChevronDown,
   ChevronRight,
   Settings,
   LogOut,
   BookIcon,
-  Menu
+  Menu,
 } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
-import { AiOutlinePieChart } from "react-icons/ai"
+// import { AiOutlinePieChart } from "react-icons/ai"
 import NotePad from "../../../../../public/svgs/note-pad"
 import Users from "../../../../../public/svgs/users"
 
@@ -80,7 +79,8 @@ export function AdminSidebar() {
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-  const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user)
+  const sendLogoutRequest = useLogout().mutateAsync;
 
   const isCollapsed = state === "collapsed"
 
@@ -105,7 +105,9 @@ export function AdminSidebar() {
                   ? pathname === item.url
                   : pathname === item.url || pathname.startsWith(item.url + "/")
                 const isOpen = openItems.includes(item.title)
-                const hasActiveChild = hasSubItems && item.subItems?.some((subItem) => pathname === subItem.url)
+                const hasActiveChild =
+                  hasSubItems &&
+                  item.subItems?.some((subItem) => pathname === subItem.url)
 
                 if (hasSubItems) {
                   return (
@@ -118,10 +120,11 @@ export function AdminSidebar() {
                         <CollapsibleTrigger asChild>
                           <SidebarMenuButton
                             asChild
-                            className={`flex w-full items-center justify-between rounded-md px-3 py-2.5 ${isActive || hasActiveChild
+                            className={`flex w-full items-center justify-between rounded-md px-3 py-2.5 ${
+                              isActive || hasActiveChild
                                 ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
                                 : "text-gray-700 hover:bg-gray-100"
-                              }`}
+                            }`}
                           >
                             <div className="flex w-full cursor-pointer items-center justify-between">
                               <div className="flex items-center gap-3">
@@ -137,17 +140,18 @@ export function AdminSidebar() {
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <SidebarMenuSub className="ml-8 mt-1 space-y-1 border-l-0 px-0">
+                          <SidebarMenuSub className="mt-1 ml-8 space-y-1 border-l-0 px-0">
                             {item.subItems?.map((subItem) => {
                               const isSubActive = pathname === subItem.url
                               return (
                                 <SidebarMenuSubItem key={subItem.title}>
                                   <SidebarMenuSubButton
                                     asChild
-                                    className={`rounded-md px-3 py-2 ${isSubActive
+                                    className={`rounded-md px-3 py-2 ${
+                                      isSubActive
                                         ? "text-[#DA3743]"
                                         : "text-gray-600 hover:bg-gray-100"
-                                      }`}
+                                    }`}
                                   >
                                     <Link href={subItem.url} onClick={handleLinkClick}>
                                       <span className="text-sm">{subItem.title}</span>
@@ -167,10 +171,11 @@ export function AdminSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className={`rounded-md px-3 py-2.5 ${isActive
+                      className={`rounded-md px-3 py-2.5 ${
+                        isActive
                           ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
                           : "text-gray-700 hover:bg-gray-100"
-                        }`}
+                      }`}
                     >
                       <Link
                         href={item.url || "#"}
@@ -189,18 +194,20 @@ export function AdminSidebar() {
         </SidebarGroup>
 
         {/* Bottom Items */}
-        <div className="mt-auto pb-2 px-3">
+        <div className="mt-auto px-3 pb-2">
           <SidebarMenu className="space-y-1">
             {bottomItems.map((item) => {
-              const isActive = pathname === item.url || pathname.startsWith(item.url + "/")
+              const isActive =
+                pathname === item.url || pathname.startsWith(item.url + "/")
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    className={`rounded-md px-3 py-2.5 ${isActive
+                    className={`rounded-md px-3 py-2.5 ${
+                      isActive
                         ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                   >
                     <Link
                       href={item.url || "#"}
@@ -229,19 +236,25 @@ export function AdminSidebar() {
                 height={32}
                 className="w-full object-cover"
               />
-              <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
+              <div className="absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
             </div>
             {!isCollapsed && (
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-gray-900"> {user?.first_name} </span>
-                <span className="text-xs text-gray-500"> {titleCase(user?.role?.[0] || '')} </span>
+                <span className="text-sm font-semibold text-gray-900">
+                  {" "}
+                  {user?.first_name}{" "}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {" "}
+                  {titleCase(user?.role?.[0] || "")}{" "}
+                </span>
               </div>
             )}
           </div>
           {!isCollapsed && (
             <button
               onClick={() => setShowLogoutDialog(true)}
-              className="text-[#DA3743] hover:bg-red-50 rounded-md p-1.5 transition-colors"
+              className="rounded-md p-1.5 text-[#DA3743] transition-colors hover:bg-red-50"
               aria-label="Logout"
             >
               <LogOut className="h-5 w-5" />
@@ -271,7 +284,6 @@ export function AdminSidebar() {
   }
 
   async function handleLogout() {
-    const sendLogoutRequest = useLogout().mutateAsync
     await sendLogoutRequest()
   }
 }

@@ -13,13 +13,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <GeneralQueryProvider>
       <UserProvider>
-      <SidebarProvider>
-        <AdminSidebar />
-        <main className="mt-[72px] h-full w-full">
-          <DashboardHeader />
-          {children}
-        </main>
-      </SidebarProvider>
+        <SidebarProvider>
+          <AdminSidebar />
+          <main className="mt-[72px] h-full w-full">
+            <DashboardHeader />
+            {children}
+          </main>
+        </SidebarProvider>
       </UserProvider>
     </GeneralQueryProvider>
   )

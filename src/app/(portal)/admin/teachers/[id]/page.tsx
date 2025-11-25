@@ -4,7 +4,11 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateTeacherData } from "@/lib/teachers"
-import { FormField, NewPersonFormBuilder, NewPersonFormConfig } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import {
+  FormField,
+  NewPersonFormBuilder,
+  NewPersonFormConfig,
+} from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -29,20 +33,22 @@ const replacements = [
     placeholder: "Enter email address",
     readonly: true,
     disabled: true,
-  }
+  },
 ]
 const exclusions = ["generatedPassword"]
 
-const editFormFields = teacherFormConfig.fields.map((field: FormField) => {
-  const replacement = replacements.find((r) => r.name === field.name)
-  if (replacement) {
-    return { ...field, ...replacement }
-  }
-  if (exclusions.includes(field.name)) {
-    return null
-  }
-  return field
-}).filter((field): field is FormField => field !== null)
+const editFormFields = teacherFormConfig.fields
+  .map((field: FormField) => {
+    const replacement = replacements.find((r) => r.name === field.name)
+    if (replacement) {
+      return { ...field, ...replacement }
+    }
+    if (exclusions.includes(field.name)) {
+      return null
+    }
+    return field
+  })
+  .filter((field): field is FormField => field !== null)
 
 const editTeacherFormConfig = {
   fields: editFormFields,
