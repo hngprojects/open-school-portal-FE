@@ -94,7 +94,6 @@ export function DatabaseConfigForm({
   function handleChange(section: keyof FormData, field: string, value: string) {
     updateFormData(section, field, value)
 
-
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
