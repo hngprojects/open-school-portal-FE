@@ -9,7 +9,7 @@ interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 const EXTRA_PROPS = ["label", "error", "children"]
 
-// needed to filer the porps so it doesnt have extra ones not valid for input element
+// needed to filter the props so it doesn't have extra ones not valid for input element
 const getInputProps = (props: FormFieldProps) => {
   const inputProps = {} as Record<string, unknown>
   Object.keys(props).forEach((key) => {
