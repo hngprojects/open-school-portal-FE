@@ -15,7 +15,7 @@ import { SchoolInfoForm } from "./school-info"
 import { AdminAccountForm } from "./create-super-admin"
 
 export default function SchoolSetupWizard() {
-  const [currentStep, setCurrentStep] = useState<number>(3)
+  const [currentStep, setCurrentStep] = useState<number>(0)
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
   const [, setInstallProgress] = useState<number>(0)
   const [installationSteps, setInstallationSteps] = useState<InstallationStep[]>([

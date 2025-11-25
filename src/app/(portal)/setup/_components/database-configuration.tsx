@@ -111,7 +111,8 @@ export function DatabaseConfigForm({
           newErrors[err.path[0] as string] = err.message
         }
       })
-      console.log("Validation errors:", newErrors)
+      setErrors(newErrors)
+      
     } else {
       setErrors({})
       onSubmit()

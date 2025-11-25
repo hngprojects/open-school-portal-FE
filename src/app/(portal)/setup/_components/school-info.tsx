@@ -170,7 +170,7 @@ export function SchoolInfoForm({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
-    const result = schoolSchema.safeParse(formData.database)
+    const result = schoolSchema.safeParse(formData.school)
 
     if (!result.success) {
       const newErrors: Errors = {}
@@ -179,6 +179,7 @@ export function SchoolInfoForm({
           newErrors[err.path[0] as string] = err.message
         }
       })
+      setErrors(newErrors)
     } else {
       setErrors({})
       onSubmit()
