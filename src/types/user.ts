@@ -1,5 +1,5 @@
 export type UserStatus = "active" | "inactive"
-export type UserType = "teachers" | "students"
+export type UserType = "teachers" | "students" | "parents"
 
 export interface User {
   id: string

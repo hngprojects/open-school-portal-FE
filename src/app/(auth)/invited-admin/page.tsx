@@ -1,5 +1,5 @@
-import InvitedUserSignIn from "../_components/invited-admin-sign-in"
+import InvitedUserSignIn from "../_components/invited-user-sign-in"
 
-export default function InvitedUserSignInPage() {
-  return <InvitedUserSignIn />
+export default function AdminSignInPage() {
+  return <InvitedUserSignIn userType="admin" />
 }

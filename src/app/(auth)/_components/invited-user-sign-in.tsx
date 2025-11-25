@@ -10,17 +10,20 @@ import { Button } from "@/components/ui/button"
 import { MoveRight } from "lucide-react"
 import { resetPasswordSchema, type ResetPasswordFormValues } from "@/lib/schemas/auth"
 
+type UserType = "teacher" | "parent" | "admin"
 type ResetField = keyof ResetPasswordFormValues
+
+type InvitedUserSignInProps = {
+  userType: UserType
+}
 
 const initialValues: ResetPasswordFormValues = {
   newPassword: "",
   confirmPassword: "",
 }
 
-const InvitedUserSignIn = () => {
+const InvitedUserSignIn: React.FC<InvitedUserSignInProps> = ({ userType }) => {
   const [step, setStep] = useState<1 | 2>(1)
-
-  // 👇 Added email state back
   const [email, setEmail] = useState("")
   const [emailTouched, setEmailTouched] = useState(false)
   const isValidEmail = /^\S+@\S+\.\S+$/.test(email)
@@ -47,26 +50,19 @@ const InvitedUserSignIn = () => {
     setFormData(updated)
 
     if (touched[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: validateField(field, updated),
-      }))
+      setErrors((prev) => ({ ...prev, [field]: validateField(field, updated) }))
     }
   }
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const field = e.target.name as ResetField
     setTouched((prev) => ({ ...prev, [field]: true }))
-    setErrors((prev) => ({
-      ...prev,
-      [field]: validateField(field, formData),
-    }))
+    setErrors((prev) => ({ ...prev, [field]: validateField(field, formData) }))
   }
 
   const handleSubmitStep1 = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // validate passwords
     const result = resetPasswordSchema.safeParse(formData)
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors
@@ -78,13 +74,25 @@ const InvitedUserSignIn = () => {
       return
     }
 
-    // validate email first
     if (!isValidEmail) {
       setEmailTouched(true)
       return
     }
 
     setStep(2)
+  }
+
+  const getUserLabel = () => {
+    switch (userType) {
+      case "teacher":
+        return "Teacher"
+      case "parent":
+        return "Parent"
+      case "admin":
+        return "Admin"
+      default:
+        return ""
+    }
   }
 
   return (
@@ -109,30 +117,36 @@ const InvitedUserSignIn = () => {
             className="w-full max-w-[464px]"
           >
             <h1 className="mb-2 text-center text-[28px] font-bold text-[#2D2D2D]">
-              {" "}
-              Welcome!{" "}
+              Welcome!
             </h1>
             <p className="mb-1 text-center text-sm text-[#6B6B6B]">
-              You&apos;ve been invited as a <span className="font-bold">Teacher</span>.
+              You&apos;ve been invited as a{" "}
+              <span className="font-bold">{getUserLabel()}</span>.
             </p>
             <p className="mb-8 text-center text-sm text-[#6B6B6B]">
               Finish setup to enter your school portal.
             </p>
 
-            <form onSubmit={handleSubmitStep1}>
+            <form onSubmit={handleSubmitStep1} autoComplete="on">
               {/* EMAIL */}
               <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-medium text-[#2D2D2D]"
+                >
                   Email Address
                 </label>
 
                 <Input
                   type="email"
+                  name="email"
+                  id="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => setEmailTouched(true)}
                   placeholder="jamesjackendfornd@gmail.com"
-                  className={`bg-[#FBEBEC] ${
+                  className={`border ${
                     emailTouched && !isValidEmail
                       ? "border-[#DA3743]"
                       : "border-[#E0E0E0] focus:border-[#2D2D2D]"
@@ -146,87 +160,71 @@ const InvitedUserSignIn = () => {
                 )}
               </div>
 
-              {/* NEW PASSWORD */}
-              <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
-                  Enter New Password
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showNewPassword ? "text" : "password"}
-                    name="newPassword"
-                    placeholder="••••••"
-                    value={formData.newPassword}
-                    onChange={handlePasswordChange}
-                    onBlur={handleBlur}
-                    className={`pr-12 ${
-                      touched.newPassword && errors.newPassword
-                        ? "border-[#DA3743]"
-                        : "border-[#E0E0E0]"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword((s) => !s)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2"
+              {/* PASSWORD */}
+              {(["newPassword", "confirmPassword"] as ResetField[]).map((field) => (
+                <div key={field} className="mb-6">
+                  <label
+                    htmlFor={field}
+                    className="mb-2 block text-sm font-medium text-[#2D2D2D]"
                   >
-                    <Image
-                      src={
-                        showNewPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
+                    {field === "newPassword"
+                      ? "Enter New Password"
+                      : "Confirm New Password"}
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={
+                        field === "newPassword"
+                          ? showNewPassword
+                            ? "text"
+                            : "password"
+                          : showConfirmPassword
+                            ? "text"
+                            : "password"
                       }
-                      alt="Toggle"
-                      width={20}
-                      height={20}
+                      name={field}
+                      id={field}
+                      autoComplete="new-password"
+                      placeholder="••••••"
+                      value={formData[field]}
+                      onChange={handlePasswordChange}
+                      onBlur={handleBlur}
+                      className={`pr-12 ${
+                        touched[field] && errors[field]
+                          ? "border-[#DA3743]"
+                          : "border-[#E0E0E0]"
+                      }`}
                     />
-                  </button>
-                </div>
-                {touched.newPassword && errors.newPassword && (
-                  <p className="mt-1 text-sm text-[#DA3743]">{errors.newPassword}</p>
-                )}
-              </div>
-
-              {/* CONFIRM PASSWORD */}
-              <div className="mb-6">
-                <label className="mb-2 block text-sm font-medium text-[#2D2D2D]">
-                  Confirm New Password
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder="••••••"
-                    value={formData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    onBlur={handleBlur}
-                    className={`pr-12 ${
-                      touched.confirmPassword && errors.confirmPassword
-                        ? "border-[#DA3743]"
-                        : "border-[#E0E0E0]"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword((s) => !s)}
-                    className="absolute top-1/2 right-4 -translate-y-1/2"
-                  >
-                    <Image
-                      src={
-                        showConfirmPassword
-                          ? "/assets/images/auth/show-password-icon.png"
-                          : "/assets/images/auth/hide-password-icon.png"
+                    <button
+                      type="button"
+                      onClick={() =>
+                        field === "newPassword"
+                          ? setShowNewPassword((s) => !s)
+                          : setShowConfirmPassword((s) => !s)
                       }
-                      alt="Toggle"
-                      width={20}
-                      height={20}
-                    />
-                  </button>
+                      className="absolute top-1/2 right-4 -translate-y-1/2"
+                    >
+                      <Image
+                        src={
+                          field === "newPassword"
+                            ? showNewPassword
+                              ? "/assets/images/auth/show-password-icon.png"
+                              : "/assets/images/auth/hide-password-icon.png"
+                            : showConfirmPassword
+                              ? "/assets/images/auth/show-password-icon.png"
+                              : "/assets/images/auth/hide-password-icon.png"
+                        }
+                        alt="Toggle"
+                        width={20}
+                        height={20}
+                      />
+                    </button>
+                  </div>
+                  {touched[field] && errors[field] && (
+                    <p className="mt-1 text-sm text-[#DA3743]">{errors[field]}</p>
+                  )}
                 </div>
-                {touched.confirmPassword && errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-[#DA3743]">{errors.confirmPassword}</p>
-                )}
-              </div>
+              ))}
 
               <Button type="submit" className="w-full py-3 text-[16px] font-semibold">
                 Create Account <MoveRight />
@@ -245,7 +243,6 @@ const InvitedUserSignIn = () => {
             transition={{ duration: 0.4 }}
             className="flex w-full max-w-[464px] flex-col items-center text-center"
           >
-            {/* MOBILE: vector above, LARGE: vector below */}
             <div className="order-1 mb-8 md:order-3">
               <Image
                 src="/assets/images/invited-user/vector.png"

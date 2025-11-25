@@ -9,7 +9,7 @@ const HowItWorksFeaturesPage = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)")
 
   return (
-    <article className="font-outfit container-full mb-40 bg-white px-5 md:px-20 lg:space-y-40">
+    <article className="font-outfit container mb-40 bg-white px-5 md:px-20 lg:space-y-40">
       {HowItWorksFeatures.map((feature, index) => (
         <section
           key={feature.id}
