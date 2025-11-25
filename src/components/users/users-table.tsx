@@ -74,7 +74,7 @@ export function UsersTable({
 
   const handleLinkStudent = (user: User) => {
     // Implement link student functionality
-    console.log("Link student for:", user)
+    router.push(`/admin/parents/${user.id}/link`)
   }
 
   const handleDeleteConfirm = async () => {
