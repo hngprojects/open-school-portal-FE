@@ -16,7 +16,7 @@ export const featuresData: FeatureProps[] = [
   },
   {
     number: 2,
-    title: " Attendance Features",
+    title: "Attendance Features",
     description:
       "Digitize daily attendance for teachers and students with real-time accuracy.",
     imageSrc: "/images/features/image2.png",
@@ -33,7 +33,7 @@ export const featuresData: FeatureProps[] = [
   },
   {
     number: 3,
-    title: " Fees & Payments Features",
+    title: "Fees & Payments Features",
     description: "Manage school fees with clarity, transparency, and accurate records.",
     imageSrc: "/images/features/image3.png",
     imgWidth: 540,
@@ -80,7 +80,7 @@ export const featuresData: FeatureProps[] = [
   },
   {
     number: 6,
-    title: " Parent/Student Functions",
+    title: "Parent/Student Functions",
     description: "Simple, transparent access to academic information.",
     imageSrc: "/images/features/image6.png",
     imgWidth: 656,
@@ -95,7 +95,7 @@ export const featuresData: FeatureProps[] = [
   },
   {
     number: 7,
-    title: " Admin Tools",
+    title: "Admin Tools",
     description: "Powerful controls for running and monitoring school operations.",
     imageSrc: "/images/features/image7.png",
     imgWidth: 672,
