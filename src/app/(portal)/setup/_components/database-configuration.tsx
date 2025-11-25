@@ -112,7 +112,6 @@ export function DatabaseConfigForm({
         }
       })
       setErrors(newErrors)
-      
     } else {
       setErrors({})
       onSubmit()
