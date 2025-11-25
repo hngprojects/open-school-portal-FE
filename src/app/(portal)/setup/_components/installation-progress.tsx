@@ -36,7 +36,6 @@ export default function InstallationProgress({
       </div>
 
       <div className="space-y-3">
-        <div className="data-completed absolute"></div>
         {steps.map((step, index) => (
           <div key={index} className="animate-onrender flex items-center gap-3">
             <div
