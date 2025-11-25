@@ -152,8 +152,8 @@ export function AdminAccountForm({
             }}
             onKeyDown={(e) => {
               if (e.key === " " || e.key === "Enter") {
-                e.preventDefault();
-                setShowPassword((a) => !a);
+                e.preventDefault()
+                setShowPassword((a) => !a)
               }
             }}
           >
