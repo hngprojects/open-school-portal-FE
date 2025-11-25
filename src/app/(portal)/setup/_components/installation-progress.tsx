@@ -1,4 +1,4 @@
-import { CheckCircle2Icon, SettingsIcon } from "lucide-react"
+import { CheckCircle2Icon } from "lucide-react"
 interface InstallationStep {
   label: string
   completed: boolean
@@ -14,16 +14,7 @@ export default function InstallationProgress({
   steps,
 }: InstallationProgressProps) {
   return (
-    <div className="rounded-lg bg-white p-8 text-center shadow-sm md:p-12">
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-red-50">
-          <SettingsIcon
-            className="h-12 w-12 animate-spin text-red-500"
-            style={{ animationDuration: "3s" }}
-          />
-        </div>
-      </div>
-
+    <div className="p-2 py-6 text-center md:p-12">
       <h1 className="mb-3 text-3xl font-semibold text-gray-900">
         Installation in Progress
       </h1>
@@ -34,21 +25,20 @@ export default function InstallationProgress({
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <span className="text-sm text-gray-700">Installing core modules....</span>
-          <span className="text-sm font-medium text-red-500">
-            {Math.round(progress)}%
-          </span>
+          <span className="text-accent text-sm font-medium">{Math.round(progress)}%</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
           <div
-            className="h-full bg-red-500 transition-all duration-500"
+            className="bg-accent h-full rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
       <div className="space-y-3">
+        <div className="data-completed absolute"></div>
         {steps.map((step, index) => (
-          <div key={index} className="flex items-center gap-3">
+          <div key={index} className="animate-onrender flex items-center gap-3">
             <div
               className={`flex h-6 w-6 items-center justify-center rounded-full ${
                 step.completed ? "bg-green-500" : "bg-gray-300"

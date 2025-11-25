@@ -4,6 +4,7 @@ import ProgressIndicator from "./progress-indicator"
 import { FormField } from "@/components/ui/form-field"
 import { Errors, FormData } from "../_types/setup"
 import { Button } from "@/components/ui/button"
+import { EyeClosedIcon, EyeIcon } from "lucide-react"
 
 interface PasswordRequirementProps {
   met: boolean
@@ -47,6 +48,7 @@ export function AdminAccountForm({
   onCancel,
 }: AdminAccountFormProps) {
   const [errors, setErrors] = useState<Errors>({})
+  const [showPassword, setShowPassword] = useState(false)
 
   const passwordStrength = useMemo(() => {
     const pwd = formData.admin.password
@@ -54,7 +56,6 @@ export function AdminAccountForm({
       length: pwd.length >= 6 && pwd.length <= 20,
       special:
         /[a-zA-Z]/.test(pwd) && /\d/.test(pwd) && /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
-      strong: pwd.length >= 10,
     }
   }, [formData.admin.password])
 
@@ -63,6 +64,13 @@ export function AdminAccountForm({
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }))
     }
+
+    // if(formData.admin.confirmPassword && formData.admin.password !== formData.admin.confirmPassword){
+    //   setErrors((prev) => {
+    //     ...prev,
+    //     "confirmPassword": "It is not the same as your password"
+    //   })
+    // }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -128,17 +136,30 @@ export function AdminAccountForm({
         <FormField
           label="Password"
           required
-          type="password"
+          type={showPassword ? "" : "password"}
           error={errors.password}
           value={formData.admin.password}
           onChange={(e) => handleChange("admin", "password", e.target.value)}
           placeholder="Create a strong password"
-        />
+        >
+          <div
+            className="absolute top-1/2 right-2 -translate-y-1/2 md:right-4"
+            onClick={() => {
+              setShowPassword((a) => !a)
+            }}
+          >
+            {showPassword ? (
+              <EyeClosedIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </div>
+        </FormField>
 
         <FormField
           label="Confirm Password"
           required
-          type="password"
+          type={showPassword ? "" : "password"}
           error={errors.confirmPassword}
           value={formData.admin.confirmPassword}
           onChange={(e) => handleChange("admin", "confirmPassword", e.target.value)}
@@ -159,7 +180,7 @@ export function AdminAccountForm({
           />
           <PasswordRequirement
             requirementActive={!!formData.admin.password}
-            met={passwordStrength.strong}
+            met={passwordStrength.length && passwordStrength.special}
             text="Strong password"
           />
         </div>
