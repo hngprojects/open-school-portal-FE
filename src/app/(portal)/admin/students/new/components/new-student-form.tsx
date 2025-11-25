@@ -1,9 +1,13 @@
+// src/app/(portal)/admin/students/new/components/new-student-form.tsx
 "use client"
 
 import {
   NewPersonFormBuilder,
   NewPersonFormConfig,
 } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import { CreateStudentData } from "@/lib/students"
+import { useRouter } from "next/navigation"
+import { useCreateStudent } from "../../_hooks/use-students"
 
 const generatePassword = () => {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
@@ -14,49 +18,43 @@ const generatePassword = () => {
   return password
 }
 
-const studentFormConfig: NewPersonFormConfig = {
+export const studentFormConfig: NewPersonFormConfig = {
   fields: [
     {
-      name: "title",
-      label: "Select Title",
-      type: "select",
-      required: true,
-      options: [
-        { value: "mr", label: "Mr." },
-        { value: "miss", label: "Miss" },
-        { value: "mrs", label: "Mrs." },
-        { value: "master", label: "Master" },
-      ],
-    },
-    {
-      name: "firstName",
+      name: "first_name",
       label: "First Name",
       type: "text",
       placeholder: "Enter first name",
       required: true,
     },
     {
-      name: "lastName",
+      name: "last_name",
       label: "Last Name",
       type: "text",
       placeholder: "Enter last name",
       required: true,
     },
     {
-      name: "middleName",
+      name: "middle_name",
       label: "Middle Name",
       type: "text",
       placeholder: "Enter middle name",
     },
     {
-      name: "identificationNumber",
-      label: "Identification Number",
+      name: "registration_number", // Changed from identification_number
+      label: "Registration Number",
       type: "text",
-      placeholder: "Enter ID number",
+      placeholder: "REG-2025-014",
+    },
+    {
+      name: "email",
+      label: "Email Address",
+      type: "email",
+      placeholder: "Enter email address",
       required: true,
     },
     {
-      name: "generatedPassword",
+      name: "password",
       label: "Generate Password",
       type: "password-generate",
       placeholder: "emp1234",
@@ -67,84 +65,88 @@ const studentFormConfig: NewPersonFormConfig = {
       },
     },
     {
-      name: "class",
-      label: "Class",
-      type: "text",
-      placeholder: "Enter class",
-      required: true,
-    },
-    {
       name: "gender",
       label: "Gender",
       type: "select",
       required: true,
       options: [
-        { value: "male", label: "Male" },
-        { value: "female", label: "Female" },
+        { value: "Male", label: "Male" },
+        { value: "Female", label: "Female" },
       ],
     },
     {
-      name: "dateOfBirth",
+      name: "date_of_birth",
       label: "Date of Birth",
       type: "date",
       required: true,
     },
     {
-      name: "homeAddress",
+      name: "phone",
+      label: "Phone Number",
+      type: "tel",
+      placeholder: "Enter phone number",
+      required: true,
+    },
+    {
+      name: "home_address",
       label: "Home Address",
       type: "text",
       placeholder: "Enter home address",
       required: true,
     },
     {
-      name: "parentGuardianName",
-      label: "Parent/ Guardian Name",
+      name: "photo_url",
+      label: "Photo URL",
       type: "text",
-      placeholder: "Enter parent/guardian name",
-      required: true,
-    },
-    {
-      name: "parentGuardianPhone",
-      label: "Parent/Guardian Phone Number",
-      type: "tel",
-      placeholder: "Enter phone number",
-      required: true,
-    },
-    {
-      name: "photo",
-      label: "Upload Photo (150x150)",
-      type: "file",
-      accept: "image/*",
-      buttonText: "Select file",
-      required: true,
+      placeholder: "https://example.com/photos/student123.jpg",
     },
   ],
   submitText: "Save",
   cancelText: "Cancel",
-  //   onSubmit: async (data) => {
-  //     console.log('Student form submitted:', data);
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //   },
-  // onCancel: () => {
-  //   console.log("Form cancelled")
-  // },
 }
 
 export default function NewStudentForm() {
+  const router = useRouter()
+  const createNewStudent = useCreateStudent().mutateAsync
+
   return (
     <NewPersonFormBuilder
+      key={"new-student"}
       config={studentFormConfig}
-      onSubmit={handleSubmit}
       onCancel={handleCancel}
+      onSubmit={handleSubmit}
     />
   )
 
   async function handleCancel() {
-    console.log("New student form cancelled")
+    router.push("/admin/students")
   }
 
-  async function handleSubmit() {
-    console.log("Submitting new student form...")
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+  async function handleSubmit(formData: Record<string, unknown>) {
+    const newStudent: CreateStudentData = {
+      first_name: formData.first_name as string,
+      last_name: formData.last_name as string,
+      middle_name: formData.middle_name as string,
+      registration_number: formData.registration_number as string, // Add this
+      email: formData.email as string,
+      password: formData.password as string,
+      gender: formData.gender as string,
+      date_of_birth: formData.date_of_birth as string,
+      phone: formData.phone as string,
+      home_address: formData.home_address as string,
+      photo_url: formData.photo_url as string,
+      is_active: true,
+    }
+
+    console.log("🎯 Sending student data:", JSON.stringify(newStudent, null, 2))
+
+    try {
+      console.log("Creating student — payload:", newStudent)
+      await createNewStudent(newStudent)
+      router.push("/admin/students")
+    } catch (err) {
+      console.error("Failed to create student:", err)
+      throw err
+    }
   }
 }

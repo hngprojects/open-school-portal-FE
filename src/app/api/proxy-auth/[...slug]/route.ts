@@ -12,7 +12,39 @@ async function methodHandler(
 
   const backendRes = await proxyAuthRequest(req, pathWithQuery)
 
+  // Special handling for DELETE requests with no content
+  if (req.method === "DELETE") {
+    // For DELETE requests, 204 No Content or 200 with no body are common
+    if (backendRes.status === 204 || backendRes.status === 200) {
+      // Return empty response with success status
+      return new NextResponse(null, {
+        status: backendRes.status,
+        headers: backendRes.headers,
+      })
+    }
+
+    // If DELETE returns 200 with content, handle it
+    if (backendRes.status === 200) {
+      const contentType = backendRes.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        // If not JSON, assume empty success response
+        return new NextResponse(null, {
+          status: 200,
+          headers: backendRes.headers,
+        })
+      }
+    }
+  }
+
   const body = await backendRes.text() // read once safely
+
+  // Handle empty responses for other methods too
+  if (!body && backendRes.status === 200) {
+    return new NextResponse(null, {
+      status: backendRes.status,
+      headers: backendRes.headers,
+    })
+  }
 
   const response = new NextResponse(body, {
     status: backendRes.status,

@@ -33,11 +33,31 @@ export function UsersToolbar({
   const [open, setOpen] = useState(false)
 
   const isTeacher = userType === "teachers"
-  const title = isTeacher ? "Teachers" : "Students"
-  const description = isTeacher ? "Manage your teaching staff" : "Manage all students"
-  const placeholder = isTeacher ? "Search teachers..." : "Search students..."
-  const addButtonText = isTeacher ? "Add Teacher" : "Add Student"
-  const filterAllText = isTeacher ? "All Teachers" : "All Students"
+  const isStudent = userType === "students"
+  const title = isTeacher ? "Teachers" : isStudent ? "Students" : "Parents"
+  const description = isTeacher
+    ? "Manage your teaching staff"
+    : isStudent
+      ? "Manage student records and enrollment"
+      : "Manage parents information"
+
+  const placeholder = isTeacher
+    ? "Search teachers..."
+    : isStudent
+      ? "Search students..."
+      : "Search parents..."
+
+  const addButtonText = isTeacher
+    ? "Add Teacher"
+    : isStudent
+      ? "Add Student"
+      : "Add Parent"
+
+  const filterAllText = isTeacher
+    ? "All Teachers"
+    : isStudent
+      ? "All Students"
+      : "All Parents"
 
   return (
     <div className="mt-2 mb-6 space-y-6">
