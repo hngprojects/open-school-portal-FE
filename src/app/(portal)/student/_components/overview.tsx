@@ -129,8 +129,8 @@ const Overview = () => {
   const getAttendanceColor = (value: AttendanceValue): string => {
     if (value === "") return "bg-white"
     if (value >= 93) return "bg-green-300"
-    if (value >= 90) return "bg-yellow-300"
-    if (value >= 88) return "bg-orange-300"
+    if (value >= 90) return "bg-red-300"
+    if (value >= 88) return "bg-green-300"
     return "bg-red-300"
   }
 
