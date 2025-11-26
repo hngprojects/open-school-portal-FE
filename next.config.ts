@@ -1,4 +1,12 @@
 import type { NextConfig } from "next"
+import withPWAInit from "next-pwa"
+
+const withPWA = withPWAInit({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+})
 
 const nextConfig: NextConfig = {
   images: {
@@ -10,6 +18,7 @@ const nextConfig: NextConfig = {
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  turbopack: {},
 }
 
-export default nextConfig
+export default withPWA(nextConfig)

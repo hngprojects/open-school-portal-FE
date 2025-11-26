@@ -1,5 +1,16 @@
+import type { Metadata } from "next"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
 import Image from "next/image"
+
+export const viewport = {
+  themeColor: "#0f172a",
+}
+
+export const metadata: Metadata = {
+  title: "Authentication | School Base",
+  description:
+    "Sign in or create your School Base account to manage your school experience.",
+}
 
 export default function AuthLayout({
   children,
