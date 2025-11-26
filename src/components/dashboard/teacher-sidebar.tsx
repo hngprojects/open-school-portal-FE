@@ -3,14 +3,10 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 
-import {
-  LayoutGrid,
-  GraduationCap,
-  User,
-  NotebookPen,
-  CalendarDays,
-  FileBadge,
-} from "lucide-react"
+import { Menu, GraduationCap } from "lucide-react"
+
+import { LuCalendarCheck } from "react-icons/lu"
+import NotePad from "../../../public/svgs/note-pad"
 
 import {
   Sidebar,
@@ -32,17 +28,12 @@ import Logo from "@/components/logo"
 // MENU CONFIG
 // ----------------------------
 const items = [
-  { title: "Dashboard", url: "/teacher", icon: LayoutGrid, exactMatch: true },
+  { title: "Dashboard", url: "/teacher", icon: Menu, exactMatch: true },
 
+  { title: "Timetable", url: "/teacher/timetable", icon: LuCalendarCheck },
+  { title: "Attendance", url: "/teacher/attendance", icon: NotePad },
   { title: "Students", url: "/teacher/students", icon: GraduationCap },
-
-  { title: "Parents", url: "/teacher/parents", icon: User },
-
-  { title: "Attendance", url: "/teacher/attendance", icon: NotebookPen },
-
-  { title: "Timetable", url: "/teacher/timetable", icon: CalendarDays },
-
-  { title: "Results", url: "/teacher/results", icon: FileBadge },
+  { title: "Results", url: "/teacher/results", icon: NotePad },
 ]
 
 // ----------------------------
