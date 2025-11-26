@@ -1,9 +1,9 @@
-import ComingSoon from "@/components/coming-soon"
+import Overview from "./_components/overview"
 
 const page = () => {
   return (
     <div>
-      <ComingSoon />
+      <Overview />
     </div>
   )
 }

@@ -1,15 +1,17 @@
 import { SnakeUser as User } from "@/types/user"
 import { apiFetch } from "./api/client"
 
+// src/lib/students.ts
 export type CreateStudentData = Omit<
   User,
-  "id" | "avatar" | "role" | "is_active" | "employment_id" | "join_date"
+  "id" | "avatar" | "role" | "employment_id" | "join_date"
 > & {
   photo?: File
-  parent_guardian_name: string
-  parent_guardian_phone: string
-  identification_number: string
-  email?: string
+  password: string
+  photo_url?: string
+  registration_number?: string
+  is_active?: boolean
+  title?: string
 }
 
 export type UpdateStudentData = Partial<CreateStudentData>

@@ -3,17 +3,21 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import {
-  LayoutGrid,
   GraduationCap,
-  User,
   ChevronDown,
   ChevronRight,
-  NotebookPen,
-  CalendarDays,
-  FileBadge,
-  Wallet,
+  Settings,
+  LogOut,
+  BookIcon,
+  Menu,
 } from "lucide-react"
+import { PiMoneyWavyBold } from "react-icons/pi"
+import { FaRegUser } from "react-icons/fa6"
+// import { AiOutlinePieChart } from "react-icons/ai"
+import NotePad from "../../../../../public/svgs/note-pad"
+import Users from "../../../../../public/svgs/users"
 
 import {
   Sidebar,
@@ -22,7 +26,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -40,26 +43,35 @@ import {
 import Logo from "@/components/logo"
 import { useLogout } from "../_hooks/use-user-data"
 import { LogoutDialog } from "./logout-confirmation-dialog"
+import { useAuthStore } from "@/store/auth-store"
+import { titleCase } from "@/lib/utils"
 
 // Menu items
-const items = [
-  { title: "Dashboard", url: "/admin", icon: LayoutGrid, exactMatch: true },
-  { title: "Teachers", url: "/admin/teachers", icon: User },
+const mainItems = [
+  { title: "Dashboard", url: "/admin", icon: Menu, exactMatch: true },
+  { title: "Fees", url: "/admin/fee-management", icon: PiMoneyWavyBold },
+  { title: "Attendance", url: "/admin/attendance", icon: NotePad },
+  { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
-  { title: "Parents", url: "/admin/parents", icon: User },
-  { title: "Attendance", url: "/admin/attendance", icon: NotebookPen },
-  { title: "Timetable", url: "/admin/timetable", icon: CalendarDays },
-  { title: "Results", url: "/admin/results", icon: FileBadge },
+  { title: "Parents", url: "/admin/parents", icon: FaRegUser },
   {
-    title: "Fees Management",
-    url: "/admin/fee-management",
-    icon: Wallet,
+    title: "Class Management",
+    url: "/admin/class-management",
+    icon: BookIcon,
     subItems: [
-      { title: "Add Fee Group", url: "/admin/fee-management/add-fees" },
-      { title: "Allocate Invoice", url: "/admin/fee-management/allocate-invoice" },
-      { title: "Record Payment", url: "/admin/fee-management/record-payment" },
+      { title: "Session", url: "/admin/class-management/session" },
+      { title: "Class", url: "/admin/class-management/class" },
+      { title: "Subjects", url: "/admin/class-management/subjects" },
+      { title: "Timetable Setup", url: "/admin/class-management/timetable-setup" },
+      { title: "Result Management", url: "/admin/class-management/result-management" },
     ],
   },
+  // { title: "User Configuration", url: "/admin/user-configuration", icon: AiOutlinePieChart },
+]
+
+const bottomItems = [
+  // { title: "Support", url: "/admin/support", icon: HelpCircle },
+  { title: "Settings", url: "/admin/settings", icon: Settings },
 ]
 
 export function AdminSidebar() {
@@ -67,58 +79,35 @@ export function AdminSidebar() {
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-
-  const toggleItem = (title: string) => {
-    setOpenItems((prev) =>
-      prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]
-    )
-  }
-
-  // Close mobile sidebar when link is clicked
-  const handleLinkClick = () => {
-    if (isMobile) {
-      setOpenMobile(false)
-    }
-  }
-
-  const isCollapsed = state === "collapsed"
-
-  // Check if any sub-item is active
-  const isParentActive = (item: (typeof items)[number]) => {
-    if ("subItems" in item && item.subItems) {
-      return item.subItems.some((subItem) => pathname === subItem.url)
-    }
-    return false
-  }
-
+  const user = useAuthStore((state) => state.user)
   const sendLogoutRequest = useLogout().mutateAsync
 
-  const handleLogout = async () => {
-    await sendLogoutRequest()
-  }
+  const isCollapsed = state === "collapsed"
 
   return (
     <Sidebar>
       <SidebarHeader>
-        <div className="flex h-7 items-center justify-between px-2 py-4">
+        <div className="flex h-16 items-center justify-between px-4">
           <div className={isCollapsed ? "hidden" : ""}>
             <Logo />
           </div>
           <SidebarTrigger />
         </div>
       </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="sr-only">Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => {
+            <SidebarMenu className="space-y-1 px-3">
+              {mainItems.map((item) => {
                 const hasSubItems = "subItems" in item && item.subItems
                 const isActive = item.exactMatch
                   ? pathname === item.url
                   : pathname === item.url || pathname.startsWith(item.url + "/")
                 const isOpen = openItems.includes(item.title)
-                const hasActiveChild = hasSubItems && isParentActive(item)
+                const hasActiveChild =
+                  hasSubItems &&
+                  item.subItems?.some((subItem) => pathname === subItem.url)
 
                 if (hasSubItems) {
                   return (
@@ -128,52 +117,44 @@ export function AdminSidebar() {
                       onOpenChange={() => toggleItem(item.title)}
                     >
                       <SidebarMenuItem>
-                        <div className="flex w-full items-center">
-                          <CollapsibleTrigger asChild>
-                            <SidebarMenuButton
-                              asChild
-                              isActive={isActive}
-                              className={`flex-1 ${
-                                isActive
-                                  ? "bg-[#DA3743]/10 text-[#DA3743]"
-                                  : hasActiveChild
-                                    ? ""
-                                    : "text-gray-700 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                              }`}
-                            >
-                              <Link
-                                href={item.url || "#"}
-                                className="flex items-center gap-2"
-                                onClick={handleLinkClick}
-                              >
-                                <item.icon className="h-4 w-4" />
-                                <span>{item.title}</span>
-                                {isOpen ? (
-                                  <ChevronDown className="h-4 w-4" />
-                                ) : (
-                                  <ChevronRight className="h-4 w-4" />
-                                )}
-                              </Link>
-                            </SidebarMenuButton>
-                          </CollapsibleTrigger>
-                        </div>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton
+                            asChild
+                            className={`flex w-full items-center justify-between rounded-md px-3 py-2.5 ${
+                              isActive || hasActiveChild
+                                ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
+                                : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                          >
+                            <div className="flex w-full cursor-pointer items-center justify-between">
+                              <div className="flex items-center gap-3">
+                                <item.icon className="h-5 w-5" />
+                                <span className="text-sm font-medium">{item.title}</span>
+                              </div>
+                              {isOpen ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </div>
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <SidebarMenuSub className="mx-0 ml-4 border-l-0 px-0">
-                            {item.subItems.map((subItem) => {
+                          <SidebarMenuSub className="mt-1 ml-8 space-y-1 border-l-0 px-0">
+                            {item.subItems?.map((subItem) => {
                               const isSubActive = pathname === subItem.url
                               return (
                                 <SidebarMenuSubItem key={subItem.title}>
                                   <SidebarMenuSubButton
                                     asChild
-                                    isActive={isSubActive}
-                                    className={`my-1.5 ${
+                                    className={`rounded-md px-3 py-2 ${
                                       isSubActive
-                                        ? "bg-[#DA3743]/10 text-[#DA3743]"
-                                        : "text-gray-600 hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
+                                        ? "text-[#DA3743]"
+                                        : "text-gray-600 hover:bg-gray-100"
                                     }`}
                                   >
                                     <Link href={subItem.url} onClick={handleLinkClick}>
-                                      {subItem.title}
+                                      <span className="text-sm">{subItem.title}</span>
                                     </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -190,20 +171,19 @@ export function AdminSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      isActive={isActive}
-                      className={
+                      className={`rounded-md px-3 py-2.5 ${
                         isActive
-                          ? "bg-[#DA3743]/10 text-[#DA3743]"
-                          : "text-primary hover:bg-[#DA3743]/10 hover:text-[#DA3743]"
-                      }
+                          ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
                     >
                       <Link
                         href={item.url || "#"}
-                        className="flex items-center gap-2"
+                        className="flex items-center gap-3"
                         onClick={handleLinkClick}
                       >
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.title}</span>
+                        <item.icon className="h-5 w-5" />
+                        <span className="text-sm font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -212,10 +192,77 @@ export function AdminSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Bottom Items */}
+        <div className="mt-auto px-3 pb-2">
+          <SidebarMenu className="space-y-1">
+            {bottomItems.map((item) => {
+              const isActive =
+                pathname === item.url || pathname.startsWith(item.url + "/")
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    className={`rounded-md px-3 py-2.5 ${
+                      isActive
+                        ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Link
+                      href={item.url || "#"}
+                      className="flex items-center gap-3"
+                      onClick={handleLinkClick}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
+        </div>
       </SidebarContent>
-      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
-        Log Out
+
+      <SidebarFooter className="border-t border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative h-10 w-10">
+              <Image
+                src="/assets/images/dashboard/avatar.svg"
+                alt="avatar"
+                width={32}
+                height={32}
+                className="w-full object-cover"
+              />
+              <div className="absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
+            </div>
+            {!isCollapsed && (
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-gray-900">
+                  {" "}
+                  {user?.first_name}{" "}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {" "}
+                  {titleCase(user?.role?.[0] || "")}{" "}
+                </span>
+              </div>
+            )}
+          </div>
+          {!isCollapsed && (
+            <button
+              onClick={() => setShowLogoutDialog(true)}
+              className="rounded-md p-1.5 text-[#DA3743] transition-colors hover:bg-red-50"
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          )}
+        </div>
       </SidebarFooter>
+
       <LogoutDialog
         open={showLogoutDialog}
         onOpenChange={setShowLogoutDialog}
@@ -223,4 +270,20 @@ export function AdminSidebar() {
       />
     </Sidebar>
   )
+
+  function toggleItem(title: string) {
+    setOpenItems((prev) =>
+      prev.includes(title) ? prev.filter((item) => item !== title) : [...prev, title]
+    )
+  }
+
+  function handleLinkClick() {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  async function handleLogout() {
+    await sendLogoutRequest()
+  }
 }

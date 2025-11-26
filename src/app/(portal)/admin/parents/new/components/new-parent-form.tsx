@@ -1,3 +1,4 @@
+// src/app/(portal)/admin/parents/new/components/new-parent-form.tsx
 "use client"
 
 import {
@@ -47,19 +48,7 @@ export const parentFormConfig: NewPersonFormConfig = {
       required: true,
     },
     {
-      name: "relationship",
-      label: "Relationship",
-      type: "select",
-      required: true,
-      options: [
-        { value: "father", label: "Father" },
-        { value: "mother", label: "Mother" },
-        { value: "guardian", label: "Guardian" },
-        { value: "other", label: "Other" },
-      ],
-    },
-    {
-      name: "generated_password",
+      name: "password",
       label: "Generate Password",
       type: "password-generate",
       placeholder: "emp1234",
@@ -100,11 +89,10 @@ export const parentFormConfig: NewPersonFormConfig = {
       required: true,
     },
     {
-      name: "photo",
-      label: "Upload Photo (150x150)",
-      type: "file",
-      accept: "image/*",
-      buttonText: "Select file",
+      name: "photo_url",
+      label: "Photo URL",
+      type: "text",
+      placeholder: "https://example.com/photos/parent123.jpg",
     },
   ],
   submitText: "Save",
@@ -130,16 +118,17 @@ export default function NewParentForm() {
 
   async function handleSubmit(formData: Record<string, unknown>) {
     const newParent: CreateParentData = {
-      title: formData.title as string,
       first_name: formData.first_name as string,
       last_name: formData.last_name as string,
       middle_name: formData.middle_name as string,
       email: formData.email as string,
-      relationship: formData.relationship as string,
+      password: formData.password as string,
       gender: formData.gender as string,
-      phone: formData.phone as string,
       date_of_birth: formData.date_of_birth as string,
+      phone: formData.phone as string,
       home_address: formData.home_address as string,
+      photo_url: formData.photo_url as string,
+      is_active: true,
     }
 
     try {
