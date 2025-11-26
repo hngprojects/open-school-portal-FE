@@ -27,7 +27,6 @@ export interface User {
 }
 
 export interface SnakeUser {
-  // snake case user
   id: string
   title?: string
   first_name: string
