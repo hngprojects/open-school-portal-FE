@@ -123,7 +123,7 @@ export type UserData = {
 
 export const getUserData = (): Promise<AuthApiResponse<UserData>> => {
   return apiFetch<AuthApiResponse<UserData>>(
-    "/api/auth/me",
+    "/auth/me",
     {
       method: "GET",
     },

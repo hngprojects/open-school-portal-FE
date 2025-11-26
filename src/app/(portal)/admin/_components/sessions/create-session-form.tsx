@@ -55,10 +55,11 @@ const CreateSessionForm = ({ defaultValues }: CreateSessionFormProps) => {
         endDate: data.endDate,
       },
       {
-        onSuccess: (response) => {
+        onSuccess: () => {
+          // onSuccess: (response) => {
           toast.success("Academic session created successfully!")
           router.push("/admin/class-management/session")
-          console.log("Created session:", response)
+          // console.log("Created session:", response)
         },
         onError: (error: Error) => {
           toast.error(error.message || "Failed to create academic session.")
