@@ -6,15 +6,14 @@ export type CreateAcademicSessionData = {
   endDate: string
 }
 
-// type ResponsePack<T> = {
-//   data: T
-//   message: string
-// }
-
 export const AcademicSessionAPI = {
   create: (data: CreateAcademicSessionData) =>
-    apiFetch("/academic-session", {
-      method: "POST",
-      data,
-    }),
+    apiFetch(
+      "/academic-session",
+      {
+        method: "POST",
+        data,
+      },
+      true
+    ),
 }
