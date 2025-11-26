@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { sendContactMessage } from "@/services/contact-api"
 
 const contactSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  full_name: z.string().min(1, "Name is required"),
   email: z.email("Invalid email address"),
-  phone: z
-    .string()
-    .min(1, "Phone number is required")
-    .regex(/^\+?[\d\s-]{10,15}$/, "Please enter a valid phone number"),
+  school_name: z.string().min(1, "School name is required"),
   message: z.string().min(1, "Message cannot be empty"),
 })
 
@@ -19,20 +18,21 @@ type ContactFormData = z.infer<typeof contactSchema>
 
 export default function ContactForm() {
   const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
+    full_name: "",
     email: "",
-    phone: "",
+    school_name: "",
     message: "",
   })
 
   const [errors, setErrors] = useState<Partial<ContactFormData>>({})
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     const result = contactSchema.safeParse(formData)
@@ -52,32 +52,42 @@ export default function ContactForm() {
 
     // No errors
     setErrors({})
-    alert(`Thank you, ${formData.name}! Your message has been sent.`)
+    setIsLoading(true)
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: "",
-    })
+    try {
+      await sendContactMessage(formData)
+      toast.success(`Thank you, ${formData.full_name}! Your message has been sent.`)
+
+      // Reset form
+      setFormData({
+        full_name: "",
+        email: "",
+        school_name: "",
+        message: "",
+      })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to send message")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="mb-1 block font-medium">
-          Name
+        <label htmlFor="full_name" className="mb-1 block font-medium">
+          Full Name
         </label>
         <Input
-          id="name"
+          id="full_name"
           type="text"
-          name="name"
-          value={formData.name}
+          name="full_name"
+          value={formData.full_name}
           onChange={handleChange}
           className="w-full"
+          disabled={isLoading}
         />
-        {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+        {errors.full_name && <p className="text-sm text-red-500">{errors.full_name}</p>}
       </div>
 
       <div>
@@ -91,23 +101,27 @@ export default function ContactForm() {
           value={formData.email}
           onChange={handleChange}
           className="w-full"
+          disabled={isLoading}
         />
         {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
       </div>
 
       <div>
-        <label htmlFor="phone" className="mb-1 block font-medium">
-          Phone
+        <label htmlFor="school_name" className="mb-1 block font-medium">
+          School Name
         </label>
         <Input
-          id="phone"
+          id="school_name"
           type="text"
-          name="phone"
-          value={formData.phone}
+          name="school_name"
+          value={formData.school_name}
           onChange={handleChange}
           className="w-full"
+          disabled={isLoading}
         />
-        {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
+        {errors.school_name && (
+          <p className="text-sm text-red-500">{errors.school_name}</p>
+        )}
       </div>
 
       <div>
@@ -121,12 +135,13 @@ export default function ContactForm() {
           onChange={handleChange}
           className="w-full rounded-xl border px-3 py-2"
           rows={4}
+          disabled={isLoading}
         />
         {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
       </div>
 
-      <Button type="submit" className="w-full">
-        Send Message
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? "Sending..." : "Send Message"}
       </Button>
     </form>
   )
