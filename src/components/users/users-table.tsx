@@ -149,19 +149,19 @@ export function UsersTable({
               </TableCell>
               <TableCell>{user.phone}</TableCell>
               <TableCell>
-                <div className="flex items-center gap-1 text-[#da3743]">
+                <div className="flex items-center gap-2 text-[#da3743]">
                   {isParent && (
                     <LinkIcon
-                      className="h-3 w-3 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                       onClick={() => handleLinkStudent(user)}
                     />
                   )}
                   <Trash2
-                    className="h-3 w-3 cursor-pointer"
+                    className="h-4 w-4 cursor-pointer"
                     onClick={() => handleDeleteClick(user)}
                   />
                   <Edit3
-                    className="h-3 w-3 cursor-pointer"
+                    className="h-4 w-4 cursor-pointer"
                     onClick={() => handleEditClick(user)}
                   />
                 </div>
