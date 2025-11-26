@@ -32,6 +32,7 @@ const AddClass = () => {
 }
 
 export default AddClass
+
 // import React from "react"
 // import DashboardTitle from "@/components/dashboard/dashboard-title"
 // import { ArrowLeft } from "lucide-react"
