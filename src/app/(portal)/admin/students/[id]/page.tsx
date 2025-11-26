@@ -27,7 +27,7 @@ export default function EditStudentPage() {
         first_name: formData.first_name as string,
         last_name: formData.last_name as string,
         middle_name: formData.middle_name as string,
-        email: formData.email as string,
+        // email: formData.email as string,
         gender: formData.gender as string,
         phone: formData.phone as string,
         date_of_birth: formData.date_of_birth as string,
