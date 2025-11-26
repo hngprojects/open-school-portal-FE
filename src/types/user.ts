@@ -37,6 +37,7 @@ export interface SnakeUser {
   role: string
   employment_id?: string
   reg_number?: string
+  registration_number?: string
   class?: string
   guardian?: string
   join_date?: string

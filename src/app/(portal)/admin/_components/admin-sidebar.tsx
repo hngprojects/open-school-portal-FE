@@ -15,7 +15,7 @@ import {
 } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
-// import { AiOutlinePieChart } from "react-icons/ai"
+import { TbSettingsCog } from "react-icons/tb"
 import NotePad from "../../../../../public/svgs/note-pad"
 import Users from "../../../../../public/svgs/users"
 
@@ -62,10 +62,12 @@ const mainItems = [
       { title: "Session", url: "/admin/class-management/session" },
       { title: "Class", url: "/admin/class-management/class" },
       { title: "Subjects", url: "/admin/class-management/subjects" },
-      { title: "Timetable Setup", url: "/admin/class-management/timetable-setup" },
-      { title: "Result Management", url: "/admin/class-management/result-management" },
+      { title: "Room", url: "/admin/class-management/classrooms" },
+      // { title: "Timetable Setup", url: "/admin/class-management/timetable-setup" },
+      // { title: "Result Management", url: "/admin/class-management/result-management" },
     ],
   },
+  { title: "User Configuration", url: "/admin/user-configuration", icon: TbSettingsCog },
   // { title: "User Configuration", url: "/admin/user-configuration", icon: AiOutlinePieChart },
 ]
 
