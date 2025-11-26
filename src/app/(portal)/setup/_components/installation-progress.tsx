@@ -1,4 +1,4 @@
-import { CheckCircle2Icon } from "lucide-react"
+import { CheckCircle2Icon, CircleXIcon } from "lucide-react"
 interface InstallationStep {
   label: string
   completed: boolean
@@ -7,11 +7,13 @@ interface InstallationStep {
 interface InstallationProgressProps {
   progress: number
   steps: InstallationStep[]
+  error: string | null
 }
 
 export default function InstallationProgress({
   progress,
   steps,
+  error,
 }: InstallationProgressProps) {
   return (
     <div className="p-2 py-6 text-center md:p-12">
@@ -33,6 +35,7 @@ export default function InstallationProgress({
             style={{ width: `${progress}%` }}
           />
         </div>
+        {error && <p className="mt-3 text-sm text-red-500">Error: {error}</p>}
       </div>
 
       <div className="space-y-3">
@@ -40,13 +43,16 @@ export default function InstallationProgress({
           <div key={index} className="animate-onrender flex items-center gap-3">
             <div
               className={`flex h-6 w-6 items-center justify-center rounded-full ${
-                step.completed ? "bg-green-500" : "bg-gray-300"
+                step.completed ? "bg-green-500" : error ? "bg-red-400" : "bg-gray-300"
               }`}
             >
               {step.completed && <CheckCircle2Icon className="h-4 w-4 text-white" />}
+              {!step.completed && !!error && (
+                <CircleXIcon className="h-4 w-4 text-white" />
+              )}
             </div>
             <span
-              className={`text-sm ${step.completed ? "text-gray-900" : "text-gray-500"}`}
+              className={`text-sm ${step.completed ? "text-gray-900" : error ? "text-red-400" : "text-gray-500"}`}
             >
               {step.label}
             </span>
