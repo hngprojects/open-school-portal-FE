@@ -91,7 +91,7 @@ export function UsersGrid({ users, userType }: UsersGridProps) {
                       {isTeacher
                         ? user.employment_id
                         : isStudent
-                          ? user.reg_number
+                          ? user.registration_number || user.reg_number || "N/A" // Check both
                           : user.role}
                     </span>
                   </div>

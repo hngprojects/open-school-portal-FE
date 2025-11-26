@@ -43,7 +43,8 @@ export function UsersTable({
     user.full_name || `${user.first_name} ${user.last_name}`
 
   const getID = (user: User) => {
-    return user.employment_id || user.reg_number || "N/A"
+    // Check both possible field names
+    return user.employment_id || user.registration_number || user.reg_number || "N/A"
   }
 
   const startSN = (currentPage - 1) * itemsPerPage + 1
