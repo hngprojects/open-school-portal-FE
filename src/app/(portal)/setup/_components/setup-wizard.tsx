@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { createContext, useContext, useState } from "react"
 import { WelcomeScreen } from "./welcome-screen"
 import Image from "next/image"
 import { InstallationStep } from "../_types/setup"
@@ -29,7 +29,7 @@ export default function SchoolSetupWizard() {
 
   const { formData, updateForm, currentStep, setCurrentStep, isLoaded, clearStorage } =
     useSetupWizardPersistence({
-      database: { name: "", host: "", username: "", password: "" },
+      database: { name: "", host: "", username: "", password: "", port: 8000 },
       school: { logo: null, name: "", brandColor: "#DA3743", phone: "", address: "" },
       admin: {
         firstName: "",
@@ -51,6 +51,7 @@ export default function SchoolSetupWizard() {
   async function handleInstallation(): Promise<void> {
     setIsInstalling(true)
     setInstallProgress(0)
+    setError("")
 
     const steps = [...installationSteps]
 
@@ -65,6 +66,7 @@ export default function SchoolSetupWizard() {
           SetupWizardAPI.createDatabase({
             database_name: formData.database.name,
             database_host: formData.database.host,
+            database_port: formData.database.port,
             database_username: formData.database.username,
             database_password: formData.database.password,
           }),
@@ -136,51 +138,74 @@ export default function SchoolSetupWizard() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-3xl">
-        <div className="mb-2 flex items-center justify-center">
-          <div className="flex items-center gap-2">
-            <Image src="/assets/logo.svg" alt="School Base Logo" width={50} height={50} />
-            <span className="text-accent hidden text-2xl font-bold md:block">
-              SCHOOLBASE
-            </span>
+    <SetupStepProvider value={setCurrentStep}>
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <div className="w-full max-w-3xl">
+          <div className="mb-2 flex items-center justify-center">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/assets/logo.svg"
+                alt="School Base Logo"
+                width={50}
+                height={50}
+              />
+              <span className="text-accent hidden text-2xl font-bold md:block">
+                SCHOOLBASE
+              </span>
+            </div>
           </div>
-        </div>
 
-        {currentStep === 0 && <WelcomeScreen onStart={handleNext} />}
-        {currentStep === 1 && (
-          <DatabaseConfigForm
-            formData={formData}
-            updateFormData={updateForm}
-            onSubmit={handleNext}
-            onCancel={handleBack}
-          />
-        )}
-        {currentStep === 2 && (
-          <SchoolInfoForm
-            formData={formData}
-            updateFormData={updateForm}
-            onSubmit={handleNext}
-            onCancel={handleBack}
-          />
-        )}
-        {currentStep === 3 && !isInstalling && (
-          <AdminAccountForm
-            formData={formData}
-            updateFormData={updateForm}
-            onSubmit={handleInstallation}
-            onCancel={handleBack}
-          />
-        )}
-        {isInstalling && !isComplete && (
-          <InstallationProgress
-            progress={installProgress}
-            steps={installationSteps}
-            error={error}
-          />
-        )}
-        {isComplete && <InstallationComplete />}
+          {currentStep === 0 && <WelcomeScreen onStart={handleNext} />}
+          {currentStep === 1 && (
+            <DatabaseConfigForm
+              formData={formData}
+              updateFormData={updateForm}
+              onSubmit={handleNext}
+              onCancel={handleBack}
+            />
+          )}
+          {currentStep === 2 && (
+            <SchoolInfoForm
+              formData={formData}
+              updateFormData={updateForm}
+              onSubmit={handleNext}
+              onCancel={handleBack}
+            />
+          )}
+          {currentStep === 3 && !isInstalling && (
+            <AdminAccountForm
+              formData={formData}
+              updateFormData={updateForm}
+              onSubmit={handleInstallation}
+              onCancel={handleBack}
+            />
+          )}
+          {isInstalling && !isComplete && (
+            <InstallationProgress
+              progress={installProgress}
+              steps={installationSteps}
+              error={error}
+              retryInstallation={handleInstallation}
+            />
+          )}
+          {isComplete && <InstallationComplete />}
+        </div>
       </div>
-    </div>
+    </SetupStepProvider>
   )
+}
+
+// Context to provide step control to child components
+const SetupStepContext = createContext<((step: number) => void) | undefined>(undefined)
+
+export const SetupStepProvider = SetupStepContext.Provider
+
+// demo use
+
+export const useSetupStep = () => {
+  const context = useContext(SetupStepContext)
+  if (!context) {
+    throw new Error("useSetupStep must be used within a SetupStepProvider")
+  }
+  return context
 }

@@ -197,7 +197,7 @@ export function AdminAccountForm({
 
       <div className="grid grid-cols-[1fr_2fr] gap-2 md:grid-cols-2 md:gap-4">
         <Button onClick={onCancel} variant="outline" className="px-4 py-3">
-          Cancel
+          Back
         </Button>
         <Button type="submit" className="px-4 py-3">
           Submit & Continue

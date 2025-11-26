@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Errors, FormData } from "../_types/setup"
 import { useState } from "react"
 import { z } from "zod"
+import { EyeClosedIcon, EyeIcon } from "lucide-react"
 
 // Zod Schemas
 const databaseSchema = z.object({
@@ -35,6 +36,7 @@ export function DatabaseConfigForm({
   onCancel,
 }: DatabaseConfigFormProps) {
   const [errors, setErrors] = useState<Errors>({})
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <form className="p-2 md:p-12" onSubmit={handleSubmit}>
@@ -48,25 +50,14 @@ export function DatabaseConfigForm({
       <ProgressIndicator currentStep={1} />
 
       <div className="animate-onrender mb-8 space-y-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField
-            label="Database Name"
-            required
-            error={errors.name}
-            value={formData.database.name}
-            onChange={(e) => handleChange("database", "name", e.target.value)}
-            placeholder="your database name"
-          />
-
-          <FormField
-            label="Database Host"
-            required
-            error={errors.host}
-            value={formData.database.host}
-            onChange={(e) => handleChange("database", "host", e.target.value)}
-            placeholder="localhost"
-          />
-        </div>
+        <FormField
+          label="Database Name"
+          required
+          error={errors.name}
+          value={formData.database.name}
+          onChange={(e) => handleChange("database", "name", e.target.value)}
+          placeholder="your database name"
+        />
 
         <FormField
           label="Database Username"
@@ -77,20 +68,64 @@ export function DatabaseConfigForm({
           placeholder="your database user"
         />
 
+        <div className="grid grid-cols-[3fr_1fr] gap-4">
+          <FormField
+            label="Database Host"
+            required
+            error={errors.host}
+            value={formData.database.host}
+            onChange={(e) => handleChange("database", "host", e.target.value)}
+            placeholder="localhost"
+          />
+
+          <FormField
+            type="number"
+            label="Database Port"
+            required
+            error={errors.port}
+            value={formData.database.port}
+            onChange={(e) => handleChange("database", "port", e.target.value)}
+            placeholder="8000"
+            pattern="\d*"
+          />
+        </div>
+
         <FormField
           label="Database Password"
           required
-          type="password"
+          type={showPassword ? "text" : "password"}
           error={errors.password}
           value={formData.database.password}
           onChange={(e) => handleChange("database", "password", e.target.value)}
           placeholder="************"
-        />
+        >
+          <div
+            className="absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer md:right-4"
+            role="button"
+            tabIndex={0}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            onClick={() => {
+              setShowPassword((a) => !a)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault()
+                setShowPassword((a) => !a)
+              }
+            }}
+          >
+            {showPassword ? (
+              <EyeClosedIcon className="h-5 w-5" />
+            ) : (
+              <EyeIcon className="h-5 w-5" />
+            )}
+          </div>
+        </FormField>
       </div>
 
       <div className="grid grid-cols-[1fr_2fr] gap-2 md:grid-cols-2 md:gap-4">
         <Button type="button" onClick={onCancel} variant="outline" className="px-4 py-3">
-          Cancel
+          Back
         </Button>
         <Button type="submit" className="px-4 py-3">
           Submit & Continue
