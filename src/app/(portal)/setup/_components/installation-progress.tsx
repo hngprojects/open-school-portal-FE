@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button"
 import { CheckCircle2Icon, CircleXIcon } from "lucide-react"
 interface InstallationStep {
   label: string
@@ -8,12 +9,14 @@ interface InstallationProgressProps {
   progress: number
   steps: InstallationStep[]
   error: string | null
+  retryInstallation: () => void
 }
 
 export default function InstallationProgress({
   progress,
   steps,
   error,
+  retryInstallation
 }: InstallationProgressProps) {
   return (
     <div className="p-2 py-6 text-center md:p-12">
@@ -59,6 +62,14 @@ export default function InstallationProgress({
           </div>
         ))}
       </div>
+
+      {
+        error && (
+          <Button className="mt-8" onClick={retryInstallation}>
+            Retry Installation
+          </Button>
+        )
+      }
     </div>
   )
 }
