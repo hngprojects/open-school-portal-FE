@@ -3,12 +3,7 @@
 import { useState } from "react"
 import { WelcomeScreen } from "./welcome-screen"
 import Image from "next/image"
-import {
-  AdminAccount,
-  DatabaseConfig,
-  InstallationStep,
-  SchoolInfo,
-} from "../_types/setup"
+import { InstallationStep } from "../_types/setup"
 import { DatabaseConfigForm } from "./database-configuration"
 import { SchoolInfoForm } from "./school-info"
 import { AdminAccountForm } from "./create-super-admin"
@@ -16,6 +11,8 @@ import { useSetupWizardPersistence } from "../_hooks/use-restore-form"
 import InstallationProgress from "./installation-progress"
 import InstallationComplete from "./installation-complete"
 import Loading from "@/app/loading"
+import { SetupWizardAPI } from "@/lib/api/setup/super-admin-setup-apis"
+import { toast } from "sonner"
 
 export default function SchoolSetupWizard() {
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
@@ -28,6 +25,7 @@ export default function SchoolSetupWizard() {
     { label: "Finalizing Setup", completed: false },
   ])
   const [isComplete, setIsComplete] = useState<boolean>(false)
+  const [error, setError] = useState("")
 
   const { formData, updateForm, currentStep, setCurrentStep, isLoaded, clearStorage } =
     useSetupWizardPersistence({
@@ -56,30 +54,75 @@ export default function SchoolSetupWizard() {
 
     const steps = [...installationSteps]
 
-    for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      steps[i].completed = true
-      setInstallationSteps([...steps])
-      setInstallProgress(((i + 1) / steps.length) * 100)
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    steps[0].completed = true
+    setInstallationSteps([...steps])
+    setInstallProgress((1 / steps.length) * 100)
+
+    try {
+      await Promise.all([
+        stepApiCall(
+          SetupWizardAPI.createDatabase({
+            database_name: formData.database.name,
+            database_host: formData.database.host,
+            database_username: formData.database.username,
+            database_password: formData.database.password,
+          }),
+          1
+        ),
+        stepApiCall(
+          SetupWizardAPI.installSchool({
+            name: formData.school.name,
+            address: formData.school.address,
+            email: formData.admin.email,
+            phone: formData.school.phone,
+            // logo: formData.school.logo,
+            primary_color: formData.school.brandColor,
+            // secondary_color: "#FFFFFF",
+            // accent_color: "#000000",
+          }),
+          2
+        ),
+        stepApiCall(
+          SetupWizardAPI.createSuperAdmin({
+            schoolName: formData.school.name,
+            firstName: formData.admin.firstName,
+            lastName: formData.admin.lastName,
+            email: formData.admin.email,
+            password: formData.admin.password,
+            confirm_password: formData.admin.confirmPassword,
+          }),
+          3
+        ),
+      ])
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "An unexpected error occurred."
+      console.error("❌ Setup Wizard Failed:", message)
+      toast.error(`Setup Failed ❗ ${message}`) // UI feedback here
+      setError(message)
+      return
     }
 
-    await Promise.all([
-      mockApiCall("/api/database/setup", formData.database),
-      mockApiCall("/api/school/setup", formData.school),
-      mockApiCall("/api/admin/create", formData.admin),
-    ])
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    steps.slice(-1)[0].completed = true
+    setInstallationSteps([...steps])
+    setInstallProgress((1 / steps.length) * 100)
 
     await new Promise((resolve) => setTimeout(resolve, 500))
     setIsComplete(true)
     clearStorage()
   }
 
-  async function mockApiCall(
-    endpoint: string,
-    data: DatabaseConfig | SchoolInfo | AdminAccount
+  async function stepApiCall(
+    apiCall: Promise<unknown>,
+    stepIndex: number
   ): Promise<void> {
-    console.log(`Calling ${endpoint} with data:`, data)
-    return new Promise((resolve) => setTimeout(resolve, 300))
+    await apiCall
+    const steps = [...installationSteps]
+    steps[stepIndex].completed = true
+    setInstallationSteps([...steps])
+    setInstallProgress(((1 + stepIndex) / steps.length) * 100)
   }
 
   function handleBack(): void {
@@ -130,7 +173,11 @@ export default function SchoolSetupWizard() {
           />
         )}
         {isInstalling && !isComplete && (
-          <InstallationProgress progress={installProgress} steps={installationSteps} />
+          <InstallationProgress
+            progress={installProgress}
+            steps={installationSteps}
+            error={error}
+          />
         )}
         {isComplete && <InstallationComplete />}
       </div>

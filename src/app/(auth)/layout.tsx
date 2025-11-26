@@ -1,4 +1,4 @@
-import { AuthQueryProvider } from "@/providers/auth-query-provider"
+import { GeneralQueryProvider } from "@/providers/general-query-provider"
 import Image from "next/image"
 
 export default function AuthLayout({
@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }>) {
   return (
-    <AuthQueryProvider>
+    <GeneralQueryProvider>
       <main className="h-screen w-full overflow-hidden lg:grid lg:grid-cols-2">
         <div className="relative hidden h-full w-full lg:top-0 lg:flex">
           <Image
@@ -22,6 +22,6 @@ export default function AuthLayout({
           <div className="w-full lg:max-w-[556px]">{children}</div>
         </div>
       </main>
-    </AuthQueryProvider>
+    </GeneralQueryProvider>
   )
 }
