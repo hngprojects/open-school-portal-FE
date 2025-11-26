@@ -9,7 +9,10 @@ export interface StatItem {
   name: string
   quantity: string | number
   percentage: number
-  icon: LucideIcon | FC<SVGProps<SVGSVGElement>>
+  icon:
+    | LucideIcon
+    | FC<SVGProps<SVGSVGElement>>
+    | React.ComponentType<{ className?: string }>
 }
 
 interface StatCardProps {
