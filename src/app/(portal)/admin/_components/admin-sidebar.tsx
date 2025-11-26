@@ -52,7 +52,7 @@ const items = [
     subItems: [
       { title: "Class", url: "/admin/class-management/class" },
       { title: "Session", url: "/admin/class-management/session" },
-      { title: "Subject", url: "#" },
+      { title: "Subject", url: "/admin/class-management/subject" },
       { title: "Timetable Setup", url: "#" },
       { title: "Result Management", url: "#" },
     ],
