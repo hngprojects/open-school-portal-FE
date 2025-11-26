@@ -24,13 +24,30 @@ const STUDENTS_KEY = ["students"]
 // 🔍 GET ALL STUDENTS
 // ----------------------------
 
+// export function useGetStudents(filters?: GetStudentsParams) {
+//   return useQuery({
+//     queryKey: [...STUDENTS_KEY, filters],
+//     queryFn: () => StudentsAPI.getAll(filters),
+//     select: (data) => data.data?.data as User[],
+//     staleTime: 1000 * 60 * 20,
+//     enabled: true,
+//   })
+// }
+
 export function useGetStudents(filters?: GetStudentsParams) {
   return useQuery({
     queryKey: [...STUDENTS_KEY, filters],
     queryFn: () => StudentsAPI.getAll(filters),
-    select: (data) => data.data?.data as User[],
+    select: (data) => {
+      // Handle the actual response structure
+      if (Array.isArray(data.data)) {
+        return data.data as User[]
+      }
+      // Fallback for nested structure
+      return (data.data?.data || []) as User[]
+    },
     staleTime: 1000 * 60 * 20,
-    enabled: !!filters,
+    enabled: true,
   })
 }
 
