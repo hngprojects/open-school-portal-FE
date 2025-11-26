@@ -36,7 +36,7 @@ export function DatabaseConfigForm({
   onCancel,
 }: DatabaseConfigFormProps) {
   const [errors, setErrors] = useState<Errors>({})
-    const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   return (
     <form className="p-2 md:p-12" onSubmit={handleSubmit}>

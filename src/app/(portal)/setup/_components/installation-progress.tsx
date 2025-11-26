@@ -16,7 +16,7 @@ export default function InstallationProgress({
   progress,
   steps,
   error,
-  retryInstallation
+  retryInstallation,
 }: InstallationProgressProps) {
   return (
     <div className="p-2 py-6 text-center md:p-12">
@@ -63,13 +63,11 @@ export default function InstallationProgress({
         ))}
       </div>
 
-      {
-        error && (
-          <Button className="mt-8" onClick={retryInstallation}>
-            Retry Installation
-          </Button>
-        )
-      }
+      {error && (
+        <Button className="mt-8" onClick={retryInstallation}>
+          Retry Installation
+        </Button>
+      )}
     </div>
   )
 }

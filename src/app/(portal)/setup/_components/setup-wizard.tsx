@@ -143,7 +143,12 @@ export default function SchoolSetupWizard() {
         <div className="w-full max-w-3xl">
           <div className="mb-2 flex items-center justify-center">
             <div className="flex items-center gap-2">
-              <Image src="/assets/logo.svg" alt="School Base Logo" width={50} height={50} />
+              <Image
+                src="/assets/logo.svg"
+                alt="School Base Logo"
+                width={50}
+                height={50}
+              />
               <span className="text-accent hidden text-2xl font-bold md:block">
                 SCHOOLBASE
               </span>
@@ -190,21 +195,17 @@ export default function SchoolSetupWizard() {
   )
 }
 
-
-
 // Context to provide step control to child components
-const SetupStepContext = createContext<
-  ((step: number) => void) | undefined
->(undefined)
+const SetupStepContext = createContext<((step: number) => void) | undefined>(undefined)
 
 export const SetupStepProvider = SetupStepContext.Provider
 
 // demo use
 
 export const useSetupStep = () => {
-  const context = useContext(SetupStepContext);
+  const context = useContext(SetupStepContext)
   if (!context) {
-    throw new Error("useSetupStep must be used within a SetupStepProvider");
+    throw new Error("useSetupStep must be used within a SetupStepProvider")
   }
-  return context;
+  return context
 }

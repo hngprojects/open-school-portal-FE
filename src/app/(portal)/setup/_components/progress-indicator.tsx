@@ -1,17 +1,16 @@
 import { cn } from "@/lib/utils"
 import { CheckCircle2Icon } from "lucide-react"
 import React from "react"
-import { useSetupStep } from "./setup-wizard";
+import { useSetupStep } from "./setup-wizard"
 
 interface ProgressIndicatorProps {
   currentStep: number
 }
 
 export default function ProgressIndicator({ currentStep }: ProgressIndicatorProps) {
-  const setCurrentStep = useSetupStep();
+  const setCurrentStep = useSetupStep()
   const handleStepClick = (stepNumber: number) => {
-    if (stepNumber < currentStep)
-      setCurrentStep(stepNumber);
+    if (stepNumber < currentStep) setCurrentStep(stepNumber)
   }
 
   const steps = [
@@ -24,7 +23,10 @@ export default function ProgressIndicator({ currentStep }: ProgressIndicatorProp
     <div className="items-shrink-0 mb-8 flex items-center justify-center gap-1">
       {steps.map((step, index) => (
         <React.Fragment key={step.number}>
-          <div className={`flex flex-shrink-0 items-center gap-1 md:gap-2 ${step.completed? "cursor-pointer" : ''}`} onClick={() => handleStepClick(step.number)}>
+          <div
+            className={`flex flex-shrink-0 items-center gap-1 md:gap-2 ${step.completed ? "cursor-pointer" : ""}`}
+            onClick={() => handleStepClick(step.number)}
+          >
             <div
               className={cn(
                 "flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium",
