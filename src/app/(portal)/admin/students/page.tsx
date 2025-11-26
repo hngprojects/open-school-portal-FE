@@ -21,7 +21,7 @@ export default function StudentsPage() {
   } = useGetStudents({
     page: currentPage,
     search: searchQuery,
-    is_active: statusFilter ? statusFilter === "active" : undefined,
+    // is_active: statusFilter ? statusFilter === "active" : undefined,
   })
 
   return (
