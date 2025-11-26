@@ -1,15 +1,15 @@
 import React from "react"
-import EmptyState from "../../_components/empty-state"
-// import ExistingClasses from "../../_components/classes/existing-classes"
-import DashboardTitle from "@/components/dashboard/dashboard-title"
+// import EmptyState from "../../_components/empty-state"
+import ExistingClasses from "../../_components/classes/existing-classes"
+// import DashboardTitle from "@/components/dashboard/dashboard-title"
 
 const page = () => {
   return (
     <div className="bg-[#FAFAFA] px-2 pt-4 lg:px-4">
-      {/* <ExistingClasses /> */}
+      <ExistingClasses />
 
       {/* empty state */}
-      <div className="p-5">
+      {/* <div className="p-5">
         <DashboardTitle
           heading="Create Classes"
           description="View, manage, or create classes"
@@ -20,7 +20,7 @@ const page = () => {
           buttonText="Add Classes"
           buttonHref="/admin/class-management/class/add-class"
         />
-      </div>
+      </div> */}
     </div>
   )
 }
