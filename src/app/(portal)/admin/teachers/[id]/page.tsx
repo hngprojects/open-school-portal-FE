@@ -168,6 +168,7 @@ export default function EditTeacherPage() {
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={initialData}
+          isEditMode={true}
         />
       </div>
     </div>

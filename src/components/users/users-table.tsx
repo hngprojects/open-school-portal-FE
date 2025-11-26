@@ -105,7 +105,7 @@ export function UsersTable({
               <TableHead>{isTeacher ? "Employee Number" : "Reg Number"}</TableHead>
             )}
             {isTeacher && <TableHead>Email</TableHead>}
-            {isStudent && <TableHead>Class</TableHead>}
+            {/* {isStudent && <TableHead>Class</TableHead>} */}
             {isStudent && <TableHead>Address</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Phone Number</TableHead>
@@ -138,7 +138,7 @@ export function UsersTable({
               {isTeacher && <TableCell>{user.email}</TableCell>}
               {isStudent && (
                 <>
-                  <TableCell>{user.class}</TableCell>
+                  {/* <TableCell>{user.class}</TableCell> */}
                   <TableCell>{user.home_address}</TableCell>
                 </>
               )}
