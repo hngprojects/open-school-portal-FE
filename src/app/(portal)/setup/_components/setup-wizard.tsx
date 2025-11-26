@@ -3,12 +3,7 @@
 import { useState } from "react"
 import { WelcomeScreen } from "./welcome-screen"
 import Image from "next/image"
-import {
-  AdminAccount,
-  DatabaseConfig,
-  InstallationStep,
-  SchoolInfo,
-} from "../_types/setup"
+import { InstallationStep } from "../_types/setup"
 import { DatabaseConfigForm } from "./database-configuration"
 import { SchoolInfoForm } from "./school-info"
 import { AdminAccountForm } from "./create-super-admin"
@@ -119,11 +114,15 @@ export default function SchoolSetupWizard() {
     clearStorage()
   }
 
-  async function stepApiCall(apiCall: Promise<any>, stepIndex: number): Promise<void> {
+  async function stepApiCall(
+    apiCall: Promise<unknown>,
+    stepIndex: number
+  ): Promise<void> {
     await apiCall
     const steps = [...installationSteps]
     steps[stepIndex].completed = true
     setInstallationSteps([...steps])
+    setInstallProgress(((1 + stepIndex) / steps.length) * 100)
   }
 
   function handleBack(): void {

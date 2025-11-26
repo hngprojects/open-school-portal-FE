@@ -21,7 +21,7 @@ export interface SuperAdminLoginData {
 export interface SuperAdminResponse {
   message: string
   status_code: number
-  data: Record<string, any>
+  data: Record<string, string>
 }
 
 // ---------------------
