@@ -1,95 +1,29 @@
-import Image from "next/image"
-import { ArrowUpRight } from "lucide-react"
+"use client"
 
-import { Badge } from "@/components/ui/badge"
+import React from "react"
+import Image from "next/image"
+import { LiaListAltSolid } from "react-icons/lia"
+import { GoChecklist } from "react-icons/go"
+import { PiPawPrintFill } from "react-icons/pi"
+import { CgFileDocument } from "react-icons/cg"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import StatCard, { StatItem } from "@/components/dashboard/stat-card"
+import TeacherWelcome from "./_components/teacher-welcome"
 import { cn } from "@/lib/utils"
 
 const assetBasePath = "/assets/dashboard/teacher"
 
-type StatItem = {
-  id: string
-  label: string
-  value: number
-  delta: string
-  iconSrc: string
-}
-
-type ClassItem = {
-  id: string
-  subject: string
-  className: string
-  time: string
-  room: string
-  image: string
-}
-
-type HomeworkItem = {
-  id: string
-  type: "Test" | "Assignment" | "Practical"
-  subject: string
-  topic: string
-  className: string
-  date: string
-}
-
-type NotificationItem = {
-  id: string
-  title: string
-  timeAgo: string
-  iconSrc: string
-}
-
-type PerformanceItem = {
-  id: string
-  subject: string
-  average: string
-  accentDotClass: string
-  accentTextClass: string
-}
-
-const arrowIconSrc = `${assetBasePath}/icons/icon-arrow-right.svg`
-
-const stats: StatItem[] = [
-  {
-    id: "attendance",
-    label: "Take Attendance",
-    value: 78,
-    delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-attendance.svg`,
-  },
-  {
-    id: "result",
-    label: "Result",
-    value: 60,
-    delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-result.svg`,
-  },
-  {
-    id: "classes",
-    label: "Class",
-    value: 10,
-    delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-class.svg`,
-  },
-  {
-    id: "assignments",
-    label: "Assignment",
-    value: 8,
-    delta: "+10% Since this term",
-    iconSrc: `${assetBasePath}/icons/icon-stat-assignment.svg`,
-  },
+// Teacher stats
+const teacherStats: StatItem[] = [
+  { name: "Take Attendance", quantity: 78, percentage: 10, icon: LiaListAltSolid },
+  { name: "Result", quantity: 60, percentage: 10, icon: GoChecklist },
+  { name: "Class", quantity: 10, percentage: 10, icon: PiPawPrintFill },
+  { name: "Assignment", quantity: 8, percentage: 10, icon: CgFileDocument },
 ]
 
-const todaysClasses: ClassItem[] = [
+// Today's classes
+const todaysClasses = [
   {
     id: "maths",
     subject: "Mathematics",
@@ -108,7 +42,8 @@ const todaysClasses: ClassItem[] = [
   },
 ]
 
-const homeworkItems: HomeworkItem[] = [
+// Homework items
+const homeworkItems = [
   {
     id: "maths-test",
     type: "Test",
@@ -143,7 +78,8 @@ const homeworkItems: HomeworkItem[] = [
   },
 ]
 
-const notifications: NotificationItem[] = [
+// Notifications
+const notifications = [
   {
     id: "assembly",
     title: "School-wide assembly schedule for Friday, 10 AM",
@@ -158,7 +94,8 @@ const notifications: NotificationItem[] = [
   },
 ]
 
-const classPerformance: PerformanceItem[] = [
+// Class performance
+const classPerformance = [
   {
     id: "maths",
     subject: "Mathematics",
@@ -182,7 +119,8 @@ const classPerformance: PerformanceItem[] = [
   },
 ]
 
-const homeworkBadgeStyles: Record<HomeworkItem["type"], string> = {
+// Homework badge styles
+const homeworkBadgeStyles: Record<string, string> = {
   Test: "bg-[#E9FBF2] text-[#1F9254]",
   Assignment: "bg-[#FFF3E3] text-[#B4690E]",
   Practical: "bg-[#E7F1FF] text-[#1E63C3]",
@@ -192,43 +130,13 @@ export default function TeachersPage() {
   return (
     <section className="min-h-screen bg-[#FAFAFA] px-4 py-10 text-[#2D2D2D] sm:px-8">
       <div className="mx-auto flex w-full max-w-[1112px] flex-col gap-8 pb-16">
-        <header className="space-y-1">
-          <p className="text-[18px] leading-8 font-medium md:text-2xl">
-            Welcome back, Mr. Daniel
-          </p>
-          <p className="text-sm font-normal text-[#535353]">
-            Here’s what’s happening in your classes today
-          </p>
-        </header>
+        {/* Welcome banner */}
+        <TeacherWelcome />
 
-        <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat) => (
-            <div
-              key={stat.id}
-              className="flex h-[151px] flex-col justify-between rounded-lg border border-[#D5D5D5] bg-white p-6"
-            >
-              <div className="flex items-center gap-3">
-                <div className="relative flex size-10 items-center justify-center rounded-full bg-[#FBEBEC]">
-                  <Image src={stat.iconSrc} alt="" width={24} height={24} />
-                </div>
-                <span className="text-lg font-medium text-[#535353]">{stat.label}</span>
-              </div>
-              <div className="space-y-2">
-                <p className="text-[28px] leading-9 font-semibold text-[#2D2D2D]">
-                  {stat.value}
-                </p>
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                  <span className="flex items-center gap-1 font-medium text-[#10B981]">
-                    <ArrowUpRight className="size-4" />
-                    {stat.delta.replace("Since this term", "").trim()}
-                  </span>
-                  <span className="text-[#686868]">Since this term</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </section>
+        {/* Teacher Stats */}
+        <StatCard stats={teacherStats} />
 
+        {/* Today's Classes */}
         <section className="space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-2xl font-medium text-[#2D2D2D]">Today’s Classes</h2>
@@ -238,13 +146,6 @@ export default function TeachersPage() {
               className="group flex h-10 items-center gap-2 rounded-lg border border-[#D5D5D5] px-6 text-base font-medium text-[#535353]"
             >
               View All
-              <Image
-                src={arrowIconSrc}
-                alt=""
-                width={14}
-                height={8}
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              />
             </Button>
           </div>
 
@@ -259,7 +160,6 @@ export default function TeachersPage() {
                     src={classItem.image}
                     alt={`${classItem.subject} classroom`}
                     fill
-                    sizes="(max-width: 768px) 100vw, 540px"
                     className="object-cover"
                     priority={classItem.id === "maths"}
                   />
@@ -289,6 +189,7 @@ export default function TeachersPage() {
           </div>
         </section>
 
+        {/* Pending Homework */}
         <section className="rounded-2xl border border-[#E8E8E8] bg-white p-6">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-2xl font-semibold text-[#2D2D2D]">Pending Homework</h2>
@@ -298,15 +199,9 @@ export default function TeachersPage() {
               className="group flex h-10 items-center gap-2 rounded-lg border border-[#D5D5D5] px-6 text-base font-medium text-[#535353]"
             >
               View All
-              <Image
-                src={arrowIconSrc}
-                alt=""
-                width={14}
-                height={8}
-                className="transition-transform duration-200 group-hover:translate-x-1"
-              />
             </Button>
           </div>
+
           <div className="space-y-4 lg:hidden">
             {homeworkItems.map((item) => (
               <article
@@ -351,74 +246,9 @@ export default function TeachersPage() {
               </article>
             ))}
           </div>
-          <div className="hidden lg:block">
-            <div className="overflow-hidden rounded-xl border border-[#EAECF0]">
-              <Table className="[&_th]:uppercase">
-                <TableHeader className="bg-[#F9FAFB]">
-                  <TableRow className="border-[#EAECF0]">
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Type
-                    </TableHead>
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Subject
-                    </TableHead>
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Topic
-                    </TableHead>
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Class
-                    </TableHead>
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Date
-                    </TableHead>
-                    <TableHead className="text-[14px] font-medium text-[#535353]">
-                      Action
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {homeworkItems.map((item) => (
-                    <TableRow key={item.id} className="border-[#EAECF0]">
-                      <TableCell>
-                        <Badge
-                          className={cn(
-                            "rounded-full px-4 py-1 text-sm font-medium",
-                            homeworkBadgeStyles[item.type] ??
-                              "bg-[#F2F4F7] text-[#475467]"
-                          )}
-                        >
-                          {item.type}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-base text-[#2D2D2D]">
-                        {item.subject}
-                      </TableCell>
-                      <TableCell className="text-base text-[#2D2D2D]">
-                        {item.topic}
-                      </TableCell>
-                      <TableCell className="text-base text-[#2D2D2D]">
-                        {item.className}
-                      </TableCell>
-                      <TableCell className="text-base text-[#2D2D2D]">
-                        {item.date}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-9 rounded-lg border border-[#DA3743] px-4 text-sm font-medium text-[#DA3743]"
-                        >
-                          View All
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
         </section>
 
+        {/* Notifications + Class Performance */}
         <section className="grid gap-5 lg:grid-cols-2">
           <div className="rounded-2xl border border-[#CDCDCD] bg-white p-6">
             <h2 className="text-2xl font-semibold text-[#2D2D2D]">

@@ -6,18 +6,20 @@ import Image from "next/image"
 import {
   AdminAccount,
   DatabaseConfig,
-  FormData,
   InstallationStep,
   SchoolInfo,
 } from "../_types/setup"
 import { DatabaseConfigForm } from "./database-configuration"
 import { SchoolInfoForm } from "./school-info"
 import { AdminAccountForm } from "./create-super-admin"
+import { useSetupWizardPersistence } from "../_hooks/use-restore-form"
+import InstallationProgress from "./installation-progress"
+import InstallationComplete from "./installation-complete"
+import Loading from "@/app/loading"
 
 export default function SchoolSetupWizard() {
-  const [currentStep, setCurrentStep] = useState<number>(0)
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
-  const [, setInstallProgress] = useState<number>(0)
+  const [installProgress, setInstallProgress] = useState<number>(0)
   const [installationSteps, setInstallationSteps] = useState<InstallationStep[]>([
     { label: "Validating Account Information", completed: false },
     { label: "Creating Database Schema", completed: false },
@@ -25,30 +27,20 @@ export default function SchoolSetupWizard() {
     { label: "Configuring Your School Profile", completed: false },
     { label: "Finalizing Setup", completed: false },
   ])
-  const [, setIsComplete] = useState<boolean>(false)
+  const [isComplete, setIsComplete] = useState<boolean>(false)
 
-  const [formData, setFormData] = useState<FormData>({
-    database: {
-      name: "",
-      host: "",
-      username: "",
-      password: "",
-    },
-    school: {
-      logo: null,
-      name: "",
-      brandColor: "#DA3743",
-      phone: "",
-      address: "",
-    },
-    admin: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-  })
+  const { formData, updateForm, currentStep, setCurrentStep, isLoaded, clearStorage } =
+    useSetupWizardPersistence({
+      database: { name: "", host: "", username: "", password: "" },
+      school: { logo: null, name: "", brandColor: "#DA3743", phone: "", address: "" },
+      admin: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      },
+    })
 
   async function handleNext(): Promise<void> {
     if (currentStep < 3) {
@@ -65,7 +57,7 @@ export default function SchoolSetupWizard() {
     const steps = [...installationSteps]
 
     for (let i = 0; i < steps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 800))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       steps[i].completed = true
       setInstallationSteps([...steps])
       setInstallProgress(((i + 1) / steps.length) * 100)
@@ -79,6 +71,7 @@ export default function SchoolSetupWizard() {
 
     await new Promise((resolve) => setTimeout(resolve, 500))
     setIsComplete(true)
+    clearStorage()
   }
 
   async function mockApiCall(
@@ -93,6 +86,10 @@ export default function SchoolSetupWizard() {
     if (currentStep > 0) {
       setCurrentStep((prev) => prev - 1)
     }
+  }
+
+  if (!isLoaded) {
+    return <Loading text="Loading Setup Wizard..." />
   }
 
   return (
@@ -111,7 +108,7 @@ export default function SchoolSetupWizard() {
         {currentStep === 1 && (
           <DatabaseConfigForm
             formData={formData}
-            updateFormData={updateFormData}
+            updateFormData={updateForm}
             onSubmit={handleNext}
             onCancel={handleBack}
           />
@@ -119,7 +116,7 @@ export default function SchoolSetupWizard() {
         {currentStep === 2 && (
           <SchoolInfoForm
             formData={formData}
-            updateFormData={updateFormData}
+            updateFormData={updateForm}
             onSubmit={handleNext}
             onCancel={handleBack}
           />
@@ -127,22 +124,16 @@ export default function SchoolSetupWizard() {
         {currentStep === 3 && !isInstalling && (
           <AdminAccountForm
             formData={formData}
-            updateFormData={updateFormData}
+            updateFormData={updateForm}
             onSubmit={handleInstallation}
             onCancel={handleBack}
           />
         )}
+        {isInstalling && !isComplete && (
+          <InstallationProgress progress={installProgress} steps={installationSteps} />
+        )}
+        {isComplete && <InstallationComplete />}
       </div>
     </div>
   )
-
-  function updateFormData(section: keyof FormData, field: string, value: string | File) {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value,
-      },
-    }))
-  }
 }
