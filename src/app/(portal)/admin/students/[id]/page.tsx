@@ -110,7 +110,7 @@ export default function EditStudentPage() {
         <h1 className="mb-2 text-xl font-bold text-gray-900">Edit Student</h1>
         <p className="text-gray-600">Update student details.</p>
       </div>
-      <div className="md:px-8">
+      <div>
         <NewPersonFormBuilder
           config={studentFormConfig}
           onSubmit={handleSubmit}

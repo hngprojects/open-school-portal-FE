@@ -33,6 +33,8 @@ export interface FormField {
   }
   accept?: string
   pattern?: string
+  readonly?: boolean
+  disabled?: boolean
   buttonText?: string
 }
 
@@ -116,7 +118,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
 
   const renderField = (field: FormField) => {
     const commonInputClasses =
-      "w-full rounded-lg shadow-sm border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none focus:border-transparent transition-all"
+      "w-full rounded-lg shadow-sm border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none focus:border-transparent transition-all readonly:cursor-not-allowed readonly:bg-gray-100 disabled:cursor-not-allowed disabled:bg-gray-100"
 
     switch (field.type) {
       case "select":
@@ -242,6 +244,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
             placeholder={field.placeholder}
             className={commonInputClasses}
             pattern={field.pattern}
+            disabled={field.disabled}
           />
         )
     }
