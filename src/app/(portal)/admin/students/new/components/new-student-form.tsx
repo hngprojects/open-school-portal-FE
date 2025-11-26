@@ -43,7 +43,7 @@ export const studentFormConfig: NewPersonFormConfig = {
       name: "registration_number", // Changed from identification_number
       label: "Registration Number",
       type: "text",
-      placeholder: "REG-2025-014",
+      placeholder: "STU-2025-0142",
     },
     {
       name: "email",
