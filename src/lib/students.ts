@@ -21,7 +21,6 @@ type ResponsePack<T> = {
 }
 
 export interface GetStudentsParams {
-  is_active?: boolean
   page?: number
   search?: string
 }
