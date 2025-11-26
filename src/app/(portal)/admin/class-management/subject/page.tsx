@@ -11,7 +11,7 @@ const SubjectPage = () => {
       <EmptyState
         title="No Subjects Assigned yet"
         description="Add Subjects."
-        buttonText="Add Classes"
+        buttonText="Add Subjects"
         buttonHref="#"
         // buttonHref="/admin/class-management/class/add-class"
       />
