@@ -28,12 +28,18 @@ export function useGetParents(filters?: GetParentsParams) {
   return useQuery({
     queryKey: [...PARENTS_KEY, filters],
     queryFn: () => ParentsAPI.getAll(filters),
-    select: (data) => data.data?.data as User[],
+    select: (data) => {
+      // Handle the actual response structure
+      if (Array.isArray(data.data)) {
+        return data.data as User[]
+      }
+      // Fallback for nested structure
+      return (data.data?.data || []) as User[]
+    },
     staleTime: 1000 * 60 * 20,
-    enabled: !!filters,
+    enabled: true,
   })
 }
-
 // ----------------------------
 // 🔍 GET PARENT BY ID
 // ----------------------------

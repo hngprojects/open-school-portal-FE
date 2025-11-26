@@ -98,14 +98,14 @@ export function UsersTable({
             <TableHead>
               {isTeacher ? "Teacher" : isStudent ? "Student" : "Parent"}
             </TableHead>
-            {isParent && <TableHead>Relationship</TableHead>}
+            {/* {isParent && <TableHead>Relationship</TableHead>} */}
             {isParent && <TableHead>Email</TableHead>}
             {isParent && <TableHead>Address</TableHead>}
             {!isParent && (
               <TableHead>{isTeacher ? "Employee Number" : "Reg Number"}</TableHead>
             )}
             {isTeacher && <TableHead>Email</TableHead>}
-            {isStudent && <TableHead>Class</TableHead>}
+            {/* {isStudent && <TableHead>Class</TableHead>} */}
             {isStudent && <TableHead>Address</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Phone Number</TableHead>
@@ -129,7 +129,7 @@ export function UsersTable({
               </TableCell>
               {isParent && (
                 <>
-                  <TableCell>{user.role}</TableCell>
+                  {/* <TableCell>{user.role}</TableCell> */}
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.home_address}</TableCell>
                 </>
@@ -138,7 +138,7 @@ export function UsersTable({
               {isTeacher && <TableCell>{user.email}</TableCell>}
               {isStudent && (
                 <>
-                  <TableCell>{user.class}</TableCell>
+                  {/* <TableCell>{user.class}</TableCell> */}
                   <TableCell>{user.home_address}</TableCell>
                 </>
               )}
@@ -149,19 +149,19 @@ export function UsersTable({
               </TableCell>
               <TableCell>{user.phone}</TableCell>
               <TableCell>
-                <div className="flex items-center gap-1 text-[#da3743]">
+                <div className="flex items-center gap-2 text-[#da3743]">
                   {isParent && (
                     <LinkIcon
-                      className="h-3 w-3 cursor-pointer"
+                      className="h-4 w-4 cursor-pointer"
                       onClick={() => handleLinkStudent(user)}
                     />
                   )}
                   <Trash2
-                    className="h-3 w-3 cursor-pointer"
+                    className="h-4 w-4 cursor-pointer"
                     onClick={() => handleDeleteClick(user)}
                   />
                   <Edit3
-                    className="h-3 w-3 cursor-pointer"
+                    className="h-4 w-4 cursor-pointer"
                     onClick={() => handleEditClick(user)}
                   />
                 </div>

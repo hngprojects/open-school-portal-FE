@@ -33,6 +33,8 @@ export interface FormField {
   }
   accept?: string
   pattern?: string
+  readonly?: boolean
+  disabled?: boolean
   buttonText?: string
 }
 
@@ -47,6 +49,7 @@ interface FormBuilderProps {
   onSubmit: (data: Record<string, unknown>) => Promise<void>
   onCancel: () => void
   initialData?: Record<string, unknown>
+  isEditMode?: boolean
 }
 
 export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
@@ -54,6 +57,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   onCancel,
   onSubmit,
   initialData,
+  isEditMode = false,
 }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
     if (initialData) return initialData
@@ -116,7 +120,11 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
 
   const renderField = (field: FormField) => {
     const commonInputClasses =
-      "w-full rounded-lg shadow-sm border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none focus:border-transparent transition-all"
+      "w-full rounded-lg shadow-sm border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none focus:border-transparent transition-all readonly:cursor-not-allowed readonly:bg-gray-100 disabled:cursor-not-allowed disabled:bg-gray-100"
+
+    // Helper to apply disabled style + attribute
+    const isEmailField = field.name === "email"
+    const disabled = isEditMode && isEmailField
 
     switch (field.type) {
       case "select":
@@ -242,6 +250,8 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
             placeholder={field.placeholder}
             className={commonInputClasses}
             pattern={field.pattern}
+            disabled={field.disabled || disabled}
+            readOnly={disabled}
           />
         )
     }

@@ -1,4 +1,3 @@
-// src/app/(portal)/admin/students/new/components/new-student-form.tsx
 "use client"
 
 import {
@@ -44,7 +43,7 @@ export const studentFormConfig: NewPersonFormConfig = {
       name: "registration_number", // Changed from identification_number
       label: "Registration Number",
       type: "text",
-      placeholder: "REG-2025-014",
+      placeholder: "STU-2025-0142",
     },
     {
       name: "email",
@@ -138,14 +137,10 @@ export default function NewStudentForm() {
       is_active: true,
     }
 
-    console.log("🎯 Sending student data:", JSON.stringify(newStudent, null, 2))
-
     try {
-      console.log("Creating student — payload:", newStudent)
       await createNewStudent(newStudent)
       router.push("/admin/students")
     } catch (err) {
-      console.error("Failed to create student:", err)
       throw err
     }
   }
