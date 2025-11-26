@@ -80,7 +80,7 @@ export function AdminSidebar() {
   const [openItems, setOpenItems] = useState<string[]>([])
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const user = useAuthStore((state) => state.user)
-  const sendLogoutRequest = useLogout().mutateAsync;
+  const sendLogoutRequest = useLogout().mutateAsync
 
   const isCollapsed = state === "collapsed"
 
