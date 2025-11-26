@@ -61,6 +61,7 @@ export interface SchoolInstallResponse {
 export interface DatabaseCreateRequest {
   database_name: string
   database_host: string
+  database_port: number
   database_username: string
   database_password: string
 }
