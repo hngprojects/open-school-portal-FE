@@ -14,14 +14,45 @@ import { Label } from "@/components/ui/label"
 
 import { useCreateAcademicSession } from "../../class-management/_hooks/use-session"
 
-const sessionFormSchema = z.object({
-  academicSession: z
-    .string()
-    .min(1, "Academic session is required")
-    .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
-})
+const toDate = (value: string) => new Date(`${value}T00:00:00`)
+
+const isFutureDate = (value: string) => {
+  const parsed = toDate(value)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  return !Number.isNaN(parsed.getTime()) && parsed > today
+}
+
+const sessionFormSchema = z
+  .object({
+    academicSession: z
+      .string()
+      .min(1, "Academic session is required")
+      .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
+  })
+  .refine(({ startDate }) => isFutureDate(startDate), {
+    path: ["startDate"],
+    message: "Start date must be in the future",
+  })
+  .refine(({ endDate }) => isFutureDate(endDate), {
+    path: ["endDate"],
+    message: "End date must be in the future",
+  })
+  .refine(
+    ({ startDate, endDate }) => {
+      const start = toDate(startDate)
+      const end = toDate(endDate)
+
+      return !Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime()) && end > start
+    },
+    {
+      path: ["endDate"],
+      message: "End date must be after start date",
+    }
+  )
 
 export type SessionFormData = z.infer<typeof sessionFormSchema>
 
@@ -56,13 +87,16 @@ const CreateSessionForm = ({ defaultValues }: CreateSessionFormProps) => {
       },
       {
         onSuccess: () => {
-          // onSuccess: (response) => {
           toast.success("Academic session created successfully!")
           router.push("/admin/class-management/session")
-          // console.log("Created session:", response)
         },
-        onError: (error: Error) => {
-          toast.error(error.message || "Failed to create academic session.")
+        onError: (error: Error | unknown) => {
+          const fallback = "Failed to create academic session."
+          if (error instanceof Error) {
+            toast.error(error.message || fallback)
+            return
+          }
+          toast.error(fallback)
         },
       }
     )
