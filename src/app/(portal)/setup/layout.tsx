@@ -1,7 +1,10 @@
+import type { Metadata } from "next"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
 
-export const metadata = {
-  title: "Super Admin Setup",
+export const metadata: Metadata = {
+  title: "Super Admin Setup | School Base",
+  description:
+    "Complete the initial School Base setup to configure your school workspace.",
 }
 
 export default function SuperAdminSetuLayout({
