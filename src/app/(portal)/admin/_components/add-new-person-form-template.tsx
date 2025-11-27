@@ -120,9 +120,9 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }))
 
     // Clear field error when user starts typing
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => ({ ...prev, [name]: "" }))
-    }
+    // if (fieldErrors[name]) {
+    //   setFieldErrors((prev) => ({ ...prev, [name]: "" }))
+    // }
 
     // Validate on change for immediate feedback
     const error = validateField(name, value)
@@ -164,7 +164,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
       if (field.required && !formData[field.name]) {
         errors[field.name] = "This field is required"
         isValid = false
-      } else if (formData[field.name]) {
+      } else if (formData[field.name] && typeof formData[field.name] === "string") {
         const error = validateField(field.name, formData[field.name] as string)
         if (error) {
           errors[field.name] = error
@@ -213,9 +213,8 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
 
     // Helper to apply disabled style + attribute
     const isEmailField = field.name === "email"
-    const isPasswordField =
-      field.name === "password" || field.name === "generatedPassword"
-    const disabled = (isEditMode && isEmailField) || isPasswordField
+
+    const disabled = isEditMode && isEmailField
 
     switch (field.type) {
       case "select":
@@ -427,5 +426,3 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
     </form>
   )
 }
-
-// ... rest of the file remains the same ...

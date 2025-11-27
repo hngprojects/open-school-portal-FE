@@ -35,7 +35,6 @@ const api = axios.create({
   validateStatus: (status) => status >= 200 && status < 400,
 })
 
-// Move navigateTo outside so it's accessible to both functions
 const navigateTo = (path: string) => {
   if (typeof window !== "undefined" && window.location.pathname !== path) {
     window.location.href = path
@@ -54,7 +53,6 @@ const getErrorMessage = (error: unknown): string => {
       const message = responseData.message || responseData.error || responseData.detail
 
       if (message) {
-        // Handle common backend validation errors
         if (typeof message === "string") {
           if (
             message.toLowerCase().includes("email already exists") ||
@@ -81,8 +79,15 @@ const getErrorMessage = (error: unknown): string => {
       }
 
       // Check for validation errors in nested structure
-      if (responseData.errors && Array.isArray(responseData.errors)) {
-        return responseData.errors[0]?.msg || responseData.errors[0] || defaultMessage
+      if (
+        responseData.errors &&
+        Array.isArray(responseData.errors) &&
+        responseData.errors.length > 0
+      ) {
+        const firstError = responseData.errors[0]
+        if (typeof firstError === "string") return firstError
+        if (typeof firstError?.msg === "string") return firstError.msg
+        return defaultMessage
       }
     }
 
