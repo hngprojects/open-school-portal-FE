@@ -6,9 +6,9 @@ import { apiFetch } from "@/lib/api/client"
 
 export interface SuperAdminSignupData {
   email: string
-  firstName: string
-  lastName: string
-  schoolName: string
+  first_name: string
+  last_name: string
+  school_name: string
   password: string
   confirm_password: string
 }
@@ -89,7 +89,7 @@ export const SetupWizardAPI = {
   // Super Admin Signup
   createSuperAdmin: (data: SuperAdminSignupData) =>
     apiFetch<SuperAdminResponse>(
-      "/superadmin/create",
+      "api/auth/superadmin",
       {
         method: "POST",
         data,
