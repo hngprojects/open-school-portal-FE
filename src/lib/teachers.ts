@@ -51,24 +51,50 @@ export const TeachersAPI = {
     apiFetch<ResponsePack<User>>(`/teachers/${id}`, undefined, true),
 
   create: (data: CreateTeacherData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       "/teachers",
       {
         method: "POST",
-        data, // Axios handles JSON automatically
+        data,
       },
       true
-    ),
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        const errorMessage = error?.message?.toLowerCase() || ""
+
+        // Handle teacher-specific conflicts with specific messages
+        if (errorMessage.includes("email") && errorMessage.includes("already exists")) {
+          throw new Error(
+            "A teacher with this email address already exists. Please use a different email."
+          )
+        }
+
+        if (
+          (errorMessage.includes("employment id") ||
+            errorMessage.includes("employment_id")) &&
+          errorMessage.includes("already exists")
+        ) {
+          throw new Error(
+            "A teacher with this employment ID already exists. Please use a different employment ID."
+          )
+        }
+
+        if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
+          throw new Error("A teacher with these details already exists.")
+        }
+        throw error
+      }),
 
   update: (id: string, data: UpdateTeacherData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       `/teachers/${id}`,
       {
         method: "PATCH",
         data,
       },
       true
-    ),
+    ).then((response) => response.data),
 
   delete: (id: string): Promise<void> =>
     apiFetch(

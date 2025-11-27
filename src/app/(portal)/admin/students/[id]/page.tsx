@@ -2,7 +2,10 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateStudentData } from "@/lib/students"
-import { NewPersonFormBuilder } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import {
+  NewPersonFormBuilder,
+  FormField,
+} from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -27,12 +30,10 @@ export default function EditStudentPage() {
         first_name: formData.first_name as string,
         last_name: formData.last_name as string,
         middle_name: formData.middle_name as string,
-        // email: formData.email as string,
         gender: formData.gender as string,
         phone: formData.phone as string,
         date_of_birth: formData.date_of_birth as string,
         home_address: formData.home_address as string,
-        photo_url: formData.photo_url as string,
       }
 
       await updateStudentMutation.mutateAsync(updateData)
@@ -80,7 +81,49 @@ export default function EditStudentPage() {
     )
   }
 
+  // Create edit form fields
+  const editStudentFormFields: FormField[] = [
+    // Add registration number field at the top for edit mode
+    {
+      name: "registration_number",
+      label: "Registration Number",
+      type: "text",
+      placeholder: "Auto-generated",
+      required: false,
+      disabled: true,
+      readonly: true,
+    },
+    // Map through original fields and modify password field
+    ...studentFormConfig.fields.map((field) => {
+      if (field.name === "password") {
+        return {
+          ...field,
+          disabled: true,
+          readonly: true,
+          placeholder: "Password cannot be changed here",
+          required: false,
+        }
+      }
+      if (field.name === "email") {
+        return {
+          ...field,
+          disabled: true,
+          readonly: true,
+        }
+      }
+      return field
+    }),
+  ]
+
+  const editStudentFormConfig = {
+    ...studentFormConfig,
+    fields: editStudentFormFields,
+    submitText: "Update",
+  }
+
   const initialData = {
+    registration_number:
+      student.registration_number || student.reg_number || "Not assigned",
     first_name: student.first_name,
     last_name: student.last_name,
     middle_name: student.middle_name || "",
@@ -89,7 +132,7 @@ export default function EditStudentPage() {
     phone: student.phone,
     date_of_birth: student.date_of_birth,
     home_address: student.home_address,
-    photo_url: student.photo_url || "",
+    password: "********", // Show placeholder for password
   }
 
   return (
@@ -112,7 +155,7 @@ export default function EditStudentPage() {
       </div>
       <div>
         <NewPersonFormBuilder
-          config={studentFormConfig}
+          config={editStudentFormConfig}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={initialData}

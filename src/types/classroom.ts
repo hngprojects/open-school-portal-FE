@@ -4,7 +4,7 @@ export interface Classroom {
   capacity: number
   type: string
   location: string
-  description: string
+  description?: string | null // Make optional
   is_available: boolean
   created_at?: string
   updated_at?: string
@@ -15,7 +15,7 @@ export interface CreateClassroomData {
   capacity: number
   type: string
   location: string
-  description: string
+  description?: string // Make optional
 }
 
 export interface UpdateClassroomData extends Partial<CreateClassroomData> {
