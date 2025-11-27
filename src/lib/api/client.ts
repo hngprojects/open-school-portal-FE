@@ -86,9 +86,9 @@ const getErrorMessage = (error: unknown): string => {
       }
     }
 
-    if (error.response?.status === 409) {
-      return "An account with these details already exists."
-    }
+    // if (error.response?.status === 409) {
+    //   return "An account with these details already exists."
+    // }
 
     if (error.response?.status === 400) {
       return "Invalid input data. Please check your entries."

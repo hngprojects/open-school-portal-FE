@@ -51,24 +51,65 @@ export const ClassroomsAPI = {
     apiFetch<ResponsePack<Classroom>>(`/rooms/${id}`, undefined, true),
 
   create: (data: CreateClassroomData): Promise<Classroom> =>
-    apiFetch(
+    apiFetch<ResponsePack<Classroom>>(
       "/rooms",
       {
         method: "POST",
         data,
       },
       true
-    ),
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        const errorMessage = error?.message?.toLowerCase() || ""
+
+        // Handle classroom-specific conflicts with specific messages
+        if (errorMessage.includes("name") && errorMessage.includes("already exists")) {
+          throw new Error(
+            "A classroom with this name already exists. Please choose a different name."
+          )
+        }
+
+        if (
+          errorMessage.includes("location") &&
+          errorMessage.includes("already exists")
+        ) {
+          throw new Error(
+            "A classroom in this location already exists. Please choose a different location."
+          )
+        }
+
+        if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
+          throw new Error("A classroom with these details already exists.")
+        }
+        throw error
+      }),
 
   update: (id: string, data: UpdateClassroomData): Promise<Classroom> =>
-    apiFetch(
+    apiFetch<ResponsePack<Classroom>>(
       `/rooms/${id}`,
       {
         method: "PATCH",
         data,
       },
       true
-    ),
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        const errorMessage = error?.message?.toLowerCase() || ""
+
+        // Handle classroom-specific conflicts during update
+        if (errorMessage.includes("name") && errorMessage.includes("already exists")) {
+          throw new Error(
+            "A classroom with this name already exists. Please choose a different name."
+          )
+        }
+
+        if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
+          throw new Error("A classroom with these details already exists.")
+        }
+        throw error
+      }),
 
   delete: (id: string): Promise<void> =>
     apiFetch(

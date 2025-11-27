@@ -39,24 +39,50 @@ export const StudentsAPI = {
     apiFetch<ResponsePack<User>>(`/students/${id}`, undefined, true),
 
   create: (data: CreateStudentData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       "/students",
       {
         method: "POST",
         data,
       },
       true
-    ),
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        const errorMessage = error?.message?.toLowerCase() || ""
+
+        // Handle student-specific conflicts with specific messages
+        if (errorMessage.includes("email") && errorMessage.includes("already exists")) {
+          throw new Error(
+            "A student with this email address already exists. Please use a different email."
+          )
+        }
+
+        if (
+          (errorMessage.includes("registration number") ||
+            errorMessage.includes("registration_number")) &&
+          errorMessage.includes("already exists")
+        ) {
+          throw new Error(
+            "A student with this registration number already exists. Please use a different registration number."
+          )
+        }
+
+        if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
+          throw new Error("A student with these details already exists.")
+        }
+        throw error
+      }),
 
   update: (id: string, data: UpdateStudentData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       `/students/${id}`,
       {
         method: "PATCH",
         data,
       },
       true
-    ),
+    ).then((response) => response.data),
 
   delete: (id: string): Promise<void> =>
     apiFetch(
