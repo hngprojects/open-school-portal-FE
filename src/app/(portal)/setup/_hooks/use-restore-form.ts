@@ -119,7 +119,7 @@ export function useSetupWizardPersistence(defaultFormData: FormData) {
   }, [formData, isLoaded])
 
   // Update form data
-  function updateForm(section: keyof FormData, field: string, value: string | File) {
+  function updateForm(section: keyof FormData, field: string, value: string | File | number) {
     setFormData((prev) => {
       const updated = {
         ...prev,

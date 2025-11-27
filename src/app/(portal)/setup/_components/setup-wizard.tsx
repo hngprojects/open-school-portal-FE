@@ -29,7 +29,7 @@ export default function SchoolSetupWizard() {
 
   const { formData, updateForm, currentStep, setCurrentStep, isLoaded, clearStorage } =
     useSetupWizardPersistence({
-      database: { name: "", host: "", username: "", password: "", port: 8000 },
+      database: { name: "", host: "", username: "", type: "", password: "", port: 8000 },
       school: { logo: null, name: "", brandColor: "#DA3743", phone: "", address: "" },
       admin: {
         firstName: "",
@@ -66,7 +66,8 @@ export default function SchoolSetupWizard() {
           SetupWizardAPI.createDatabase({
             database_name: formData.database.name,
             database_host: formData.database.host,
-            database_port: formData.database.port,
+            database_type: formData.database.type,
+            database_port: Number(formData.database.port),
             database_username: formData.database.username,
             database_password: formData.database.password,
           }),
@@ -120,11 +121,26 @@ export default function SchoolSetupWizard() {
     apiCall: Promise<unknown>,
     stepIndex: number
   ): Promise<void> {
-    await apiCall
-    const steps = [...installationSteps]
-    steps[stepIndex].completed = true
-    setInstallationSteps([...steps])
-    setInstallProgress(((1 + stepIndex) / steps.length) * 100)
+    const dbKey = `extra-${stepIndex}`;
+
+    try {
+      await apiCall
+      const steps = [...installationSteps]
+      steps[stepIndex].completed = true
+      setInstallationSteps([...steps])
+      setInstallProgress(((1 + stepIndex) / steps.length) * 100)
+      updateForm("extra", dbKey, 'done') // incase of 409 error
+
+    } catch (error) {
+      if (error instanceof Error){
+        const accountExists = error?.message?.includes("already exists");
+        const isARetry = formData.extra?.[dbKey] === 'done';
+        if (accountExists && isARetry){
+          return
+        }
+      }
+      throw error
+    }
   }
 
   function handleBack(): void {
