@@ -18,7 +18,10 @@ const databaseSchema = z.object({
   host: z.string().min(1, "Database host is required"),
   username: z.string().min(1, "Database username is required"),
   port: z.number().max(65535, "Port must be less than or equal to 65535"),
-  type: z.enum(["postgres", "mysql", "sqlite", "mssql", "mariadb"], "Must be one of postgres, mysql, sqlite, mssql, mariadb"),
+  type: z.enum(
+    ["postgres", "mysql", "sqlite", "mssql", "mariadb"],
+    "Must be one of postgres, mysql, sqlite, mssql, mariadb"
+  ),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -64,7 +67,7 @@ export function DatabaseConfigForm({
         />
 
         <div className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 items-center md:items-start">
+          <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-[2fr_1fr] md:items-start">
             <FormField
               label="Database Username"
               required
@@ -85,14 +88,14 @@ export function DatabaseConfigForm({
 
           {!!(errors.type || errors.username) && (
             <p className="mt-1 flex items-center gap-2 text-sm text-red-500">
-              <AlertCircleIcon /> { errors.username? "Username: " + errors.username : ""}{" "}
-              { errors.type? "Type: " + errors.type : ""}{" "}
+              <AlertCircleIcon /> {errors.username ? "Username: " + errors.username : ""}{" "}
+              {errors.type ? "Type: " + errors.type : ""}{" "}
             </p>
           )}
         </div>
 
         <div className="relative">
-          <div className="grid grid-cols-[3fr_1fr] gap-4 items-center">
+          <div className="grid grid-cols-[3fr_1fr] items-center gap-4">
             <FormField
               label="Database Host"
               required
@@ -115,8 +118,8 @@ export function DatabaseConfigForm({
           {!!(errors.host || errors.port) && (
             <p className="mt-1 flex items-center gap-2 text-sm text-red-500">
               {" "}
-              <AlertCircleIcon /> { errors.host? "Host: " + errors.host : ""}{" "}
-              { errors.port? "Port: " + errors.port : ""}{" "}
+              <AlertCircleIcon /> {errors.host ? "Host: " + errors.host : ""}{" "}
+              {errors.port ? "Port: " + errors.port : ""}{" "}
             </p>
           )}
         </div>

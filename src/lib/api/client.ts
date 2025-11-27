@@ -96,11 +96,11 @@ const getErrorMessage = (error: unknown): string => {
   const defaultMessage = "An unexpected error occurred. Please try again later."
 
   if (error instanceof AxiosError) {
-    let handledError = error.response?.data?.message as string | object | undefined;
+    let handledError = error.response?.data?.message as string | object | undefined
 
     if (typeof handledError === "object") {
       handledError = Object.values(handledError).flat().join("\n ")
-    } 
+    }
 
     if (handledError) {
       const lowercaseHandledError = handledError.toLowerCase()

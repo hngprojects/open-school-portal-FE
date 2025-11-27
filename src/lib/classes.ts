@@ -43,11 +43,7 @@ export interface GroupedClassResponse {
 
 export const ClassesAPI = {
   getAll: (params?: { page?: number; limit?: number }) =>
-    apiFetch<ResponsePack<GroupedClassResponse>>(
-      "/v1/classes",
-      { params },
-      true
-    ),
+    apiFetch<ResponsePack<GroupedClassResponse>>("/v1/classes", { params }, true),
 
   create: (body: CreateClassData) =>
     apiFetch<ResponsePack<ClassItem>>(
@@ -64,16 +60,14 @@ export const ClassesAPI = {
     ),
 
   assignedTeachers: (id: string, session_id?: string) =>
-    apiFetch<ResponsePack<
-      {
-        teacher_id: string
-        name: string
-        assignment_date: string
-        streams: string
-      }[]
-    >>(
-      `/v1/classes/${id}/teachers`,
-      { params: { session_id } },
-      true
-    ),
+    apiFetch<
+      ResponsePack<
+        {
+          teacher_id: string
+          name: string
+          assignment_date: string
+          streams: string
+        }[]
+      >
+    >(`/v1/classes/${id}/teachers`, { params: { session_id } }, true),
 }

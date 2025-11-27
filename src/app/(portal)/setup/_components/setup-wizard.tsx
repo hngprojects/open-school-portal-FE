@@ -121,7 +121,7 @@ export default function SchoolSetupWizard() {
     apiCall: Promise<unknown>,
     stepIndex: number
   ): Promise<void> {
-    const dbKey = `extra-${stepIndex}`;
+    const dbKey = `extra-${stepIndex}`
 
     try {
       await apiCall
@@ -129,13 +129,12 @@ export default function SchoolSetupWizard() {
       steps[stepIndex].completed = true
       setInstallationSteps([...steps])
       setInstallProgress(((1 + stepIndex) / steps.length) * 100)
-      updateForm("extra", dbKey, 'done') // incase of 409 error
-
+      updateForm("extra", dbKey, "done") // incase of 409 error
     } catch (error) {
-      if (error instanceof Error){
-        const accountExists = error?.message?.includes("already exists");
-        const isARetry = formData.extra?.[dbKey] === 'done';
-        if (accountExists && isARetry){
+      if (error instanceof Error) {
+        const accountExists = error?.message?.includes("already exists")
+        const isARetry = formData.extra?.[dbKey] === "done"
+        if (accountExists && isARetry) {
           return
         }
       }

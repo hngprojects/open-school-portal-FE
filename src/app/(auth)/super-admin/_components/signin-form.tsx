@@ -31,7 +31,7 @@ const ActivationForm = () => {
     password: false,
   })
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <section className="flex min-h-screen flex-col items-center justify-center px-6 lg:px-8">
@@ -172,8 +172,7 @@ const ActivationForm = () => {
 
     try {
       await loginUsingEmail(formData)
-      router.push('/login')
-
+      router.push("/login")
     } catch (error) {
       console.error("Activation error:", error)
 

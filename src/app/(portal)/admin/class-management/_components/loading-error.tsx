@@ -16,9 +16,7 @@ export const ItemsError = ({
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
           <AlertCircleIcon className="h-8 w-8 text-red-600" />
         </div>
-        <h2 className="mb-2 text-xl font-bold text-gray-900">
-          Failed to Load {item}
-        </h2>
+        <h2 className="mb-2 text-xl font-bold text-gray-900">Failed to Load {item}</h2>
         <p className="mb-6 text-gray-600">{errorMessage}</p>
         <div className="space-y-3">
           <Button

@@ -28,7 +28,7 @@ export interface FormData {
   database: DatabaseConfig
   school: SchoolInfo
   admin: AdminAccount
-  extra?: Record<string,string>
+  extra?: Record<string, string>
 }
 
 export interface Errors {

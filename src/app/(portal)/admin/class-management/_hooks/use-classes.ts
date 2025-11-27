@@ -14,7 +14,7 @@ export const useGetClasses = (params?: { page?: number; limit?: number }) =>
   useQuery({
     queryKey: CLASS_KEYS.all,
     queryFn: () => ClassesAPI.getAll(params),
-    select: (data) => data.data
+    select: (data) => data.data,
   })
 
 // CREATE CLASS
@@ -24,7 +24,7 @@ export const useCreateClass = () => {
   return useMutation({
     mutationFn: (data: CreateClassData) => ClassesAPI.create(data),
     onSuccess: (res) => {
-    //   toast.success(res.message)
+      //   toast.success(res.message)
       qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
     },
     onError: (err: any) => {
@@ -41,9 +41,9 @@ export const useUpdateClass = () => {
     mutationFn: ({ id, ...data }: { id: string } & UpdateClassData) =>
       ClassesAPI.update(id, data),
     onSuccess: (res) => {
-    //   toast.success(res.message)
+      //   toast.success(res.message)
       qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
-    //   qc.invalidateQueries({ queryKey: CLASS_KEYS.detail(res.data.id) })
+      //   qc.invalidateQueries({ queryKey: CLASS_KEYS.detail(res.data.id) })
     },
     onError: (err: any) => {
       toast.error(err?.response?.data?.message ?? "Update failed")
