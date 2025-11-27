@@ -75,6 +75,23 @@ export const refresh = (): Promise<RefreshResponse> => {
   )
 }
 
+
+// ------------------------------
+// Activate Account
+// ------------------------------
+
+export const activateAccount = (
+  userID: string,
+): Promise<AuthApiResponse<null>> => {
+  return apiFetch<AuthApiResponse<null>>(
+    `/auth/users/${userID}activate-account`,
+    {
+      method: "PATCH",
+    },
+    true // use proxy
+  )
+}
+
 // ------------------------------
 // Forgot Password
 // ------------------------------
