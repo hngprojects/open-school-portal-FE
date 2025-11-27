@@ -2,7 +2,10 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { UpdateParentData } from "@/lib/parents"
-import { NewPersonFormBuilder } from "@/app/(portal)/admin/_components/add-new-person-form-template"
+import {
+  NewPersonFormBuilder,
+  FormField,
+} from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -27,12 +30,10 @@ export default function EditParentPage() {
         first_name: formData.first_name as string,
         last_name: formData.last_name as string,
         middle_name: formData.middle_name as string,
-        // email: formData.email as string,
         gender: formData.gender as string,
         phone: formData.phone as string,
         date_of_birth: formData.date_of_birth as string,
         home_address: formData.home_address as string,
-        photo_url: formData.photo_url as string,
       }
 
       await updateParentMutation.mutateAsync(updateData)
@@ -80,7 +81,48 @@ export default function EditParentPage() {
     )
   }
 
+  // Create edit form fields for parent
+  const editParentFormFields: FormField[] = [
+    // Add parent ID field at the top for edit mode
+    // {
+    //   name: "parent_id",
+    //   label: "Parent ID",
+    //   type: "text",
+    //   placeholder: "Auto-generated",
+    //   required: false,
+    //   disabled: true,
+    //   readonly: true,
+    // },
+    // Map through original fields and modify password field
+    ...parentFormConfig.fields.map((field) => {
+      if (field.name === "password") {
+        return {
+          ...field,
+          disabled: true,
+          readonly: true,
+          placeholder: "Password cannot be changed here",
+          required: false,
+        }
+      }
+      if (field.name === "email") {
+        return {
+          ...field,
+          disabled: true,
+          readonly: true,
+        }
+      }
+      return field
+    }),
+  ]
+
+  const editParentFormConfig = {
+    ...parentFormConfig,
+    fields: editParentFormFields,
+    submitText: "Update",
+  }
+
   const initialData = {
+    parent_id: parent.id, // Using the actual ID as parent identifier
     first_name: parent.first_name,
     last_name: parent.last_name,
     middle_name: parent.middle_name || "",
@@ -89,7 +131,7 @@ export default function EditParentPage() {
     phone: parent.phone,
     date_of_birth: parent.date_of_birth,
     home_address: parent.home_address,
-    photo_url: parent.photo_url || "",
+    password: "********", // Show placeholder for password
   }
 
   return (
@@ -112,7 +154,7 @@ export default function EditParentPage() {
       </div>
       <div>
         <NewPersonFormBuilder
-          config={parentFormConfig}
+          config={editParentFormConfig}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           initialData={initialData}

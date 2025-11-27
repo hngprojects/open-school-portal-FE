@@ -61,8 +61,11 @@ export default function CreateClassroomPage() {
           </Button>
         </div>
         <div className="md:px-8">
-          <h1 className="mb-2 text-xl font-bold text-gray-900">Create New Classroom</h1>
-          <p className="text-gray-600">Enter details of the new classroom.</p>
+          <h1 className="mb-2 text-xl font-bold text-gray-900">Create New Room</h1>
+          <p className="text-gray-600">
+            Add a new room with its name, description, and capacity to <br /> manage
+            academic operations.
+          </p>
         </div>
       </div>
 

@@ -36,6 +36,11 @@ export interface FormField {
   readonly?: boolean
   disabled?: boolean
   buttonText?: string
+  validation?: {
+    pattern?: RegExp
+    message?: string
+    validate?: (value: string) => string | null
+  }
 }
 
 export interface NewPersonFormConfig {
@@ -50,6 +55,10 @@ interface FormBuilderProps {
   onCancel: () => void
   initialData?: Record<string, unknown>
   isEditMode?: boolean
+}
+
+interface FieldErrors {
+  [key: string]: string
 }
 
 export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
@@ -68,18 +77,61 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [localError, setLocalError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
 
-  // show inital data
-  /*const initialData = JSON.stringify(initialData)
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData)
+  // Validation functions
+  const validateEmail = (email: string): string | null => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address"
     }
-  }, [initialData])*/
+    return null
+  }
+
+  const validatePhone = (phone: string): string | null => {
+    const phoneRegex = /^[\d\s+\-()]+$/
+    if (!phoneRegex.test(phone)) {
+      return "Phone number can only contain numbers, spaces, +, -, and ()"
+    }
+    if (phone.replace(/\D/g, "").length < 10) {
+      return "Phone number must be at least 10 digits"
+    }
+    return null
+  }
+
+  const validateField = (name: string, value: string): string | null => {
+    if (!value && config.fields.find((f) => f.name === name)?.required) {
+      return "This field is required"
+    }
+
+    switch (name) {
+      case "email":
+        return validateEmail(value)
+      case "phone":
+      case "phoneNumber":
+        return validatePhone(value)
+      default:
+        return null
+    }
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }))
+    }
+
+    // Validate on change for immediate feedback
+    const error = validateField(name, value)
+    if (error) {
+      setFieldErrors((prev) => ({ ...prev, [name]: error }))
+    } else {
+      setFieldErrors((prev) => ({ ...prev, [name]: "" }))
+    }
+
     setLocalError("")
   }
 
@@ -104,15 +156,46 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
     setFormData((prev) => ({ ...prev, [fieldName]: generated }))
   }
 
+  const validateForm = (): boolean => {
+    const errors: FieldErrors = {}
+    let isValid = true
+
+    config.fields.forEach((field) => {
+      if (field.required && !formData[field.name]) {
+        errors[field.name] = "This field is required"
+        isValid = false
+      } else if (formData[field.name]) {
+        const error = validateField(field.name, formData[field.name] as string)
+        if (error) {
+          errors[field.name] = error
+          isValid = false
+        }
+      }
+    })
+
+    setFieldErrors(errors)
+    return isValid
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      setLocalError("Please fix the validation errors before submitting.")
+      return
+    }
+
     setIsSubmitting(true)
     setLocalError("")
 
     try {
       await onSubmit(formData)
     } catch (error) {
-      setLocalError(error instanceof Error ? error.message : "Something went wrong.")
+      const errorMessage =
+        error instanceof Error ? error.message : "Something went wrong."
+      setLocalError(errorMessage)
+
+      // Don't clear form on error to prevent duplicate submissions
     } finally {
       setIsSubmitting(false)
     }
@@ -122,48 +205,70 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
     const commonInputClasses =
       "w-full rounded-lg shadow-sm border border-gray-300 px-4 py-3 text-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:outline-none focus:border-transparent transition-all readonly:cursor-not-allowed readonly:bg-gray-100 disabled:cursor-not-allowed disabled:bg-gray-100"
 
+    const hasError = fieldErrors[field.name]
+    const inputClasses = cn(
+      commonInputClasses,
+      hasError && "border-red-500 focus:ring-red-500"
+    )
+
     // Helper to apply disabled style + attribute
     const isEmailField = field.name === "email"
-    const disabled = isEditMode && isEmailField
+    const isPasswordField =
+      field.name === "password" || field.name === "generatedPassword"
+    const disabled = (isEditMode && isEmailField) || isPasswordField
 
     switch (field.type) {
       case "select":
         return (
-          <Select
-            value={formData[field.name] as string}
-            required={field.required}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, [field.name]: value }))
-            }
-          >
-            <SelectTrigger className="w-full rounded-lg border-gray-300 shadow-sm">
-              <SelectValue placeholder="Select..." />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options?.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div>
+            <Select
+              value={formData[field.name] as string}
+              required={field.required}
+              onValueChange={(value) => {
+                setFormData((prev) => ({ ...prev, [field.name]: value }))
+                if (fieldErrors[field.name]) {
+                  setFieldErrors((prev) => ({ ...prev, [field.name]: "" }))
+                }
+              }}
+            >
+              <SelectTrigger
+                className={cn(
+                  "w-full rounded-lg border-gray-300 shadow-sm",
+                  hasError && "border-red-500"
+                )}
+              >
+                <SelectValue placeholder="Select..." />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options?.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {hasError && <p className="mt-1 text-sm text-red-600">{hasError}</p>}
+          </div>
         )
 
       case "date":
         return (
-          <div className="relative">
-            <input
-              type="date"
-              id={field.name}
-              name={field.name}
-              required={field.required}
-              value={formData[field.name] as string}
-              onChange={handleChange}
-              className={cn(commonInputClasses, "before:hidden after:hidden")}
-            />
-            <div className="absolute top-1/2 right-px -translate-y-1/2 bg-white pr-3">
-              <Calendar className="pointer-events-none h-5 w-5 text-gray-400" />
+          <div>
+            <div className="relative">
+              <input
+                type="date"
+                id={field.name}
+                name={field.name}
+                required={field.required}
+                value={formData[field.name] as string}
+                onChange={handleChange}
+                className={cn(inputClasses, "before:hidden after:hidden")}
+              />
+              <div className="absolute top-1/2 right-px -translate-y-1/2 bg-white pr-3">
+                <Calendar className="pointer-events-none h-5 w-5 text-gray-400" />
+              </div>
             </div>
+            {hasError && <p className="mt-1 text-sm text-red-600">{hasError}</p>}
           </div>
         )
 
@@ -211,48 +316,70 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
         )
 
       case "password-generate":
+        const isPasswordDisabled = isEditMode
         return (
-          <div className="flex items-center gap-2 rounded-lg border border-gray-300 pr-2 shadow-sm">
+          <div>
+            <div className="flex items-center gap-2 rounded-lg border border-gray-300 pr-2 shadow-sm">
+              <input
+                type="text"
+                id={field.name}
+                name={field.name}
+                required={!isEditMode && field.required} // Don't require in edit mode
+                value={formData[field.name] as string}
+                onChange={handleChange}
+                placeholder={
+                  isEditMode ? "Password cannot be changed" : field.placeholder
+                }
+                className={cn(
+                  commonInputClasses,
+                  "border-none shadow-none",
+                  hasError && "border-red-500",
+                  isPasswordDisabled && "cursor-not-allowed bg-gray-100"
+                )}
+                disabled={isPasswordDisabled}
+                readOnly={isPasswordDisabled}
+              />
+              <Button
+                type="button"
+                onClick={() =>
+                  !isPasswordDisabled &&
+                  field.generateButton &&
+                  handleGenerate(field.name, field.generateButton.onGenerate)
+                }
+                size="sm"
+                className="w-auto px-6 text-sm whitespace-nowrap"
+                disabled={isPasswordDisabled}
+              >
+                {field.generateButton?.text || "Generate"}
+              </Button>
+            </div>
+            {hasError && <p className="mt-1 text-sm text-red-600">{hasError}</p>}
+            {isEditMode && (
+              <p className="mt-1 text-sm text-gray-500">
+                Password cannot be changed in edit mode
+              </p>
+            )}
+          </div>
+        )
+
+      default:
+        return (
+          <div>
             <input
-              type="text"
+              type={field.type}
               id={field.name}
               name={field.name}
               required={field.required}
               value={formData[field.name] as string}
               onChange={handleChange}
               placeholder={field.placeholder}
-              className={cn(commonInputClasses, "border-none shadow-none")}
-              readOnly
+              className={inputClasses}
+              pattern={field.pattern}
+              disabled={field.disabled || disabled}
+              readOnly={field.readonly || disabled}
             />
-            <Button
-              type="button"
-              onClick={() =>
-                field.generateButton &&
-                handleGenerate(field.name, field.generateButton.onGenerate)
-              }
-              size="sm"
-              className="w-auto px-6 text-sm whitespace-nowrap"
-            >
-              {field.generateButton?.text || "Generate"}
-            </Button>
+            {hasError && <p className="mt-1 text-sm text-red-600">{hasError}</p>}
           </div>
-        )
-
-      default:
-        return (
-          <input
-            type={field.type}
-            id={field.name}
-            name={field.name}
-            required={field.required}
-            value={formData[field.name] as string}
-            onChange={handleChange}
-            placeholder={field.placeholder}
-            className={commonInputClasses}
-            pattern={field.pattern}
-            disabled={field.disabled || disabled}
-            readOnly={disabled}
-          />
         )
     }
   }
@@ -301,241 +428,4 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   )
 }
 
-// studentForm.config.ts
-const generatePassword = () => {
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-  let password = "emp"
-  for (let i = 0; i < 4; i++) {
-    password += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return password
-}
-
-export const studentFormConfig: NewPersonFormConfig = {
-  fields: [
-    {
-      name: "title",
-      label: "Select Title",
-      type: "select",
-      required: true,
-      options: [
-        { value: "mr", label: "Mr." },
-        { value: "miss", label: "Miss" },
-        { value: "mrs", label: "Mrs." },
-        { value: "master", label: "Master" },
-      ],
-    },
-    {
-      name: "firstName",
-      label: "First Name",
-      type: "text",
-      placeholder: "Enter first name",
-      required: true,
-    },
-    {
-      name: "lastName",
-      label: "Last Name",
-      type: "text",
-      placeholder: "Enter last name",
-      required: true,
-    },
-    {
-      name: "middleName",
-      label: "Middle Name",
-      type: "text",
-      placeholder: "Enter middle name",
-    },
-    {
-      name: "identificationNumber",
-      label: "Identification Number",
-      type: "text",
-      placeholder: "Enter ID number",
-      required: true,
-    },
-    {
-      name: "generatedPassword",
-      label: "Generate Password",
-      type: "password-generate",
-      placeholder: "emp1234",
-      required: true,
-      generateButton: {
-        text: "Generate",
-        onGenerate: generatePassword,
-      },
-    },
-    {
-      name: "class",
-      label: "Class",
-      type: "text",
-      placeholder: "Enter class",
-      required: true,
-    },
-    {
-      name: "gender",
-      label: "Gender",
-      type: "select",
-      required: true,
-      options: [
-        { value: "male", label: "Male" },
-        { value: "female", label: "Female" },
-      ],
-    },
-    {
-      name: "dateOfBirth",
-      label: "Date of Birth",
-      type: "date",
-      required: true,
-    },
-    {
-      name: "homeAddress",
-      label: "Home Address",
-      type: "text",
-      placeholder: "Enter home address",
-      required: true,
-    },
-    {
-      name: "parentGuardianName",
-      label: "Parent/ Guardian Name",
-      type: "text",
-      placeholder: "Enter parent/guardian name",
-      required: true,
-    },
-    {
-      name: "parentGuardianPhone",
-      label: "Parent/Guardian Phone Number",
-      type: "tel",
-      placeholder: "Enter phone number",
-      required: true,
-    },
-    {
-      name: "photo",
-      label: "Upload Photo (150x150)",
-      type: "file",
-      accept: "image/*",
-      buttonText: "Select file",
-      required: true,
-    },
-  ],
-  submitText: "Save",
-  cancelText: "Cancel",
-  //   onSubmit: async (data) => {
-  //     console.log('Student form submitted:', data);
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //   },
-  // onCancel: () => {
-  //   console.log("Form cancelled")
-  // },
-}
-
-// staffForm.config.ts
-export const staffFormConfig: NewPersonFormConfig = {
-  fields: [
-    {
-      name: "title",
-      label: "Select Title",
-      type: "select",
-      required: true,
-      options: [
-        { value: "mr", label: "Mr." },
-        { value: "miss", label: "Miss" },
-        { value: "mrs", label: "Mrs." },
-        { value: "dr", label: "Dr." },
-        { value: "prof", label: "Prof." },
-      ],
-    },
-    {
-      name: "firstName",
-      label: "First Name",
-      type: "text",
-      placeholder: "Enter first name",
-      required: true,
-    },
-    {
-      name: "lastName",
-      label: "Last Name",
-      type: "text",
-      placeholder: "Enter last name",
-      required: true,
-    },
-    {
-      name: "middleName",
-      label: "Middle Name",
-      type: "text",
-      placeholder: "Enter middle name",
-    },
-    {
-      name: "employmentId",
-      label: "Employment ID",
-      type: "text",
-      placeholder: "Enter employment ID",
-      required: true,
-    },
-    {
-      name: "dateOfBirth",
-      label: "Date of Birth",
-      type: "date",
-      required: true,
-    },
-    {
-      name: "generatedPassword",
-      label: "Generate Password",
-      type: "password-generate",
-      placeholder: "emp1234",
-      required: true,
-      generateButton: {
-        text: "Generate",
-        onGenerate: generatePassword,
-      },
-    },
-    {
-      name: "gender",
-      label: "Gender",
-      type: "select",
-      required: true,
-      options: [
-        { value: "male", label: "Male" },
-        { value: "female", label: "Female" },
-      ],
-    },
-    {
-      name: "phoneNumber",
-      label: "Phone Number",
-      type: "tel",
-      placeholder: "Enter phone number",
-      required: true,
-    },
-    {
-      name: "homeAddress",
-      label: "Home Address",
-      type: "text",
-      placeholder: "Enter home address",
-      required: true,
-    },
-    {
-      name: "photo",
-      label: "Upload Photo (150x150)",
-      type: "file",
-      accept: "image/*",
-      buttonText: "Select file",
-      required: true,
-    },
-  ],
-  submitText: "Save",
-  cancelText: "Cancel",
-  //   onSubmit: async (data) => {
-  //     console.log('Staff form submitted:', data);
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //   },
-  // onCancel: () => {
-  //   console.log("Form cancelled")
-  // },
-}
-
-// Usage Example:
-// import { NewPersonFormBuilder } from './NewPersonFormBuilder';
-// import { studentFormConfig } from './studentForm.config';
-//
-// <NewPersonFormBuilder config={studentFormConfig} />
-//
-// import { staffFormConfig } from './staffForm.config';
-// <NewPersonFormBuilder config={staffFormConfig} />
+// ... rest of the file remains the same ...

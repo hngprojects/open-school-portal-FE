@@ -28,18 +28,7 @@ interface ClassroomFormProps {
   submitText?: string
 }
 
-const roomTypes = [
-  "Classroom",
-  "Laboratory",
-  "Computer Lab",
-  "Library",
-  "Auditorium",
-  "Sports Hall",
-  "Music Room",
-  "Art Room",
-  "Conference Room",
-  "Other",
-]
+const roomTypes = ["PHYSICAL", "VIRTUAL"]
 
 export function ClassroomForm({
   initialData,
