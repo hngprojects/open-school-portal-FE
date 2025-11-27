@@ -7,54 +7,13 @@ import { UpdateTeacherData } from "@/lib/teachers"
 import {
   FormField,
   NewPersonFormBuilder,
-  NewPersonFormConfig,
+  // NewPersonFormConfig,
 } from "@/app/(portal)/admin/_components/add-new-person-form-template"
 import { ArrowLeftIcon, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useGetTeacher, useUpdateTeacher } from "../_hooks/use-teachers"
 import { teacherFormConfig } from "../new/components/new-teacher-form"
-
-const replacements = [
-  {
-    name: "employmentId",
-    label: "Employment ID",
-    type: "text",
-    placeholder: "EMP-YYYY-XXX",
-    required: true,
-    readonly: true,
-    pattern: "EMP-\\d{4}-\\d{3}",
-    disabled: true,
-  },
-  {
-    name: "email",
-    label: "Email Address",
-    type: "email",
-    placeholder: "Enter email address",
-    readonly: true,
-    disabled: true,
-  },
-]
-const exclusions = ["generatedPassword"]
-
-const editFormFields = teacherFormConfig.fields
-  .map((field: FormField) => {
-    const replacement = replacements.find((r) => r.name === field.name)
-    if (replacement) {
-      return { ...field, ...replacement }
-    }
-    if (exclusions.includes(field.name)) {
-      return null
-    }
-    return field
-  })
-  .filter((field): field is FormField => field !== null)
-
-const editTeacherFormConfig = {
-  fields: editFormFields,
-  cancelText: "Cancel",
-  submitText: "Update",
-} as NewPersonFormConfig
 
 export default function EditTeacherPage() {
   const { id } = useParams()
@@ -83,13 +42,11 @@ export default function EditTeacherPage() {
       }
 
       await updateTeacherMutation.mutateAsync(updateData)
-      // Small delay to ensure toast shows before navigation
       setTimeout(() => {
         router.push("/admin/teachers")
       }, 300)
     } catch (err) {
-      // Error toast is handled in the hook
-      throw err // Let the form handle the error
+      throw err
     }
   }
 
@@ -129,6 +86,48 @@ export default function EditTeacherPage() {
     )
   }
 
+  // Create edit form fields for teacher
+  const editFormFields: FormField[] = [
+    // Keep employment ID but make it readonly
+    {
+      name: "employmentId",
+      label: "Employment ID",
+      type: "text",
+      placeholder: "EMP-YYYY-XXX",
+      required: true,
+      readonly: true,
+      disabled: true,
+    },
+    // Map through other fields
+    ...teacherFormConfig.fields
+      .filter((field) => field.name !== "employmentId") // Remove original employmentId
+      .map((field: FormField) => {
+        if (field.name === "generatedPassword") {
+          return {
+            ...field,
+            disabled: true,
+            readonly: true,
+            placeholder: "Password cannot be changed here",
+            required: false,
+          }
+        }
+        if (field.name === "email") {
+          return {
+            ...field,
+            disabled: true,
+            readonly: true,
+          }
+        }
+        return field
+      }),
+  ]
+
+  const editTeacherFormConfig = {
+    ...teacherFormConfig,
+    fields: editFormFields,
+    submitText: "Update",
+  }
+
   // Prepare initial data for the form
   const initialData = {
     title: teacher.title,
@@ -141,7 +140,7 @@ export default function EditTeacherPage() {
     gender: teacher.gender,
     phoneNumber: teacher.phone,
     homeAddress: teacher.home_address,
-    generatedPassword: "", // Empty for security
+    generatedPassword: "********", // Show placeholder for password
   }
 
   return (

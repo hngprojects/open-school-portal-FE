@@ -15,7 +15,6 @@ interface ClassroomFormData {
   capacity: string
   type: string
   location: string
-  description: string
 }
 
 export default function EditClassroomPage() {
@@ -38,7 +37,7 @@ export default function EditClassroomPage() {
       capacity: parseInt(formData.capacity),
       type: formData.type,
       location: formData.location,
-      description: formData.description,
+      // Remove description from payload
     }
 
     await updateClassroomMutation.mutateAsync(updateData)
@@ -91,7 +90,6 @@ export default function EditClassroomPage() {
     capacity: classroom.capacity.toString(),
     type: classroom.type,
     location: classroom.location,
-    description: classroom.description,
   }
 
   return (

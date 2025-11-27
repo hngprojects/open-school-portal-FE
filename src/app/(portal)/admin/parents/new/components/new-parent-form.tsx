@@ -48,9 +48,9 @@ export const parentFormConfig: NewPersonFormConfig = {
     },
     {
       name: "password",
-      label: "Generate Password",
-      type: "password-generate",
-      placeholder: "emp1234",
+      label: "Password",
+      type: "password-generate", // Allow editing
+      placeholder: "Enter or generate password",
       required: true,
       generateButton: {
         text: "Generate",
@@ -89,9 +89,11 @@ export const parentFormConfig: NewPersonFormConfig = {
     },
     {
       name: "photo_url",
-      label: "Photo URL",
-      type: "text",
-      placeholder: "https://example.com/photos/parent123.jpg",
+      label: "Upload Photo (150x150)",
+      type: "file",
+      accept: "image/*",
+      buttonText: "Select file",
+      required: false,
     },
   ],
   submitText: "Save",
@@ -116,6 +118,8 @@ export default function NewParentForm() {
   }
 
   async function handleSubmit(formData: Record<string, unknown>) {
+    // const photoData = formData.photo as { file: File; previewUrl: string } | undefined
+
     const newParent: CreateParentData = {
       first_name: formData.first_name as string,
       last_name: formData.last_name as string,
@@ -126,7 +130,7 @@ export default function NewParentForm() {
       date_of_birth: formData.date_of_birth as string,
       phone: formData.phone as string,
       home_address: formData.home_address as string,
-      photo_url: formData.photo_url as string,
+      // photo_url: photoData?.file,
       is_active: true,
     }
 
