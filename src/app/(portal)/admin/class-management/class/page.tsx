@@ -7,7 +7,7 @@ import { useGetClasses } from "../_hooks/use-classes"
 import { ItemLoader } from "../_components/sub-loader"
 import { ItemsError } from "../_components/loading-error"
 
-const page = () => {
+const Page = () => {
   const { data: classesInfo, isLoading, isError, error, refetch } = useGetClasses()
   const classGroups = classesInfo && classesInfo.data
 
@@ -64,4 +64,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

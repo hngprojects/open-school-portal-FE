@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { ClassesAPI, CreateClassData, UpdateClassData } from "@/lib/classes"
 import { toast } from "sonner"
+import { AxiosError } from "axios"
 
 // QUERY KEYS
 export const CLASS_KEYS = {
@@ -23,12 +24,14 @@ export const useCreateClass = () => {
 
   return useMutation({
     mutationFn: (data: CreateClassData) => ClassesAPI.create(data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       //   toast.success(res.message)
       qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? "Failed to create class")
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to create class")
+      }
     },
   })
 }
@@ -40,13 +43,15 @@ export const useUpdateClass = () => {
   return useMutation({
     mutationFn: ({ id, ...data }: { id: string } & UpdateClassData) =>
       ClassesAPI.update(id, data),
-    onSuccess: (res) => {
+    onSuccess: () => {
       //   toast.success(res.message)
       qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
       //   qc.invalidateQueries({ queryKey: CLASS_KEYS.detail(res.data.id) })
     },
-    onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? "Update failed")
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to update class")
+      }
     },
   })
 }
