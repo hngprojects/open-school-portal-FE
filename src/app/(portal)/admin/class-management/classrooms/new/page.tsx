@@ -15,7 +15,6 @@ interface ClassroomFormData {
   capacity: string
   type: string
   location: string
-  description: string
 }
 
 export default function CreateClassroomPage() {
@@ -33,7 +32,7 @@ export default function CreateClassroomPage() {
       capacity: parseInt(formData.capacity),
       type: formData.type,
       location: formData.location,
-      description: formData.description,
+      // Remove description from payload
     }
 
     await createClassroomMutation.mutateAsync(classroomData)
@@ -63,7 +62,7 @@ export default function CreateClassroomPage() {
         <div className="md:px-8">
           <h1 className="mb-2 text-xl font-bold text-gray-900">Create New Room</h1>
           <p className="text-gray-600">
-            Add a new room with its name, description, and capacity to <br /> manage
+            Add a new room with its name, type, capacity and location to <br /> manage
             academic operations.
           </p>
         </div>

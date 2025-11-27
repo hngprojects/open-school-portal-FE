@@ -6,10 +6,14 @@ export interface Classroom {
   capacity: number
   type: string
   location: string
-  description: string
+  description?: string | null
   is_available: boolean
+  status?: string
+  building?: string | null
+  floor?: string | null
   created_at?: string
   updated_at?: string
+  streams?: unknown[] // Use unknown instead of any
 }
 
 export interface CreateClassroomData {
@@ -17,7 +21,7 @@ export interface CreateClassroomData {
   capacity: number
   type: string
   location: string
-  description: string
+  description?: string
 }
 
 export interface UpdateClassroomData extends Partial<CreateClassroomData> {
@@ -32,14 +36,24 @@ export interface GetClassroomsParams {
   page?: number
 }
 
-type ResponsePack<T> = {
-  data: T
+// Update response types to match backend
+interface ClassroomsBackendResponse {
+  status_code: number
   message: string
+  data: {
+    rooms: Classroom[]
+  }
+}
+
+interface ClassroomBackendResponse {
+  status_code: number
+  message: string
+  data: Classroom
 }
 
 export const ClassroomsAPI = {
   getAll: (params?: GetClassroomsParams) =>
-    apiFetch<ResponsePack<ResponsePack<Classroom[]>>>(
+    apiFetch<ClassroomsBackendResponse>(
       "/rooms",
       {
         params,
@@ -48,10 +62,10 @@ export const ClassroomsAPI = {
     ),
 
   getOne: (id: string) =>
-    apiFetch<ResponsePack<Classroom>>(`/rooms/${id}`, undefined, true),
+    apiFetch<ClassroomBackendResponse>(`/rooms/${id}`, undefined, true),
 
   create: (data: CreateClassroomData): Promise<Classroom> =>
-    apiFetch<ResponsePack<Classroom>>(
+    apiFetch<ClassroomBackendResponse>(
       "/rooms",
       {
         method: "POST",
@@ -63,7 +77,6 @@ export const ClassroomsAPI = {
       .catch((error) => {
         const errorMessage = error?.message?.toLowerCase() || ""
 
-        // Handle classroom-specific conflicts with specific messages
         if (errorMessage.includes("name") && errorMessage.includes("already exists")) {
           throw new Error(
             "A classroom with this name already exists. Please choose a different name."
@@ -86,7 +99,7 @@ export const ClassroomsAPI = {
       }),
 
   update: (id: string, data: UpdateClassroomData): Promise<Classroom> =>
-    apiFetch<ResponsePack<Classroom>>(
+    apiFetch<ClassroomBackendResponse>(
       `/rooms/${id}`,
       {
         method: "PATCH",
@@ -98,7 +111,6 @@ export const ClassroomsAPI = {
       .catch((error) => {
         const errorMessage = error?.message?.toLowerCase() || ""
 
-        // Handle classroom-specific conflicts during update
         if (errorMessage.includes("name") && errorMessage.includes("already exists")) {
           throw new Error(
             "A classroom with this name already exists. Please choose a different name."
