@@ -45,24 +45,40 @@ export const ParentsAPI = {
   getOne: (id: string) => apiFetch<ResponsePack<User>>(`/parents/${id}`, undefined, true),
 
   create: (data: CreateParentData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       "/parents",
       {
         method: "POST",
         data,
       },
       true
-    ),
+    )
+      .then((response) => response.data)
+      .catch((error) => {
+        const errorMessage = error?.message?.toLowerCase() || ""
+
+        // Handle parent-specific conflicts with specific messages
+        if (errorMessage.includes("email") && errorMessage.includes("already exists")) {
+          throw new Error(
+            "A parent with this email address already exists. Please use a different email."
+          )
+        }
+
+        if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
+          throw new Error("A parent with these details already exists.")
+        }
+        throw error
+      }),
 
   update: (id: string, data: UpdateParentData): Promise<User> =>
-    apiFetch(
+    apiFetch<ResponsePack<User>>(
       `/parents/${id}`,
       {
         method: "PATCH",
         data,
       },
       true
-    ),
+    ).then((response) => response.data),
 
   delete: (id: string): Promise<void> =>
     apiFetch(

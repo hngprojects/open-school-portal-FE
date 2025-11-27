@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <UserProvider>
         <SidebarProvider>
           <AdminSidebar />
-          <main className="mt-[72px] h-full w-full">
+          <main className="mt-[72px] h-full w-full bg-white">
             <DashboardHeader />
             {children}
           </main>

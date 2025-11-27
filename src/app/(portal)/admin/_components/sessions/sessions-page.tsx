@@ -5,7 +5,7 @@ import Link from "next/link"
 import { toast } from "sonner"
 import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { Button } from "@/components/ui/button"
-import { CircleAlert, ListFilter, Plus, Search } from "lucide-react"
+import { ListFilter, Plus, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import AcademicSessionTable from "./academic-session-table"
 import AcademicSessionsMobile from "./academic-session-mobile"
@@ -48,7 +48,7 @@ const SessionsPage = () => {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="mt-10 rounded-xl border bg-white p-6 text-sm text-slate-600 shadow-sm">
+        <div className="mt-10 flex h-60 animate-pulse items-center justify-center rounded-md border bg-white p-6 text-sm text-slate-600 shadow-sm">
           Loading sessions...
         </div>
       )
@@ -56,7 +56,7 @@ const SessionsPage = () => {
 
     if (isError) {
       return (
-        <div className="mt-10 rounded-xl border bg-white p-6 text-sm text-red-600 shadow-sm">
+        <div className="mt-10 flex h-60 items-center justify-center rounded-md border bg-white p-6 text-sm text-red-600 shadow-sm">
           {error instanceof Error ? error.message : "Failed to load sessions."}
         </div>
       )
@@ -113,28 +113,18 @@ const SessionsPage = () => {
 
       <div className="flex items-center justify-between">
         {/* search bar */}
-        <div className="relative my-5">
+        <div className="relative my-4 w-full">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#64748B]" />
           <Input
             placeholder="Search Sessions"
-            className="max-h-10 max-w-[18rem] border pl-8"
+            className="max-h-10 w-full max-w-[20rem] border pl-8"
           />
         </div>
 
         {/* icon */}
-        <div className="w-fit rounded-xl border p-[9px]">
+        <div className="w-fit rounded-md border p-[9px]">
           <ListFilter />
         </div>
-      </div>
-
-      {/* warning note */}
-      <div className="flex items-start gap-1.5 text-sm text-[#F42C2C]">
-        <CircleAlert className="size-7 lg:size-3.5" />
-        <p className="leading-none">
-          Only one academic session can be active at a time. Once a new session has been
-          created that will be your active academic session. Archived sessions cannot be
-          edited.
-        </p>
       </div>
 
       {/* show a table for desktop and cards for mobile */}

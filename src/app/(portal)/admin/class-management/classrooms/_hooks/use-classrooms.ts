@@ -10,12 +10,12 @@ import type {
 } from "@/types/classroom"
 import { toast } from "sonner"
 
-type ResponsePack<T> = {
-  data: T
-  message: string
+// Define the response type for optimistic updates
+interface ClassroomsQueryData {
+  data: {
+    rooms: Classroom[]
+  }
 }
-
-type ClassroomsResponse = ResponsePack<ResponsePack<Classroom[]>>
 
 const CLASSROOMS_KEY = ["classrooms"]
 
@@ -23,7 +23,14 @@ export function useGetClassrooms(filters?: GetClassroomsParams) {
   return useQuery({
     queryKey: [...CLASSROOMS_KEY, filters],
     queryFn: () => ClassroomsAPI.getAll(filters),
-    select: (data) => data.data?.data as Classroom[],
+    select: (data) => {
+      // Handle the backend response structure
+      if (data.data && Array.isArray(data.data.rooms)) {
+        return data.data.rooms as Classroom[]
+      }
+      // Fallback for nested structure
+      return [] as Classroom[] // Return empty array as fallback
+    },
     staleTime: 1000 * 60 * 20,
   })
 }
@@ -75,14 +82,14 @@ export function useDeleteClassroom() {
       await queryClient.cancelQueries({ queryKey: CLASSROOMS_KEY })
       const previousRaw = queryClient.getQueryData(CLASSROOMS_KEY)
 
-      queryClient.setQueryData(CLASSROOMS_KEY, (old: ClassroomsResponse | undefined) => {
+      queryClient.setQueryData(CLASSROOMS_KEY, (old: ClassroomsQueryData | undefined) => {
         if (!old) return old
-        if (old.data?.data && Array.isArray(old.data.data)) {
+        if (old.data?.rooms && Array.isArray(old.data.rooms)) {
           return {
             ...old,
             data: {
               ...old.data,
-              data: old.data.data.filter((c) => c.id !== id),
+              rooms: old.data.rooms.filter((classroom: Classroom) => classroom.id !== id),
             },
           }
         }
