@@ -86,7 +86,7 @@ export const TeachersAPI = {
 1. dont use react hot toast, we use sonner
 2. in the compoenents use mutateAsync methos in this manner
 directly in the component 
- updateTeachers = <queryfuncrion>().mutateAsync
+ updateTeachers = <query function>().mutateAsync
 
 ... in the handler
      await updateTeachers ()
