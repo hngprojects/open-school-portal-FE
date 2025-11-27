@@ -2,7 +2,7 @@ this is how api is called in my application at the moment for reference
 
 TEACHER FILE
 import { User } from "@/types/user"
-import { apiFetch } from @/lib/api/client"
+import { apiFetch } from "@/lib/api/client"
 
 export type CreateTeacherData = Omit<User, "id" | "avatar" | "role" | "is_active"> & {
   photo?: File
