@@ -103,7 +103,9 @@ export function UsersTable({
             {isParent && <TableHead>Email</TableHead>}
             {isParent && <TableHead>Address</TableHead>}
             {!isParent && (
-              <TableHead>{isTeacher ? "Employee Number" : "Reg Number"}</TableHead>
+              <TableHead>
+                {isTeacher ? "Employee Number" : "Registration Number"}
+              </TableHead>
             )}
             {isTeacher && <TableHead>Email</TableHead>}
             {/* {isStudent && <TableHead>Class</TableHead>} */}

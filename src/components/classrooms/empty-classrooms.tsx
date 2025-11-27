@@ -20,10 +20,10 @@ export function EmptyClassrooms() {
             className="mx-auto"
           />
         </div>
-        <h3 className="mb-4 text-2xl font-bold text-gray-900">No classroom yet</h3>
+        <h3 className="mb-4 text-2xl font-bold text-gray-900">No Room yet</h3>
         <p className="mb-8 max-w-md text-gray-600">
-          Get started by creating your first classroom to organize and manage your
-          academic spaces efficiently.
+          Create your first room with it’s name, description, and capacity to Manage
+          academic operations.
         </p>
         <Button
           onClick={() => router.push("/admin/class-management/classrooms/new")}
