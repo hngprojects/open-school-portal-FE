@@ -81,8 +81,15 @@ const getErrorMessage = (error: unknown): string => {
       }
 
       // Check for validation errors in nested structure
-      if (responseData.errors && Array.isArray(responseData.errors)) {
-        return responseData.errors[0]?.msg || responseData.errors[0] || defaultMessage
+      if (
+        responseData.errors &&
+        Array.isArray(responseData.errors) &&
+        responseData.errors.length > 0
+      ) {
+        const firstError = responseData.errors[0]
+        if (typeof firstError === "string") return firstError
+        if (typeof firstError?.msg === "string") return firstError.msg
+        return defaultMessage
       }
     }
 
