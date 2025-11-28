@@ -476,4 +476,262 @@ export const articles: Article[] = [
       },
     ],
   },
+  {
+    id: 7,
+    heading:
+      "The Modern School Administrator's Guide to Stress-Free Timetable Management",
+    slug: "modern-school-administrator-guide-stress-free-timetable-management",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Every session, the same issue returns teachers being booked in different classrooms at the same time.  If you've ever spent late nights trying to make your spreadsheets perfect with colored highlights, you need to know there's an easier way of handling this now.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Manual scheduling is becoming very complex especially in today's educational environment.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase, you never have to manually schedule timetables.",
+          },
+        ],
+      },
+      {
+        key: "why_manual_scheduling_falls_short",
+        heading: "Why Manual Scheduling Falls Short",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Manual scheduling is not just time taking, it's back paining and tiring also.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Always having disagreements on whose turn it is to teach and whose turn it is not to is very disruptive.",
+          },
+        ],
+      },
+      {
+        key: "what_schoolbase_timetables_schedule_management_does",
+        heading: "What  SchoolBase Timetable Schedule Management Software Actually Does",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase Timetable Schedule is like having a tireless assistant who never gets tired and can run thousands of scheduling options in seconds.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "The Class and Room features take note of  multiple factors like teachers qualifications, classroom equipment requirements, student groupings etc. This feature identifies issues before they become actual problems.",
+          },
+        ],
+      },
+      {
+        key: "solving_the_real_problem_how_to_manage_teacher_and_room_allocation_conflict",
+        heading:
+          "Solving the Real Problem: How to Manage Teacher and Room Allocation Conflict",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase functions as a conflict-free timetable solution by building in intelligence about your school's unique constraints. They learn that certain teachers work better in specific rooms, that Year 10 students need longer passing periods between buildings, or that particular subject combinations create bottlenecks.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "When conflicts inevitably arise illness, facility issues, curriculum changes these platforms don't just flag the problem. They propose solutions. Need to swap two teachers' rooms? The system shows you every schedule affected and suggests optimal alternatives.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This becomes invaluable as a teacher workload optimizer. SchoolBase takes notes of these inabilities and rebalances td options.",
+          },
+        ],
+      },
+      {
+        key: "keeping_everyone_updated",
+        heading: "Keeping Everyone Updated",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Creating the timetable is only half the challenge. The other half is ensuring everyone actually follows it.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Schoolbase keeps students and staff updated on schedules and has transformed how schools handle this communication challenge. Rather than printing and sharing hundreds of paper schedules that become outdated the moment circumstances change, modern platforms provide real-time updates accessible from any device.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Parents love this transparency too. When they know what their ward is up to, it helps them to assist better in their homeworks and routine.",
+          },
+        ],
+      },
+      {
+        key: "shifting_from_manual_to_automated_with_schoolbase",
+        heading: "Shifting from Manual to Automated with SchoolBase",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Schools considering this shift often worry about the learning curve. Will staff resist new technology? Will setup take months?",
+          },
+          {
+            type: "paragraph" as const,
+            text: "The reality surprises most administrators. Because these systems eliminate existing frustrations, adoption happens naturally. Teachers who were skeptical become the strongest advocates once they experience a term without scheduling conflicts disrupting their lessons.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Ready to make the shift from Manually printing out timetables to making everyone have a digital one?",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill out the form below to get a demo on how SchoolBase Timetable management works:",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 8,
+    heading: "Run smarter, safer, and faster schools",
+    slug: "run-smarter-safer-faster-schools",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Running a school doesn't need to be so challenging. If you log into various systems before 8am when you have the time, you'll find that the risk of burning out is significant. It's not only burnout; it is costly, prone to mistakes, and bewildering for parents, teachers, students, and even for you as the school administrator.",
+          },
+        ],
+      },
+      {
+        key: "the_unseen_expense_of_digital_disorder",
+        heading: "The Unseen Expense of Digital Disorder",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "The majority of schools did not intentionally select issues. It built up over time. Five years ago, when you required attendance tracking, you purchased the top attendance software on the market. Subsequently, you included a grading system, a tool for parent communication, and a finance module, each top-notch for that period.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "However, these independent solutions lead to issues that accumulate over time. Your information is spread across various locations. A student's data can be found in numerous areas, frequently varying between systems.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Employees waste hours on entering duplicate data. Instructors enter grades into one system, and then administrators manually move that data into another for report cards. Enrollment occurs in one location, yet billing for fees necessitates the re-input of identical student information in another area.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Parents also experience frustration. They manage various login details, browse numerous apps for distinct information, and continue to overlook critical updates due to notifications being dispersed across platforms.",
+          },
+        ],
+      },
+      {
+        key: "schoolbase_your_all_in_one_school_platform",
+        heading: "SchoolBase your all in one  School Platform",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase is not just a collection of features, it serves as a platform that enables smooth data across all platforms. When a new student registers, their details are automatically filled in across the system, they are included in class rosters, assigned a student Id card  and displayed in the parent portal all from one entry point.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "When a teacher takes attendance, that information is immediately accessible to administrators observing truancy trends, parents overseeing their child's school experience, and counselors recognizing students who may require assistance.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This connectivity changes the way schools function. Rather than overseeing separate functions, you’re coordinating a cohesive ecosystem where each element enhances the others",
+          },
+        ],
+      },
+      {
+        key: "mobile_first_is_a_must",
+        heading: "Mobile-First Is a must",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Teachers don't  have to go back to their desk to take attendance or write down a quick assessment note. Parents rarely use desktop and should not have to start using one because of monitoring their kids grade. Administrators don't have to be at their desk to take records of what is happening in their schools.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Schoolbase is a mobile first software, meaning it was made specifically for smartphones and tablets to provide a fast experience for its users. This is more significant than what most administrators first comprehend. The acceptance of any new system by teachers largely relies on how seamlessly it integrates into their existing workflow",
+          },
+        ],
+      },
+      {
+        key: "creating_a_digital_workflow_for_education_that_actually_works",
+        heading: "Creating a Digital Workflow for Education That Actually Works",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase does not create new administrative burdens. It simplifies your workflow and makes it easy for you to see your school in one glance.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Ready to Run smarter, safer and faster schools?",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill the form below to get a demo on how SchoolBase works",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 9,
+    heading: "EASIEST WAY TO CREATE SCHOOL TOMETABLE",
+    slug: "easiest-way-to-create-school-timetable",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Timetables look easy to do until you actually try to make them. From a teacher being double booked, to class capacity to room limitations a single mistake can send everybody into chaos.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This is why you need SchoolBase, with it you have a timetable management that generates timetables automatically without the chaos. SchoolBase also has a class and room allocation system, which intelligently assigns teachers, instead of you guessing or using Excel highlighter to strain your eyes. Using schoolbase for this prevents double booking, overcrowded classes and empty periods.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This helps you to run a smarter, safer and faster school.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Using schoolbase timetable management with teacher management is where the sweet spot is. Teachers often have heavy workload, last minute changes, back to back classes and it affects performance.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase teacher management it balances teaching hours, frees up break periods and makes sure that a teacher is not cramped with work.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase automated attendance it tracks availability, knowing school admins know who, where and when a teacher is teaching.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This makes it easy to substitute unavailable teachers, and maintain fairness in distribution of teachers workload.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Schools can use SchoolBase digital timetable displays to give teachers and students updates on changes. Whether it's a new teacher, an extended period, or a swap everyone knows quickly what is happening.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "A conflict-free timetable isn’t just organization; it’s the foundation of a well-run school.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill the form below to get a demo on SchoolBase Timetable management:",
+          },
+        ],
+      },
+    ],
+  },
 ]

@@ -2,8 +2,8 @@
 
 import React, { ReactNode } from "react"
 
-import ContactForm from "../../_components/contact-form"
 import BackButton from "./back-button"
+import ResourceContactForm from "./resource-contact"
 
 type BlogArticleProps = {
   title: string
@@ -27,7 +27,7 @@ export default function BlogArticle({ title, date, children }: BlogArticleProps)
 
         {/* Call to Action */}
         <div className="mt-10 max-w-3xl pt-8">
-          <ContactForm />
+          <ResourceContactForm />
         </div>
       </article>
     </>
