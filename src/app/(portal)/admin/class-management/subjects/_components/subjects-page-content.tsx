@@ -10,42 +10,39 @@ import NewSubjectDialog from "./new-subject-dialog"
 import AddedSubjectSuccess from "./add-subject-success"
 
 export default function SubjectsPageContent() {
-  const { data: subjects, isLoading, isError, error, refetch } = useGetSubjects();
+  const { data: subjects, isLoading, isError, error, refetch } = useGetSubjects()
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showSuccessDialog, setShowSuccessDialog] = useState<boolean | string>(false)
 
   return (
     <>
-      {
-        isLoading ? (
-          <ItemLoader item="Subjects" />
-
-        ) : isError ? (
-          <ItemsError
-            item="Subjects"
-            reload={refetch}
-            errorMessage={error?.message || "An unexpected error occurred."}
-          />
-        ) : !subjects || subjects.length === 0 ? (
-          <EmptyState
-            title="No Subjects Created yet"
-            description="Add Subjects."
-            buttonText="Add Subjects"
-            buttonHref="/admin/subject-management/subject/new"
-            buttonOnClick={handleAddSubject}
-          />
-        ) : (
-          // Render existing subjects here when available
-          <SubjectManagement 
-            subjects={subjects}
-            onAddSubject={handleAddSubject}
-            currentPage={1}
-            totalPages={1}
-            totalItems={subjects.length}
-            onPageChange={() => {}}
-          />
-        )
-      }
+      {isLoading ? (
+        <ItemLoader item="Subjects" />
+      ) : isError ? (
+        <ItemsError
+          item="Subjects"
+          reload={refetch}
+          errorMessage={error?.message || "An unexpected error occurred."}
+        />
+      ) : !subjects || subjects.length === 0 ? (
+        <EmptyState
+          title="No Subjects Created yet"
+          description="Add Subjects."
+          buttonText="Add Subjects"
+          buttonHref="/admin/subject-management/subject/new"
+          buttonOnClick={handleAddSubject}
+        />
+      ) : (
+        // Render existing subjects here when available
+        <SubjectManagement
+          subjects={subjects}
+          onAddSubject={handleAddSubject}
+          currentPage={1}
+          totalPages={1}
+          totalItems={subjects.length}
+          onPageChange={() => {}}
+        />
+      )}
 
       <NewSubjectDialog
         open={showCreateDialog}
@@ -62,7 +59,6 @@ export default function SubjectsPageContent() {
       />
     </>
   )
-
 
   function handleAddSubject() {
     setShowCreateDialog(true)

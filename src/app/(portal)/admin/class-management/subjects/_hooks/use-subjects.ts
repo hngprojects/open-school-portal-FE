@@ -15,7 +15,7 @@ export interface GetSubjectsParams {
 }
 
 export type Subject = {
-    name: string
+  name: string
 }
 
 export interface SubjectsListResponse {
@@ -49,39 +49,35 @@ export const SubjectsAPI = {
     )
       .then((response) => response.data)
       .catch((error) => {
-        const errorMessage = error?.message?.toLowerCase() || "";
+        const errorMessage = error?.message?.toLowerCase() || ""
 
         if (error?.message?.includes("409") || errorMessage.includes("already exists")) {
           throw new Error("Subject with this name already exists.")
         }
         throw error
       }),
-
 }
 
-
-
 export const useGetSubjects = () => {
-    return useQuery({
-        queryKey: ["subjects"],
-        queryFn: () => SubjectsAPI.getAll().then((res) => res.data),
-        refetchOnWindowFocus: false,
-        retry: 1,
-        staleTime: 5 * 60 * 1000, // 5 minutes
-    })
+  return useQuery({
+    queryKey: ["subjects"],
+    queryFn: () => SubjectsAPI.getAll().then((res) => res.data),
+    refetchOnWindowFocus: false,
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  })
 }
 
 export const useCreateSubject = (subjectData: Subject) => {
-    //  use a mutation hook here to create a subject
-    const queryClient = useQueryClient();
-    
-    return useMutation({
-        mutationKey: ["create-subject", subjectData],
-        mutationFn: () => SubjectsAPI.create(subjectData),
-        onSuccess: () => {
-            // Invalidate and refetch
-            queryClient.invalidateQueries({ queryKey: ["subjects"] });
-        }
+  //  use a mutation hook here to create a subject
+  const queryClient = useQueryClient()
 
-    })
+  return useMutation({
+    mutationKey: ["create-subject", subjectData],
+    mutationFn: () => SubjectsAPI.create(subjectData),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["subjects"] })
+    },
+  })
 }

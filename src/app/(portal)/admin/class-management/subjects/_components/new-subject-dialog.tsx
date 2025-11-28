@@ -23,7 +23,7 @@ import { useState } from "react"
 interface Subject {
   id: string
   name: string
-//   department: string
+  //   department: string
 }
 
 // interface Department {
@@ -38,32 +38,34 @@ interface Subject {
 // ]
 
 export default function NewSubjectDialog({
-    open, setOpen, onSuccess
+  open,
+  setOpen,
+  onSuccess,
 }: {
-    open: boolean,
-    setOpen: (open: boolean) => void
-    onSuccess: (subject: string) => void
+  open: boolean
+  setOpen: (open: boolean) => void
+  onSuccess: (subject: string) => void
 }) {
-    const [formData, setFormData] = useState({
-      department: "",
-      subjectName: "",
-    })
-    const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formData, setFormData] = useState({
+    department: "",
+    subjectName: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-    return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogOverlay className="z-60" />
-        <DialogContent className="sm:max-w-md z-60">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
-            <DialogDescription className="text-sm">
-              Add a new subject to your school curriculum.
-            </DialogDescription>
-          </DialogHeader>
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogOverlay className="z-60" />
+      <DialogContent className="z-60 sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
+          <DialogDescription className="text-sm">
+            Add a new subject to your school curriculum.
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            {/* Department Select */}
-            {/* <div>
+        <div className="space-y-4 py-4">
+          {/* Department Select */}
+          {/* <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
                 Department
               </label>
@@ -86,60 +88,56 @@ export default function NewSubjectDialog({
               </Select>
             </div> */}
 
-            {/* Subject Name Input */}
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">
-                Subject Name
-              </label>
-              <Input
-                type="text"
-                placeholder="Enter Subject name, eg Biology"
-                value={formData.subjectName}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, subjectName: e.target.value }))
-                }
-                className="w-full"
-              />
-            </div>
+          {/* Subject Name Input */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-900">
+              Subject Name
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter Subject name, eg Biology"
+              value={formData.subjectName}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, subjectName: e.target.value }))
+              }
+              className="w-full"
+            />
           </div>
+        </div>
 
-          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-            <Button
-              onClick={handleCreateSubject}
-              disabled={isSubmitting || !formData.department || !formData.subjectName}
-              className="w-full"
-            >
-              {isSubmitting ? "Creating..." : "Create Subject"}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setOpen(false)}
-              className="w-full"
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-        </Dialog>
-    )
+        <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+          <Button
+            onClick={handleCreateSubject}
+            disabled={isSubmitting || !formData.department || !formData.subjectName}
+            className="w-full"
+          >
+            {isSubmitting ? "Creating..." : "Create Subject"}
+          </Button>
+          <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
 
-    async function handleCreateSubject() {
-      setIsSubmitting(true)
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-  
-      // Add new subject to list
-      // const newSubject: Subject = {
-      //   id: Date.now().toString(),
-      //   name: formData.subjectName,
-      //   // department: mockDepartments.find((d) => d.id === formData.department)?.name || "",
-      // }
-  
-      // Reset form
-      setFormData({ department: "", subjectName: "" })
-      setIsSubmitting(false)
-      setOpen(false);
-      onSuccess(formData.subjectName);
-    }
+  async function handleCreateSubject() {
+    setIsSubmitting(true)
+
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Add new subject to list
+    // const newSubject: Subject = {
+    //   id: Date.now().toString(),
+    //   name: formData.subjectName,
+    //   // department: mockDepartments.find((d) => d.id === formData.department)?.name || "",
+    // }
+
+    // Reset form
+    setFormData({ department: "", subjectName: "" })
+    setIsSubmitting(false)
+    setOpen(false)
+    onSuccess(formData.subjectName)
+  }
 }

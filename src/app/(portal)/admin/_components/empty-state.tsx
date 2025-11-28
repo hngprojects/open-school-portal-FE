@@ -25,14 +25,13 @@ const EmptyState = ({
   imageAlt = "Empty state",
   icon: Icon = Plus,
 }: EmptyStateProps) => {
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (buttonOnClick) {
-      e.preventDefault();
+      e.preventDefault()
       buttonOnClick()
     }
   }
-  
+
   return (
     <section className="flex min-h-[500px] flex-col items-center justify-center gap-6">
       <div className="relative">

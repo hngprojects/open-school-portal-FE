@@ -200,7 +200,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
           /> */}
         </form>
       </div>
-      </ActiveSessionGuard>
+    </ActiveSessionGuard>
   )
 }
 

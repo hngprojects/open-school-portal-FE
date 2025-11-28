@@ -19,7 +19,6 @@ interface Subject {
   // department: string
 }
 
-
 const SubjectManagement = ({
   subjects,
   onAddSubject,
@@ -122,18 +121,15 @@ const SubjectManagement = ({
       </section>
 
       {/* Pagination */}
-      {
-        filteredSubjects.length > 0 && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages || 1}
-            totalItems={totalItems}
-            onPageChange={onPageChange ?? (() => {})}
-            className="mt-6"
-          />
-        )
-      }
-
+      {filteredSubjects.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages || 1}
+          totalItems={totalItems}
+          onPageChange={onPageChange ?? (() => {})}
+          className="mt-6"
+        />
+      )}
     </article>
   )
 }

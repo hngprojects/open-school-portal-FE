@@ -8,7 +8,7 @@ import { useCreateClass } from "../../_hooks/use-classes"
 
 const AddClass = () => {
   const router = useRouter()
-  const createNewClass = useCreateClass().mutateAsync;
+  const createNewClass = useCreateClass().mutateAsync
 
   const handleCreateClass = async (data: ClassFormData) => {
     await createNewClass({
