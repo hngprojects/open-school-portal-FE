@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 
 import { SuccessModal } from "@/components/dashboard/success-modal"
 import { toast } from "sonner"
+import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
+import ActiveSessionGuard from "../sessions/active-session-required"
 
 // Zod Schema
 const classFormSchema = z.object({
@@ -34,6 +36,7 @@ interface AddClassFormProps {
 const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps) => {
   const router = useRouter()
   const [openSuccess, setOpenSuccess] = useState(false)
+  const { data: currentSession, isLoading: isLoadingSession } = useActiveAcademicSession()
 
   const {
     register,
@@ -70,8 +73,18 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
     router.push("/admin/class-management/class")
   }
 
+  useEffect(() => {
+    if (!isLoadingSession) {
+      if (currentSession) {
+        reset({
+          academicSession: currentSession.name,
+        })
+      }
+    }
+  }, [isLoadingSession, currentSession, reset])
+
   return (
-    <>
+    <ActiveSessionGuard>
       {/* SUCCESS MODAL */}
       <SuccessModal
         open={openSuccess}
@@ -186,7 +199,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
           /> */}
         </form>
       </div>
-    </>
+      </ActiveSessionGuard>
   )
 }
 
