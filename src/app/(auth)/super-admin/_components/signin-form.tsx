@@ -5,10 +5,17 @@ import { AlertCircle, Loader2Icon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useAuthStore } from "@/store/auth-store"
-import { activateSchoolPortal, ActivationFormValues, activationSchema } from "@/lib/auth"
 import SchoolLogo from "../../_components/school-logo"
+import { loginUsingEmail } from "@/lib/api/auth"
+import z from "zod"
+import { useRouter } from "next/navigation"
 
+export const activationSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+})
+
+export type ActivationFormValues = z.infer<typeof activationSchema>
 type ActivationField = keyof ActivationFormValues
 
 const initialValues: ActivationFormValues = {
@@ -24,8 +31,7 @@ const ActivationForm = () => {
     password: false,
   })
   const [isLoading, setIsLoading] = useState(false)
-
-  const setAuthSession = useAuthStore((state) => state.setAuthSession)
+  const router = useRouter()
 
   return (
     <section className="flex min-h-screen flex-col items-center justify-center px-6 lg:px-8">
@@ -165,13 +171,8 @@ const ActivationForm = () => {
     setErrors({})
 
     try {
-      const response = await activateSchoolPortal(formData)
-
-      // Successful activation - set auth session
-      setAuthSession(response)
-
-      // Redirect or show success state here
-      // router.push('/dashboard')
+      await loginUsingEmail(formData)
+      router.push("/login")
     } catch (error) {
       console.error("Activation error:", error)
 

@@ -6,9 +6,9 @@ import { apiFetch } from "@/lib/api/client"
 
 export interface SuperAdminSignupData {
   email: string
-  firstName: string
-  lastName: string
-  schoolName: string
+  first_name: string
+  last_name: string
+  school_name: string
   password: string
   confirm_password: string
 }
@@ -62,6 +62,7 @@ export interface DatabaseCreateRequest {
   database_name: string
   database_host: string
   database_port: number
+  database_type: string
   database_username: string
   database_password: string
 }
@@ -88,7 +89,7 @@ export const SetupWizardAPI = {
   // Super Admin Signup
   createSuperAdmin: (data: SuperAdminSignupData) =>
     apiFetch<SuperAdminResponse>(
-      "/superadmin/create",
+      "api/auth/superadmin",
       {
         method: "POST",
         data,
@@ -110,7 +111,7 @@ export const SetupWizardAPI = {
   // Install School
   installSchool: (data: SchoolInstallRequest) =>
     apiFetch<SchoolInstallResponse>(
-      "/school/install",
+      "/school/installation",
       {
         method: "POST",
         data,
@@ -121,7 +122,7 @@ export const SetupWizardAPI = {
   // Create Database
   createDatabase: (data: DatabaseCreateRequest) =>
     apiFetch<DatabaseCreateResponse>(
-      "/database/create",
+      "/setup/database",
       {
         method: "POST",
         data,
