@@ -46,12 +46,8 @@ export default function ResourceContactForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Full Name */}
         <div className="space-y-1">
-          <Label htmlFor="fullName">Full Name</Label>
-          <Input
-            id="fullName"
-            placeholder="Enter your full name"
-            {...register("fullName")}
-          />
+          <Label htmlFor="fullName">Name</Label>
+          <Input id="fullName" placeholder="Enter your name" {...register("fullName")} />
           {errors.fullName && (
             <p className="text-sm text-red-500">{errors.fullName.message}</p>
           )}

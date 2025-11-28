@@ -47,7 +47,7 @@ export default function SqueezePage() {
         {/* TEXT SECTION */}
         <div>
           <h1 className="text-4xl leading-tight font-bold md:text-5xl">
-            How Would You Like to <span className="text-blue-600">Manage</span>
+            How Would You Like to <span className="text-yellow-600">Manage</span>
             <br />
             Your School Smarter?
           </h1>
@@ -60,10 +60,10 @@ export default function SqueezePage() {
           {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)} className="mt-6 max-w-sm space-y-4">
             <div>
-              <Label htmlFor="fullName">First Name</Label>
+              <Label htmlFor="fullName">Name</Label>
               <Input
                 id="fullName"
-                placeholder="Enter your full name"
+                placeholder="Enter your name"
                 {...register("fullName")}
               />
               {errors.fullName && (
