@@ -18,7 +18,7 @@ const BlogCards = () => {
         {articles.map((article) => (
           <Card
             key={article.id}
-            className="rounded-2xl border bg-white p-6 shadow-sm transition-all hover:shadow-md"
+            className="bg-accent/10 rounded-2xl border p-6 shadow-sm transition-all hover:shadow-md"
           >
             <CardHeader className="space-y-3">
               <span className="text-primary text-xs font-semibold tracking-wide">
