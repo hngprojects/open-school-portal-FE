@@ -3,8 +3,8 @@
 import EmptyState from "../../_components/empty-state"
 import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { useGetClassesInfo } from "../_hooks/use-classes"
-import { ItemLoader } from "../_components/sub-loader"
-import { ItemsError } from "../_components/loading-error"
+import { ItemLoader } from "../../_components/sub-loader"
+import { ItemsError } from "../../_components/loading-error"
 import ExistingClasses from "../../_components/classes/existing-classes"
 
 const Page = () => {
@@ -30,7 +30,7 @@ const Page = () => {
           heading="Create Classes"
           description="View, manage, or create classes"
         />
-        {isLoading || !classes ? (
+        {isLoading ? (
           <ItemLoader item="Classes" />
         ) : isError ? (
           <ItemsError
@@ -38,7 +38,7 @@ const Page = () => {
             reload={refetch}
             errorMessage={error?.message || "An unexpected error occurred."}
           />
-        ) : classes && classes.length === 0 ? (
+        ) : !classes || classes.length === 0 ? (
           <EmptyState
             title="No Classes Assigned yet"
             description="Add Classes to make the session active."

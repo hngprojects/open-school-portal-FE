@@ -43,6 +43,8 @@ export function useActiveAcademicSession() {
   return useQuery<AcademicSession>({
     queryKey: ACTIVE_SESSION_KEY,
     queryFn: () => AcademicSessionAPI.getActive(),
+    refetchOnWindowFocus: false,
+    staleTime: 20 * 60 * 1000, // 20 minutes
   })
 }
 
