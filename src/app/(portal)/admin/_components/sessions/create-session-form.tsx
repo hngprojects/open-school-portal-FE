@@ -181,7 +181,8 @@ const CreateSessionForm = () => {
     }
 
   const onSubmit = (data: SessionFormData) => {
-    const { acknowledge, description, ...rest } = data
+    const { description, ...rest } = data
+    // const { acknowledge, description, ...rest } = data
 
     mutate(
       {
@@ -251,7 +252,7 @@ const CreateSessionForm = () => {
   )
 
   return (
-    <div className="animate-onrender min-h-[calc(100vh-70px)] p-4 px-2 pt-4 pb-10 lg:p-10">
+    <div className="animate-onrender min-h-[calc(100vh-70px)] p-4 px-4 pt-4 pb-10 lg:p-10">
       <DashboardTitle heading="Create Session" description="Create academic session" />
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -263,7 +264,7 @@ const CreateSessionForm = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 rounded-md border p-4 lg:grid-cols-2 lg:border-none lg:p-0">
             <DateField
               name="firstTermStartDate"
               label="First Term Start Date"
@@ -276,7 +277,7 @@ const CreateSessionForm = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 border px-4 lg:grid-cols-2 lg:border-none lg:p-0">
             <DateField
               name="secondTermStartDate"
               label="Second Term Start Date"
@@ -289,7 +290,7 @@ const CreateSessionForm = () => {
             />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 border px-4 md:grid-cols-2 lg:border-none lg:p-0">
             <DateField
               name="thirdTermStartDate"
               label="Third Term Start Date"
@@ -302,7 +303,7 @@ const CreateSessionForm = () => {
             />
           </div>
 
-          <div>
+          <div className="border px-4 lg:border-none lg:p-0">
             <Label>Description</Label>
             <Textarea
               placeholder="e.g Details about this academic year"
