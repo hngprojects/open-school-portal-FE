@@ -41,10 +41,10 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import Logo from "@/components/logo"
-import { useLogout } from "../_hooks/use-user-data"
 import { LogoutDialog } from "./logout-confirmation-dialog"
 import { useAuthStore } from "@/store/auth-store"
 import { titleCase } from "@/lib/utils"
+import { useLogout } from "@/hooks/use-user-data"
 
 // Menu items
 const mainItems = [
