@@ -108,7 +108,7 @@ export default function NewSubjectDialog({
         <DialogFooter className="flex flex-col gap-2 sm:flex-col">
           <Button
             onClick={handleCreateSubject}
-            disabled={isSubmitting || !formData.department || !formData.subjectName}
+            disabled={isSubmitting || !formData.subjectName}
             className="w-full"
           >
             {isSubmitting ? "Creating..." : "Create Subject"}
