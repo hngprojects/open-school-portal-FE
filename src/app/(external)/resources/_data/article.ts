@@ -734,4 +734,38 @@ export const articles: Article[] = [
       },
     ],
   },
+  {
+    id: 10,
+    heading: "A school management system you can customize, integrate and resell",
+    slug: "a-school-management-system-you-can-customize-integrate-and-resell",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Developers looking to earn more money without coding are looking for tools that reduce development time, simplify integration and deliver what schools actually want.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase which is a school management system you can solve this by acting as a reseller to an already made product. Instead of building from scratch, you just have to customize it to the school needs. This gives you speed, reliability and scalability necessary to get more schools onboard.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase goes beyond the regular school management system and basic record keeping. It is a full ERP for schools enabling them to run everything from one place.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Developers get access to APIs, customizable interfaces, that make integration into schools easier and also faster into third party systems. On major selling points developers can use is automation, you can use the features of automated timetables, automated attendance, fees management, room allocation, communication with parents to sell. This acts as a big differentiation from other school management system platforms.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill the form below to get a demo on SchoolBase Timetable management:",
+          },
+        ],
+      },
+    ],
+  },
 ]
