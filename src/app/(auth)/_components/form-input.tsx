@@ -115,7 +115,7 @@ const LoginForm = () => {
 
     try {
       const res = await loginUsingEmail(formData)
-      const role = res?.user?.role?.[0]
+      const role = res?.data?.user?.role?.[0]
       const route = roleToRoute[role] ?? "login"
       router.push(`/${route}`)
       setAttemptCount(0)

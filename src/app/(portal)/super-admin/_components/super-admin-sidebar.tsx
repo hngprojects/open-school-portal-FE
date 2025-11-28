@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import Logo from "@/components/logo"
-import { useLogout } from "../_hooks/use-user-data"
+import { useLogout } from "@/hooks/use-user-data"
 import { LogoutDialog } from "./logout-confirmation-dialog"
 import Image from "next/image"
 import { useAuthStore } from "@/store/auth-store"
