@@ -1,4 +1,3 @@
-// src/app/(portal)/admin/results/[id]/page.tsx
 "use client"
 
 import { useParams } from "next/navigation"

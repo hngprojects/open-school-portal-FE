@@ -1,4 +1,3 @@
-// src/lib/dummy-data.ts
 import {
   Class,
   Subject,

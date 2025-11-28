@@ -1,4 +1,3 @@
-// src/app/(portal)/admin/results/_components/submission-review.tsx
 "use client"
 
 import { useState } from "react"

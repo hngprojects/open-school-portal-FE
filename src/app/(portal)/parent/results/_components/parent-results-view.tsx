@@ -1,4 +1,3 @@
-// src/app/(portal)/parent/results/_components/parent-results-view.tsx
 "use client"
 
 import { Class, Term, Grade } from "@/types/result"

@@ -1,4 +1,3 @@
-// src/app/(portal)/admin/results/_components/submission-card.tsx
 "use client"
 
 import { GradeSubmission } from "@/types/result"
