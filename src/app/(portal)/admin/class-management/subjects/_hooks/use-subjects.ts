@@ -73,7 +73,7 @@ export const useCreateSubject = (subjectData: Subject) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationKey: ["create-subject", subjectData],
+    mutationKey: ["create-subject"],
     mutationFn: () => SubjectsAPI.create(subjectData),
     onSuccess: () => {
       // Invalidate and refetch
