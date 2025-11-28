@@ -1,84 +1,90 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
-import { Mail, Phone, Home, Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import { Mail, Phone, Home } from "lucide-react"
+import Logo from "./logo"
+import SocialLinks from "./social-links"
 
-const quickLinks = [
-  { name: "Benefit", href: "/coming-soon" },
+const product = [
   { name: "Features", href: "/features" },
-  { name: "Who it's for", href: "/coming-soon" },
+  { name: "About", href: "/about" },
+  { name: "How it works", href: "/how-it-works" },
 ]
 const support = [
-  { name: "FAQs", href: "/#faq" },
-  { name: "Contact Us", href: "/coming-soon" },
-  { name: "Mail Support", href: "/coming-soon" },
+  { name: "FAQs", href: "/faq" },
+  { name: "Contact Us", href: "/contact-us" },
 ]
 
 const Footer = () => {
   return (
     <div className="bg-black text-white">
-      <div className="container flex flex-col gap-8 py-8 lg:flex-row lg:justify-between lg:py-12">
-        <section className="flex w-full max-w-100 flex-col gap-5 lg:justify-center">
-          <div className="flex items-center gap-4">
-            <Image
-              src="/assets/logo.png"
-              alt="Open School Portal Logo"
-              width={56}
-              height={56}
-              sizes="56px"
-              loading="lazy"
-              className="size-14 brightness-0 invert"
-            />
-            <h2 className="text-2xl font-bold">Open School Portal</h2>
-          </div>
-          <p className="text-lg leading-8 lg:text-xl">
-            The Modern Way School Run In Nigeria. Manage attendance, results, timetables,
-            fees, and NFC, all in one place
-          </p>
-          <div className="flex items-center gap-4">
-            <Facebook className="size-5 fill-white text-white" />
-            <Instagram className="size-5 text-white" />
-            <Linkedin className="size-5 text-white" />
-            <Twitter className="size-5 text-white" />
-          </div>
-          <p className="text-[#fafafa]">Copyright © 2025</p>
-        </section>
-        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
-          <h3 className="text-lg font-bold lg:text-xl">Quick Links</h3>
-          <ul className="flex flex-col gap-4">
-            {quickLinks.map((link) => (
-              <li key={`${link.name}-${link.href}`}>
-                <Link href={link.href}>{link.name}</Link>
+      <div className="container flex flex-col gap-6 py-8 lg:py-12">
+        <section className="flex flex-col gap-8 lg:flex-row lg:justify-between">
+          <section className="flex w-full max-w-100 flex-col gap-5 lg:justify-center">
+            <div className="flex items-center gap-4">
+              <Logo iconColor="white" textColor="white" size={40} />
+            </div>
+            <p className="text-lg leading-8 text-white/80 lg:text-xl">
+              The Modern Way School Run In Nigeria. Manage attendance, results,
+              timetables, fees, and NFC, all in one place
+            </p>
+
+            <SocialLinks />
+          </section>
+          <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+            <h3 className="text-lg font-bold lg:text-xl">Product</h3>
+            <ul className="flex flex-col gap-4">
+              {product.map((link) => (
+                <li key={`${link.name}-${link.href}`}>
+                  <Link href={link.href}>{link.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+            <h3 className="text-lg font-bold lg:text-xl">Support</h3>
+            <ul className="flex flex-col gap-4">
+              {support.map((link) => (
+                <li key={`${link.name}-${link.href}`}>
+                  <Link href={link.href}>{link.name}</Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+          <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
+            <h3 className="text-lg font-bold lg:text-xl">Get in Touch</h3>
+            <ul className="flex flex-col gap-4">
+              <li className="flex items-center gap-3">
+                <Mail className="size-5 shrink-0" />
+
+                <Link
+                  href="mailto:openschoolportalhq@gmail.com"
+                  className="wrap-break-word transition-all duration-200 ease-in-out hover:text-white/90 hover:underline"
+                >
+                  openschoolportalhq@gmail.com
+                </Link>
               </li>
-            ))}
-          </ul>
-        </section>
-        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
-          <h3 className="text-lg font-bold lg:text-xl">Support</h3>
-          <ul className="flex flex-col gap-4">
-            {support.map((link) => (
-              <li key={`${link.name}-${link.href}`}>
-                <Link href={link.href}>{link.name}</Link>
+              <li className="flex items-center gap-3">
+                <Phone className="size-5 shrink-0" />
+                <span>+234 123 456 7890</span>
               </li>
-            ))}
-          </ul>
+              <li className="flex items-start gap-3">
+                <Home className="mt-0.5 size-5 shrink-0 fill-current" />
+                <span className="wrap-break-word">123 School Street, Lagos, Nigeria</span>
+              </li>
+            </ul>
+          </section>
         </section>
-        <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
-          <h3 className="text-lg font-bold lg:text-xl">Get in Touch</h3>
-          <ul className="flex flex-col gap-4">
-            <li className="flex items-center gap-3">
-              <Mail className="size-5 shrink-0" />
-              <span className="wrap-break-word">info@openschoolportal.com</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <Phone className="size-5 shrink-0" />
-              <span>+234 123 456 7890</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <Home className="mt-0.5 size-5 shrink-0 fill-current" />
-              <span className="wrap-break-word">123 School Street, Lagos, Nigeria</span>
-            </li>
-          </ul>
+        <section className="flex justify-between">
+          <p className="text-[#fafafa]">Copyright &copy; {new Date().getFullYear()}</p>
+          <div className="flex items-center gap-6 text-[#FAFAFA] [&_p]:cursor-pointer">
+            <Link href={"/terms"}>
+              <p>Terms & Conditions</p>
+            </Link>
+
+            <Link href={"/privacy"}>
+              <p>Privacy Policy</p>
+            </Link>
+          </div>
         </section>
       </div>
     </div>

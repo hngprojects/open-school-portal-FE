@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { usePathname } from "next/navigation"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Menu } from "lucide-react"
+
+import { HiOutlineMenuAlt2 } from "react-icons/hi"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -69,7 +69,6 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
-  const pathname = usePathname()
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -94,13 +93,6 @@ function SidebarProvider({
   const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
   }, [isMobile, setOpen, setOpenMobile])
-
-  // Close mobile sidebar on route change
-  React.useEffect(() => {
-    if (isMobile && openMobile) {
-      setOpenMobile(false)
-    }
-  }, [pathname, isMobile])
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -272,14 +264,14 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7 hover:bg-transparent", className)}
+      className={cn("size-10 hover:bg-transparent", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <Menu />
+      <HiOutlineMenuAlt2 />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -429,7 +421,7 @@ function SidebarGroupAction({
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
-        "text-sidebar-foreground ring-sidebar-ring hover:bg-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         // Increases the hit area of the button on mobile.
         "after:absolute after:-inset-2 md:after:hidden",
         "group-data-[collapsible=icon]:hidden",
@@ -456,7 +448,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
     <ul
       data-slot="sidebar-menu"
       data-sidebar="menu"
-      className={cn("flex w-full min-w-0 flex-col gap-4", className)}
+      className={cn("flex w-full min-w-0 flex-col gap-2", className)}
       {...props}
     />
   )
@@ -474,7 +466,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-accent/10 hover:text-accent focus-visible:ring-2 active:bg-accent/10 active:text-accent disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-accent/10 data-[active=true]:font-medium data-[active=true]:text-accent data-[state=open]:hover:bg-accent/10 data-[state=open]:hover:text-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-2 py-6 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-accent/10 hover:text-accent focus-visible:ring-2 active:bg-accent/10 active:text-accent disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-accent/10 data-[active=true]:font-medium data-[active=true]:text-accent data-[state=open]:hover:bg-accent/10 data-[state=open]:hover:text-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -502,7 +494,6 @@ function SidebarMenuButton({
   size = "default",
   tooltip,
   className,
-  onClick,
   ...props
 }: React.ComponentProps<"button"> & {
   asChild?: boolean
@@ -510,16 +501,7 @@ function SidebarMenuButton({
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const Comp = asChild ? Slot : "button"
-  const { isMobile, state, setOpenMobile } = useSidebar()
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // Close mobile sidebar on click
-    if (isMobile) {
-      setOpenMobile(false)
-    }
-    // Call original onClick if it exists
-    onClick?.(e)
-  }
+  const { isMobile, state } = useSidebar()
 
   const button = (
     <Comp
@@ -528,7 +510,6 @@ function SidebarMenuButton({
       data-size={size}
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-      onClick={handleClick}
       {...props}
     />
   )
@@ -614,7 +595,15 @@ function SidebarMenuSkeleton({
 }: React.ComponentProps<"div"> & {
   showIcon?: boolean
 }) {
-  const [width] = React.useState(() => `${Math.floor(Math.random() * 40) + 50}%`)
+  // Random width between 50 to 90%.
+  // Outside component
+  const generateWidth = () => `${Math.floor(Math.random() * 40) + 50}%`
+
+  // Inside component
+  const [width] = React.useState(generateWidth)
+  // const width = React.useMemo(() => {
+  //   return `${Math.floor(Math.random() * 40) + 50}%`
+  // }, [])
 
   return (
     <div
@@ -670,7 +659,6 @@ function SidebarMenuSubButton({
   size = "md",
   isActive = false,
   className,
-  onClick,
   ...props
 }: React.ComponentProps<"a"> & {
   asChild?: boolean
@@ -678,16 +666,6 @@ function SidebarMenuSubButton({
   isActive?: boolean
 }) {
   const Comp = asChild ? Slot : "a"
-  const { isMobile, setOpenMobile } = useSidebar()
-
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    // Close mobile sidebar on click
-    if (isMobile) {
-      setOpenMobile(false)
-    }
-    // Call original onClick if it exists
-    onClick?.(e)
-  }
 
   return (
     <Comp
@@ -703,7 +681,6 @@ function SidebarMenuSubButton({
         "group-data-[collapsible=icon]:hidden",
         className
       )}
-      onClick={handleClick}
       {...props}
     />
   )
@@ -735,9 +712,11 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
 // "use client"
 
 // import * as React from "react"
+// import { usePathname } from "next/navigation"
 // import { Slot } from "@radix-ui/react-slot"
 // import { cva, type VariantProps } from "class-variance-authority"
 // import { Menu } from "lucide-react"
@@ -805,6 +784,7 @@ export {
 // }) {
 //   const isMobile = useIsMobile()
 //   const [openMobile, setOpenMobile] = React.useState(false)
+//   const pathname = usePathname()
 
 //   // This is the internal state of the sidebar.
 //   // We use openProp and setOpenProp for control from outside the component.
@@ -829,6 +809,13 @@ export {
 //   const toggleSidebar = React.useCallback(() => {
 //     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
 //   }, [isMobile, setOpen, setOpenMobile])
+
+//   // Close mobile sidebar on route change
+//   React.useEffect(() => {
+//     if (isMobile && openMobile) {
+//       setOpenMobile(false)
+//     }
+//   }, [pathname, isMobile, openMobile, setOpenMobile])
 
 //   // Adds a keyboard shortcut to toggle the sidebar.
 //   React.useEffect(() => {
@@ -1157,7 +1144,7 @@ export {
 //       data-slot="sidebar-group-action"
 //       data-sidebar="group-action"
 //       className={cn(
-//         "text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+//         "text-sidebar-foreground ring-sidebar-ring hover:bg-accent hover:text-sidebar-accent-foreground absolute top-3.5 right-3 flex aspect-square w-5 items-center justify-center rounded-md p-0 outline-hidden transition-transform focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
 //         // Increases the hit area of the button on mobile.
 //         "after:absolute after:-inset-2 md:after:hidden",
 //         "group-data-[collapsible=icon]:hidden",
@@ -1184,7 +1171,7 @@ export {
 //     <ul
 //       data-slot="sidebar-menu"
 //       data-sidebar="menu"
-//       className={cn("flex w-full min-w-0 flex-col gap-6", className)}
+//       className={cn("flex w-full min-w-0 flex-col gap-2", className)}
 //       {...props}
 //     />
 //   )
@@ -1202,7 +1189,7 @@ export {
 // }
 
 // const sidebarMenuButtonVariants = cva(
-//   "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+//   "peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md px-2 py-6 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-accent/10 hover:text-accent focus-visible:ring-2 active:bg-accent/10 active:text-accent disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-accent/10 data-[active=true]:font-medium data-[active=true]:text-accent data-[state=open]:hover:bg-accent/10 data-[state=open]:hover:text-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
 //   {
 //     variants: {
 //       variant: {
@@ -1230,6 +1217,7 @@ export {
 //   size = "default",
 //   tooltip,
 //   className,
+//   onClick,
 //   ...props
 // }: React.ComponentProps<"button"> & {
 //   asChild?: boolean
@@ -1237,7 +1225,16 @@ export {
 //   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 // } & VariantProps<typeof sidebarMenuButtonVariants>) {
 //   const Comp = asChild ? Slot : "button"
-//   const { isMobile, state } = useSidebar()
+//   const { isMobile, state, setOpenMobile } = useSidebar()
+
+//   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+//     // Close mobile sidebar on click
+//     if (isMobile) {
+//       setOpenMobile(false)
+//     }
+//     // Call original onClick if it exists
+//     onClick?.(e)
+//   }
 
 //   const button = (
 //     <Comp
@@ -1246,6 +1243,7 @@ export {
 //       data-size={size}
 //       data-active={isActive}
 //       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+//       onClick={handleClick}
 //       {...props}
 //     />
 //   )
@@ -1331,15 +1329,7 @@ export {
 // }: React.ComponentProps<"div"> & {
 //   showIcon?: boolean
 // }) {
-//   // Random width between 50 to 90%.
-//   // Outside component
-//   const generateWidth = () => `${Math.floor(Math.random() * 40) + 50}%`
-
-//   // Inside component
-//   const [width] = React.useState(generateWidth)
-//   // const width = React.useMemo(() => {
-//   //   return `${Math.floor(Math.random() * 40) + 50}%`
-//   // }, [])
+//   const [width] = React.useState(() => `${Math.floor(Math.random() * 40) + 50}%`)
 
 //   return (
 //     <div
@@ -1395,6 +1385,7 @@ export {
 //   size = "md",
 //   isActive = false,
 //   className,
+//   onClick,
 //   ...props
 // }: React.ComponentProps<"a"> & {
 //   asChild?: boolean
@@ -1402,6 +1393,16 @@ export {
 //   isActive?: boolean
 // }) {
 //   const Comp = asChild ? Slot : "a"
+//   const { isMobile, setOpenMobile } = useSidebar()
+
+//   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+//     // Close mobile sidebar on click
+//     if (isMobile) {
+//       setOpenMobile(false)
+//     }
+//     // Call original onClick if it exists
+//     onClick?.(e)
+//   }
 
 //   return (
 //     <Comp
@@ -1417,6 +1418,7 @@ export {
 //         "group-data-[collapsible=icon]:hidden",
 //         className
 //       )}
+//       onClick={handleClick}
 //       {...props}
 //     />
 //   )

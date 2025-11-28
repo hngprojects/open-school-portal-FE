@@ -1,14 +1,16 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
 import Link from "next/link"
-import React from "react"
+import Image from "next/image"
+import WatchDemoButton from "./watch-demo-button"
 
 const HomeHero = () => {
   return (
     <section className="w-full bg-[#f5f5f5] pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0">
       <div className="container flex flex-col items-center gap-6 text-center sm:gap-8 md:gap-10">
         <div className="flex w-full max-w-xl flex-col gap-3 sm:gap-4 md:max-w-4xl md:gap-6">
-          <h1 className="text-text-primary text-4xl leading-tight font-bold sm:text-5xl md:text-6xl md:leading-tight">
+          <h1 className="text-text-primary mx-auto max-w-[20ch] text-4xl leading-tight font-bold sm:text-5xl md:text-6xl md:leading-tight lg:max-w-[16ch]">
             The Modern Way Schools Run in Nigeria
           </h1>
           <p className="text-text-secondary text-base leading-7 sm:text-lg sm:leading-8 md:text-xl md:leading-8">
@@ -23,14 +25,7 @@ const HomeHero = () => {
             </Button>
           </Link>
 
-          <Link href="/demo">
-            <Button
-              variant="outline"
-              className="min-w-[140px] flex-1 sm:min-w-[180px] lg:w-auto lg:flex-none"
-            >
-              Watch Demo
-            </Button>
-          </Link>
+          <WatchDemoButton />
         </div>
 
         <div className="w-full px-4 pt-6 sm:px-0">

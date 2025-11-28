@@ -1,5 +1,4 @@
 import Image from "next/image"
-import React from "react"
 
 const forWhoData = [
   {
@@ -34,12 +33,15 @@ const forWhoData = [
 
 const HomeForWho = () => {
   return (
-    <div className="flex flex-col gap-6 bg-white px-4 py-8 md:gap-8 md:py-12 lg:py-18">
+    <div
+      id="for-who"
+      className="flex scroll-mt-9 flex-col gap-6 bg-white px-4 py-8 md:gap-8 md:py-12 lg:py-18"
+    >
       <div className="container flex flex-col gap-6 md:gap-8">
         <section className="flex w-full max-w-[1296px] flex-col gap-3 px-4 text-left md:gap-4">
           <h2 className="text-2xl font-semibold md:text-3xl">Who is it for?</h2>
           <p className="text-base leading-7 md:text-lg md:leading-8 lg:text-xl">
-            With Open School Portal, students, teachers, parents, and administrators stay
+            With School Base, students, teachers, parents, and administrators stay
             connected to everything they need learning, communication, and school
             management anytime, anywhere.
           </p>

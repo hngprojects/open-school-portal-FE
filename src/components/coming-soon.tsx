@@ -2,6 +2,8 @@
 
 import React from "react"
 import { Clock, Bell, ArrowLeft } from "lucide-react"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 
 interface ComingSoonProps {
   pageTitle?: string
@@ -32,8 +34,8 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
   }
 
   return (
-    <div className="animate-onrender flex min-h-[85vh] items-center justify-center bg-linear-to-b from-gray-50 to-white px-4">
-      <div className="w-full max-w-2xl text-center">
+    <div className="flex min-h-[85vh] items-center justify-center bg-linear-to-b from-gray-50 to-white px-4">
+      <div className="animate-onrender w-full max-w-2xl text-center">
         {/* Back Button */}
         {onBackClick && (
           <button
@@ -50,39 +52,37 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-red-100 opacity-60 blur-2xl"></div>
             <div className="relative rounded-full bg-white p-6 shadow-lg">
-              <Clock className="h-16 w-16 text-red-600" />
+              <Clock className="h-10 w-10 text-red-600 lg:h-16 lg:w-16" />
             </div>
           </div>
         </div>
 
         {/* Title */}
-        <h1 className="mb-4 text-5xl font-bold text-gray-900">{pageTitle}</h1>
+        <h1 className="text-primary mb-4 text-2xl font-bold lg:text-5xl">{pageTitle}</h1>
 
         {/* Message */}
-        <p className="mx-auto mb-12 max-w-xl text-xl text-gray-600">{message}</p>
+        <p className="text-baselg:text-xl text-text-secondary mx-auto mb-12 max-w-xl">
+          {message}
+        </p>
 
         {/* Notify Form */}
         {showNotifyButton && !subscribed && (
           <div className="mx-auto mb-8 max-w-md">
-            <div className="flex gap-3">
-              <input
+            <div className="flex flex-col gap-3 lg:flex-row">
+              <Input
                 type="email"
                 value={email}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setEmail(e.target.value)
                 }
                 placeholder="Enter your email"
-                className="flex-1 rounded-full border-2 border-gray-200 px-6 py-3 transition-colors focus:border-red-500 focus:outline-none"
+                className="focus:border-red-500"
                 required
               />
-              <button
-                type="button"
-                onClick={handleNotify}
-                className="inline-flex items-center gap-2 rounded-full bg-red-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-red-700"
-              >
+              <Button type="button" onClick={handleNotify} className="flex">
                 <Bell className="h-5 w-5" />
                 Notify Me
-              </button>
+              </Button>
             </div>
           </div>
         )}

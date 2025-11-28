@@ -1,3 +1,4 @@
+import Link from "next/link"
 import {
   Accordion,
   AccordionContent,
@@ -5,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from "@/components/ui/button"
-import Image from "next/image"
+import { Rocket } from "lucide-react"
 
 interface FAQItem {
   id: number
@@ -17,39 +18,39 @@ export default function HomeFAQ() {
   const faqData: FAQItem[] = [
     {
       id: 0,
-      question: "How does the app help users manage their finances?",
+      question: "What is SchoolBase?",
       answer:
-        "With a sleek design and user-friendly interface, users can effortlessly track their spending and stay within budget.",
+        "SchoolBase is an open digital school management system that helps schools replace manual processes with automated tools for administration, academics, attendance, report cards, and parent engagement.",
     },
     {
       id: 1,
-      question: "How can users benefit from using the app?",
+      question: "Who can use SchoolBase and what do they get?",
       answer:
-        "Users can save time, reduce financial stress, and achieve their financial goals through comprehensive budgeting tools and insights.",
+        "SchoolBase supports Admins, Teachers, Students, and Parents, each with their own dashboard and permissions. Parents get read-only access, while teachers and admins can manage academic and administrative tasks.",
     },
     {
       id: 2,
-      question: "How can users benefit from using the app?",
+      question: "How secure is the platform?",
       answer:
-        "The app provides real-time notifications, customizable categories, and detailed reports to help users make informed financial decisions.",
+        "SchoolBase uses secure login, encrypted data, role-based access control (RBAC), and audit logs to ensure safety, privacy, and controlled access for all users.",
     },
     {
       id: 3,
-      question: "How can users benefit from using the app?",
+      question: "How does school setup work?",
       answer:
-        "With automated tracking and smart suggestions, users can identify spending patterns and optimize their budget for better savings.",
+        "Admins can create academic sessions, classes, and streams, then assign teachers and students. Everything automatically links to the active session to keep the academic structure organized.",
     },
   ]
 
   return (
     <section
       id="faq"
-      className="font-outfit mb-8 h-full w-full bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
+      className="font-outfit mb-8 h-full w-full scroll-mt-20 bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
     >
       <div className="mx-auto max-w-full lg:max-w-[1285px]">
         <h2
           className="mb-8 leading-none font-semibold text-gray-900"
-          style={{ fontSize: "clamp(32px, 4vw, 32px)" }}
+          style={{ fontSize: "clamp(24px, 3vw, 32px)" }}
         >
           Frequently Asked Questions
         </h2>
@@ -65,21 +66,23 @@ export default function HomeFAQ() {
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="rounded-md border border-gray-200 px-4 py-2"
+                  className="rounded-md border border-[#2D2D2D]/15 bg-white px-4 py-2"
                 >
                   <AccordionTrigger
-                    className="w-full py-2 text-left font-semibold text-gray-900 transition-colors duration-200 hover:text-gray-700"
-                    style={{ fontSize: "clamp(16px, 4vw, 24px)" }}
+                    className="flex w-full flex-row items-center py-2 text-left font-normal text-[#535353] transition-colors duration-200 hover:text-[#2d2d2d]"
+                    style={{ fontSize: "clamp(16px, 2vw, 20px)" }}
                   >
-                    <span className="block max-w-[500px] text-2xl">{faq.question}</span>
+                    <span className="block w-full sm:text-lg md:text-2xl">
+                      {faq.question}
+                    </span>
                   </AccordionTrigger>
 
                   <AccordionContent className="flex flex-col gap-4">
                     <p
-                      className="mt-2 leading-relaxed text-[#2d2d2d]"
-                      style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+                      className="leading-relaxed text-[#535353]/80"
+                      style={{ fontSize: "clamp(14px, 2vw, 16px)" }}
                     >
-                      {faq.answer}
+                      <span className="text-sm md:text-xl">{faq.answer}</span>
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -89,36 +92,29 @@ export default function HomeFAQ() {
 
           <div className="mt-16 lg:mt-0 lg:h-full lg:max-w-[330px]">
             <div className="flex h-full flex-col items-center justify-center rounded-lg border border-[#999] px-4 py-8 text-center lg:min-h-[400px]">
-              <div className="mx-auto mb-4 h-[62px] w-[62px] max-w-32">
-                <Image
-                  src="/faq/chat.png"
-                  alt="Chat"
-                  width={128}
-                  height={128}
-                  className="h-auto w-full object-cover"
-                  priority
-                />
+              <div className="mx-auto mb-4 flex h-[62px] w-[62px] max-w-32 items-center justify-center rounded-full bg-[#DA3743]/10">
+                <Rocket className="h-8 w-8 text-[#DA3743]" />
               </div>
               <h2
                 className="mb-2 font-bold lg:mb-4"
-                style={{ fontSize: "clamp(18px, 4vw, 20px)" }}
+                style={{ fontSize: "clamp(16px, 2vw, 18px)" }}
               >
-                Do you have more questions?
+                Ready to transform your school?
               </h2>
 
               <p
                 className="mb-2 leading-relaxed text-black lg:mb-4"
-                style={{ fontSize: "clamp(16px, 4vw, 18px)" }}
+                style={{ fontSize: "clamp(14px, 2vw, 16px)" }}
               >
-                Our team will answer all your questions. We response fast.
+                Our team is ready to set up your school system. We respond fast.
               </p>
 
               <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
                 <Button
                   className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
-                  style={{ fontSize: "clamp(14px, 4vw, 16px)" }}
+                  style={{ fontSize: "clamp(14px, 2vw, 16px)" }}
                 >
-                  Contact Super Team
+                  <Link href="/contact-us">Request Installation</Link>
                 </Button>
               </div>
             </div>

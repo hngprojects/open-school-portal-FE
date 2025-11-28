@@ -33,14 +33,14 @@ const HomeWhyUs = () => {
   ]
 
   return (
-    <section className="w-full bg-white py-16 lg:py-24">
+    <section id="benefits" className="w-full scroll-mt-16 bg-white py-16 lg:py-24">
       <div className="mx-auto max-w-[1305px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-left lg:mb-16">
           <h2
             className="text-3xl leading-tight font-bold text-gray-900 uppercase sm:text-4xl lg:text-5xl"
             style={{ fontSize: "clamp(20px, 4vw, 32px)" }}
           >
-            Why You Should Use Open School Portal
+            Why You Should Use School Base
           </h2>
           <p
             className="mt-4 max-w-3xl text-left text-lg text-gray-600"

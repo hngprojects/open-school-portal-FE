@@ -1,5 +1,16 @@
-import { AuthQueryProvider } from "@/providers/auth-query-provider"
+import type { Metadata } from "next"
+import { GeneralQueryProvider } from "@/providers/general-query-provider"
 import Image from "next/image"
+
+export const viewport = {
+  themeColor: "#0f172a",
+}
+
+export const metadata: Metadata = {
+  title: "Authentication | School Base",
+  description:
+    "Sign in or create your School Base account to manage your school experience.",
+}
 
 export default function AuthLayout({
   children,
@@ -7,7 +18,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }>) {
   return (
-    <AuthQueryProvider>
+    <GeneralQueryProvider>
       <main className="h-screen w-full overflow-hidden lg:grid lg:grid-cols-2">
         <div className="relative hidden h-full w-full lg:top-0 lg:flex">
           <Image
@@ -18,10 +29,10 @@ export default function AuthLayout({
             className="object-cover"
           />
         </div>
-        <div className="scrollbar-hide flex h-full w-full overflow-y-auto px-4 py-8 sm:px-8 lg:items-center lg:justify-center lg:px-16">
+        <div className="scrollbar-hide flex h-full w-full overflow-y-auto px-4 sm:px-8 lg:items-center lg:justify-center lg:px-16">
           <div className="w-full lg:max-w-[556px]">{children}</div>
         </div>
       </main>
-    </AuthQueryProvider>
+    </GeneralQueryProvider>
   )
 }

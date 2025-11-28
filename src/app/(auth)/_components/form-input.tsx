@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 import { loginUsingEmail } from "@/lib/api/auth"
+import { useRouter } from "next/navigation"
+import SchoolLogo from "./school-logo"
 
 type LoginField = keyof LoginFormValues
 
@@ -40,7 +42,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  // const setAuthSession = useAuthStore((state) => state.setAuthSession)
+  const router = useRouter()
 
   const getFieldError = (field: LoginField, value: string) => {
     const schema = loginSchema.shape[field]
@@ -99,16 +101,23 @@ const LoginForm = () => {
       return
     }
 
+    // all roles
+    const roleToRoute: Record<string, string> = {
+      ADMIN: "admin",
+      // SUPER_ADMIN: "super-admin",
+      TEACHER: "teacher",
+      // STUDENT: "student",
+      // PARENT: "parent",
+    }
+
     setIsLoading(true)
     setErrors({})
 
     try {
-      await loginUsingEmail(formData)
-
-      // Successful login - set auth session
-      // setAuthSession(response)
-
-      // Reset attempt count on success
+      const res = await loginUsingEmail(formData)
+      const role = res?.data?.user?.role?.[0]
+      const route = roleToRoute[role] ?? "login"
+      router.push(`/${route}`)
       setAttemptCount(0)
     } catch (error) {
       console.error("Login error:", error)
@@ -130,9 +139,11 @@ const LoginForm = () => {
 
       // Set error message
       setErrors({
-        password: "Wrong password. Try again",
+        password:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
       })
-    } finally {
       setIsLoading(false)
     }
   }
@@ -151,15 +162,7 @@ const LoginForm = () => {
     <>
       <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
         {/* School Logo */}
-        <div className="mb-8">
-          <Image
-            src="/assets/images/auth/desktop-school-logo.png"
-            alt="StudyBridge Online School Logo"
-            width={100}
-            height={100}
-            className="h-40 w-40"
-          />
-        </div>
+        <SchoolLogo />
 
         {/* Main Content */}
         <div className="w-full max-w-md">
@@ -244,8 +247,8 @@ const LoginForm = () => {
                     />
                   )}
                 </button>
-                {renderError("password")}
               </div>
+              {renderError("password")}
             </div>
 
             {/* Remember Me & Forgot Password */}

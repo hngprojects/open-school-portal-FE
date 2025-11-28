@@ -38,7 +38,7 @@ jobs:
 
       - name: Create environment file from GitHub secrets
         run: |
-          echo "${{ secrets.ENV_AUTH }}" > .env
+          echo "${{ secrets.ENV_AUTH_PROD }}" > .env
 
       - name: Lint code
         run: pnpm run lint
@@ -56,7 +56,7 @@ jobs:
         run: |
           tar -czf open-school-portal-fe.tar.gz .next public package.json next.config.ts tsconfig.json pnpm-lock.yaml .env
 
-      - name: Copy Artifacts to Server
+      - name: Copy Artifacts to Server                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
         run: |
-          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/open-school-portal-fe-artifact.tar.gz
+          sshpass -p "${{ secrets.PASSWORD }}" scp -o StrictHostKeyChecking=no open-school-portal-fe.tar.gz ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/tmp/prod/open-school-portal-fe-artifact.tar.gz
           rm -f open-school-portal-fe.tar.gz

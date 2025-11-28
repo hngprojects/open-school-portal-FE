@@ -1,11 +1,11 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
 import React, { useState } from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+import Logo from "./logo"
 
 const Navbar = () => {
   const pathname = usePathname()
@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const navItems = [
     { label: "Home", path: "/" },
-    { label: "Feature", path: "/feature" },
+    { label: "Features", path: "/features" },
     { label: "Modules", path: "/modules" },
     { label: "About", path: "/about" },
   ]
@@ -29,15 +29,9 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 right-0 left-0 z-50 border-b border-gray-100 bg-[#fffbfc] py-4 lg:py-6">
       <div className="relative container flex items-center justify-between">
-        <Image
-          src="/assets/logo.png"
-          alt="Open School Portal Logo"
-          width={64}
-          height={64}
-          priority
-          sizes="(max-width: 768px) 48px, (max-width: 1024px) 56px, 64px"
-          className="size-12 md:size-14 lg:size-16"
-        />
+        <Link href="/">
+          <Logo />
+        </Link>
 
         {/* Desktop Navigation - Centered */}
         <section className="absolute left-1/2 hidden -translate-x-1/2 gap-6 text-lg font-medium lg:flex lg:gap-10">
@@ -58,7 +52,12 @@ const Navbar = () => {
         {/* Desktop Button */}
         <div className="hidden lg:block">
           <Link href="/login">
-            <Button>Get Started</Button>
+            <Button
+              variant="outline"
+              className="border-accent text-accent bg-primary-hover"
+            >
+              Get Started
+            </Button>
           </Link>
         </div>
 
@@ -109,7 +108,11 @@ const Navbar = () => {
                   })}
                   <div className="mt-2 px-4">
                     <Link href="/login">
-                      <Button className="w-full" onClick={closeMobileMenu}>
+                      <Button
+                        variant="outline"
+                        className="border-accent text-accent bg-primary-hover w-full"
+                        onClick={closeMobileMenu}
+                      >
                         Get Started
                       </Button>
                     </Link>
