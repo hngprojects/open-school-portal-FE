@@ -15,46 +15,44 @@ type ResponsePack<T> = {
 export interface ClassItem {
   id: string
   name: string
-  arm: string
   academicSession: {
     id: string
     name: string
   }
+  classes: {
+    id: string,
+    arm: string
+  }[]
+}
+
+interface Pagination {
+  total: number
+  limit: number
+  page: number
+  total_pages: number
+  has_next: boolean
+  has_previous: boolean
 }
 
 export interface GroupedClassResponse {
-  status_code: number
-  message: string
-  data: {
-    name: string
-    academicSession: {
-      id: string
-      name: string
-    }
-    classes: { id: string; arm: string }[]
-  }[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
+  items: ClassItem[],
+  pagination: Pagination
 }
 
 export const ClassesAPI = {
   getAll: (params?: { page?: number; limit?: number }) =>
-    apiFetch<ResponsePack<GroupedClassResponse>>("/v1/classes", { params }, true),
+    apiFetch<ResponsePack<GroupedClassResponse>>("/classes", { params }, true),
 
   create: (body: CreateClassData) =>
     apiFetch<ResponsePack<ClassItem>>(
-      "/v1/classes",
+      "/classes",
       { method: "POST", data: body },
       true
     ),
 
   update: (id: string, body: UpdateClassData) =>
     apiFetch<ResponsePack<ClassItem>>(
-      `/v1/classes/${id}`,
+      `/classes/${id}`,
       { method: "PATCH", data: body },
       true
     ),
@@ -69,5 +67,5 @@ export const ClassesAPI = {
           streams: string
         }[]
       >
-    >(`/v1/classes/${id}/teachers`, { params: { session_id } }, true),
+    >(`/classes/${id}/teachers`, { params: { session_id } }, true),
 }

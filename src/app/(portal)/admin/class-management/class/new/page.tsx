@@ -13,7 +13,7 @@ const AddClass = () => {
   const handleCreateClass = async (data: ClassFormData) => {
     await createNewClass({
       name: data.className,
-      arm: data.arms,
+      arm: data.arm,
     })
     router.push("/admin/class-management/class")
   }

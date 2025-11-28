@@ -11,12 +11,14 @@ export const CLASS_KEYS = {
 }
 
 // GET ALL (GROUPED)
-export const useGetClasses = (params?: { page?: number; limit?: number }) =>
+export const useGetClassesInfo = (params?: { page?: number; limit?: number }) =>
   useQuery({
     queryKey: CLASS_KEYS.all,
     queryFn: () => ClassesAPI.getAll(params),
     select: (data) => data.data,
   })
+
+
 
 // CREATE CLASS
 export const useCreateClass = () => {

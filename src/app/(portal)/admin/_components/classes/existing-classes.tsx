@@ -10,44 +10,19 @@ import { ChevronDown, GraduationCap, Pencil, Plus, Search } from "lucide-react"
 interface ClassData {
   id: string
   name: string
-  arms: string[]
+  arms: {
+    id: string;
+    name: string
+  }[]
   classTeacher?: string
 }
 
-const classesData: ClassData[] = [
-  {
-    id: "1",
-    name: "JSS 1",
-    arms: ["JSS 1A", "JSS 1B", "JSS 1C"],
-    // classTeacher: "Mr. Johnson",
-  },
-  {
-    id: "2",
-    name: "JSS 2",
-    arms: ["JSS 2A", "JSS 2B", "JSS 2C", "JSS 2D"],
-    // classTeacher: "Mrs. Williams",
-  },
-  {
-    id: "3",
-    name: "JSS 3",
-    arms: ["JSS 3A", "JSS 3B"],
-    // classTeacher: "Mr. Davis",
-  },
-  {
-    id: "4",
-    name: "SS 1",
-    arms: ["SS 1A", "SS 1B", "SS 1C", "SS 1D"],
-    // classTeacher: "Mrs. Thompson",
-  },
-  {
-    id: "5",
-    name: "SS 2",
-    arms: ["SS 2A", "SS 2B", "SS 2C"],
-    // classTeacher: "Mr. Anderson",
-  },
-]
 
-const ExistingClasses = () => {
+const ExistingClasses = ({
+  classesData,
+} : {
+  classesData: ClassData[]
+}) => {
   const [expandedClasses, setExpandedClasses] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -66,7 +41,7 @@ const ExistingClasses = () => {
   const filteredClasses = classesData.filter(
     (classItem) =>
       classItem.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      classItem.arms.some((arm) => arm.toLowerCase().includes(searchQuery.toLowerCase()))
+      classItem.arms.some((arm) => arm.name.toLowerCase().includes(searchQuery.toLowerCase()))
   )
 
   const hasOtherClasses =
@@ -144,14 +119,14 @@ const ExistingClasses = () => {
                     <ul className="mt-4 space-y-2 border-t pt-3">
                       {classItem.arms.map((arm) => (
                         <li
-                          key={arm}
+                          key={arm.id}
                           className="group grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
                         >
                           <div className="text-accent bg-accent/10 group-hover:bg-accent/20 flex size-9 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110">
                             <GraduationCap className="size-5" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{arm}</p>
+                            <p className="text-sm font-medium text-gray-900">{arm.name}</p>
                             <p className="text-xs text-gray-500">
                               {Math.floor(Math.random() * 20) + 25} students
                             </p>
@@ -160,7 +135,7 @@ const ExistingClasses = () => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                            aria-label={`Edit ${arm}`}
+                            aria-label={`Edit ${arm.name}`}
                           >
                             <Pencil className="size-4" />
                           </Button>
@@ -210,7 +185,7 @@ const ExistingClasses = () => {
           className="h-12 w-12 rounded-full shadow-lg transition-transform hover:scale-110"
           size="icon"
         >
-          <Link href="/admin/class-management/class/add-class" aria-label="Add new class">
+          <Link href="/admin/class-management/class/new" aria-label="Add new class">
             <Plus className="size-6" />
           </Link>
         </Button>
@@ -381,7 +356,7 @@ export default ExistingClasses
 //       {/* Button to add */}
 //       <div className="my-5 flex justify-end">
 //         <Button asChild className="rounded-full p-3" size="icon">
-//           <Link href="/admin/class-management/class/add-class" aria-label="Add new class">
+//           <Link href="/admin/class-management/class/new" aria-label="Add new class">
 //             <Plus className="size-5" />
 //           </Link>
 //         </Button>

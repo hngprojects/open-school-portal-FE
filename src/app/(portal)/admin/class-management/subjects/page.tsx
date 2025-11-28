@@ -13,7 +13,7 @@ const SubjectPage = () => {
         description="Add Subjects."
         buttonText="Add Subjects"
         buttonHref="#"
-        // buttonHref="/admin/class-management/class/add-class"
+        // buttonHref="/admin/class-management/class/new"
       />
     </div>
   )

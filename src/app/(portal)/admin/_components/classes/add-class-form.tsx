@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import { SuccessModal } from "@/components/dashboard/success-modal"
+import { toast } from "sonner"
 
 // Zod Schema
 const classFormSchema = z.object({
@@ -18,7 +19,7 @@ const classFormSchema = z.object({
     .min(1, "Academic session is required")
     .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
   className: z.string().min(1, "Class name is required").min(2),
-  arms: z.string().min(1, "Arms is required").min(2),
+  arm: z.string().optional(),
   classTeacher: z.string().optional(),
 })
 
@@ -44,7 +45,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
     defaultValues: {
       academicSession: defaultValues?.academicSession || "",
       className: defaultValues?.className || "",
-      arms: defaultValues?.arms || "",
+      arm: defaultValues?.arm || "",
       classTeacher: defaultValues?.classTeacher || "",
     },
   })
@@ -56,11 +57,12 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
       } else {
         console.log("Form data:", data)
       }
-
       // ❗ Show success modal after form submission
       setOpenSuccess(true)
     } catch (error) {
       console.error("Error submitting form:", error)
+      if (error instanceof Error)
+        toast.error(error.message)
     }
   }
 
@@ -124,18 +126,18 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
               )}
             </div>
 
-            {/* arms */}
+            {/* arm */}
             <div>
-              <Label htmlFor="arms">Arms</Label>
+              <Label htmlFor="arm">Arms</Label>
               <Input
-                id="arms"
-                {...register("arms")}
+                id="arm"
+                {...register("arm")}
                 placeholder="Enter class name e.g, JSS 3A"
                 type="text"
-                className={errors.arms ? "border-red-500" : ""}
+                className={errors.arm ? "border-red-500" : ""}
               />
-              {errors.arms && (
-                <p className="mt-1 text-sm text-red-500">{errors.arms.message}</p>
+              {errors.arm && (
+                <p className="mt-1 text-sm text-red-500">{errors.arm.message}</p>
               )}
             </div>
 
