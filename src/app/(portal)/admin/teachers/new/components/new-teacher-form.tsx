@@ -75,9 +75,9 @@ export const teacherFormConfig: NewPersonFormConfig = {
     },
     {
       name: "generatedPassword",
-      label: "Generate Password",
-      type: "password-generate",
-      placeholder: "emp1234",
+      label: "Password", // Changed label
+      type: "password-generate", // Allow editing
+      placeholder: "Enter or generate password",
       required: true,
       generateButton: {
         text: "Generate",

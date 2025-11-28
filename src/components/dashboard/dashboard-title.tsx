@@ -9,8 +9,10 @@ const DashboardTitle = ({
 }) => {
   return (
     <section>
-      <h2 className="text-primary text-2xl font-bold">{heading}</h2>
-      <p className="text-sm text-[#666666]">{description}</p>
+      <h2 className="text-primary pb-3 text-2xl font-bold lg:text-[1.75rem]">
+        {heading}
+      </h2>
+      <p className="text-text-secondary text-sm lg:text-base">{description}</p>
     </section>
   )
 }

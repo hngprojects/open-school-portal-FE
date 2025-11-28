@@ -3,11 +3,6 @@ import { getUserFriendlyMessage } from "../errors"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
-/*type APIResponse<T> = {
-  data: T
-  message?: string
-}*/
-
 const isAbsoluteUrl = (path: string): boolean => /^https?:\/\//i.test(path)
 const isInternalApiPath = (path: string): boolean => path.startsWith("/api/")
 const normalizeBackendPath = (path: string): string => {
@@ -40,6 +35,89 @@ const api = axios.create({
   validateStatus: (status) => status >= 200 && status < 400,
 })
 
+const navigateTo = (path: string) => {
+  if (typeof window !== "undefined" && window.location.pathname !== path) {
+    window.location.href = path
+  }
+}
+
+const getErrorMessage = (error: unknown): string => {
+  const defaultMessage = "An unexpected error occurred. Please try again later."
+
+  if (error instanceof AxiosError) {
+    const responseData = error.response?.data
+
+    // Try to extract the actual error message from backend response
+    if (typeof responseData === "object" && responseData !== null) {
+      // Check for nested message structure
+      const message = responseData.message || responseData.error || responseData.detail
+
+      if (message) {
+        if (typeof message === "string") {
+          if (
+            message.toLowerCase().includes("email already exists") ||
+            message.toLowerCase().includes("email already exist")
+          ) {
+            return "Email address already exists. Please use a different email."
+          }
+          if (
+            message.toLowerCase().includes("registration number") &&
+            message.toLowerCase().includes("already exists")
+          ) {
+            return "Registration number already exists."
+          }
+          if (message.toLowerCase().includes("invalid credentials")) {
+            return "Invalid Email address and/or Password."
+          }
+          // check if it is a proxy
+          if (message.toLowerCase().includes("proxy error")) {
+            return "Network error! please check your connection and try again"
+          }
+
+          return message
+        }
+
+        // Handle array of validation errors
+        if (Array.isArray(message)) {
+          return message[0] || defaultMessage
+        }
+      }
+
+      // Check for validation errors in nested structure
+      if (
+        responseData.errors &&
+        Array.isArray(responseData.errors) &&
+        responseData.errors.length > 0
+      ) {
+        const firstError = responseData.errors[0]
+        if (typeof firstError === "string") return firstError
+        if (typeof firstError?.msg === "string") return firstError.msg
+        return defaultMessage
+      }
+    }
+
+    // if (error.response?.status === 409) {
+    //   return "An account with these details already exists."
+    // }
+
+    if (error.response?.status === 400) {
+      return "Invalid input data. Please check your entries."
+    }
+
+    if (error.response?.status === 401) {
+      navigateTo("/login")
+      return "Your session has expired. Please log in again."
+    }
+
+    // Fix the type error by providing default values
+    const statusText = error.response?.statusText || "Unknown Error"
+    const status = error.response?.status || 500
+    return getUserFriendlyMessage(statusText, status)
+  }
+
+  return defaultMessage
+}
+
 export async function apiFetch<TResponse>(
   path: string,
   config: AxiosRequestConfig = {},
@@ -50,12 +128,6 @@ export async function apiFetch<TResponse>(
   // Only set JSON header for plain objects/strings
   const isJson =
     config.data && !(config.data instanceof FormData) && !(config.data instanceof Blob)
-
-  const navigateTo = (path: string) => {
-    if (typeof window !== "undefined" && window.location.pathname !== path) {
-      window.location.href = path
-    }
-  }
 
   if (!headers["Content-Type"] && isJson) {
     headers["Content-Type"] = "application/json"
@@ -79,7 +151,6 @@ export async function apiFetch<TResponse>(
     return res.data as TResponse
   } catch (err) {
     // Network or backend errors
-
     if (err instanceof AxiosError) {
       // if unauthed
       if (err.response?.status === 401) {
@@ -90,30 +161,4 @@ export async function apiFetch<TResponse>(
     }
     throw new Error("An unexpected error occured. Please try again later")
   }
-}
-
-const getErrorMessage = (error: unknown): string => {
-  const defaultMessage = "An unexpected error occurred. Please try again later."
-
-  if (error instanceof AxiosError) {
-    const handledError = error.response?.data?.message as string | undefined
-
-    if (handledError) {
-      const lowercaseHandledError = handledError.toLowerCase()
-
-      if (lowercaseHandledError.includes("invalid credentials")) {
-        return "Invalid Email address and/or Password."
-      }
-
-      if (error.response?.status === 409) {
-        return "An account with this details already exists."
-      }
-    }
-
-    if (error.response) {
-      return getUserFriendlyMessage(error.response?.statusText, error.response?.status)
-    }
-  }
-
-  return defaultMessage
 }

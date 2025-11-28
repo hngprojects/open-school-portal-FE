@@ -3,21 +3,12 @@
 import { useState, FormEvent } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 export interface ClassroomFormData {
   name: string
   capacity: string
   type: string
   location: string
-  description: string
 }
 
 interface ClassroomFormProps {
@@ -27,19 +18,6 @@ interface ClassroomFormProps {
   isSubmitting?: boolean
   submitText?: string
 }
-
-const roomTypes = [
-  "Classroom",
-  "Laboratory",
-  "Computer Lab",
-  "Library",
-  "Auditorium",
-  "Sports Hall",
-  "Music Room",
-  "Art Room",
-  "Conference Room",
-  "Other",
-]
 
 export function ClassroomForm({
   initialData,
@@ -54,7 +32,6 @@ export function ClassroomForm({
       capacity: "",
       type: "",
       location: "",
-      description: "",
     }
   )
   const [errors, setErrors] = useState<Partial<ClassroomFormData>>({})
@@ -70,18 +47,16 @@ export function ClassroomForm({
       newErrors.capacity = "Capacity is required"
     } else if (isNaN(Number(formData.capacity)) || Number(formData.capacity) <= 0) {
       newErrors.capacity = "Capacity must be a positive number"
+    } else if (!/^\d+$/.test(formData.capacity)) {
+      newErrors.capacity = "Capacity must contain only numbers"
     }
 
-    if (!formData.type) {
+    if (!formData.type.trim()) {
       newErrors.type = "Room type is required"
     }
 
     if (!formData.location.trim()) {
       newErrors.location = "Location is required"
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = "Description is required"
     }
 
     setErrors(newErrors)
@@ -98,12 +73,17 @@ export function ClassroomForm({
     try {
       await onSubmit(formData)
     } catch (error) {
-      console.error("Failed to create teacher:", error)
+      console.error("Failed to create classroom:", error)
       throw error
     }
   }
 
   const handleChange = (field: keyof ClassroomFormData, value: string) => {
+    // For capacity field, only allow numbers
+    if (field === "capacity" && value !== "" && !/^\d*$/.test(value)) {
+      return
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }))
     // Clear error when user starts typing
     if (errors[field]) {
@@ -143,18 +123,19 @@ export function ClassroomForm({
             </label>
             <Input
               id="capacity"
-              type="number"
+              type="text"
+              inputMode="numeric"
               value={formData.capacity}
               onChange={(e) => handleChange("capacity", e.target.value)}
               placeholder="Enter capacity"
-              min="1"
+              pattern="[0-9]*"
             />
             {errors.capacity && (
               <p className="mt-1 text-sm text-red-600">{errors.capacity}</p>
             )}
           </div>
 
-          {/* Type Field */}
+          {/* Type Field - Changed from Select to Input */}
           <div>
             <label
               htmlFor="type"
@@ -162,21 +143,12 @@ export function ClassroomForm({
             >
               Room Type <span className="text-red-600">*</span>
             </label>
-            <Select
+            <Input
+              id="type"
               value={formData.type}
-              onValueChange={(value) => handleChange("type", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select room type" />
-              </SelectTrigger>
-              <SelectContent>
-                {roomTypes.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(e) => handleChange("type", e.target.value)}
+              placeholder="Enter room type (e.g., PHYSICAL, VIRTUAL, LAB)"
+            />
             {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type}</p>}
           </div>
         </div>
@@ -197,26 +169,6 @@ export function ClassroomForm({
           />
           {errors.location && (
             <p className="mt-1 text-sm text-red-600">{errors.location}</p>
-          )}
-        </div>
-
-        {/* Description Field */}
-        <div>
-          <label
-            htmlFor="description"
-            className="mb-2 block text-sm font-semibold text-gray-900"
-          >
-            Description <span className="text-red-600">*</span>
-          </label>
-          <Textarea
-            id="description"
-            value={formData.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            placeholder="Enter classroom description and features"
-            rows={4}
-          />
-          {errors.description && (
-            <p className="mt-1 text-sm text-red-600">{errors.description}</p>
           )}
         </div>
       </div>

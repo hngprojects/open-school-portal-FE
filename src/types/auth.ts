@@ -32,3 +32,16 @@ export interface UserProfileResponse {
   updated_at: string
   role: string[] // ["STUDENT"] | ["ADMIN"] | ["TEACHER"] | etc
 }
+
+export type LoginResponse = {
+  message: string
+  data: {
+    user: {
+      id: string
+      email: string
+      first_name: string
+      last_name: string
+      role: string[]
+    }
+  }
+}

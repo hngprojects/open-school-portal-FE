@@ -1,102 +1,204 @@
 "use client"
 
-import React from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { CircleAlert } from "lucide-react"
 
 import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
 import { useCreateAcademicSession } from "../../class-management/_hooks/use-session"
+import { Textarea } from "@/components/ui/textarea"
 
-const toDate = (value: string) => new Date(`${value}T00:00:00`)
+// ===============================
+// UTILITY FUNCTIONS
+// ===============================
 
-const isFutureDate = (value: string) => {
-  const parsed = toDate(value)
+const parseDate = (dateStr: string): Date => {
+  return new Date(`${dateStr}T00:00:00`)
+}
+
+const isValidFutureDate = (dateStr: string): boolean => {
+  if (!dateStr) return false
+  const date = parseDate(dateStr)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-
-  return !Number.isNaN(parsed.getTime()) && parsed > today
+  return !isNaN(date.getTime()) && date >= today
 }
+
+const isDateAfter = (laterDate: string, earlierDate: string): boolean => {
+  if (!laterDate || !earlierDate) return false
+  return parseDate(laterDate) > parseDate(earlierDate)
+}
+
+// ===============================
+// ZOD SCHEMA
+// ===============================
 
 const sessionFormSchema = z
   .object({
-    academicSession: z
-      .string()
-      .min(1, "Academic session is required")
-      .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().min(1, "End date is required"),
+    firstTermStartDate: z.string().min(1, "First term start date is required"),
+    firstTermEndDate: z.string().min(1, "First term end date is required"),
+    secondTermStartDate: z.string().min(1, "Second term start date is required"),
+    secondTermEndDate: z.string().min(1, "Second term end date is required"),
+    thirdTermStartDate: z.string().min(1, "Third term start date is required"),
+    thirdTermEndDate: z.string().min(1, "Third term end date is required"),
+    description: z.string().optional(),
+    acknowledge: z.boolean().refine((v) => v === true, {
+      message: "You must acknowledge to continue",
+    }),
   })
-  .refine(({ startDate }) => isFutureDate(startDate), {
-    path: ["startDate"],
-    message: "Start date must be in the future",
-  })
-  .refine(({ endDate }) => isFutureDate(endDate), {
-    path: ["endDate"],
-    message: "End date must be in the future",
-  })
-  .refine(
-    ({ startDate, endDate }) => {
-      const start = toDate(startDate)
-      const end = toDate(endDate)
+  .superRefine((data, ctx) => {
+    const fields = [
+      { key: "firstTermStartDate" as const, label: "First term start date" },
+      { key: "firstTermEndDate" as const, label: "First term end date" },
+      { key: "secondTermStartDate" as const, label: "Second term start date" },
+      { key: "secondTermEndDate" as const, label: "Second term end date" },
+      { key: "thirdTermStartDate" as const, label: "Third term start date" },
+      { key: "thirdTermEndDate" as const, label: "Third term end date" },
+    ]
 
-      return !Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime()) && end > start
-    },
-    {
-      path: ["endDate"],
-      message: "End date must be after start date",
+    // Validate all dates are future or today
+    fields.forEach(({ key, label }) => {
+      if (!isValidFutureDate(data[key])) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: `${label} must be today or in the future`,
+        })
+      }
+    })
+
+    // First term validation
+    if (!isDateAfter(data.firstTermEndDate, data.firstTermStartDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["firstTermEndDate"],
+        message: "First term end date must be after the start date",
+      })
     }
-  )
 
-export type SessionFormData = z.infer<typeof sessionFormSchema>
+    // Second term validation
+    if (!isDateAfter(data.secondTermStartDate, data.firstTermEndDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["secondTermStartDate"],
+        message: "Second term cannot start before first term ends",
+      })
+    }
 
-interface CreateSessionFormProps {
-  defaultValues?: Partial<SessionFormData>
-}
+    if (!isDateAfter(data.secondTermEndDate, data.secondTermStartDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["secondTermEndDate"],
+        message: "Second term end date must be after the start date",
+      })
+    }
 
-const CreateSessionForm = ({ defaultValues }: CreateSessionFormProps) => {
+    // Third term validation
+    if (!isDateAfter(data.thirdTermStartDate, data.secondTermEndDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["thirdTermStartDate"],
+        message: "Third term cannot start before second term ends",
+      })
+    }
+
+    if (!isDateAfter(data.thirdTermEndDate, data.thirdTermStartDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["thirdTermEndDate"],
+        message: "Third term end date must be after the start date",
+      })
+    }
+  })
+
+type SessionFormData = z.infer<typeof sessionFormSchema>
+
+// ===============================
+// COMPONENT
+// ===============================
+
+const CreateSessionForm = () => {
   const router = useRouter()
   const { mutate, isPending } = useCreateAcademicSession()
 
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    getValues,
+    trigger,
   } = useForm<SessionFormData>({
     resolver: zodResolver(sessionFormSchema),
     defaultValues: {
-      academicSession: defaultValues?.academicSession || "",
-      startDate: defaultValues?.startDate || "",
-      endDate: defaultValues?.endDate || "",
+      firstTermStartDate: "",
+      firstTermEndDate: "",
+      secondTermStartDate: "",
+      secondTermEndDate: "",
+      thirdTermStartDate: "",
+      thirdTermEndDate: "",
+      description: "",
+      acknowledge: false,
     },
+    mode: "onChange",
   })
 
-  const handleCreateSession = (data: SessionFormData) => {
+  const [firstTermStart, thirdTermEnd] = watch(["firstTermStartDate", "thirdTermEndDate"])
+
+  const academicSession =
+    firstTermStart && thirdTermEnd
+      ? `${parseDate(firstTermStart).getFullYear()} / ${parseDate(thirdTermEnd).getFullYear()}`
+      : "_ _ _ _ / _ _ _ _"
+
+  const handleDateChange =
+    (field: keyof SessionFormData) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value
+
+      const revalidationMap: Record<string, (keyof SessionFormData)[]> = {
+        firstTermStartDate: ["firstTermEndDate", "secondTermStartDate"],
+        firstTermEndDate: ["firstTermStartDate", "secondTermStartDate"],
+        secondTermStartDate: ["secondTermEndDate", "thirdTermStartDate"],
+        secondTermEndDate: ["secondTermStartDate", "thirdTermStartDate"],
+        thirdTermStartDate: ["secondTermEndDate", "thirdTermEndDate"],
+        thirdTermEndDate: ["thirdTermStartDate"],
+      }
+
+      if (value && revalidationMap[field]) {
+        setTimeout(() => {
+          const formValues = getValues()
+          revalidationMap[field].forEach((relatedField) => {
+            if (formValues[relatedField]) trigger(relatedField)
+          })
+        }, 0)
+      }
+    }
+
+  const onSubmit = (data: SessionFormData) => {
+    const { description, ...rest } = data
+    // const { acknowledge, description, ...rest } = data
+
     mutate(
       {
-        name: data.academicSession,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        name: academicSession,
+        startDate: rest.firstTermStartDate,
+        endDate: rest.thirdTermEndDate,
       },
       {
         onSuccess: () => {
           toast.success("Academic session created successfully!")
           router.push("/admin/class-management/session")
         },
-        onError: (error: Error | unknown) => {
-          const fallback = "Failed to create academic session."
-          if (error instanceof Error) {
-            toast.error(error.message || fallback)
-            return
-          }
-          toast.error(fallback)
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : "Failed to create session."
+          )
         },
       }
     )
@@ -107,66 +209,145 @@ const CreateSessionForm = ({ defaultValues }: CreateSessionFormProps) => {
     router.push("/admin/class-management/session")
   }
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleSubmit(onSubmit)(e)
+  }
+
+  const DateField = ({
+    name,
+    label,
+    error,
+  }: {
+    name: keyof SessionFormData
+    label: string
+    error?: { message?: string }
+  }) => (
+    <div className="space-y-1">
+      <Label htmlFor={name}>
+        {label} <span className="text-red-500">*</span>
+      </Label>
+      <Input
+        id={name}
+        type="date"
+        {...register(name, {
+          onChange: handleDateChange(name),
+        })}
+        className={`w-full ${error ? "border-red-500" : ""}`}
+        aria-invalid={error ? "true" : "false"}
+        aria-describedby={error ? `${name}-error` : undefined}
+        placeholder="Select a date"
+      />
+      {error && (
+        <p
+          id={`${name}-error`}
+          className="flex items-center gap-1 text-sm text-red-600"
+          role="alert"
+        >
+          <CircleAlert className="h-4 w-4" />
+          {error.message}
+        </p>
+      )}
+    </div>
+  )
+
   return (
-    <section className="min-h-[calc(100vh-70px)] bg-[#FAFAFA] px-2 pt-4 pb-10 lg:px-4">
+    <div className="animate-onrender min-h-[calc(100vh-70px)] p-4 px-4 pt-4 pb-10 lg:p-10">
       <DashboardTitle heading="Create Session" description="Create academic session" />
 
-      <form onSubmit={handleSubmit(handleCreateSession)}>
-        <section className="my-8 space-y-7">
-          {/* Academic Year */}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <section className="my-4 space-y-7">
           <div>
-            <Label htmlFor="academicSession">
-              Academic Session <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="academicSession"
-              {...register("academicSession")}
-              placeholder="e.g 2025/2026"
-              className={errors.academicSession ? "border-red-500" : ""}
-            />
-            {errors.academicSession && (
-              <p className="mt-1 text-sm text-red-500">
-                {errors.academicSession.message}
-              </p>
-            )}
+            <Label htmlFor="academicSession">Academic Year</Label>
+            <div className="flex h-10 items-end-safe rounded-md border border-[#6666664D] bg-[#EEEEEE] px-3 py-2.5 text-[#666666]">
+              {academicSession}
+            </div>
           </div>
 
-          {/* Start + End Date */}
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div>
-              <Label htmlFor="startDate">
-                Session Start Date <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="startDate"
-                type="date"
-                {...register("startDate")}
-                className={errors.startDate ? "border-red-500" : ""}
-              />
-              {errors.startDate && (
-                <p className="mt-1 text-sm text-red-500">{errors.startDate.message}</p>
-              )}
-            </div>
+          <div className="grid grid-cols-1 gap-4 rounded-md border p-4 lg:grid-cols-2 lg:border-none lg:p-0">
+            <DateField
+              name="firstTermStartDate"
+              label="First Term Start Date"
+              error={errors.firstTermStartDate}
+            />
+            <DateField
+              name="firstTermEndDate"
+              label="First Term End Date"
+              error={errors.firstTermEndDate}
+            />
+          </div>
 
-            <div>
-              <Label htmlFor="endDate">
-                Session End Date <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                {...register("endDate")}
-                className={errors.endDate ? "border-red-500" : ""}
-              />
-              {errors.endDate && (
-                <p className="mt-1 text-sm text-red-500">{errors.endDate.message}</p>
-              )}
-            </div>
+          <div className="grid grid-cols-1 gap-4 border px-4 lg:grid-cols-2 lg:border-none lg:p-0">
+            <DateField
+              name="secondTermStartDate"
+              label="Second Term Start Date"
+              error={errors.secondTermStartDate}
+            />
+            <DateField
+              name="secondTermEndDate"
+              label="Second Term End Date"
+              error={errors.secondTermEndDate}
+            />
+          </div>
+
+          <div className="grid gap-4 border px-4 md:grid-cols-2 lg:border-none lg:p-0">
+            <DateField
+              name="thirdTermStartDate"
+              label="Third Term Start Date"
+              error={errors.thirdTermStartDate}
+            />
+            <DateField
+              name="thirdTermEndDate"
+              label="Third Term End Date"
+              error={errors.thirdTermEndDate}
+            />
+          </div>
+
+          <div className="border px-4 lg:border-none lg:p-0">
+            <Label>Description</Label>
+            <Textarea
+              placeholder="e.g Details about this academic year"
+              className="min-h-[124px]"
+              {...register("description")}
+            />
           </div>
         </section>
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-4">
+        <div className="my-5 flex gap-3 rounded-md border border-amber-300 bg-amber-50 p-4">
+          <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+          <div className="text-sm text-amber-900">
+            <strong>Warning:</strong> Activating a new session will archive the current
+            one. Archived sessions cannot be edited.
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <Input
+              type="checkbox"
+              id="acknowledge"
+              {...register("acknowledge")}
+              className="mb-2 h-4 w-4 accent-green-600"
+              aria-invalid={errors.acknowledge ? "true" : "false"}
+              aria-describedby={errors.acknowledge ? "acknowledge-error" : undefined}
+            />
+            <Label htmlFor="acknowledge" className="cursor-pointer">
+              I acknowledge the effect of activating a new academic session.
+            </Label>
+          </div>
+
+          {errors.acknowledge && (
+            <p
+              id="acknowledge-error"
+              className="flex items-center gap-1 text-sm text-red-600"
+            >
+              <CircleAlert className="h-4 w-4" />
+              {errors.acknowledge.message}
+            </p>
+          )}
+        </div>
+
+        <div className="mt-6 flex justify-end gap-4">
           <Button
             type="button"
             variant="outline"
@@ -175,12 +356,18 @@ const CreateSessionForm = ({ defaultValues }: CreateSessionFormProps) => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting || isPending}>
+
+          <Button
+            type="button"
+            onClick={handleFormSubmit}
+            disabled={isSubmitting || isPending || !watch("acknowledge")}
+            className="disabled:cursor-not-allowed"
+          >
             {isSubmitting || isPending ? "Saving..." : "Save"}
           </Button>
         </div>
       </form>
-    </section>
+    </div>
   )
 }
 
@@ -188,73 +375,274 @@ export default CreateSessionForm
 
 // "use client"
 
-// import React from "react"
 // import { useRouter } from "next/navigation"
 // import { toast } from "sonner"
 // import { useForm } from "react-hook-form"
 // import { zodResolver } from "@hookform/resolvers/zod"
 // import * as z from "zod"
+// import { CircleAlert } from "lucide-react"
 
 // import DashboardTitle from "@/components/dashboard/dashboard-title"
 // import { Button } from "@/components/ui/button"
 // import { Input } from "@/components/ui/input"
 // import { Label } from "@/components/ui/label"
-
 // import { useCreateAcademicSession } from "../../class-management/_hooks/use-session"
-// // -------------------------
-// // Zod validation schema
-// // -------------------------
-// const sessionFormSchema = z.object({
-//   academicSession: z
-//     .string()
-//     .min(1, "Academic session is required")
-//     .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
-//   startDate: z.string().min(1, "Start date is required"),
-//   endDate: z.string().min(1, "End date is required"),
-// })
+// import { Textarea } from "@/components/ui/textarea"
 
-// export type SessionFormData = z.infer<typeof sessionFormSchema>
+// // ===============================
+// // IMPROVED UTILITY FUNCTIONS
+// // ===============================
 
-// interface CreateSessionFormProps {
-//   onSubmit?: (data: SessionFormData) => void | Promise<void>
-//   isLoading?: boolean
-//   defaultValues?: Partial<SessionFormData>
+// const parseDate = (dateStr: string): Date => {
+//   return new Date(`${dateStr}T00:00:00`)
 // }
 
-// // -------------------------
-// // Component
-// // -------------------------
-// const CreateSessionForm = ({
-//   // onSubmit,
-//   // isLoading = false,
-//   defaultValues,
-// }: CreateSessionFormProps) => {
-//   const router = useRouter()
+// const isValidFutureDate = (dateStr: string): boolean => {
+//   if (!dateStr) return false
+//   const date = parseDate(dateStr)
+//   const today = new Date()
+//   today.setHours(0, 0, 0, 0)
+//   return !isNaN(date.getTime()) && date >= today
+// }
 
+// const isDateAfter = (laterDate: string, earlierDate: string): boolean => {
+//   if (!laterDate || !earlierDate) return false
+//   return parseDate(laterDate) > parseDate(earlierDate)
+// }
+
+// // ===============================
+// // IMPROVED ZOD SCHEMA
+// // ===============================
+
+// const sessionFormSchema = z
+//   .object({
+//     firstTermStartDate: z.string().min(1, "First term start date is required"),
+//     firstTermEndDate: z.string().min(1, "First term end date is required"),
+//     secondTermStartDate: z.string().min(1, "Second term start date is required"),
+//     secondTermEndDate: z.string().min(1, "Second term end date is required"),
+//     thirdTermStartDate: z.string().min(1, "Third term start date is required"),
+//     thirdTermEndDate: z.string().min(1, "Third term end date is required"),
+//     acknowledge: z.boolean().refine((v) => v === true, {
+//       message: "You must acknowledge to continue",
+//     }),
+//   })
+//   // Future date validations
+//   .superRefine((data, ctx) => {
+//     const fields = [
+//       { key: "firstTermStartDate" as const, label: "First term start date" },
+//       { key: "firstTermEndDate" as const, label: "First term end date" },
+//       { key: "secondTermStartDate" as const, label: "Second term start date" },
+//       { key: "secondTermEndDate" as const, label: "Second term end date" },
+//       { key: "thirdTermStartDate" as const, label: "Third term start date" },
+//       { key: "thirdTermEndDate" as const, label: "Third term end date" },
+//     ]
+
+//     // Validate all dates are today or in the future
+//     fields.forEach(({ key, label }) => {
+//       if (!isValidFutureDate(data[key])) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: [key],
+//           message: `${label} must be today or in the future`,
+//         })
+//       }
+//     })
+
+//     // FIRST TERM VALIDATIONS
+//     if (data.firstTermStartDate && data.firstTermEndDate) {
+//       if (!isDateAfter(data.firstTermEndDate, data.firstTermStartDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["firstTermEndDate"],
+//           message: "First term end date must be after the start date",
+//         })
+//       }
+//     }
+
+//     // SECOND TERM VALIDATIONS
+//     // Second term start must be after first term end
+//     if (data.secondTermStartDate && data.firstTermEndDate) {
+//       if (!isDateAfter(data.secondTermStartDate, data.firstTermEndDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["secondTermStartDate"],
+//           message: "Second term cannot start before first term ends",
+//         })
+//       }
+//     }
+
+//     // Second term start must also be after first term start (redundant check but explicit)
+//     if (data.secondTermStartDate && data.firstTermStartDate) {
+//       if (!isDateAfter(data.secondTermStartDate, data.firstTermStartDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["secondTermStartDate"],
+//           message: "Second term cannot start before first term starts",
+//         })
+//       }
+//     }
+
+//     // Second term end must be after second term start
+//     if (data.secondTermStartDate && data.secondTermEndDate) {
+//       if (!isDateAfter(data.secondTermEndDate, data.secondTermStartDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["secondTermEndDate"],
+//           message: "Second term end date must be after the start date",
+//         })
+//       }
+//     }
+
+//     // THIRD TERM VALIDATIONS
+//     // Third term start must be after second term end
+//     if (data.thirdTermStartDate && data.secondTermEndDate) {
+//       if (!isDateAfter(data.thirdTermStartDate, data.secondTermEndDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["thirdTermStartDate"],
+//           message: "Third term cannot start before second term ends",
+//         })
+//       }
+//     }
+
+//     // Third term start must also be after second term start
+//     if (data.thirdTermStartDate && data.secondTermStartDate) {
+//       if (!isDateAfter(data.thirdTermStartDate, data.secondTermStartDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["thirdTermStartDate"],
+//           message: "Third term cannot start before second term starts",
+//         })
+//       }
+//     }
+
+//     // Third term start must be after first term end
+//     if (data.thirdTermStartDate && data.firstTermEndDate) {
+//       if (!isDateAfter(data.thirdTermStartDate, data.firstTermEndDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["thirdTermStartDate"],
+//           message: "Third term cannot start before first term ends",
+//         })
+//       }
+//     }
+
+//     // Third term end must be after third term start
+//     if (data.thirdTermStartDate && data.thirdTermEndDate) {
+//       if (!isDateAfter(data.thirdTermEndDate, data.thirdTermStartDate)) {
+//         ctx.addIssue({
+//           code: z.ZodIssueCode.custom,
+//           path: ["thirdTermEndDate"],
+//           message: "Third term end date must be after the start date",
+//         })
+//       }
+//     }
+//   })
+
+// type SessionFormData = z.infer<typeof sessionFormSchema>
+
+// // ===============================
+// // IMPROVED FORM COMPONENT
+// // ===============================
+
+// const CreateSessionForm = () => {
+//   const router = useRouter()
+//   // Mock mutation hoo
+//   // const mutate = (data: any, callbacks: any) => {
+//   //   setTimeout(() => callbacks.onSuccess(), 1000)
+//   // }
 //   const { mutate, isPending } = useCreateAcademicSession()
 
 //   const {
 //     register,
+//     watch,
 //     handleSubmit,
 //     formState: { errors, isSubmitting },
 //     reset,
+//     getValues,
+//     trigger,
 //   } = useForm<SessionFormData>({
 //     resolver: zodResolver(sessionFormSchema),
 //     defaultValues: {
-//       academicSession: defaultValues?.academicSession || "",
-//       startDate: defaultValues?.startDate || "",
-//       endDate: defaultValues?.endDate || "",
+//       firstTermStartDate: "",
+//       firstTermEndDate: "",
+//       secondTermStartDate: "",
+//       secondTermEndDate: "",
+//       thirdTermStartDate: "",
+//       thirdTermEndDate: "",
+//       acknowledge: false,
 //     },
+//     mode: "onChange", // Validate on change for immediate feedback
 //   })
 
-//   const handleFormSubmit = async (data: SessionFormData) => {
-//     if (onSubmit) {
-//       await onSubmit(data)
-//       return
+//   const watchedFields = watch(["firstTermStartDate", "thirdTermEndDate"])
+//   const [firstTermStart, thirdTermEnd] = watchedFields
+
+//   // Trigger validation when related dates change
+//   const handleDateChange =
+//     (field: keyof SessionFormData) => async (e: React.ChangeEvent<HTMLInputElement>) => {
+//       const value = e.target.value
+
+//       // Define which fields should trigger revalidation of other fields
+//       const revalidationMap: Record<string, (keyof SessionFormData)[]> = {
+//         firstTermStartDate: [
+//           "firstTermEndDate",
+//           "secondTermStartDate",
+//           "thirdTermStartDate",
+//         ],
+//         firstTermEndDate: [
+//           "firstTermStartDate",
+//           "secondTermStartDate",
+//           "thirdTermStartDate",
+//         ],
+//         secondTermStartDate: [
+//           "firstTermEndDate",
+//           "secondTermEndDate",
+//           "thirdTermStartDate",
+//         ],
+//         secondTermEndDate: ["secondTermStartDate", "thirdTermStartDate"],
+//         thirdTermStartDate: ["secondTermEndDate", "thirdTermEndDate"],
+//         thirdTermEndDate: ["thirdTermStartDate"],
+//       }
+
+//       // Trigger validation for related fields
+//       if (value && revalidationMap[field]) {
+//         setTimeout(() => {
+//           const formValues = getValues()
+//           revalidationMap[field].forEach((relatedField) => {
+//             if (formValues[relatedField]) {
+//               trigger(relatedField)
+//             }
+//           })
+//         }, 0)
+//       }
 //     }
 
-//     // If no onSubmit is passed (fallback)
-//     router.push("/admin/class-management/session")
+//   // Generate academic session label
+//   const academicSession =
+//     firstTermStart && thirdTermEnd
+//       ? `${parseDate(firstTermStart).getFullYear()} / ${parseDate(thirdTermEnd).getFullYear()}`
+//       : "_ _ _ _ / _ _ _ _"
+
+//   const onSubmit = (data: SessionFormData) => {
+//     mutate(
+//       {
+//         name: academicSession,
+//         startDate: data.firstTermStartDate,
+//         endDate: data.thirdTermEndDate,
+//       },
+//       {
+//         onSuccess: () => {
+//           toast.success("Academic session created successfully!")
+//           router.push("/admin/class-management/session")
+//         },
+//         onError: (error: Error | unknown) => {
+//           toast.error(
+//             error instanceof Error ? error.message : "Failed to create session."
+//           )
+//         },
+//       }
+//     )
 //   }
 
 //   const handleCancel = () => {
@@ -262,259 +650,162 @@ export default CreateSessionForm
 //     router.push("/admin/class-management/session")
 //   }
 
-//   const handleCreateSession = (data: SessionFormData) => {
-//     mutate(
-//       {
-//         name: data.academicSession,
-//         startDate: data.startDate,
-//         endDate: data.endDate,
-//       },
-//       {
-//         onSuccess: (data: any) => {
-//           toast.success("Academic session created successfully!")
-//           router.push("/admin/class-management/session")
-//           console.log("session", data)
-//         },
-//         onError: (error: Error) => {
-//           toast.error(error.message || "Failed to create academic session.")
-//         },
-//       }
-//     )
+//   const handleFormSubmit = (e: React.FormEvent) => {
+//     e.preventDefault()
+//     handleSubmit(onSubmit)(e)
 //   }
 
+//   // Reusable date field component
+//   const DateField = ({
+//     name,
+//     label,
+//     error,
+//   }: {
+//     name: keyof SessionFormData
+//     label: string
+//     error?: { message?: string }
+//   }) => (
+//     <div className="space-y-1">
+//       <Label htmlFor={name}>
+//         {label} <span className="text-red-500">*</span>
+//       </Label>
+//       <Input
+//         id={name}
+//         type="date"
+//         {...register(name, {
+//           onChange: handleDateChange(name),
+//         })}
+//         className={`w-full ${error ? "border-red-500" : ""}`}
+//         aria-invalid={error ? "true" : "false"}
+//         aria-describedby={error ? `${name}-error` : undefined}
+//         placeholder="Select a date"
+//       />
+//       {error && (
+//         <p
+//           id={`${name}-error`}
+//           className="flex items-center gap-1 text-sm text-red-600"
+//           role="alert"
+//         >
+//           <CircleAlert className="h-4 w-4" />
+//           {error.message}
+//         </p>
+//       )}
+//     </div>
+//   )
+
 //   return (
-//     <section className="min-h-[calc(100vh-70px)] bg-[#FAFAFA] px-2 pt-4 pb-10 lg:px-4">
+//     <div className="animate-onrender min-h-[calc(100vh-70px)] p-4 px-2 pt-4 pb-10 lg:p-10">
 //       <DashboardTitle heading="Create Session" description="Create academic session" />
 
-//       <form onSubmit={handleSubmit(handleFormSubmit)}>
-//         <section className="my-8 space-y-7">
-//           {/* Academic Year */}
+//       <form onSubmit={handleSubmit(onSubmit)}>
+//         <section className="my-4 space-y-7">
+//           {/* Academic Year Display */}
 //           <div>
-//             <Label htmlFor="academicSession">
-//               Academic Session <span className="text-red-500">*</span>
-//             </Label>
-//             <Input
-//               id="academicSession"
-//               {...register("academicSession")}
-//               placeholder="e.g 2025/2026"
-//               className={errors.academicSession ? "border-red-500" : ""}
-//             />
-//             {errors.academicSession && (
-//               <p className="mt-1 text-sm text-red-500">
-//                 {errors.academicSession.message}
-//               </p>
-//             )}
+//             <Label htmlFor="academicSession">Academic Year</Label>
+//             <div className="flex h-10 items-end-safe rounded-md border border-[#6666664D] bg-[#EEEEEE] px-3 py-2.5 text-[#666666]">
+//               {academicSession}
+//             </div>
 //           </div>
 
-//           {/* Start + End Date */}
+//           {/* First Term */}
 //           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-//             <div>
-//               <Label>
-//                 Session Start Date <span className="text-red-500">*</span>
-//               </Label>
-//               <Input
-//                 type="date"
-//                 {...register("startDate")}
-//                 className={errors.startDate ? "border-red-500" : ""}
-//               />
-//               {errors.startDate && (
-//                 <p className="mt-1 text-sm text-red-500">{errors.startDate.message}</p>
-//               )}
-//             </div>
+//             <DateField
+//               name="firstTermStartDate"
+//               label="First Term Start Date"
+//               error={errors.firstTermStartDate}
+//             />
+//             <DateField
+//               name="firstTermEndDate"
+//               label="First Term End Date"
+//               error={errors.firstTermEndDate}
+//             />
+//           </div>
 
-//             <div>
-//               <Label>
-//                 Session End Date <span className="text-red-500">*</span>
-//               </Label>
-//               <Input
-//                 type="date"
-//                 {...register("endDate")}
-//                 className={errors.endDate ? "border-red-500" : ""}
-//               />
-//               {errors.endDate && (
-//                 <p className="mt-1 text-sm text-red-500">{errors.endDate.message}</p>
-//               )}
-//             </div>
+//           {/* Second Term */}
+//           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+//             <DateField
+//               name="secondTermStartDate"
+//               label="Second Term Start Date"
+//               error={errors.secondTermStartDate}
+//             />
+//             <DateField
+//               name="secondTermEndDate"
+//               label="Second Term End Date"
+//               error={errors.secondTermEndDate}
+//             />
+//           </div>
+
+//           {/* Third Term */}
+//           <div className="grid gap-4 md:grid-cols-2">
+//             <DateField
+//               name="thirdTermStartDate"
+//               label="Third Term Start Date"
+//               error={errors.thirdTermStartDate}
+//             />
+//             <DateField
+//               name="thirdTermEndDate"
+//               label="Third Term End Date"
+//               error={errors.thirdTermEndDate}
+//             />
+//           </div>
+
+//           <div>
+//             <Label>Description</Label>
+//             <Textarea
+//               placeholder="e.g Details about this academic year"
+//               className="min-h-[124px]"
+//             />
 //           </div>
 //         </section>
 
-//         {/* Buttons */}
-//         <div className="flex justify-end gap-4">
+//         {/* Warning Alert */}
+//         <div className="my-5 flex gap-3 rounded-md border border-amber-300 bg-amber-50 p-4">
+//           <CircleAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+//           <div className="text-sm text-amber-900">
+//             <strong>Warning:</strong> Activating a new session will archive the current
+//             one. Archived sessions cannot be edited.
+//           </div>
+//         </div>
+
+//         {/* Acknowledgment Checkbox */}
+//         <div className="space-y-2">
+//           <div className="flex items-center gap-3">
+//             <Input
+//               type="checkbox"
+//               id="acknowledge"
+//               {...register("acknowledge")}
+//               className="mb-2 h-4 w-4 accent-green-600"
+//               aria-invalid={errors.acknowledge ? "true" : "false"}
+//               aria-describedby={errors.acknowledge ? "acknowledge-error" : undefined}
+//             />
+//             <Label htmlFor="acknowledge" className="cursor-pointer">
+//               I acknowledge the effect of activating a new academic session.
+//             </Label>
+//           </div>
+//         </div>
+
+//         {/* Action Buttons */}
+//         <div className="mt-6 flex justify-end gap-4">
 //           <Button
 //             type="button"
 //             variant="outline"
 //             onClick={handleCancel}
-//             disabled={isSubmitting || isLoading}
+//             disabled={isSubmitting || isPending}
 //           >
 //             Cancel
 //           </Button>
-
-//           <Button type="submit" disabled={isSubmitting || isPending}>
+//           <Button
+//             type="button"
+//             onClick={handleFormSubmit}
+//             disabled={isSubmitting || isPending || !watch("acknowledge")}
+//             className="disabled:cursor-not-allowed"
+//           >
 //             {isSubmitting || isPending ? "Saving..." : "Save"}
 //           </Button>
 //         </div>
 //       </form>
-//     </section>
+//     </div>
 //   )
 // }
 
 // export default CreateSessionForm
-
-// // "use client"
-
-// // import React from "react"
-// // import { useRouter } from "next/navigation"
-// // import { useForm } from "react-hook-form"
-// // import { zodResolver } from "@hookform/resolvers/zod"
-// // import * as z from "zod"
-// // import DashboardTitle from "@/components/dashboard/dashboard-title"
-// // import { Button } from "@/components/ui/button"
-// // import { Input } from "@/components/ui/input"
-
-// // import { Label } from "@/components/ui/label"
-
-// // // Zod Schema
-// // const sessionFormSchema = z.object({
-// //   academicSession: z
-// //     .string()
-// //     .min(1, "Academic session is required")
-// //     .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
-// //   startDate: z.string().min(1, "Start date is required"),
-// //   endDate: z.string().min(1, "End date is required"),
-// // })
-
-// // export type SessionFormData = z.infer<typeof sessionFormSchema>
-
-// // interface CreateSessionFormProps {
-// //   onSubmit?: (data: SessionFormData) => void | Promise<void>
-// //   isLoading?: boolean
-// //   defaultValues?: Partial<SessionFormData>
-// // }
-
-// // const CreateSessionForm = ({
-// //   onSubmit,
-// //   isLoading,
-// //   defaultValues,
-// // }: CreateSessionFormProps) => {
-// //   const router = useRouter()
-
-// //   const {
-// //     register,
-// //     handleSubmit,
-// //     formState: { errors, isSubmitting },
-// //     reset,
-// //   } = useForm<SessionFormData>({
-// //     resolver: zodResolver(sessionFormSchema),
-// //     defaultValues: {
-// //       academicSession: defaultValues?.academicSession || "",
-// //       startDate: defaultValues?.startDate || "",
-// //       endDate: defaultValues?.endDate || "",
-// //     },
-// //   })
-
-// //   const handleFormSubmit = async (data: SessionFormData) => {
-// //     try {
-// //       if (onSubmit) {
-// //         await onSubmit(data)
-// //       } else {
-// //         // Default behavior if no onSubmit prop is provided
-// //         console.log("Form data:", data)
-// //         // You can add your API call here
-// //         // await createSession(data)
-
-// //         // On success, navigate back
-// //         router.push("/admin/class-management/session")
-// //       }
-// //     } catch (error) {
-// //       console.error("Error submitting form:", error)
-// //       // Handle error (you can add toast notification here)
-// //     }
-// //   }
-
-// //   const handleCancel = () => {
-// //     reset()
-// //     router.push("/admin/class-management/session")
-// //   }
-
-// //   return (
-// //     <section className="min-h-[calc(100vh-70px)] bg-[#FAFAFA] px-2 pt-4 pb-10 lg:px-4">
-// //       <DashboardTitle heading="Create Session" description="Create academic session" />
-
-// //       <form onSubmit={handleSubmit(handleFormSubmit)}>
-// //         <section className="my-8 space-y-7">
-// //           {/* academic year */}
-// //           <div>
-// //             <Label htmlFor="academicSession">
-// //               Academic Session <span className="text-red-500">*</span>
-// //             </Label>
-// //             <Input
-// //               id="academicSession"
-// //               {...register("academicSession")}
-// //               placeholder="e.g 2025/2026"
-// //               className={errors.academicSession ? "border-red-500" : ""}
-// //             />
-// //             {errors.academicSession && (
-// //               <p className="mt-1 text-sm text-red-500">
-// //                 {errors.academicSession.message}
-// //               </p>
-// //             )}
-// //           </div>
-
-// //           {/* first term start and term end */}
-// //           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-// //             {/* first term start */}
-// //             <div>
-// //               <Label htmlFor="firstTermStart">
-// //                 Session Start Date <span className="text-red-500">*</span>
-// //               </Label>
-// //               <Input
-// //                 id="firstTermStart"
-// //                 {...register("startDate")}
-// //                 placeholder="Select a date"
-// //                 type="date"
-// //                 className={errors.startDate ? "border-red-500" : ""}
-// //               />
-// //               {errors.startDate && (
-// //                 <p className="mt-1 text-sm text-red-500">{errors.startDate.message}</p>
-// //               )}
-// //             </div>
-
-// //             {/* first term end */}
-// //             <div>
-// //               <Label htmlFor="firstTermEnd">
-// //                 Session End Date <span className="text-red-500">*</span>
-// //               </Label>
-// //               <Input
-// //                 id="firstTermEnd"
-// //                 {...register("endDate")}
-// //                 placeholder="Select a date"
-// //                 type="date"
-// //                 className={errors.endDate ? "border-red-500" : ""}
-// //               />
-// //               {errors.endDate && (
-// //                 <p className="mt-1 text-sm text-red-500">{errors.endDate.message}</p>
-// //               )}
-// //             </div>
-// //           </div>
-// //         </section>
-
-// //         {/* Buttons */}
-// //         <div className="flex justify-end gap-4">
-// //           <Button
-// //             type="button"
-// //             variant="outline"
-// //             onClick={handleCancel}
-// //             disabled={isSubmitting || isLoading}
-// //           >
-// //             Cancel
-// //           </Button>
-// //           <Button type="submit" disabled={isSubmitting || isLoading}>
-// //             {isSubmitting || isLoading ? "Saving..." : "Save"}
-// //           </Button>
-// //         </div>
-// //       </form>
-// //     </section>
-// //   )
-// // }
-
-// // export default CreateSessionForm

@@ -4,6 +4,7 @@ export interface DatabaseConfig {
   username: string
   password: string
   port: number
+  type: string
 }
 
 export interface SchoolInfo {
@@ -27,6 +28,7 @@ export interface FormData {
   database: DatabaseConfig
   school: SchoolInfo
   admin: AdminAccount
+  extra?: Record<string, string>
 }
 
 export interface Errors {

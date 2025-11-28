@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       secure: true,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     })
 
     // Set cookies — HTTP-only for security
