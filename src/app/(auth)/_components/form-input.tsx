@@ -29,8 +29,6 @@ const initialValues: LoginFormValues = {
 }
 
 const LoginForm = () => {
-  const setUser = useAuthStore((state) => state.setUser)
-
   const [formData, setFormData] = useState<LoginFormValues>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
   const [touched, setTouched] = useState<Record<LoginField, boolean>>({
