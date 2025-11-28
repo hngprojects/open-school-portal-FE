@@ -4,7 +4,7 @@ import type {
   LoginPayload,
   SignUpPayload,
   UserProfileResponse,
-  LoginResponse
+  LoginResponse,
 } from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"

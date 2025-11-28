@@ -12,13 +12,15 @@ const Page = () => {
   const classItems = classesInfo && classesInfo.items
 
   // flatten out the classes with group names
-  const classes = classItems && classItems.map(item => ({
-    ...item,
-    arms: item.classes.map(arm => ({
-      id: arm.id,
-      name: arm.arm
-    }) )
-  }))
+  const classes =
+    classItems &&
+    classItems.map((item) => ({
+      ...item,
+      arms: item.classes.map((arm) => ({
+        id: arm.id,
+        name: arm.arm,
+      })),
+    }))
 
   return (
     <div className="bg-[#FAFAFA] px-2 pt-4 lg:px-4">

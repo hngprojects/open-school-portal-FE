@@ -61,8 +61,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
       setOpenSuccess(true)
     } catch (error) {
       console.error("Error submitting form:", error)
-      if (error instanceof Error)
-        toast.error(error.message)
+      if (error instanceof Error) toast.error(error.message)
     }
   }
 

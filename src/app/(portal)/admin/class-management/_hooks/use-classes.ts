@@ -18,8 +18,6 @@ export const useGetClassesInfo = (params?: { page?: number; limit?: number }) =>
     select: (data) => data.data,
   })
 
-
-
 // CREATE CLASS
 export const useCreateClass = () => {
   const qc = useQueryClient()

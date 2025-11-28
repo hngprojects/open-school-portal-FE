@@ -11,18 +11,13 @@ interface ClassData {
   id: string
   name: string
   arms: {
-    id: string;
+    id: string
     name: string
   }[]
   classTeacher?: string
 }
 
-
-const ExistingClasses = ({
-  classesData,
-} : {
-  classesData: ClassData[]
-}) => {
+const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
   const [expandedClasses, setExpandedClasses] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -41,7 +36,9 @@ const ExistingClasses = ({
   const filteredClasses = classesData.filter(
     (classItem) =>
       classItem.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      classItem.arms.some((arm) => arm.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      classItem.arms.some((arm) =>
+        arm.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
   )
 
   const hasOtherClasses =
@@ -126,7 +123,9 @@ const ExistingClasses = ({
                             <GraduationCap className="size-5" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{arm.name}</p>
+                            <p className="text-sm font-medium text-gray-900">
+                              {arm.name}
+                            </p>
                             <p className="text-xs text-gray-500">
                               {Math.floor(Math.random() * 20) + 25} students
                             </p>

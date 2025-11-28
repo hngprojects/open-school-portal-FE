@@ -20,7 +20,7 @@ export interface ClassItem {
     name: string
   }
   classes: {
-    id: string,
+    id: string
     arm: string
   }[]
 }
@@ -35,7 +35,7 @@ interface Pagination {
 }
 
 export interface GroupedClassResponse {
-  items: ClassItem[],
+  items: ClassItem[]
   pagination: Pagination
 }
 
@@ -44,11 +44,7 @@ export const ClassesAPI = {
     apiFetch<ResponsePack<GroupedClassResponse>>("/classes", { params }, true),
 
   create: (body: CreateClassData) =>
-    apiFetch<ResponsePack<ClassItem>>(
-      "/classes",
-      { method: "POST", data: body },
-      true
-    ),
+    apiFetch<ResponsePack<ClassItem>>("/classes", { method: "POST", data: body }, true),
 
   update: (id: string, body: UpdateClassData) =>
     apiFetch<ResponsePack<ClassItem>>(
