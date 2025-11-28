@@ -3,13 +3,13 @@ import CreateSessionForm from "../../../_components/sessions/create-session-form
 
 const CreateSessionPage = async () => {
   // You can fetch default values server-side here if needed
-  const defaultValues = {
-    academicSession: "",
-    startDate: "",
-    endDate: "",
-  }
+  // const defaultValues = {
+  //   academicSession: "",
+  //   startDate: "",
+  //   endDate: "",
+  // }
 
-  return <CreateSessionForm defaultValues={defaultValues} />
+  return <CreateSessionForm />
 }
 
 export default CreateSessionPage

@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,8 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { MoreVertical, Play, Trash2 } from "lucide-react"
-import React from "react"
+import { Edit, Eye, MoreVertical } from "lucide-react"
 import { AcademicSession } from "@/lib/academic-session"
 
 type Props = {
@@ -20,12 +20,11 @@ type Props = {
 
 export default function AcademicSessionsMobile({
   sessions,
-  onActivate,
-  onDelete,
+
   isMutating,
 }: Props) {
   return (
-    <div className="mt-10 space-y-4 p-3 lg:hidden">
+    <div className="mt-2 space-y-4 p-3 lg:hidden">
       {sessions.map((item) => (
         <div key={item.id} className="relative rounded-xl border bg-white p-4 shadow-sm">
           {/* Header */}
@@ -37,42 +36,52 @@ export default function AcademicSessionsMobile({
                 <MoreVertical className="text-gray-600" />
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent align="end" className="w-36">
-                {!item.isActive && (
-                  <DropdownMenuItem
-                    className="flex items-center gap-2"
-                    onClick={() => onActivate(item.id)}
-                    disabled={isMutating}
-                  >
-                    <Play size={16} /> Activate
-                  </DropdownMenuItem>
-                )}
+              <DropdownMenuContent align="end" className="w-fit">
                 <DropdownMenuItem
-                  className="flex items-center gap-2 text-red-600"
-                  onClick={() => onDelete(item.id)}
+                  className="flex items-center gap-2"
+                  // onClick={() => onActivate(item.id)}
                   disabled={isMutating}
                 >
-                  <Trash2 size={16} /> Delete
+                  <Eye size={16} /> View
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  className="flex items-center gap-2"
+                  // onClick={() => onDelete(item.id)}
+                  disabled={!item.isActive}
+                >
+                  <Edit size={16} /> Edit
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
 
           {/* Content */}
-          <div className="space-y-1 text-sm">
-            <p>Start: {item.startDate}</p>
-            <p>End: {item.endDate}</p>
-            <p>Date created: {new Date(item.createdAt).toLocaleString()}</p>
+          <div className="text-text-secondary mt-6 space-y-4 text-sm">
+            <p className="flex justify-between">
+              <span>Start date: </span>
+              <span className="text-[#404040]"> {item.startDate}</span>
+            </p>
+            <p className="flex justify-between">
+              <span>End date: </span>
+              <span className="text-[#404040]"> {item.endDate}</span>
+            </p>
+            <p className="flex justify-between">
+              <span>Date created: </span>
+              <span className="text-[#404040]">
+                {new Date(item.createdAt).toLocaleString()}
+              </span>
+            </p>
             <p className="flex items-center gap-2">
               Status:
               <Badge
                 className={`px-2 py-0.5 ${
                   item.isActive
                     ? "bg-emerald-100 text-emerald-700"
-                    : "bg-slate-100 text-slate-700"
+                    : "bg-[#FEF5E7] text-[#F59E0B]"
                 }`}
               >
-                {item.isActive ? "Active" : "Inactive"}
+                {item.isActive ? "Active" : "Archived"}
               </Badge>
             </p>
           </div>
