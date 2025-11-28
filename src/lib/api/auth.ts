@@ -4,6 +4,7 @@ import type {
   LoginPayload,
   SignUpPayload,
   UserProfileResponse,
+  LoginResponse
 } from "@/types/auth"
 
 const LOGIN_PATH = "/api/auth/login"
@@ -11,7 +12,6 @@ const ME_PATH = "/auth/me"
 const LOGOUT_PATH = "/api/auth/logout"
 const REFRESH_PATH = "/api/auth/refresh"
 
-export type LoginResponse = AuthApiResponse<Record<string, unknown>>
 export type RefreshResponse = AuthApiResponse<Record<string, unknown>>
 
 // ------------------------------

@@ -70,7 +70,7 @@ const getErrorMessage = (error: unknown): string => {
             return "Invalid Email address and/or Password."
           }
           // check if it is a proxy
-          if (message.toLowerCase().includes("proxy error")){
+          if (message.toLowerCase().includes("proxy error")) {
             return "Network error! please check your connection and try again"
           }
 
