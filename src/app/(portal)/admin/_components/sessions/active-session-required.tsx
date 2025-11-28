@@ -3,30 +3,28 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
 import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode } from "react"
+import { useRouter } from "next/navigation"
 
 const LINK_TO_ACTIVE_SESSIONS = "/admin/class-management/session/create-session"
+// const LINK_TO_SUBJECTS_LIST = "/admin/class-management/subjects"
 
 
 export default function ActiveSessionGuard({ children }: { children: ReactNode }) {
-    const [open, setOpen] = useState(false);
     const { data: currentSession, isLoading: isLoadingSession } = useActiveAcademicSession()
-
-    useEffect(() => {
-        if (!isLoadingSession) {
-            if (!currentSession) {
-                setOpen(true);
-            } else {
-                setOpen(false);
-            }
-        }
-    }, [isLoadingSession, currentSession]);
+    const router = useRouter();
     // active session here means school session e.g 2035/2036 session
+
+    const handleClose = (open:boolean) => {
+        if (!open){
+            router.back();
+        }
+    }
 
     return (
         <>
         {children}
-            <Dialog open={open}>
+            <Dialog open={!isLoadingSession && !currentSession} onOpenChange={handleClose}>
                 <DialogOverlay className="z-60" />
                 <DialogContent className="max-w-md z-60">
                     <DialogHeader>
@@ -42,7 +40,7 @@ export default function ActiveSessionGuard({ children }: { children: ReactNode }
                     </DialogHeader>
                     <DialogFooter className="flex flex-col gap-2 sm:flex-col">
                         <Button asChild className="w-full">
-                            <Link href={LINK_TO_ACTIVE_SESSIONS} onClick={() => setOpen(false)}>
+                            <Link href={LINK_TO_ACTIVE_SESSIONS}>
                                 Create an Active Session
                             </Link>
                         </Button>

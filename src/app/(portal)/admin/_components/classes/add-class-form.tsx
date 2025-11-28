@@ -114,6 +114,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
                 id="academicSession"
                 {...register("academicSession")}
                 placeholder="2025/2026"
+                disabled
                 className={errors.academicSession ? "border-red-500" : ""}
               />
               {errors.academicSession && (

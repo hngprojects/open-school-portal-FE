@@ -1,7 +1,7 @@
 "use client"
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getUserData, sendLogoutRequest } from "@/lib/api/auth"
+import { useQuery } from "@tanstack/react-query"
+import { getUserData } from "@/lib/api/auth"
 
 // The main list query key
 const USER_DATA_KEY = ["user"]

@@ -18,7 +18,6 @@ import {
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
 import { loginUsingEmail } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
 import SchoolLogo from "./school-logo"
 
 type LoginField = keyof LoginFormValues

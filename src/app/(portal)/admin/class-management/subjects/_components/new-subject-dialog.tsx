@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogOverlay,
   DialogFooter,
 } from "@/components/ui/dialog"
 // import {
@@ -51,7 +52,8 @@ export default function NewSubjectDialog({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+            <DialogOverlay className="z-60" />
+        <DialogContent className="sm:max-w-md z-60">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
             <DialogDescription className="text-sm">
@@ -128,11 +130,11 @@ export default function NewSubjectDialog({
       await new Promise((resolve) => setTimeout(resolve, 1000))
   
       // Add new subject to list
-      const newSubject: Subject = {
-        id: Date.now().toString(),
-        name: formData.subjectName,
-        // department: mockDepartments.find((d) => d.id === formData.department)?.name || "",
-      }
+      // const newSubject: Subject = {
+      //   id: Date.now().toString(),
+      //   name: formData.subjectName,
+      //   // department: mockDepartments.find((d) => d.id === formData.department)?.name || "",
+      // }
   
       // Reset form
       setFormData({ department: "", subjectName: "" })
