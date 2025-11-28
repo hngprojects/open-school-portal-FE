@@ -8,7 +8,7 @@ const page = () => {
       <div className="container flex flex-col gap-8">
         <div className="flex flex-col items-center gap-2.5 text-center">
           <h1 className="text-lg font-medium text-[#2d2d2d] uppercase md:text-2xl lg:text-3xl">
-            WHY YOU SHOULD USE OPEN SCHOOL PORTAL
+            WHY YOU SHOULD USE SCHOOL BASE
           </h1>
           <p className="text-sm text-[#535353] sm:text-lg md:text-xl">
             Our platform powers the full student and school lifecycle from admissions to
