@@ -16,9 +16,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { loginUsingEmail, getProfile } from "@/lib/api/auth"
+import { loginUsingEmail } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
-import { useAuthStore } from "@/store/auth-store"
 import SchoolLogo from "./school-logo"
 
 type LoginField = keyof LoginFormValues
@@ -29,8 +28,6 @@ const initialValues: LoginFormValues = {
 }
 
 const LoginForm = () => {
-  const setUser = useAuthStore((state) => state.setUser)
-
   const [formData, setFormData] = useState<LoginFormValues>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
   const [touched, setTouched] = useState<Record<LoginField, boolean>>({
@@ -46,8 +43,6 @@ const LoginForm = () => {
   const [attemptCount, setAttemptCount] = useState(0)
 
   const router = useRouter()
-
-  // const setAuthSession = useAuthStore((state) => state.setAuthSession)
 
   const getFieldError = (field: LoginField, value: string) => {
     const schema = loginSchema.shape[field]
@@ -119,13 +114,8 @@ const LoginForm = () => {
     setErrors({})
 
     try {
-      await loginUsingEmail(formData)
-
-      // fetch profile after successful login
-      const user = await getProfile()
-      setUser(user)
-
-      const role = user.role[0]
+      const res = await loginUsingEmail(formData)
+      const role = res?.data?.user?.role?.[0]
       const route = roleToRoute[role] ?? "login"
       router.push(`/${route}`)
       setAttemptCount(0)
@@ -173,20 +163,6 @@ const LoginForm = () => {
       <section className="flex min-h-screen flex-col items-center justify-center px-6 py-12 lg:px-8">
         {/* School Logo */}
         <SchoolLogo />
-        {/* <Link href="/">
-          <div className="-gap-1.5 mb-8 flex flex-col items-center justify-center">
-            <Image
-              src="/assets/logo.svg"
-              alt="School Base Logo"
-              width={50}
-              height={50}
-              // className="h-40 w-40"
-            />
-            <span className="text-accent text-sm font-bold tracking-wider uppercase">
-              school base
-            </span>
-          </div>
-        </Link> */}
 
         {/* Main Content */}
         <div className="w-full max-w-md">

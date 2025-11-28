@@ -3,7 +3,7 @@ import { proxyAuthRequest } from "../_proxy"
 
 export async function POST(req: Request) {
   // Call your backend
-  const backendResponse = await proxyAuthRequest(req, "/auth/login")
+  const backendResponse = await proxyAuthRequest(req, "/superadmin")
 
   const data = await backendResponse.json()
 

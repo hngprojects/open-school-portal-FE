@@ -9,6 +9,7 @@ interface EmptyStateProps {
   description: string
   buttonText: string
   buttonHref: string
+  buttonOnClick?: () => void
   imageSrc?: string
   imageAlt?: string
   icon?: LucideIcon
@@ -19,10 +20,18 @@ const EmptyState = ({
   description,
   buttonText,
   buttonHref,
+  buttonOnClick,
   imageSrc = "/assets/images/dashboard/empty-state-hr.svg",
   imageAlt = "Empty state",
   icon: Icon = Plus,
 }: EmptyStateProps) => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (buttonOnClick) {
+      e.preventDefault()
+      buttonOnClick()
+    }
+  }
+
   return (
     <section className="flex min-h-[500px] flex-col items-center justify-center gap-6">
       <div className="relative">
@@ -33,7 +42,7 @@ const EmptyState = ({
         <p className="text-primary max-w-[50ch] text-center">{description}</p>
       </div>
       <Button asChild>
-        <Link href={buttonHref} className="flex items-center gap-2">
+        <Link href={buttonHref} className="flex items-center gap-2" onClick={handleClick}>
           <Icon className="size-4" />
           {buttonText}
         </Link>

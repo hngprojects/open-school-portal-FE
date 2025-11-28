@@ -11,6 +11,8 @@ export function useGetUser() {
     queryFn: () => getUserData(),
     select: (data) => data.data,
     staleTime: 1000 * 60 * 60,
+    retry: 2,
+    refetchOnWindowFocus: false,
   })
 }
 

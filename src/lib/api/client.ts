@@ -69,6 +69,11 @@ const getErrorMessage = (error: unknown): string => {
           if (message.toLowerCase().includes("invalid credentials")) {
             return "Invalid Email address and/or Password."
           }
+          // check if it is a proxy
+          if (message.toLowerCase().includes("proxy error")) {
+            return "Network error! please check your connection and try again"
+          }
+
           return message
         }
 
@@ -154,6 +159,6 @@ export async function apiFetch<TResponse>(
       const errorMessage = getErrorMessage(err)
       throw new Error(errorMessage)
     }
-    throw new Error("An unexpected error occurred. Please try again later")
+    throw new Error("An unexpected error occured. Please try again later")
   }
 }

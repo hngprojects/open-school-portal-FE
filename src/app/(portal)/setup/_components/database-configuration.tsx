@@ -4,27 +4,34 @@ import { Button } from "@/components/ui/button"
 import { Errors, FormData } from "../_types/setup"
 import { useState } from "react"
 import { z } from "zod"
-import { EyeClosedIcon, EyeIcon } from "lucide-react"
+import { AlertCircleIcon, EyeClosedIcon, EyeIcon } from "lucide-react"
 
 // Zod Schemas
 const databaseSchema = z.object({
-  name: z.string().min(1, "Database name is required"),
+  name: z
+    .string()
+    .min(1, "Database name is required")
+    .regex(
+      /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+      "Database name can only contain letters, numbers, and underscores, and cannot start with a number"
+    ),
   host: z.string().min(1, "Database host is required"),
   username: z.string().min(1, "Database username is required"),
+  port: z.number().max(65535, "Port must be less than or equal to 65535"),
+  type: z.enum(
+    ["postgres", "mysql", "sqlite", "mssql", "mariadb"],
+    "Must be one of postgres, mysql, sqlite, mssql, mariadb"
+  ),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
     .regex(/[a-zA-Z]/, "Password must contain at least one letter")
-    .regex(/\d/, "Password must contain at least one number")
-    .regex(
-      /[!@#$%^&*(),.?":{}|<>]/,
-      "Password must contain at least one special character"
-    ),
+    .regex(/\d/, "Password must contain at least one number"),
 })
 
 interface DatabaseConfigFormProps {
   formData: FormData
-  updateFormData: (section: keyof FormData, field: string, value: string) => void
+  updateFormData: (section: keyof FormData, field: string, value: string | number) => void
   onSubmit: () => void
   onCancel: () => void
 }
@@ -59,35 +66,62 @@ export function DatabaseConfigForm({
           placeholder="your database name"
         />
 
-        <FormField
-          label="Database Username"
-          required
-          error={errors.username}
-          value={formData.database.username}
-          onChange={(e) => handleChange("database", "username", e.target.value)}
-          placeholder="your database user"
-        />
+        <div className="relative">
+          <div className="grid grid-cols-1 items-center gap-4 md:grid-cols-[2fr_1fr] md:items-start">
+            <FormField
+              label="Database Username"
+              required
+              value={formData.database.username}
+              onChange={(e) => handleChange("database", "username", e.target.value)}
+              placeholder="your database user"
+            />
 
-        <div className="grid grid-cols-[3fr_1fr] gap-4">
-          <FormField
-            label="Database Host"
-            required
-            error={errors.host}
-            value={formData.database.host}
-            onChange={(e) => handleChange("database", "host", e.target.value)}
-            placeholder="localhost"
-          />
+            <FormField
+              type="text"
+              label="Type"
+              required
+              value={formData.database.type}
+              onChange={(e) => handleChange("database", "type", e.target.value)}
+              placeholder="postgres"
+            />
+          </div>
 
-          <FormField
-            type="number"
-            label="Database Port"
-            required
-            error={errors.port}
-            value={formData.database.port}
-            onChange={(e) => handleChange("database", "port", e.target.value)}
-            placeholder="8000"
-            pattern="\d*"
-          />
+          {!!(errors.type || errors.username) && (
+            <p className="mt-1 flex items-center gap-2 text-sm text-red-500">
+              <AlertCircleIcon /> {errors.username ? "Username: " + errors.username : ""}{" "}
+              {errors.type ? "Type: " + errors.type : ""}{" "}
+            </p>
+          )}
+        </div>
+
+        <div className="relative">
+          <div className="grid grid-cols-[3fr_1fr] items-center gap-4">
+            <FormField
+              label="Database Host"
+              required
+              value={formData.database.host}
+              onChange={(e) => handleChange("database", "host", e.target.value)}
+              placeholder="localhost"
+            />
+
+            <FormField
+              type="number"
+              label="Port"
+              required
+              value={formData.database.port}
+              onChange={(e) => handleChange("database", "port", Number(e.target.value))}
+              placeholder="8000"
+              pattern="\d*"
+            />
+          </div>
+
+          {!!(errors.host || errors.port) && (
+            <p className="mt-1 flex items-center gap-2 text-sm text-red-500">
+              {" "}
+              <AlertCircleIcon /> {errors.host ? "Host: " + errors.host : ""}{" "}
+              {errors.port ? "Port: " + errors.port : ""}{" "}
+            </p>
+          )}
         </div>
 
         <FormField
@@ -134,7 +168,7 @@ export function DatabaseConfigForm({
     </form>
   )
 
-  function handleChange(section: keyof FormData, field: string, value: string) {
+  function handleChange(section: keyof FormData, field: string, value: string | number) {
     updateFormData(section, field, value)
 
     if (errors[field]) {

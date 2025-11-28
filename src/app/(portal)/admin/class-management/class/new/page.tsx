@@ -1,13 +1,22 @@
 "use client"
 
-import React from "react"
 import { useRouter } from "next/navigation"
 import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { ArrowLeft } from "lucide-react"
-import AddClassForm from "../../../_components/classes/add-class-form"
+import AddClassForm, { ClassFormData } from "../../../_components/classes/add-class-form"
+import { useCreateClass } from "../../_hooks/use-classes"
 
 const AddClass = () => {
   const router = useRouter()
+  const createNewClass = useCreateClass().mutateAsync
+
+  const handleCreateClass = async (data: ClassFormData) => {
+    await createNewClass({
+      name: data.className,
+      arm: data.arm,
+    })
+    router.push("/admin/class-management/class")
+  }
 
   return (
     <div className="p-4">
@@ -25,7 +34,7 @@ const AddClass = () => {
           description="Enter the details of the new teacher"
         />
 
-        <AddClassForm />
+        <AddClassForm onSubmit={handleCreateClass} />
       </section>
     </div>
   )
