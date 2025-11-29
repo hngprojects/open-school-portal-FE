@@ -30,10 +30,10 @@ export function BulkUploadSuccess({
         </div>
       </div>
       <Button
-        onClick={() => router.replace("/admin")}
+        onClick={() => router.replace("/admin/user-configuration?tab=pending")}
         className="mt-[60px] min-w-[200px] bg-[#DA3743] hover:bg-[#DA3743]/90"
       >
-        Go Back to Dashboard
+        Go Back to User Configuration
       </Button>
     </div>
   )

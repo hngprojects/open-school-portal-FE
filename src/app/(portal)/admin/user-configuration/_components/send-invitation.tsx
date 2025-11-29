@@ -10,7 +10,7 @@ export function SendInvitation() {
   const [isBulk, setIsBulk] = useState(false)
 
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col gap-6 pb-10">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
           <h2 className="text-2xl font-bold text-[#2d2d2d] capitalize">
