@@ -3,19 +3,21 @@
 import { useParams, useRouter } from "next/navigation"
 import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { ArrowLeft } from "lucide-react"
-import AddClassForm, { ClassFormData } from "../../../../_components/classes/add-class-form"
-import {useUpdateClass, useGetClass } from "../../../_hooks/use-classes"
+import AddClassForm, {
+  ClassFormData,
+} from "../../../../_components/classes/add-class-form"
+import { useUpdateClass, useGetClass } from "../../../_hooks/use-classes"
 import { ItemLoader } from "@/app/(portal)/admin/_components/sub-loader"
 import { ItemsError } from "@/app/(portal)/admin/_components/loading-error"
 
 const EditClass = () => {
-  const classID = useParams().classID as string;
-  const { data: classData, isLoading, isError, error, refetch } = useGetClass(classID);
+  const classID = useParams().classID as string
+  const { data: classData, isLoading, isError, error, refetch } = useGetClass(classID)
 
   const prefilledData = classData && {
     academicSession: classData.academicSession?.name,
     className: classData.name,
-    arm: classData.arm
+    arm: classData.arm,
   }
 
   const router = useRouter()
@@ -53,18 +55,14 @@ const EditClass = () => {
             item="Class Information"
             reload={refetch}
             errorMessage={
-              isError ? ( error?.message || "An unexpected error occurred." ) :
-              "Class does not exist!"
+              isError
+                ? error?.message || "An unexpected error occurred."
+                : "Class does not exist!"
             }
           />
         ) : (
-          <AddClassForm
-            onSubmit={handleUpdateClass}
-            defaultValues={prefilledData}
-          />
-        )
-        }
-
+          <AddClassForm onSubmit={handleUpdateClass} defaultValues={prefilledData} />
+        )}
       </section>
     </div>
   )

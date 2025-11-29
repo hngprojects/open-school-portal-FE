@@ -6,10 +6,7 @@ const Page = () => {
     <div className="bg-[#FAFAFA] px-2 pt-4 lg:px-4">
       {/* empty state */}
       <div className="p-5">
-        <DashboardTitle
-          heading="Classes"
-          description="View, manage, or create classes"
-        />
+        <DashboardTitle heading="Classes" description="View, manage, or create classes" />
 
         <ClassesPageContent />
       </div>

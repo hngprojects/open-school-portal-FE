@@ -16,15 +16,15 @@ export const useGetClassesInfo = (params?: { page?: number; limit?: number }) =>
     queryKey: CLASS_KEYS.all,
     queryFn: () => ClassesAPI.getAll(params),
     select: (data) => data.data,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   })
 
-export const useGetClass = (id: string) => 
+export const useGetClass = (id: string) =>
   useQuery({
     queryKey: CLASS_KEYS.detail(id),
     queryFn: () => ClassesAPI.getOne(id),
     select: (data) => data.data,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
   })
 
 // CREATE CLASS
@@ -55,7 +55,7 @@ export const useUpdateClass = (classID: string) => {
     onSuccess: () => {
       //   toast.success(res.message)
       qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
-        qc.invalidateQueries({ queryKey: CLASS_KEYS.detail(classID) })
+      qc.invalidateQueries({ queryKey: CLASS_KEYS.detail(classID) })
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

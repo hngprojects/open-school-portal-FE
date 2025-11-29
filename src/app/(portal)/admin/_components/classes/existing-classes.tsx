@@ -9,7 +9,6 @@ import { ChevronDown, GraduationCap, Pencil, Plus, Search } from "lucide-react"
 import { ClassItem } from "@/lib/classes"
 import { useRouter } from "next/navigation"
 
-
 const EDIT_CLASS = (classID: string) => `/admin/class-management/class/${classID}/edit`
 
 const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
@@ -29,10 +28,9 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
     })
   }
 
-  const filteredClasses = classesData.filter(
-    (classItem) =>
-      classItem.name.toLowerCase().includes(searchQuery.toLowerCase()
-  ))
+  const filteredClasses = classesData.filter((classItem) =>
+    classItem.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const hasOtherClasses =
     filteredClasses.length < classesData.length && searchQuery === ""
@@ -116,9 +114,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                             <GraduationCap className="size-5" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              {arm.arm}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{arm.arm}</p>
                             <p className="text-xs text-gray-500">
                               {Math.floor(Math.random() * 20) + 25} students
                             </p>

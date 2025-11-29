@@ -64,11 +64,7 @@ export const ClassesAPI = {
     ),
 
   getOne: (id: string) =>
-    apiFetch<ResponsePack<SingleClass>>(
-      `/classes/${id}`,
-      { method: "GET"},
-      true
-    ),
+    apiFetch<ResponsePack<SingleClass>>(`/classes/${id}`, { method: "GET" }, true),
 
   assignedTeachers: (id: string, session_id?: string) =>
     apiFetch<
@@ -82,6 +78,5 @@ export const ClassesAPI = {
       >
     >(`/classes/${id}/teachers`, { params: { session_id } }, true),
 
-    count: () => 
-      apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
+  count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }

@@ -73,7 +73,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
     router.push("/admin/class-management/class")
   }
 
-  const defaultSession = defaultValues?.academicSession;
+  const defaultSession = defaultValues?.academicSession
   useEffect(() => {
     if (!isLoadingSession) {
       if (currentSession && !defaultSession) {

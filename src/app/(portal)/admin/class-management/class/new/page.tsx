@@ -12,8 +12,8 @@ const AddClass = () => {
   const createNewClass = useCreateClass().mutateAsync
 
   const handleCreateClass = async (data: ClassFormData) => {
-    let teacher = null;
-    if (data.classTeacher){
+    let teacher = null
+    if (data.classTeacher) {
       try {
         teacher = await getTeacherByName(data?.classTeacher)
       } catch {
@@ -21,7 +21,7 @@ const AddClass = () => {
       }
     }
 
-    if (!teacher && data.classTeacher ) {
+    if (!teacher && data.classTeacher) {
       throw "The specified class teacher does not exist."
     }
 

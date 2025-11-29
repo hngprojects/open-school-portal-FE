@@ -148,9 +148,13 @@ export function useTeachersCount() {
   })
 }
 
-
 export async function getTeacherByName(name: string) {
-  const teachers = await TeachersAPI.getAll({search: name, limit: 1, page: 1, is_active: true})
+  const teachers = await TeachersAPI.getAll({
+    search: name,
+    limit: 1,
+    page: 1,
+    is_active: true,
+  })
   const teacher = teachers.data?.data?.[0] || null
   return teacher
 }

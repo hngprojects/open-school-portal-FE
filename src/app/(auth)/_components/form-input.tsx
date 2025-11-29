@@ -43,7 +43,8 @@ const LoginForm = () => {
   const [attemptCount, setAttemptCount] = useState(0)
 
   // ?next=/path
-  const nextRoute = window !== undefined && new URLSearchParams(window.location.search).get("next");
+  const nextRoute =
+    window !== undefined && new URLSearchParams(window.location.search).get("next")
 
   const router = useRouter()
 
@@ -129,7 +130,6 @@ const LoginForm = () => {
       const route = roleToRoute[role] ?? "/"
       router.push(`/${route}`)
       setAttemptCount(0)
-
     } catch (error) {
       console.error("Login error:", error)
 

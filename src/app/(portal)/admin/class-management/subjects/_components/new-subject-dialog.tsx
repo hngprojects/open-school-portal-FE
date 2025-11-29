@@ -21,7 +21,6 @@ import {
 import { useState } from "react"
 import ActiveSessionGuard from "../../../_components/sessions/active-session-required"
 
-
 export default function NewSubjectDialog({
   open,
   setOpen,
@@ -39,19 +38,19 @@ export default function NewSubjectDialog({
 
   return (
     <>
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogOverlay className="z-60" />
-      <DialogContent className="z-60 sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
-          <DialogDescription className="text-sm">
-            Add a new subject to your school curriculum.
-          </DialogDescription>
-        </DialogHeader>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="z-60" />
+        <DialogContent className="z-60 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
+            <DialogDescription className="text-sm">
+              Add a new subject to your school curriculum.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* Department Select */}
-          {/* <div>
+          <div className="space-y-4 py-4">
+            {/* Department Select */}
+            {/* <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
                 Department
               </label>
@@ -74,43 +73,39 @@ export default function NewSubjectDialog({
               </Select>
             </div> */}
 
-          {/* Subject Name Input */}
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-900">
-              Subject Name
-            </label>
-            <Input
-              type="text"
-              placeholder="Enter Subject name, eg Biology"
-              value={formData.subjectName}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, subjectName: e.target.value }))
-              }
-              className="w-full"
-            />
+            {/* Subject Name Input */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Subject Name
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter Subject name, eg Biology"
+                value={formData.subjectName}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, subjectName: e.target.value }))
+                }
+                className="w-full"
+              />
+            </div>
           </div>
-        </div>
 
-        <DialogFooter className="flex flex-col gap-2 sm:flex-col">
-          <Button
-            onClick={handleCreateSubject}
-            disabled={isSubmitting || !formData.subjectName}
-            className="w-full"
-          >
-            {isSubmitting ? "Creating..." : "Create Subject"}
-          </Button>
-          <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
-            Cancel
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <Button
+              onClick={handleCreateSubject}
+              disabled={isSubmitting || !formData.subjectName}
+              className="w-full"
+            >
+              {isSubmitting ? "Creating..." : "Create Subject"}
+            </Button>
+            <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-    {
-      open && (
-        <ActiveSessionGuard />
-      )
-    }
+      {open && <ActiveSessionGuard />}
     </>
   )
 
