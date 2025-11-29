@@ -5,15 +5,30 @@ import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { ArrowLeft } from "lucide-react"
 import AddClassForm, { ClassFormData } from "../../../_components/classes/add-class-form"
 import { useCreateClass } from "../../_hooks/use-classes"
+import { getTeacherByName } from "../../../teachers/_hooks/use-teachers"
 
 const AddClass = () => {
   const router = useRouter()
   const createNewClass = useCreateClass().mutateAsync
 
   const handleCreateClass = async (data: ClassFormData) => {
+    let teacher = null;
+    if (data.classTeacher){
+      try {
+        teacher = await getTeacherByName(data?.classTeacher)
+      } catch {
+        throw "An error occurred while adding the teacher to the class."
+      }
+    }
+
+    if (!teacher && data.classTeacher ) {
+      throw "The specified class teacher does not exist."
+    }
+
     await createNewClass({
       name: data.className,
       arm: data.arm,
+      teacherIds: [teacher?.id].filter(Boolean) as string[],
     })
     router.push("/admin/class-management/class")
   }
@@ -31,7 +46,7 @@ const AddClass = () => {
       <section className="mt-5 lg:ml-10">
         <DashboardTitle
           heading="Add New Class"
-          description="Enter the details of the new teacher"
+          description="Enter the details of the new class"
         />
 
         <AddClassForm onSubmit={handleCreateClass} />
