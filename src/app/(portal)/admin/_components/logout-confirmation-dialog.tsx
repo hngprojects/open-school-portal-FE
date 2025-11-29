@@ -4,7 +4,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -54,8 +53,7 @@ export function LogoutDialog({
   if (isLoggingOut) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+        <DialogContent className="gap-0 border-0 p-0 sm:max-w-[425px]">
           <div className="flex flex-col items-center justify-center px-6 py-12">
             <div className="relative mb-4 h-12 w-12">
               <Loader2 className="h-12 w-12 animate-spin text-red-500" />
@@ -71,8 +69,7 @@ export function LogoutDialog({
   if (error) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+        <DialogContent className="gap-0 border-0 p-0 sm:max-w-[425px]">
           <DialogHeader className="space-y-3 px-6 pt-8 pb-6">
             <DialogTitle className="text-center text-2xl font-semibold">
               Log Out Failed
@@ -105,8 +102,7 @@ export function LogoutDialog({
   // Default confirmation state
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="z-60" />
-      <DialogContent className="z-60 gap-0 border-0 p-0 sm:max-w-[425px]">
+      <DialogContent className="gap-0 border-0 p-0 sm:max-w-[425px]">
         <DialogHeader className="space-y-3 px-6 pt-8 pb-6">
           <DialogTitle className="text-center text-2xl font-semibold">
             Log Out?

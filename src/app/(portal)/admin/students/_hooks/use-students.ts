@@ -158,3 +158,15 @@ export function useStudentsCount() {
     },
   })
 }
+
+// ----------------------------
+// STUDENT GROWTH REPORT
+// --------------------------
+
+export function useStudentGrowthReport(academic_year?: string) {
+  return useQuery({
+    queryKey: ["student_growth_report", academic_year],
+    queryFn: () => StudentsAPI.getStudentGrowthReport(academic_year),
+    select: (data) => data.data,
+  })
+}

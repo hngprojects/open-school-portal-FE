@@ -43,7 +43,26 @@ export interface StudentsListResponse {
   status_code: number
 }
 
+export interface StudentGrowthReport {
+  academic_year: string
+  report: {
+    class_name: string
+    new_students: number
+    boys: number
+    girls: number
+  }[]
+}
+
 export const StudentsAPI = {
+  getStudentGrowthReport: (academic_year?: string) =>
+    apiFetch<ResponsePack<StudentGrowthReport>>(
+      "/students/student-growth-report",
+      {
+        params: { academic_year },
+      },
+      true
+    ),
+
   getAll: (params?: GetStudentsParams) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
       "/students",
