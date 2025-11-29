@@ -99,7 +99,7 @@ const WaitlistFormModal: React.FC<{
         ) : (
           <>
             <form className="mt-4 space-y-3" onSubmit={handleSubmit}>
-              {/* 🔴 ERROR MESSAGE BEFORE FIRST INPUT */}
+              
               {!!localError && (
                 <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
                   {localError || "Something went wrong."}

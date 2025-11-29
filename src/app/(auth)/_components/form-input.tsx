@@ -42,6 +42,9 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
+  // ?next=/path
+  const nextRoute = window !== undefined && new URLSearchParams(window.location.search).get("next");
+
   const router = useRouter()
 
   const getFieldError = (field: LoginField, value: string) => {
@@ -115,10 +118,18 @@ const LoginForm = () => {
 
     try {
       const res = await loginUsingEmail(formData)
+
+      if (nextRoute) {
+        router.push(nextRoute)
+        setAttemptCount(0)
+        return
+      }
+
       const role = res?.data?.user?.role?.[0]
-      const route = roleToRoute[role] ?? "login"
+      const route = roleToRoute[role] ?? "/"
       router.push(`/${route}`)
       setAttemptCount(0)
+
     } catch (error) {
       console.error("Login error:", error)
 

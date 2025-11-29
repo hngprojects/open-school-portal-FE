@@ -105,7 +105,12 @@ const getErrorMessage = (error: unknown): string => {
     }
 
     if (error.response?.status === 401) {
-      navigateTo("/login")
+      if (window !== undefined) {
+        const pathname = window.location.pathname
+        if (!pathname.includes("/login")) {
+          navigateTo(`/login?next=${encodeURIComponent(pathname)}`)
+        }
+      }
       return "Your session has expired. Please log in again."
     }
 
