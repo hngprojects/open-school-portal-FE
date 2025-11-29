@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Loader2 } from "lucide-react"
+import { Loader2, Edit3 } from "lucide-react"
 
 interface StudentsTableProps {
   students: Student[]
@@ -43,12 +43,13 @@ export function StudentsTable({
               <TableRow>
                 <TableHead>S/N</TableHead>
                 <TableHead>Student Name</TableHead>
-                <TableHead>Reg No</TableHead>
+                {/* <TableHead>Reg No</TableHead> */}
                 <TableHead>CA (0-30)</TableHead>
                 <TableHead>Exam (0-70)</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Grade</TableHead>
-                <TableHead>Comment</TableHead>
+                {/* <TableHead>Comment</TableHead> */}
+                <TableHead>Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -83,7 +84,7 @@ function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableR
       <TableCell className="font-medium">
         {student.first_name} {student.last_name}
       </TableCell>
-      <TableCell>{student.registration_number || "-"}</TableCell>
+      {/* <TableCell>{student.registration_number || "-"}</TableCell> */}
 
       {/* CA Score */}
       <TableCell>
@@ -93,8 +94,8 @@ function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableR
           max="30"
           value={grade?.ca_score ?? ""}
           onChange={(e) => onGradeUpdate(student.id, "ca_score", e.target.value)}
-          className="w-20"
-          placeholder="0-30"
+          className="w-20 border-none"
+          placeholder="-"
         />
       </TableCell>
 
@@ -106,8 +107,8 @@ function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableR
           max="70"
           value={grade?.exam_score ?? ""}
           onChange={(e) => onGradeUpdate(student.id, "exam_score", e.target.value)}
-          className="w-20"
-          placeholder="0-70"
+          className="w-20 border-none"
+          placeholder="-"
         />
       </TableCell>
 
@@ -118,13 +119,17 @@ function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableR
       <TableCell>{grade?.grade ?? "-"}</TableCell>
 
       {/* Comment */}
-      <TableCell>
+      {/* <TableCell>
         <Input
           value={grade?.comment ?? ""}
           onChange={(e) => onGradeUpdate(student.id, "comment", e.target.value)}
           className="w-32"
           placeholder="Comment"
         />
+      </TableCell> */}
+
+      <TableCell>
+        <Edit3 className="h-5 w-5 cursor-pointer text-[#da3743]" />
       </TableCell>
     </TableRow>
   )
