@@ -1,20 +1,8 @@
-"use client"
-
+import { useState, useMemo } from "react"
 import { GraduationCap } from "lucide-react"
 import { ReuseableBarChart } from "./bar-chart" // adjust path as needed
 import { TypedChartConfig } from "@/types/chart"
-
-// -------------------
-// Chart Data
-// -------------------
-const studentData = [
-  { class: "JSS1", new: 42, boys: 25, girls: 34 },
-  { class: "JSS2", new: 34, boys: 41, girls: 33 },
-  { class: "JSS3", new: 50, boys: 34, girls: 25 },
-  { class: "SS1", new: 28, boys: 45, girls: 30 },
-  { class: "SS2", new: 40, boys: 32, girls: 15 },
-  { class: "SS3", new: 30, boys: 22, girls: 15 },
-]
+import { useStudentGrowthReport } from "../../students/_hooks/use-students"
 
 // -------------------
 // Chart Configuration
@@ -29,11 +17,28 @@ const studentConfig: TypedChartConfig<"new" | "boys" | "girls"> = {
 // Component
 // -------------------
 export default function StudentGrowthChart() {
+  const [selectedYear, setSelectedYear] = useState("2025")
+  const { data, isLoading } = useStudentGrowthReport(selectedYear)
+
+  const chartData = useMemo(() => {
+    if (!data?.report) return []
+    return data.report.map((item) => ({
+      class: item.class_name,
+      new: item.new_students,
+      boys: item.boys,
+      girls: item.girls,
+    }))
+  }, [data])
+
+  const handleYearChange = (value: string) => {
+    setSelectedYear(value)
+  }
+
   return (
     <ReuseableBarChart
       title="Student Growth"
       icon={GraduationCap}
-      data={studentData}
+      data={chartData}
       xKey="class"
       bars={["new", "boys", "girls"]}
       config={studentConfig}
@@ -42,6 +47,8 @@ export default function StudentGrowthChart() {
         { label: "2024/2025", value: "2024" },
         { label: "2023/2024", value: "2023" },
       ]}
+      onDropdownChange={handleYearChange}
+      isLoading={isLoading}
       footer={[
         { label: "New Students", color: "#1EBE6F" },
         { label: "Boys", color: "#D64545" },

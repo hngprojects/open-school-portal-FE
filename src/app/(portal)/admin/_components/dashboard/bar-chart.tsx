@@ -9,7 +9,7 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { LucideIcon } from "lucide-react"
+import { LucideIcon, Loader2 } from "lucide-react"
 import {
   Select,
   SelectTrigger,
@@ -27,7 +27,9 @@ interface ReuseableBarChartProps<XKey extends string, BarKey extends string> {
   bars: BarKey[]
   config: TypedChartConfig<BarKey>
   dropdown?: { label: string; value: string }[]
+  onDropdownChange?: (value: string) => void
   footer?: { label: string; color: string }[]
+  isLoading?: boolean
 }
 
 export function ReuseableBarChart<XKey extends string, BarKey extends string>({
@@ -38,7 +40,9 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
   bars,
   config,
   dropdown,
+  onDropdownChange,
   footer,
+  isLoading,
 }: ReuseableBarChartProps<XKey, BarKey>) {
   return (
     <Card className="p-2">
@@ -50,7 +54,7 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
           </div>
 
           {dropdown && (
-            <Select>
+            <Select onValueChange={onDropdownChange} defaultValue={dropdown[0]?.value}>
               <SelectTrigger className="border-accent text-accent w-[135px]">
                 <SelectValue placeholder={dropdown[0]?.label} />
               </SelectTrigger>
@@ -67,27 +71,38 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={config}>
-          <BarChart data={data} barCategoryGap={10} barGap={0}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey={xKey} tickLine={false} axisLine={false} tickMargin={10} />
-            <YAxis
-              tickLine={false}
-              axisLine={false}
-              tickMargin={10}
-              // Optional: format the numbers, e.g., thousands separator
-              // tickFormatter={(value) => value.toLocaleString()}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
-            />
+        {isLoading ? (
+          <div className="flex h-[200px] items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+          </div>
+        ) : (
+          <ChartContainer config={config}>
+            <BarChart data={data} barCategoryGap={10} barGap={0}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey={xKey} tickLine={false} axisLine={false} tickMargin={10} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={10}
+                // Optional: format the numbers, e.g., thousands separator
+                // tickFormatter={(value) => value.toLocaleString()}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="dot" />}
+              />
 
-            {bars.map((barKey) => (
-              <Bar key={barKey} dataKey={barKey} fill={config[barKey].color} radius={0} />
-            ))}
-          </BarChart>
-        </ChartContainer>
+              {bars.map((barKey) => (
+                <Bar
+                  key={barKey}
+                  dataKey={barKey}
+                  fill={config[barKey].color}
+                  radius={0}
+                />
+              ))}
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
 
       {footer && (
