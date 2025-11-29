@@ -73,15 +73,16 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
     router.push("/admin/class-management/class")
   }
 
+  const defaultSession = defaultValues?.academicSession
   useEffect(() => {
     if (!isLoadingSession) {
-      if (currentSession) {
+      if (currentSession && !defaultSession) {
         reset({
           academicSession: currentSession.name,
         })
       }
     }
-  }, [isLoadingSession, currentSession, reset])
+  }, [isLoadingSession, currentSession, defaultSession, reset])
 
   return (
     <ActiveSessionGuard>
