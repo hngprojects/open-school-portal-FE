@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Loader2 } from "lucide-react"
+import { Loader2, Edit3 } from "lucide-react"
 
 interface StudentsTableProps {
   students: Student[]
@@ -126,6 +126,10 @@ function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableR
           placeholder="Comment"
         />
       </TableCell> */}
+
+      <TableCell>
+        <Edit3 className="h-5 w-5 cursor-pointer text-[#da3743]" />
+      </TableCell>
     </TableRow>
   )
 }

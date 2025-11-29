@@ -3,11 +3,11 @@
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { CircleAlert } from "lucide-react"
-import type { UseFormRegister, FieldError } from "react-hook-form"
+import type { UseFormRegister, FieldError, Path } from "react-hook-form"
 import type { SessionFormData } from "../_schemas/session-form-schema"
 
 interface Props {
-  name: keyof SessionFormData
+  name: Path<SessionFormData> // <-- allows "terms.first_term.startDate"
   label: string
   register: UseFormRegister<SessionFormData>
   error?: FieldError
