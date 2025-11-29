@@ -121,7 +121,7 @@ export function SubmissionActions({
         <Button
           onClick={handleSubmitForApproval}
           disabled={submitMutation.isPending || !canSubmit}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="bg-[#da3743]"
         >
           {submitMutation.isPending ? "Submitting..." : "Submit for Approval"}
         </Button>
