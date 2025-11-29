@@ -10,6 +10,9 @@ import {
   NotebookPen,
   CalendarDays,
   FileBadge,
+  Menu,
+  Calendar,
+  Users,
 } from "lucide-react"
 
 import {
@@ -36,7 +39,8 @@ const items = [
 
   { title: "Students", url: "/teacher/students", icon: GraduationCap },
 
-  { title: "Parents", url: "/teacher/parents", icon: User },
+  { title: "Parents", url: "/teacher/parents", icon: Users }, // Changed icon from User to Users
+  { title: "Timetable", url: "/teacher/timetable", icon: Calendar }, // Added new Timetable item
 
   { title: "Attendance", url: "/teacher/attendance", icon: NotebookPen },
 
