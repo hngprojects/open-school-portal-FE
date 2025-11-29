@@ -87,7 +87,7 @@ const extractData = <T>(response: ResponsePack<T>): T => {
 export const ResultsAPI = {
   // Classes - handle the nested response structure
   getClasses: (): Promise<Class[]> =>
-    apiFetch<ResponsePack<ClassesResponse>>("/classes", {}, true)
+    apiFetch<ResponsePack<ClassesResponse>>("/classes/teacher/me", {}, true)
       .then((response) => {
         const data = extractData(response)
         console.log("Classes API Response:", data) // Debug log
@@ -115,7 +115,7 @@ export const ResultsAPI = {
 
   // Subjects - handle the nested response structure
   getSubjects: (): Promise<Subject[]> =>
-    apiFetch<ResponsePack<SubjectsResponse>>("/subjects", {}, true)
+    apiFetch<ResponsePack<SubjectsResponse>>("/classes/${classId}/subjects", {}, true)
       .then((response) => {
         const data = extractData(response)
         console.log("Subjects API Response:", data) // Debug log
@@ -132,7 +132,7 @@ export const ResultsAPI = {
 
   // Terms - updated endpoint to use academic-term
   getTerms: (): Promise<Term[]> =>
-    apiFetch<ResponsePack<Term[]>>("/academic-term", {}, true)
+    apiFetch<ResponsePack<Term[]>>("/academic-term/session/{sessionId}", {}, true)
       .then((response) => {
         const terms = ensureArray<Term>(extractData(response))
         console.log("Terms API Response:", terms) // Debug log
