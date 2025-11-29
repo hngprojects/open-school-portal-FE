@@ -82,7 +82,7 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
         })
       }
     }
-  }, [isLoadingSession, currentSession, reset])
+  }, [isLoadingSession, currentSession, defaultSession, reset])
 
   return (
     <ActiveSessionGuard>
