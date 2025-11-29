@@ -5,7 +5,7 @@ import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { ArrowLeft } from "lucide-react"
 import AddClassForm, { ClassFormData } from "../../../_components/classes/add-class-form"
 import { useCreateClass } from "../../_hooks/use-classes"
-import { getTeacherByName } from "../../../teachers/_hooks/use-teachers"
+import { findTeacherBySearch } from "../../../teachers/_hooks/use-teachers"
 
 const AddClass = () => {
   const router = useRouter()
@@ -15,7 +15,7 @@ const AddClass = () => {
     let teacher = null
     if (data.classTeacher) {
       try {
-        teacher = await getTeacherByName(data?.classTeacher)
+        teacher = await findTeacherBySearch(data?.classTeacher)
       } catch {
         throw new Error("An error occurred while adding the teacher to the class.")
       }

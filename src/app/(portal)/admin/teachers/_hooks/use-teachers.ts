@@ -148,7 +148,7 @@ export function useTeachersCount() {
   })
 }
 
-export async function getTeacherByName(name: string) {
+export async function findTeacherBySearch(name: string) {
   const teachers = await TeachersAPI.getAll({
     search: name,
     limit: 1,

@@ -105,7 +105,7 @@ const getErrorMessage = (error: unknown): string => {
     }
 
     if (error.response?.status === 401) {
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const pathname = window.location.pathname
         if (
           !pathname.includes("/login") &&

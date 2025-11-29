@@ -25,7 +25,7 @@ export interface ClassItem {
   }[]
 }
 
-export interface SingleClass extends ClassItem {
+export interface SingleClass {
   id: string
   name: string
   arm: string
