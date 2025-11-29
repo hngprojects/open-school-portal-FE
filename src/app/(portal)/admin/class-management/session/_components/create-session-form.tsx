@@ -29,19 +29,21 @@ const CreateSessionForm = () => {
   } = useForm<SessionFormData>({
     resolver: zodResolver(sessionFormSchema),
     defaultValues: {
-      firstTermStartDate: "",
-      firstTermEndDate: "",
-      secondTermStartDate: "",
-      secondTermEndDate: "",
-      thirdTermStartDate: "",
-      thirdTermEndDate: "",
+      terms: {
+        first_term: { startDate: "", endDate: "" },
+        second_term: { startDate: "", endDate: "" },
+        third_term: { startDate: "", endDate: "" },
+      },
       description: "",
       acknowledge: false,
     },
     mode: "onChange",
   })
 
-  const [start, end] = watch(["firstTermStartDate", "thirdTermEndDate"])
+  const [start, end] = watch([
+    "terms.first_term.startDate",
+    "terms.third_term.endDate"
+  ])
 
   const academicSession =
     start && end
@@ -51,9 +53,8 @@ const CreateSessionForm = () => {
   const onSubmit = (data: SessionFormData) => {
     mutate(
       {
-        name: academicSession,
-        startDate: data.firstTermStartDate,
-        endDate: data.thirdTermEndDate,
+        description: data.description,
+        terms: data.terms
       },
       {
         onSuccess: () => {
@@ -74,6 +75,7 @@ const CreateSessionForm = () => {
       <DashboardTitle heading="Create Session" description="Create academic session" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-8">
+        
         <div>
           <label className="text-sm font-medium">Academic Year</label>
           <div className="mt-1 flex h-10 items-center rounded-md border bg-[#EEEEEE] px-3 text-[#666]">
@@ -81,48 +83,51 @@ const CreateSessionForm = () => {
           </div>
         </div>
 
+        {/* FIRST TERM */}
         <div className="grid gap-4 lg:grid-cols-2">
           <DateField
-            name="firstTermStartDate"
+            name="terms.first_term.startDate"
             label="First Term Start Date"
             register={register}
-            error={errors.firstTermStartDate}
+            error={errors.terms?.first_term?.startDate}
           />
           <DateField
-            name="firstTermEndDate"
+            name="terms.first_term.endDate"
             label="First Term End Date"
             register={register}
-            error={errors.firstTermEndDate}
+            error={errors.terms?.first_term?.endDate}
           />
         </div>
 
+        {/* SECOND TERM */}
         <div className="grid gap-4 lg:grid-cols-2">
           <DateField
-            name="secondTermStartDate"
+            name="terms.second_term.startDate"
             label="Second Term Start Date"
             register={register}
-            error={errors.secondTermStartDate}
+            error={errors.terms?.second_term?.startDate}
           />
           <DateField
-            name="secondTermEndDate"
+            name="terms.second_term.endDate"
             label="Second Term End Date"
             register={register}
-            error={errors.secondTermEndDate}
+            error={errors.terms?.second_term?.endDate}
           />
         </div>
 
+        {/* THIRD TERM */}
         <div className="grid gap-4 lg:grid-cols-2">
           <DateField
-            name="thirdTermStartDate"
+            name="terms.third_term.startDate"
             label="Third Term Start Date"
             register={register}
-            error={errors.thirdTermStartDate}
+            error={errors.terms?.third_term?.startDate}
           />
           <DateField
-            name="thirdTermEndDate"
+            name="terms.third_term.endDate"
             label="Third Term End Date"
             register={register}
-            error={errors.thirdTermEndDate}
+            error={errors.terms?.third_term?.endDate}
           />
         </div>
 
@@ -134,8 +139,7 @@ const CreateSessionForm = () => {
         <div className="flex gap-3 rounded-md border border-amber-300 bg-amber-50 p-4">
           <CircleAlert className="h-5 w-5 text-amber-600" />
           <p className="text-sm text-amber-900">
-            <strong>Warning: </strong> Activating a new session will archive the current
-            one.
+            <strong>Warning: </strong> Activating a new session will archive the current one.
           </p>
         </div>
 

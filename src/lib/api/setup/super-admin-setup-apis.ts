@@ -122,7 +122,7 @@ export const SetupWizardAPI = {
   // Create Database
   createDatabase: (data: DatabaseCreateRequest) =>
     apiFetch<DatabaseCreateResponse>(
-      "/setup/database",
+      "/database",
       {
         method: "POST",
         data,

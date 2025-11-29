@@ -25,10 +25,23 @@ export type PaginatedSessions = {
   status_code?: number
 }
 
+
 export type CreateAcademicSessionData = {
-  name: string
-  startDate: string
-  endDate: string
+  description?: string
+  terms: {
+    first_term: {
+      startDate: string
+      endDate: string
+    }
+    second_term: {
+      startDate: string
+      endDate: string
+    }
+    third_term: {
+      startDate: string
+      endDate: string
+    }
+  }
 }
 
 export type UpdateAcademicSessionData = Partial<CreateAcademicSessionData>
