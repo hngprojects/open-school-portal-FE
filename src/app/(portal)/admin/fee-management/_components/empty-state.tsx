@@ -1,8 +1,6 @@
 import React from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
 import { RiFolderOpenLine } from "react-icons/ri"
+import CreateComponentButton from "./create-component-button"
 
 const EmptyState = () => {
   return (
@@ -15,19 +13,12 @@ const EmptyState = () => {
           Your Fee Component Will Appear Here
         </h4>
         <p className="text-text-secondary max-w-[55ch] text-center leading-6">
-          Get Started by creating a new fee component to organize your school’s fee
+          Get started by creating a new fee component to organize your school’s fee
           structure
         </p>
       </div>
-      <Button asChild>
-        <Link
-          href="/admin/fee-management/create-component"
-          className="flex items-center gap-2"
-        >
-          <Plus className="size-4" />
-          <span>Create Your First Component</span>
-        </Link>
-      </Button>
+
+      <CreateComponentButton>Create Your First Component</CreateComponentButton>
     </section>
   )
 }
