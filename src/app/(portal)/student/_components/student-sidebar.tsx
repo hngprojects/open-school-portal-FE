@@ -12,6 +12,7 @@ import {
   FileBadge,
   Settings,
   LogOut,
+  Calendar,
 } from "lucide-react"
 
 import {
@@ -40,7 +41,8 @@ const items = [
   { title: "Messages", url: "/student/messages", icon: User },
   { title: "Assignments", url: "/student/assignments", icon: NotebookPen },
   { title: "Timetable", url: "/student/timetable", icon: CalendarDays },
-  { title: "Results", url: "/student/results", icon: FileBadge },
+  { title: "Results", url: "/student/results", icon: GraduationCap },
+  { title: "Timetable", url: "/student/timetable", icon: Calendar },
 ]
 
 export function StudentSidebar() {
