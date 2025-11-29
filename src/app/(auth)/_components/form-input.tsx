@@ -44,7 +44,7 @@ const LoginForm = () => {
 
   // ?next=/path
   const nextRoute =
-    window !== undefined && new URLSearchParams(window.location.search).get("next")
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get("next")
 
   const router = useRouter()
 
