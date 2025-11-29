@@ -1,134 +1,65 @@
 import * as z from "zod"
 import { parseDate, isDateAfter } from "../_utils/date"
 
+const termSchema = z.object({
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
+})
+
 export const sessionFormSchema = z
   .object({
-    firstTermStartDate: z.string().min(1, "First term start date is required"),
-    firstTermEndDate: z.string().min(1, "First term end date is required"),
-
-    secondTermStartDate: z.string().min(1, "Second term start date is required"),
-    secondTermEndDate: z.string().min(1, "Second term end date is required"),
-
-    thirdTermStartDate: z.string().min(1, "Third term start date is required"),
-    thirdTermEndDate: z.string().min(1, "Third term end date is required"),
-
     description: z.string().optional(),
+
+    terms: z.object({
+      first_term: termSchema,
+      second_term: termSchema,
+      third_term: termSchema,
+    }),
 
     acknowledge: z.boolean().refine((v) => v === true, {
       message: "You must acknowledge to continue",
     }),
   })
   .superRefine((data, ctx) => {
-    // Strong typing for date fields
-    type DateFieldKey =
-      | "firstTermStartDate"
-      | "firstTermEndDate"
-      | "secondTermStartDate"
-      | "secondTermEndDate"
-      | "thirdTermStartDate"
-      | "thirdTermEndDate"
+    const { first_term, second_term, third_term } = data.terms
 
-    const fields: { key: DateFieldKey; label: string }[] = [
-      { key: "firstTermStartDate", label: "First term start date" },
-      { key: "firstTermEndDate", label: "First term end date" },
-      { key: "secondTermStartDate", label: "Second term start date" },
-      { key: "secondTermEndDate", label: "Second term end date" },
-      { key: "thirdTermStartDate", label: "Third term start date" },
-      { key: "thirdTermEndDate", label: "Third term end date" },
-    ]
+    const after = (a: string, b: string) => isDateAfter(a, b)
 
-    // Validate valid dates
-    fields.forEach(({ key, label }) => {
-      const parsed = parseDate(data[key])
-      if (isNaN(parsed.getTime())) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: [key],
-          message: `${label} is not a valid date`,
-        })
-      }
-    })
-
-    const FSS = data.firstTermStartDate
-    const FSE = data.firstTermEndDate
-
-    const SSS = data.secondTermStartDate
-    const SSE = data.secondTermEndDate
-
-    const TSS = data.thirdTermStartDate
-    const TSE = data.thirdTermEndDate
-
-    //
-    // ───────────────────────────────────────────────
-    //  FIRST TERM RULES
-    // ───────────────────────────────────────────────
-    //
-
-    // First term end must be after its start
-    if (!isDateAfter(FSE, FSS)) {
+    // Validate date ordering
+    if (!after(first_term.endDate, first_term.startDate))
       ctx.addIssue({
-        path: ["firstTermEndDate"],
+        path: ["terms", "first_term", "endDate"],
         code: z.ZodIssueCode.custom,
-        message: "First term end date must be after the start date",
+        message: "First term end date must be after start date",
       })
-    }
 
-    //
-    // ───────────────────────────────────────────────
-    //  SECOND TERM RULES
-    // ───────────────────────────────────────────────
-    //
-
-    // Cannot start before first term start
-    if (!isDateAfter(SSS, FSS)) {
+    if (!after(second_term.startDate, first_term.endDate))
       ctx.addIssue({
-        path: ["secondTermStartDate"],
+        path: ["terms", "second_term", "startDate"],
         code: z.ZodIssueCode.custom,
-        message: "Second term cannot start before first term starts",
+        message: "Second term must start after first term ends",
       })
-    }
 
-    // Cannot be inside first term duration
-    if (!isDateAfter(SSS, FSE)) {
+    if (!after(second_term.endDate, second_term.startDate))
       ctx.addIssue({
-        path: ["secondTermStartDate"],
+        path: ["terms", "second_term", "endDate"],
         code: z.ZodIssueCode.custom,
-        message: "Second term cannot fall within the first term period",
+        message: "Second term end date must be after start date",
       })
-    }
 
-    // Second term end cannot be before its start
-    if (!isDateAfter(SSE, SSS)) {
+    if (!after(third_term.startDate, second_term.endDate))
       ctx.addIssue({
-        path: ["secondTermEndDate"],
+        path: ["terms", "third_term", "startDate"],
         code: z.ZodIssueCode.custom,
-        message: "Second term end date must be after the start date",
+        message: "Third term must start after second term ends",
       })
-    }
 
-    //
-    // ───────────────────────────────────────────────
-    //  THIRD TERM RULES
-    // ───────────────────────────────────────────────
-    //
-
-    // Cannot be inside second term duration
-    if (!isDateAfter(TSS, SSE)) {
+    if (!after(third_term.endDate, third_term.startDate))
       ctx.addIssue({
-        path: ["thirdTermStartDate"],
+        path: ["terms", "third_term", "endDate"],
         code: z.ZodIssueCode.custom,
-        message: "Third term cannot fall within the second term period",
+        message: "Third term end date must be after start date",
       })
-    }
-
-    // Third term end cannot be before start
-    if (!isDateAfter(TSE, TSS)) {
-      ctx.addIssue({
-        path: ["thirdTermEndDate"],
-        code: z.ZodIssueCode.custom,
-        message: "Third term end date must be after the start date",
-      })
-    }
   })
 
 export type SessionFormData = z.infer<typeof sessionFormSchema>
