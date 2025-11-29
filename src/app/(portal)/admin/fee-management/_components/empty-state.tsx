@@ -8,7 +8,6 @@ const EmptyState = () => {
       <div className="bg-accent/10 flex h-[140px] w-[140px] items-center justify-center rounded-full">
         <RiFolderOpenLine className="text-accent size-16" />
       </div>
-
       <div className="space-y-2">
         <h4 className="text-center text-xl font-semibold text-[#101828]">
           Your Fee Component Will Appear Here
