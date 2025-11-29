@@ -1,5 +1,5 @@
 import React, { FC, SVGProps } from "react"
-import { MoveUp } from "lucide-react"
+// import { MoveUp } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -70,9 +70,9 @@ const StatCard: React.FC<StatCardProps> = ({ stats, isLoading }) => {
             {/* --- FOOTER / PERCENTAGE --- */}
             <div>
               <p className="flex items-center gap-1 text-xs text-[#686868]">
-                <MoveUp className="text-secondary size-3" />
+                {/* <MoveUp className="text-secondary size-3" />
                 <span className="text-secondary mr-1">{stat.percentage}%</span>
-                Since this term
+                Since this term*/}
               </p>
             </div>
           </Card>

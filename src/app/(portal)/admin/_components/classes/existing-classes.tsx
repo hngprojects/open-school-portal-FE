@@ -1,44 +1,35 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LuLayoutGrid } from "react-icons/lu"
 import { ChevronDown, GraduationCap, Pencil, Plus, Search } from "lucide-react"
+import { ClassItem } from "@/lib/classes"
+import { useRouter } from "next/navigation"
 
-interface ClassData {
-  id: string
-  name: string
-  arms: {
-    id: string
-    name: string
-  }[]
-  classTeacher?: string
-}
+const EDIT_CLASS = (classID: string) => `/admin/class-management/class/${classID}/edit`
 
-const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
+const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
   const [expandedClasses, setExpandedClasses] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
 
-  const toggleClass = (classId: string) => {
+  const toggleClass = (className: string) => {
     setExpandedClasses((prev) => {
       const newSet = new Set(prev)
-      if (newSet.has(classId)) {
-        newSet.delete(classId)
+      if (newSet.has(className)) {
+        newSet.delete(className)
       } else {
-        newSet.add(classId)
+        newSet.add(className)
       }
       return newSet
     })
   }
 
-  const filteredClasses = classesData.filter(
-    (classItem) =>
-      classItem.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      classItem.arms.some((arm) =>
-        arm.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+  const filteredClasses = classesData.filter((classItem) =>
+    classItem.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const hasOtherClasses =
@@ -65,11 +56,11 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
       <section className="mt-5 space-y-3">
         {filteredClasses.length > 0 ? (
           filteredClasses.map((classItem) => {
-            const isExpanded = expandedClasses.has(classItem.id)
+            const isExpanded = expandedClasses.has(classItem.name)
 
             return (
               <div
-                key={classItem.id}
+                key={classItem.name}
                 className="rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="flex items-center justify-between">
@@ -79,8 +70,8 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
                     </h5>
                     <div className="mt-1 flex flex-col gap-1 text-sm text-gray-600">
                       <p>
-                        {classItem.arms.length}{" "}
-                        {classItem.arms.length === 1 ? "arm" : "arms"}
+                        {classItem.classes.length}{" "}
+                        {classItem.classes.length === 1 ? "arm" : "arms"}
                       </p>
                       {/* {classItem.classTeacher && (
                         <p className="text-xs text-gray-500">
@@ -92,7 +83,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => toggleClass(classItem.id)}
+                    onClick={() => toggleClass(classItem.name)}
                     className="h-9 w-9 hover:bg-gray-100"
                     aria-label={isExpanded ? "Collapse" : "Expand"}
                   >
@@ -114,7 +105,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
                 >
                   <div className="overflow-hidden">
                     <ul className="mt-4 space-y-2 border-t pt-3">
-                      {classItem.arms.map((arm) => (
+                      {classItem.classes.map((arm) => (
                         <li
                           key={arm.id}
                           className="group grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
@@ -123,9 +114,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
                             <GraduationCap className="size-5" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              {arm.name}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900">{arm.arm}</p>
                             <p className="text-xs text-gray-500">
                               {Math.floor(Math.random() * 20) + 25} students
                             </p>
@@ -134,7 +123,8 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                            aria-label={`Edit ${arm.name}`}
+                            aria-label={`Edit ${arm.arm}`}
+                            onClick={() => handleEdit(arm.id)}
                           >
                             <Pencil className="size-4" />
                           </Button>
@@ -193,11 +183,15 @@ const ExistingClasses = ({ classesData }: { classesData: ClassData[] }) => {
       {/* Button to View Subjects */}
       <div className="flex justify-center">
         <Button asChild className="mx-auto w-full max-w-[400px] shadow-sm" size="lg">
-          <Link href="/admin/class-management/subject">View Subjects</Link>
+          <Link href="/admin/class-management/subjects">View Subjects</Link>
         </Button>
       </div>
     </article>
   )
+
+  function handleEdit(armId: string) {
+    router.push(EDIT_CLASS(armId))
+  }
 }
 
 export default ExistingClasses
@@ -364,7 +358,7 @@ export default ExistingClasses
 //       {/* Button to view subjects */}
 //       <div className="flex justify-center">
 //         <Button asChild className="mx-auto w-full max-w-[400px]">
-//           <Link href="/admin/class-management/subject">View Subjects</Link>
+//           <Link href="/admin/class-management/subjects">View Subjects</Link>
 //         </Button>
 //       </div>
 //     </article>
