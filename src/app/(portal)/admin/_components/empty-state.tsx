@@ -39,7 +39,9 @@ const EmptyState = ({
       </div>
       <div className="space-y-2">
         <h4 className="text-center text-xl font-semibold text-[#101828]">{title}</h4>
-        <p className="text-primary max-w-[50ch] text-center">{description}</p>
+        <p className="text-text-secondary max-w-[55ch] text-center leading-6">
+          {description}
+        </p>
       </div>
       <Button asChild>
         <Link href={buttonHref} className="flex items-center gap-2" onClick={handleClick}>
