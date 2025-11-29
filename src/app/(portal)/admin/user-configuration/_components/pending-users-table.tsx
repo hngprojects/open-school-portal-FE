@@ -3,25 +3,7 @@
 import { columns, User } from "./columns"
 import { DataTable } from "./data-table"
 
-const mockData: User[] = [
-  {
-    id: "2",
-    name: "Jane Smith",
-    regNumber: "ABC-5678-5677",
-    role: "Teacher",
-    status: "Pending",
-    date: "8/25/2023 2:15:00 PM",
-  },
-  // Add more mock data as needed for pagination testing
-  ...Array.from({ length: 15 }).map((_, i) => ({
-    id: `${i + 4}`,
-    name: `Pending User ${i + 4}`,
-    regNumber: `ABC-${1000 + i}-${2000 + i}`,
-    role: "Teacher" as const,
-    status: "Pending" as const,
-    date: "8/24/2023 1:06:39 PM",
-  })),
-]
+const mockData: User[] = []
 
 export function PendingUsersTable() {
   return (

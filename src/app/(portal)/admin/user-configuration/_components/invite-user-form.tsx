@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select"
 import { inviteUserSchema, InviteUserValues } from "@/lib/schemas/invite-user.schema"
 import { BulkUploadSuccess } from "./bulk-upload-success"
+import { useInviteUser } from "../_hooks/use-invite-user"
 
 export function InviteUserForm() {
   const [isSuccess, setIsSuccess] = useState(false)
@@ -32,10 +33,19 @@ export function InviteUserForm() {
     },
   })
 
+  const { mutate: inviteUser, isPending } = useInviteUser()
+
   function onSubmit(data: InviteUserValues) {
-    console.log(data)
-    // TODO: Implement invite logic
-    setIsSuccess(true)
+    inviteUser(
+      {
+        email: data.email,
+        role: data.userType.toUpperCase(),
+        full_name: `${data.firstName} ${data.lastName}`,
+      },
+      {
+        onSuccess: () => setIsSuccess(true),
+      }
+    )
   }
 
   if (isSuccess) {
@@ -113,9 +123,10 @@ export function InviteUserForm() {
       </div>
       <Button
         type="submit"
+        disabled={isPending}
         className="w-full bg-[#DA3743] text-white hover:bg-[#DA3743]/90"
       >
-        Send Invitation
+        {isPending ? "Sending..." : "Send Invitation"}
       </Button>
     </form>
   )

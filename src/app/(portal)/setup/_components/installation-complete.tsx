@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function InstallationComplete() {
   return (
@@ -21,8 +22,8 @@ export default function InstallationComplete() {
         Your School Portal Has Been Successfully Created.
       </p>
 
-      <Button onClick={() => (window.location.href = "/login")}>
-        Visit School Portal
+      <Button asChild className="w-full md:max-w-xs">
+        <Link href="/super-admin/login">Visit School Portal</Link>
       </Button>
     </div>
   )

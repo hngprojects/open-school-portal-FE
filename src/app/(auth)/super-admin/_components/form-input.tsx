@@ -16,9 +16,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { loginSchema, type LoginFormValues } from "@/lib/schemas/auth"
-import { loginUsingEmail } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
-import SchoolLogo from "./school-logo"
+import SchoolLogo from "../../_components/school-logo"
+import { SetupWizardAPI } from "@/lib/api/setup/super-admin-setup-apis"
 
 type LoginField = keyof LoginFormValues
 
@@ -27,7 +27,7 @@ const initialValues: LoginFormValues = {
   password: "",
 }
 
-const LoginForm = () => {
+const SuperAdminLoginForm = () => {
   const [formData, setFormData] = useState<LoginFormValues>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<LoginField, string>>>({})
   const [touched, setTouched] = useState<Record<LoginField, boolean>>({
@@ -42,7 +42,6 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [attemptCount, setAttemptCount] = useState(0)
 
-  // ?next=/path
   const nextRoute =
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("next")
@@ -106,30 +105,18 @@ const LoginForm = () => {
       return
     }
 
-    // all roles
-    const roleToRoute: Record<string, string> = {
-      ADMIN: "admin",
-      SUPER_ADMIN: "super-admin",
-      TEACHER: "teacher",
-      STUDENT: "student",
-      PARENT: "parent",
-    }
-
     setIsLoading(true)
     setErrors({})
 
     try {
-      const res = await loginUsingEmail(formData)
+      await SetupWizardAPI.login(formData)
 
       if (nextRoute) {
         router.push(nextRoute)
         setAttemptCount(0)
         return
       }
-
-      const role = res?.data?.user?.role?.[0]
-      const route = roleToRoute[role] ?? "/"
-      router.push(`/${route}`)
+      router.push(`/super-admin`)
       setAttemptCount(0)
     } catch (error) {
       console.error("Login error:", error)
@@ -384,4 +371,4 @@ const LoginForm = () => {
   )
 }
 
-export default LoginForm
+export default SuperAdminLoginForm

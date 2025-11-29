@@ -183,7 +183,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
       {/* Button to View Subjects */}
       <div className="flex justify-center">
         <Button asChild className="mx-auto w-full max-w-[400px] shadow-sm" size="lg">
-          <Link href="/admin/class-management/subject">View Subjects</Link>
+          <Link href="/admin/class-management/subjects">View Subjects</Link>
         </Button>
       </div>
     </article>
@@ -358,7 +358,7 @@ export default ExistingClasses
 //       {/* Button to view subjects */}
 //       <div className="flex justify-center">
 //         <Button asChild className="mx-auto w-full max-w-[400px]">
-//           <Link href="/admin/class-management/subject">View Subjects</Link>
+//           <Link href="/admin/class-management/subjects">View Subjects</Link>
 //         </Button>
 //       </div>
 //     </article>

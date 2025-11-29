@@ -49,7 +49,6 @@ export function StudentsTable({
                 <TableHead>Total</TableHead>
                 <TableHead>Grade</TableHead>
                 {/* <TableHead>Comment</TableHead> */}
-                <TableHead>Edit</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

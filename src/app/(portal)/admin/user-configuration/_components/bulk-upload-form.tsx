@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table"
 
 import { BulkUploadSuccess } from "./bulk-upload-success"
+import { useBulkInviteUser } from "../_hooks/use-invite-user"
 
 interface ParsedUser {
   name: string
@@ -35,6 +36,7 @@ export function BulkUploadForm() {
   const [userType, setUserType] = useState("")
   const [isSuccess, setIsSuccess] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const { mutate: uploadCsv, isPending } = useBulkInviteUser()
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = event.target.files?.[0]
@@ -89,8 +91,13 @@ export function BulkUploadForm() {
   }
 
   const handleSendInvitations = () => {
-    if (parsedData.length > 0 && errors.length === 0) {
-      setIsSuccess(true)
+    if (file && userType) {
+      uploadCsv(
+        { file, type: userType.toUpperCase() },
+        {
+          onSuccess: () => setIsSuccess(true),
+        }
+      )
     }
   }
 
@@ -226,9 +233,11 @@ export function BulkUploadForm() {
             <Button
               className="w-full bg-[#DA3743] hover:bg-[#DA3743]/90"
               onClick={handleSendInvitations}
-              disabled={parsedData.length === 0 || errors.length > 0}
+              disabled={
+                parsedData.length === 0 || errors.length > 0 || !userType || isPending
+              }
             >
-              Send Invitations
+              {isPending ? "Sending..." : "Send Invitations"}
             </Button>
           </div>
         )}
