@@ -186,7 +186,7 @@ export default function AssignSubjectForm({
       //   subjectId: subject.id,
       //   classIds: Array.from(selectedClasses),
       // })
-      new Promise((res) => setTimeout(res, 1000))
+      await new Promise((res) => setTimeout(res, 1000))
       onSuccess()
     } catch (error) {
       console.error("Failed to assign subject:", error)

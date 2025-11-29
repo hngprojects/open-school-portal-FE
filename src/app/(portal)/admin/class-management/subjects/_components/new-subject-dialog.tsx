@@ -33,11 +33,12 @@ export function NewSubjectDialog({
   onSuccess: (subject: string) => void
 }) {
   const [formData, setFormData] = useState({
-    department: "",
+    // department: "",
     subjectName: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const createSubject = useCreateSubject().mutateAsync
+  const [error, setError] = useState("")
 
   return (
     <>
@@ -76,7 +77,15 @@ export function NewSubjectDialog({
               </Select>
             </div> */}
 
+            {!!error && (
+              <div className="flex items-center gap-1 text-red-600">
+                <AlertCircleIcon className="size-4" />
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
+
             {/* Subject Name Input */}
+
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
                 Subject Name
@@ -114,12 +123,20 @@ export function NewSubjectDialog({
 
   async function handleCreateSubject() {
     setIsSubmitting(true)
-    await createSubject({ name: formData.subjectName })
-    // Reset form
-    setFormData({ department: "", subjectName: "" })
-    setIsSubmitting(false)
-    setOpen(false)
-    onSuccess(formData.subjectName)
+    try {
+      await createSubject({ name: formData.subjectName })
+      // Reset form
+      setFormData({ subjectName: "" })
+      onSuccess(formData.subjectName)
+      setOpen(false)
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message)
+      }
+      setError("An unexpected error occurred. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 }
 
@@ -140,6 +157,7 @@ export function EditSubjectDialog({
     subjectName: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     if (subjectData) {
@@ -190,6 +208,12 @@ export function EditSubjectDialog({
             {isLoading ? (
               <div className="animate-pulse">Loading subject data...</div>
             ) : null}
+            {!!error && (
+              <div className="flex items-center gap-1 text-red-600">
+                <AlertCircleIcon className="size-4" />
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
                 Subject Name
@@ -234,14 +258,21 @@ export function EditSubjectDialog({
 
   async function handleUpdateSubject() {
     setIsSubmitting(true)
+    try {
+      await updateSubject({ id: subjectID, name: formData.subjectName })
 
-    // Simulate API call
-    await updateSubject({ id: subjectID, name: formData.subjectName })
-
-    // Reset form
-    setFormData({ subjectName: "" })
-    setIsSubmitting(false)
-    setOpen(false)
-    onSuccess(formData.subjectName)
+      // Reset form
+      setFormData({ subjectName: "" })
+      setOpen(false)
+      onSuccess(formData.subjectName)
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message)
+      } else {
+        setError("An unexpected error occurred. Please try again.")
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 }

@@ -85,6 +85,6 @@ export default function AssignSubjectPageContent() {
   }
 
   function handleGoHome() {
-    router.push("/admin/class-management/subject")
+    router.push("/admin/class-management/subjects")
   }
 }

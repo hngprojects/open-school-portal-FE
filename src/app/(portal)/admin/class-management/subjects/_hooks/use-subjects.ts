@@ -102,7 +102,7 @@ export const useCreateSubject = () => {
 }
 
 export const useUpdateSubject = (subjectID: string) => {
-  //  use a mutation hook here to create a subject
+  //  use a mutation hook here to update a subject
   const queryClient = useQueryClient()
 
   return useMutation({
