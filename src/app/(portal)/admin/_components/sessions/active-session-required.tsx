@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
-import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
+import { useActiveAcademicSession } from "../../class-management/session/_hooks/use-session"
 import { ReactNode } from "react"
 import { useRouter } from "next/navigation"
 
