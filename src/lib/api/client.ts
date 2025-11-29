@@ -105,7 +105,7 @@ const getErrorMessage = (error: unknown): string => {
     }
 
     if (error.response?.status === 401) {
-      if (window !== undefined) {
+      if (typeof window !== 'undefined') {
         const pathname = window.location.pathname
         if (!pathname.includes("/login")) {
           navigateTo(`/login?next=${encodeURIComponent(pathname)}`)
