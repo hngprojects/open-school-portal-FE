@@ -22,10 +22,12 @@ export async function POST(req: Request) {
       status: 200,
     })
 
+    const SECURE = true // so i fit comot am while testing
+
     // Set cookies — HTTP-only for security
     response.cookies.set("access_token", access_token, {
       httpOnly: true,
-      secure: true,
+      secure: SECURE,
       sameSite: "strict",
       path: "/",
       expires: expiresAt,
@@ -33,7 +35,7 @@ export async function POST(req: Request) {
 
     response.cookies.set("refresh_token", refresh_token, {
       httpOnly: true,
-      secure: true,
+      secure: SECURE,
       sameSite: "strict",
       path: "/",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
     // Set cookies — HTTP-only for security
     response.cookies.set("session_id", session_id, {
       httpOnly: true,
-      secure: true,
+      secure: SECURE,
       sameSite: "strict",
       path: "/",
       maxAge: Infinity,
@@ -50,7 +52,7 @@ export async function POST(req: Request) {
 
     response.cookies.set("user_id", user_id, {
       httpOnly: true,
-      secure: true,
+      secure: SECURE,
       sameSite: "strict",
       path: "/",
       maxAge: Infinity,
