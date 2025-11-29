@@ -26,7 +26,7 @@ export default function SubmissionReviewPage() {
     return (
       <div className="min-h-screen bg-gray-50 p-4 md:p-6">
         <div className="mx-auto max-w-7xl">
-          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+          <div className="p-12 text-center">
             <h3 className="text-lg font-semibold text-gray-900">Submission not found</h3>
             <p className="mt-2 text-gray-600">
               The requested grade submission could not be found.

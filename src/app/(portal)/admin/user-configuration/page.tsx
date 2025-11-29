@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { TbUserQuestion, TbUserUp } from "react-icons/tb"
 import { LuUserCheck } from "react-icons/lu"
 
@@ -20,9 +20,33 @@ const tabIcons = {
 }
 
 const Page = () => {
-  const [activeTab, setActiveTab] = useState<UserConfigurationTab>(
-    UserConfigurationTab.Invited
-  )
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const tabParam = searchParams.get("tab")
+
+  const getActiveTab = () => {
+    if (tabParam === "pending") return UserConfigurationTab.Pending
+    if (tabParam === "invite") return UserConfigurationTab.Invite
+    return UserConfigurationTab.Invited
+  }
+
+  const activeTab = getActiveTab()
+
+  const handleTabChange = (tab: UserConfigurationTab) => {
+    let query = ""
+    switch (tab) {
+      case UserConfigurationTab.Pending:
+        query = "pending"
+        break
+      case UserConfigurationTab.Invite:
+        query = "invite"
+        break
+      case UserConfigurationTab.Invited:
+        query = "invited"
+        break
+    }
+    router.push(`/admin/user-configuration?tab=${query}`)
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -53,7 +77,7 @@ const Page = () => {
             <div
               key={tab}
               className={`box-border flex cursor-pointer items-center gap-2 border-r border-[#2D2D2D4D] px-4 py-2.5 text-sm font-medium transition-colors last:border-r-0 ${activeTab === tab ? "bg-[#DA3743] text-white" : "bg-white text-[#535353]"}`}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
             >
               <Icon className="h-4 w-4" />
               <span className="capitalize">{tab}</span>
