@@ -79,7 +79,7 @@ export default function ForgotPasswordForm() {
           </h1>
           <p className="text-sm text-gray-600">
             {isSubmitted
-              ? `We sent password reset instructions to ${formData.email}.`
+              ? `If the account exists, password reset instructions will be sent to ${formData.email}.`
               : "Enter the email address associated with your account and we will send a reset link."}
           </p>
         </header>
