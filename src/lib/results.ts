@@ -8,6 +8,8 @@ import type {
   GradeSubmission,
   GradingScale,
   GetGradesParams,
+  CreateSubmissionRequest,
+  ReviewActionRequest,
 } from "@/types/result"
 
 import {
@@ -15,16 +17,17 @@ import {
   DUMMY_SUBJECTS,
   DUMMY_TERMS,
   DUMMY_STUDENTS,
-  // DUMMY_GRADING_SCALE,
   DUMMY_SUBMISSIONS,
   DUMMY_STUDENT_RESULTS,
   TEACHER_NAMES,
 } from "./dummy-data"
 
 type ResponsePack<T> = {
-  data: T
+  status_code: number
   message: string
+  data: T
 }
+
 const DEFAULT_GRADING_SCALE: GradingScale[] = [
   { grade: "A", min_score: 80, max_score: 100, remark: "Excellent" },
   { grade: "B", min_score: 70, max_score: 79, remark: "Very Good" },
@@ -34,53 +37,65 @@ const DEFAULT_GRADING_SCALE: GradingScale[] = [
   { grade: "F", min_score: 0, max_score: 39, remark: "Fail" },
 ]
 
+// Helper function to ensure arrays are returned
+const ensureArray = <T>(data: unknown): T[] => {
+  if (Array.isArray(data)) return data as T[]
+  return []
+}
+
+// Helper to extract data from backend response
+const extractData = <T>(response: ResponsePack<T>): T => {
+  return response.data
+}
+
 export const ResultsAPI = {
-  // Classes
+  // Classes - updated endpoint
   getClasses: (): Promise<Class[]> =>
-    apiFetch<ResponsePack<Class[]>>("/classes", {}, true)
-      .then((response) => response.data)
+    apiFetch<ResponsePack<Class[]>>("/classes?page=1&limit=50", {}, true)
+      .then((response) => ensureArray<Class>(extractData(response)))
       .catch(() => {
         console.log("Using dummy classes data")
         return DUMMY_CLASSES
       }),
 
-  // Subjects
+  // Subjects - updated endpoint
   getSubjects: (): Promise<Subject[]> =>
-    apiFetch<ResponsePack<Subject[]>>("/subjects", {}, true)
-      .then((response) => response.data)
+    apiFetch<ResponsePack<Subject[]>>("/subjects?page=1&limit=50", {}, true)
+      .then((response) => ensureArray<Subject>(extractData(response)))
       .catch(() => {
         console.log("Using dummy subjects data")
         return DUMMY_SUBJECTS
       }),
 
-  // Terms
+  // Terms - updated endpoint to use academic-term
   getTerms: (): Promise<Term[]> =>
-    apiFetch<ResponsePack<Term[]>>("/term", {}, true)
-      .then((response) => response.data)
+    apiFetch<ResponsePack<Term[]>>("/academic-term/session/current", {}, true)
+      .then((response) => ensureArray<Term>(extractData(response)))
       .catch(() => {
         console.log("Using dummy terms data")
         return DUMMY_TERMS
       }),
-  // Students for grade entry - with fallback to dummy data
-  getStudentsForGradeEntry: (classId: string): Promise<Student[]> =>
-    apiFetch<ResponsePack<Student[]>>(`/grades/class/${classId}/students`, {}, true)
-      .then((response) => response.data)
+
+  // Students for grade entry - updated endpoint
+  getStudentsForGradeEntry: (classId: string, subjectId?: string): Promise<Student[]> =>
+    apiFetch<ResponsePack<Student[]>>(
+      `/grades/class/${classId}/students${subjectId ? `?subject_id=${subjectId}` : ""}`,
+      {},
+      true
+    )
+      .then((response) => ensureArray<Student>(extractData(response)))
       .catch(() => {
         console.log("Using dummy students data for class:", classId)
-        // Filter students by class
         return DUMMY_STUDENTS.filter(
           (student) => student.class === DUMMY_CLASSES.find((c) => c.id === classId)?.name
         )
       }),
+
   // Grading scale
   getGradingScale: (): Promise<GradingScale[]> => Promise.resolve(DEFAULT_GRADING_SCALE),
-  // Grade submissions
-  createSubmission: (data: {
-    class_id: string
-    subject_id: string
-    term_id: string
-    grades: Omit<Grade, "id" | "created_at" | "updated_at">[]
-  }): Promise<GradeSubmission> =>
+
+  // Grade submissions - create new submission
+  createSubmission: (data: CreateSubmissionRequest): Promise<GradeSubmission> =>
     apiFetch<ResponsePack<GradeSubmission>>(
       "/grades/submissions",
       {
@@ -88,12 +103,47 @@ export const ResultsAPI = {
         data,
       },
       true
-    ).then((response) => response.data),
+    ).then((response) => extractData(response)),
 
-  // Grade submissions - with fallback to dummy data
-  getSubmissions: (params?: GetGradesParams): Promise<GradeSubmission[]> =>
-    apiFetch<ResponsePack<GradeSubmission[]>>("/grades/submissions", { params }, true)
-      .then((response) => response.data)
+  // Submit submission for approval
+  submitSubmission: (id: string): Promise<GradeSubmission> =>
+    apiFetch<ResponsePack<GradeSubmission>>(
+      `/grades/submissions/${id}/submit`,
+      { method: "POST" },
+      true
+    ).then((response) => extractData(response)),
+
+  // Update submission after rejection
+  updateSubmission: (
+    id: string,
+    data: Partial<GradeSubmission>
+  ): Promise<GradeSubmission> =>
+    apiFetch<ResponsePack<GradeSubmission>>(
+      `/grades/submission/${id}/update`,
+      {
+        method: "PATCH",
+        data,
+      },
+      true
+    ).then((response) => extractData(response)),
+
+  // Get teacher's submissions with filters
+  getSubmissions: (params?: GetGradesParams): Promise<GradeSubmission[]> => {
+    const queryParams = new URLSearchParams()
+
+    if (params?.class_id) queryParams.append("class_id", params.class_id)
+    if (params?.subject_id) queryParams.append("subject_id", params.subject_id)
+    if (params?.term_id) queryParams.append("term_id", params.term_id)
+    if (params?.status) queryParams.append("status", params.status)
+    if (params?.page) queryParams.append("page", params.page.toString())
+    if (params?.limit) queryParams.append("limit", params.limit.toString())
+
+    return apiFetch<ResponsePack<GradeSubmission[]>>(
+      `/grades/submissions?${queryParams.toString()}`,
+      {},
+      true
+    )
+      .then((response) => ensureArray<GradeSubmission>(extractData(response)))
       .catch(() => {
         console.log("Using dummy submissions data")
         let filteredSubmissions = [...DUMMY_SUBMISSIONS]
@@ -115,11 +165,13 @@ export const ResultsAPI = {
         }
 
         return filteredSubmissions
-      }),
+      })
+  },
 
+  // Get specific submission
   getSubmission: (id: string): Promise<GradeSubmission> =>
     apiFetch<ResponsePack<GradeSubmission>>(`/grades/submissions/${id}`, {}, true)
-      .then((response) => response.data)
+      .then((response) => extractData(response))
       .catch(() => {
         console.log("Using dummy submission data for ID:", id)
         const submission = DUMMY_SUBMISSIONS.find((s) => s.id === id)
@@ -129,14 +181,7 @@ export const ResultsAPI = {
         return submission
       }),
 
-  submitSubmission: (id: string): Promise<GradeSubmission> =>
-    apiFetch<ResponsePack<GradeSubmission>>(
-      `/grades/submissions/${id}/submit`,
-      { method: "POST" },
-      true
-    ).then((response) => response.data),
-
-  // Individual grades
+  // Update individual grade
   updateGrade: (gradeId: string, data: Partial<Grade>): Promise<Grade> =>
     apiFetch<ResponsePack<Grade>>(
       `/grades/${gradeId}`,
@@ -146,7 +191,7 @@ export const ResultsAPI = {
       },
       true
     )
-      .then((response) => response.data)
+      .then((response) => extractData(response))
       .catch(() => {
         console.log("Mock grade update for ID:", gradeId, data)
         // Return mock updated grade
@@ -158,38 +203,80 @@ export const ResultsAPI = {
         } as Grade
       }),
 
-  // Admin endpoints
-  approveSubmission: (id: string): Promise<GradeSubmission> =>
-    apiFetch<ResponsePack<GradeSubmission>>(
-      `/grades/submissions/${id}/approve`,
-      { method: "POST" },
-      true
-    ).then((response) => response.data),
+  // Admin: Get all submissions (for admin dashboard)
+  getAdminSubmissions: (params?: { status?: string }): Promise<GradeSubmission[]> => {
+    const queryParams = new URLSearchParams()
 
-  rejectSubmission: (id: string, reason: string): Promise<GradeSubmission> =>
-    apiFetch<ResponsePack<GradeSubmission>>(
-      `/grades/submissions/${id}/reject`,
-      {
-        method: "POST",
-        data: { reason },
-      },
-      true
-    ).then((response) => response.data),
+    if (params?.status) queryParams.append("status", params.status)
 
-  // Student results for parent/student view
-  getStudentResults: (
-    studentId: string,
-    classId?: string,
-    termId?: string
-  ): Promise<unknown[]> =>
-    apiFetch<ResponsePack<unknown[]>>(
-      `/students/${studentId}/results`,
-      { params: { class_id: classId, term_id: termId } },
+    return apiFetch<ResponsePack<GradeSubmission[]>>(
+      `/admin/submissions?${queryParams.toString()}`,
+      {},
       true
     )
-      .then((response) => response.data)
+      .then((response) => ensureArray<GradeSubmission>(extractData(response)))
+      .catch(() => {
+        console.log("Using dummy submissions data for admin")
+        let filteredSubmissions = [...DUMMY_SUBMISSIONS]
+
+        if (params?.status) {
+          filteredSubmissions = filteredSubmissions.filter(
+            (submission) => submission.status === params.status
+          )
+        }
+
+        return filteredSubmissions
+      })
+  },
+
+  // Admin: Approve submission
+  approveSubmission: (id: string, data?: ReviewActionRequest): Promise<GradeSubmission> =>
+    apiFetch<ResponsePack<GradeSubmission>>(
+      `/admin/submissions/${id}/approve`,
+      {
+        method: "POST",
+        data,
+      },
+      true
+    ).then((response) => extractData(response)),
+
+  // Admin: Reject submission
+  rejectSubmission: (id: string, data: ReviewActionRequest): Promise<GradeSubmission> =>
+    apiFetch<ResponsePack<GradeSubmission>>(
+      `/admin/submissions/${id}/reject`,
+      {
+        method: "POST",
+        data,
+      },
+      true
+    ).then((response) => extractData(response)),
+
+  // Get student results for parent/student view
+  getStudentResults: (studentId: string, termId?: string): Promise<Grade[]> =>
+    apiFetch<ResponsePack<Grade[]>>(
+      `/results/student/${studentId}${termId ? `?term_id=${termId}` : ""}`,
+      {},
+      true
+    )
+      .then((response) => ensureArray<Grade>(extractData(response)))
       .catch(() => {
         console.log("Using dummy student results data")
-        return DUMMY_STUDENT_RESULTS
+        // Convert DUMMY_STUDENT_RESULTS to Grade format
+        const convertedResults: Grade[] = DUMMY_STUDENT_RESULTS.map((result, index) => ({
+          id: `grade-${index}`,
+          student_id: studentId,
+          subject_id: result.subject_id,
+          class_id: "1", // Default class ID
+          term_id: termId || "1",
+          ca_score: result.ca_score,
+          exam_score: result.exam_score,
+          total_score: result.total_score,
+          grade: result.grade,
+          comment: null,
+          status: "approved",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }))
+        return convertedResults
       }),
 }

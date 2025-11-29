@@ -126,7 +126,7 @@ const SessionsPage = () => {
           heading="Create Session"
           description="View, manage, or create academic sessions"
         />
-        <Button className="h-12 w-full lg:w-90">
+        <Button asChild className="h-12 w-full lg:w-90">
           <Link
             href="/admin/class-management/session/create-session"
             className="flex items-center gap-2"

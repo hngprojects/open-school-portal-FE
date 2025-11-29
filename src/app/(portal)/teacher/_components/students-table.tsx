@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { Student, Grade } from "@/types/result"
+import { Student, GradeEntry } from "@/types/result"
 import {
   Table,
   TableBody,
@@ -10,35 +9,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Edit, Loader2 } from "lucide-react"
-import { GradeFormDialog } from "./grade-form-dialog"
-import { useGetStudentGrades } from "../_hooks/use-results"
+import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
 
 interface StudentsTableProps {
   students: Student[]
-  classId: string
-  subjectId: string
-  termId: string
+  grades: Record<string, GradeEntry>
+  onGradeUpdate: (studentId: string, field: keyof GradeEntry, value: string) => void
   isLoading: boolean
 }
 
 export function StudentsTable({
   students,
-  classId,
-  subjectId,
-  termId,
+  grades,
+  onGradeUpdate,
   isLoading,
 }: StudentsTableProps) {
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
-  const [isFormOpen, setIsFormOpen] = useState(false)
-
-  const handleEditClick = (student: Student) => {
-    setSelectedStudent(student)
-    setIsFormOpen(true)
-  }
-
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -48,106 +35,96 @@ export function StudentsTable({
   }
 
   return (
-    <>
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>
-                    CA
-                    <br /> [30]
-                  </TableHead>
-                  <TableHead>
-                    Exam
-                    <br /> [70]{" "}
-                  </TableHead>
-                  <TableHead className="hidden lg:table-cell">Grade</TableHead>
-                  <TableHead>
-                    Total
-                    <br /> [100]
-                  </TableHead>
-                  <TableHead>Edit</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {students.map((student) => (
-                  <StudentTableRow
-                    key={student.id}
-                    student={student}
-                    classId={classId}
-                    subjectId={subjectId}
-                    termId={termId}
-                    onEditClick={handleEditClick}
-                  />
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      <GradeFormDialog
-        open={isFormOpen}
-        onOpenChange={setIsFormOpen}
-        student={selectedStudent}
-        classId={classId}
-        subjectId={subjectId}
-        termId={termId}
-      />
-    </>
+    <Card>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>S/N</TableHead>
+                <TableHead>Student Name</TableHead>
+                <TableHead>Reg No</TableHead>
+                <TableHead>CA (0-30)</TableHead>
+                <TableHead>Exam (0-70)</TableHead>
+                <TableHead>Total</TableHead>
+                <TableHead>Grade</TableHead>
+                <TableHead>Comment</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {students.map((student, index) => (
+                <StudentTableRow
+                  key={student.id}
+                  student={student}
+                  index={index}
+                  grade={grades[student.id]}
+                  onGradeUpdate={onGradeUpdate}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
 interface StudentTableRowProps {
   student: Student
-  classId: string
-  subjectId: string
-  termId: string
-  onEditClick: (student: Student) => void
+  index: number
+  grade?: GradeEntry
+  onGradeUpdate: (studentId: string, field: keyof GradeEntry, value: string) => void
 }
 
-function StudentTableRow({
-  student,
-  classId,
-  subjectId,
-  termId,
-  onEditClick,
-}: StudentTableRowProps) {
-  const { data: grade } = useGetStudentGrades(student.id, classId, subjectId, termId)
-
-  const displayValue = (value: number | string | null | undefined) => {
-    if (value === null || value === undefined) return "-"
-    return value
-  }
-
-  // Type guard to check if grade exists and has the required properties
-  const hasGradeData = (gradeData: unknown): gradeData is Grade => {
-    return typeof gradeData === "object" && gradeData !== null
-  }
-
+function StudentTableRow({ student, index, grade, onGradeUpdate }: StudentTableRowProps) {
   return (
     <TableRow>
+      <TableCell>{index + 1}</TableCell>
       <TableCell className="font-medium">
         {student.first_name} {student.last_name}
       </TableCell>
-      <TableCell>{hasGradeData(grade) ? displayValue(grade.ca_score) : "-"}</TableCell>
-      <TableCell>{hasGradeData(grade) ? displayValue(grade.exam_score) : "-"}</TableCell>
-      <TableCell className="hidden lg:table-cell">
-        {hasGradeData(grade) ? displayValue(grade.grade) : "-"}
-      </TableCell>
-      <TableCell>{hasGradeData(grade) ? displayValue(grade.total_score) : "-"}</TableCell>
+      <TableCell>{student.registration_number || "-"}</TableCell>
+
+      {/* CA Score */}
       <TableCell>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onEditClick(student)}
-          className="h-8 w-8 p-0 hover:bg-gray-200"
-        >
-          <Edit className="h-4 w-4 font-bold text-[#da3743]" />
-        </Button>
+        <Input
+          type="number"
+          min="0"
+          max="30"
+          value={grade?.ca_score ?? ""}
+          onChange={(e) => onGradeUpdate(student.id, "ca_score", e.target.value)}
+          className="w-20"
+          placeholder="0-30"
+        />
+      </TableCell>
+
+      {/* Exam Score */}
+      <TableCell>
+        <Input
+          type="number"
+          min="0"
+          max="70"
+          value={grade?.exam_score ?? ""}
+          onChange={(e) => onGradeUpdate(student.id, "exam_score", e.target.value)}
+          className="w-20"
+          placeholder="0-70"
+        />
+      </TableCell>
+
+      {/* Total (auto-calculated) */}
+      <TableCell>{grade?.total_score ?? "-"}</TableCell>
+
+      {/* Grade (auto-calculated) */}
+      <TableCell>{grade?.grade ?? "-"}</TableCell>
+
+      {/* Comment */}
+      <TableCell>
+        <Input
+          value={grade?.comment ?? ""}
+          onChange={(e) => onGradeUpdate(student.id, "comment", e.target.value)}
+          className="w-32"
+          placeholder="Comment"
+        />
       </TableCell>
     </TableRow>
   )

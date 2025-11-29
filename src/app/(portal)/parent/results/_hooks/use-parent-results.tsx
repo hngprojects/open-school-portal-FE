@@ -21,16 +21,16 @@ export function useGetTerms() {
   })
 }
 
-export function useGetStudentResults(classId?: string, termId?: string) {
+export function useGetStudentResults(studentId?: string, termId?: string) {
   return useQuery({
-    queryKey: [...PARENT_RESULTS_KEY, "student-results", classId, termId],
+    queryKey: [...PARENT_RESULTS_KEY, "student-results", studentId, termId],
     queryFn: () => {
-      if (!classId || !termId) return Promise.resolve([])
-      // This would need to be implemented based on your API
-      // For now, return empty array
-      return Promise.resolve([])
+      if (!studentId || !termId) return Promise.resolve([])
+      // In a real app, you'd get the student ID from auth context
+      const mockStudentId = "1" // This should come from user context
+      return ResultsAPI.getStudentResults(mockStudentId, termId)
     },
-    enabled: !!classId && !!termId,
+    enabled: !!studentId && !!termId,
     staleTime: 1000 * 60 * 5,
   })
 }
