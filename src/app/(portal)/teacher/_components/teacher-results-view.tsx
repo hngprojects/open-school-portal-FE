@@ -223,7 +223,7 @@ export function TeacherResultsView({
 
       {/* Empty State */}
       {!canShowResults && (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+        <div className="p-12 text-center">
           <div className="mx-auto max-w-md">
             <h3 className="text-lg font-semibold text-gray-900">
               Select filters to view students
