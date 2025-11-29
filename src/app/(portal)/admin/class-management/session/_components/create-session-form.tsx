@@ -40,10 +40,7 @@ const CreateSessionForm = () => {
     mode: "onChange",
   })
 
-  const [start, end] = watch([
-    "terms.first_term.startDate",
-    "terms.third_term.endDate"
-  ])
+  const [start, end] = watch(["terms.first_term.startDate", "terms.third_term.endDate"])
 
   const academicSession =
     start && end
@@ -54,7 +51,7 @@ const CreateSessionForm = () => {
     mutate(
       {
         description: data.description,
-        terms: data.terms
+        terms: data.terms,
       },
       {
         onSuccess: () => {
@@ -75,7 +72,6 @@ const CreateSessionForm = () => {
       <DashboardTitle heading="Create Session" description="Create academic session" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-8">
-        
         <div>
           <label className="text-sm font-medium">Academic Year</label>
           <div className="mt-1 flex h-10 items-center rounded-md border bg-[#EEEEEE] px-3 text-[#666]">
@@ -139,7 +135,8 @@ const CreateSessionForm = () => {
         <div className="flex gap-3 rounded-md border border-amber-300 bg-amber-50 p-4">
           <CircleAlert className="h-5 w-5 text-amber-600" />
           <p className="text-sm text-amber-900">
-            <strong>Warning: </strong> Activating a new session will archive the current one.
+            <strong>Warning: </strong> Activating a new session will archive the current
+            one.
           </p>
         </div>
 

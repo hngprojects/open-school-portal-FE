@@ -7,7 +7,7 @@ import type { UseFormRegister, FieldError, Path } from "react-hook-form"
 import type { SessionFormData } from "../_schemas/session-form-schema"
 
 interface Props {
-  name: Path<SessionFormData>        // <-- allows "terms.first_term.startDate"
+  name: Path<SessionFormData> // <-- allows "terms.first_term.startDate"
   label: string
   register: UseFormRegister<SessionFormData>
   error?: FieldError

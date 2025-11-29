@@ -25,7 +25,6 @@ export type PaginatedSessions = {
   status_code?: number
 }
 
-
 export type CreateAcademicSessionData = {
   description?: string
   terms: {
