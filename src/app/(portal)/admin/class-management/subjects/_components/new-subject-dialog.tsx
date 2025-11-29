@@ -19,23 +19,8 @@ import {
 //   SelectValue,
 // } from "@/components/ui/select"
 import { useState } from "react"
+import ActiveSessionGuard from "../../../_components/sessions/active-session-required"
 
-interface Subject {
-  id: string
-  name: string
-  //   department: string
-}
-
-// interface Department {
-//   id: string
-//   name: string
-// }
-
-// const mockDepartments: Department[] = [
-//   { id: "1", name: "Science Department" },
-//   { id: "2", name: "Arts Department" },
-//   { id: "3", name: "Commercial Department" },
-// ]
 
 export default function NewSubjectDialog({
   open,
@@ -53,6 +38,7 @@ export default function NewSubjectDialog({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   return (
+    <>
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogOverlay className="z-60" />
       <DialogContent className="z-60 sm:max-w-md">
@@ -119,6 +105,13 @@ export default function NewSubjectDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+    {
+      open && (
+        <ActiveSessionGuard />
+      )
+    }
+    </>
   )
 
   async function handleCreateSubject() {
