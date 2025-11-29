@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -10,54 +8,42 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Plus, Search, MoreVertical, Pencil, BookOpen, Trash2 } from "lucide-react"
+import { Search, MoreVertical, Pencil, BookOpen, Trash2 } from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
+import { useDeleteSubject } from "../_hooks/use-subjects"
+import { toast } from "sonner"
 
 interface Subject {
-  // id: string
+  id: string
   name: string
   // department: string
 }
 
 const SubjectManagement = ({
   subjects,
-  onAddSubject,
+  onAssignSubject,
+  onEditSubject,
+  searchQuery,
+  setSearchQuery,
   currentPage,
   totalPages,
   totalItems,
   onPageChange,
 }: {
   subjects: Subject[]
-  onAddSubject: () => void
+  onAssignSubject: (subjectID: string) => void
+  onEditSubject: (subjectID: string) => void
+  searchQuery: string
+  setSearchQuery: (query: string) => void
   currentPage: number
   totalPages: number
   totalItems: number
   onPageChange?: (page: number) => void
 }) => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const filteredSubjects = subjects.filter(
-    (subject) =>
-      subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      // subject.department.toLowerCase().includes(searchQuery.toLowerCase())
-      false
-  )
+  const deleteSubject = useDeleteSubject().mutateAsync
 
   return (
-    <article className="pb-5">
-      {/* Header */}
-      <header className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Create Subject</h2>
-        <p className="text-text-secondary mt-1 text-sm">
-          Manage all subjects used across classes.
-        </p>
-      </header>
-
-      {/* Create Button */}
-      <Button onClick={onAddSubject} className="mb-4 w-full">
-        <Plus className="mr-2 h-5 w-5" />
-        Create Subject
-      </Button>
-
+    <article className="py-5">
       {/* Search Bar */}
       <div className="relative mb-4">
         <Search className="text-text-secondary absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -72,8 +58,8 @@ const SubjectManagement = ({
 
       {/* Subjects List */}
       <section className="space-y-3">
-        {filteredSubjects.length > 0 ? (
-          filteredSubjects.map((subject, id) => (
+        {subjects.length > 0 ? (
+          subjects.map((subject, id) => (
             <div
               key={id}
               className="flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
@@ -89,15 +75,18 @@ const SubjectManagement = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleEdit(subject)}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleAssign(subject)}>
                     <BookOpen className="mr-2 h-4 w-4" />
                     Assign
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-600">
+                  <DropdownMenuItem
+                    className="text-red-600 hover:bg-red-50"
+                    onClick={() => handleDelete(subject)}
+                  >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
@@ -121,10 +110,10 @@ const SubjectManagement = ({
       </section>
 
       {/* Pagination */}
-      {filteredSubjects.length > 0 && (
+      {subjects.length > 0 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages || 1}
+          totalPages={totalPages}
           totalItems={totalItems}
           onPageChange={onPageChange ?? (() => {})}
           className="mt-6"
@@ -132,6 +121,25 @@ const SubjectManagement = ({
       )}
     </article>
   )
+
+  function handleEdit(subject: Subject) {
+    onEditSubject(subject.id)
+  }
+  function handleAssign(subject: Subject) {
+    onAssignSubject(subject.id)
+  }
+  async function handleDelete(subject: Subject) {
+    try {
+      await deleteSubject(subject.id)
+      toast.success(`Subject "${subject.name}" deleted successfully.`)
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+        return
+      }
+      toast.error(`Failed to delete subject "${subject.name}". Please try again.`)
+    }
+  }
 }
 
 export default SubjectManagement

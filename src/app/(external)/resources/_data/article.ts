@@ -680,4 +680,92 @@ export const articles: Article[] = [
       },
     ],
   },
+  {
+    id: 9,
+    heading: "EASIEST WAY TO CREATE SCHOOL TOMETABLE",
+    slug: "easiest-way-to-create-school-timetable",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Timetables look easy to do until you actually try to make them. From a teacher being double booked, to class capacity to room limitations a single mistake can send everybody into chaos.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This is why you need SchoolBase, with it you have a timetable management that generates timetables automatically without the chaos. SchoolBase also has a class and room allocation system, which intelligently assigns teachers, instead of you guessing or using Excel highlighter to strain your eyes. Using schoolbase for this prevents double booking, overcrowded classes and empty periods.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This helps you to run a smarter, safer and faster school.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Using schoolbase timetable management with teacher management is where the sweet spot is. Teachers often have heavy workload, last minute changes, back to back classes and it affects performance.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase teacher management it balances teaching hours, frees up break periods and makes sure that a teacher is not cramped with work.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase automated attendance it tracks availability, knowing school admins know who, where and when a teacher is teaching.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "This makes it easy to substitute unavailable teachers, and maintain fairness in distribution of teachers workload.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Schools can use SchoolBase digital timetable displays to give teachers and students updates on changes. Whether it's a new teacher, an extended period, or a swap everyone knows quickly what is happening.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "A conflict-free timetable isn’t just organization; it’s the foundation of a well-run school.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill the form below to get a demo on SchoolBase Timetable management:",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 10,
+    heading: "A school management system you can customize, integrate and resell",
+    slug: "a-school-management-system-you-can-customize-integrate-and-resell",
+    date: "28/11/2025",
+    posts: [
+      {
+        key: "intro",
+        heading: "",
+        content: [
+          {
+            type: "paragraph" as const,
+            text: "Developers looking to earn more money without coding are looking for tools that reduce development time, simplify integration and deliver what schools actually want.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "With SchoolBase which is a school management system you can solve this by acting as a reseller to an already made product. Instead of building from scratch, you just have to customize it to the school needs. This gives you speed, reliability and scalability necessary to get more schools onboard.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "SchoolBase goes beyond the regular school management system and basic record keeping. It is a full ERP for schools enabling them to run everything from one place.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Developers get access to APIs, customizable interfaces, that make integration into schools easier and also faster into third party systems. On major selling points developers can use is automation, you can use the features of automated timetables, automated attendance, fees management, room allocation, communication with parents to sell. This acts as a big differentiation from other school management system platforms.",
+          },
+          {
+            type: "paragraph" as const,
+            text: "Fill the form below to get a demo on SchoolBase Timetable management:",
+          },
+        ],
+      },
+    ],
+  },
 ]

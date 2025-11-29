@@ -23,11 +23,38 @@ type ResponsePack<T> = {
 export interface GetStudentsParams {
   page?: number
   search?: string
+  is_active?: boolean
+
+  limit?: number
+  total?: number
+}
+
+export interface StudentsListResponse {
+  data: User[]
+  message: string
+  meta: {
+    total: number
+    page: number
+    limit: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
+  }
+  status_code: number
 }
 
 export const StudentsAPI = {
   getAll: (params?: GetStudentsParams) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
+      "/students",
+      {
+        params,
+      },
+      true
+    ),
+
+  getTotal: (params?: GetStudentsParams) =>
+    apiFetch<StudentsListResponse>( // Remove ResponsePack wrapper
       "/students",
       {
         params,

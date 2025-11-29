@@ -127,7 +127,13 @@ const PasswordReset = () => {
       setIsSuccess(true)
     } catch (err) {
       console.error("Password reset failed:", err)
-      setTokenError("Failed to reset password. Please try again.")
+      if (err instanceof Error) {
+        setTokenError(err.message)
+      } else {
+        setTokenError(
+          "An unexpected error occured while resetting your password. Please try again later"
+        )
+      }
     } finally {
       setIsSubmitting(false)
     }

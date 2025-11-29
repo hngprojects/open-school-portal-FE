@@ -10,14 +10,14 @@ import {
 } from "@/components/ui/dialog"
 import { TriangleAlertIcon } from "lucide-react"
 import Link from "next/link"
-import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
+import { useActiveAcademicSession } from "../../class-management/session/_hooks/use-session"
 import { ReactNode } from "react"
 import { useRouter } from "next/navigation"
 
 const LINK_TO_ACTIVE_SESSIONS = "/admin/class-management/session/create-session"
 // const LINK_TO_SUBJECTS_LIST = "/admin/class-management/subjects"
 
-export default function ActiveSessionGuard({ children }: { children: ReactNode }) {
+export default function ActiveSessionGuard({ children }: { children?: ReactNode }) {
   const { data: currentSession, isLoading: isLoadingSession } = useActiveAcademicSession()
   const router = useRouter()
   // active session here means school session e.g 2035/2036 session

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { activityData } from "../../_data/activity-data"
+// import { activityData } from "../../_data/activity-data"
 import {
   Table,
   TableBody,
@@ -10,16 +10,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getActivityStatusStyles } from "../../_utils/activity-status"
+// import { getActivityStatusStyles } from "../../_utils/activity-status"
 
-const TodayActivities = ({
-  highlightedIndex,
-  showAll,
-}: {
-  highlightedIndex: number | null
-  showAll: boolean
-  search?: string
-}) => {
+const TodayActivities = (
+  {
+    // highlightedIndex,
+    // showAll,
+  }: {
+    highlightedIndex: number | null
+    showAll: boolean
+    search?: string
+  }
+) => {
   return (
     <div className="hidden lg:block">
       <Table>
@@ -37,7 +39,7 @@ const TodayActivities = ({
         </TableHeader>
 
         <TableBody>
-          {activityData.map((activity, i) => (
+          {/* {activityData.map((activity, i) => (
             <TableRow
               id={`activity-${i}`}
               key={i}
@@ -62,7 +64,12 @@ const TodayActivities = ({
               <TableCell className="text-center">{activity.students}</TableCell>
               <TableCell className="text-center">{activity.venue}</TableCell>
             </TableRow>
-          ))}
+          ))} */}
+          <TableRow>
+            <TableCell className="py-10 text-center" colSpan={8}>
+              No Activity yet
+            </TableCell>
+          </TableRow>
         </TableBody>
       </Table>
     </div>

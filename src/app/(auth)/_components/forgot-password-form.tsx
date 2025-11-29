@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "@/lib/schemas/auth"
 import { sendForgotPasswordEmail } from "@/lib/api/auth"
-import { useAuthStore } from "@/store/auth-store"
 import SchoolLogo from "./school-logo"
 
 const AUTH_SECTION_STYLES =
@@ -23,9 +22,6 @@ export default function ForgotPasswordForm() {
   const [touched, setTouched] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-
-  const pendingEmail = useAuthStore((state) => state.pendingEmail)
-  const setPendingEmail = useAuthStore((state) => state.setPendingEmail)
 
   const getEmailError = (value: string) => {
     const schema = forgotPasswordSchema.shape.email
@@ -63,7 +59,6 @@ export default function ForgotPasswordForm() {
 
     try {
       await sendForgotPasswordEmail(validation.data.email)
-      setPendingEmail(validation.data.email)
       setIsSubmitted(true)
     } catch {
       setError("Failed to send reset link. Please try again later.")
@@ -72,8 +67,6 @@ export default function ForgotPasswordForm() {
       setIsSubmitting(false)
     }
   }
-
-  const submittedEmail = pendingEmail ?? formData.email
 
   return (
     <section className={AUTH_SECTION_STYLES}>
@@ -86,7 +79,7 @@ export default function ForgotPasswordForm() {
           </h1>
           <p className="text-sm text-gray-600">
             {isSubmitted
-              ? `We sent password reset instructions to ${submittedEmail}.`
+              ? `If the account exists, password reset instructions will be sent to ${formData.email}.`
               : "Enter the email address associated with your account and we will send a reset link."}
           </p>
         </header>
