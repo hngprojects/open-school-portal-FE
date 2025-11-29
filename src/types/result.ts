@@ -72,4 +72,33 @@ export interface GetGradesParams {
   status?: string
   page?: number
   search?: string
+  limit?: number
+}
+export interface GradeEntry {
+  student_id: string
+  ca_score: number | null
+  exam_score: number | null
+  total_score?: number | null
+  grade?: string | null
+  comment?: string | null
+}
+
+export interface CreateSubmissionRequest {
+  class_id: string
+  subject_id: string
+  term_id: string
+  academic_session_id?: string
+  grades: GradeEntry[]
+}
+
+export interface SubmissionStats {
+  total: number
+  pending: number
+  approved: number
+  rejected: number
+}
+
+export interface ReviewActionRequest {
+  reason?: string
+  comment?: string
 }

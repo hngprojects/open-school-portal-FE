@@ -81,7 +81,7 @@ export function ParentResultsView({
 
       {/* Empty State */}
       {!selectedClass || !selectedTerm ? (
-        <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+        <div className="p-12 text-center">
           <div className="mx-auto max-w-md">
             <h3 className="text-lg font-semibold text-gray-900">Select class and term</h3>
             <p className="mt-2 text-gray-600">
@@ -92,7 +92,7 @@ export function ParentResultsView({
       ) : (
         results.length === 0 &&
         !isLoading && (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+          <div className="p-12 text-center">
             <div className="mx-auto max-w-md">
               <h3 className="text-lg font-semibold text-gray-900">No results found</h3>
               <p className="mt-2 text-gray-600">
