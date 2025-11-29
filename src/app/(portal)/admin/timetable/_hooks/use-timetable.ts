@@ -19,8 +19,8 @@ export const useCreateSchedule = () => {
       toast.success("Schedule created successfully")
       queryClient.invalidateQueries({ queryKey: ["timetable"] })
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to create schedule")
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create schedule")
     },
   })
 }
@@ -35,8 +35,8 @@ export const useUpdateSchedule = () => {
       toast.success("Schedule updated successfully")
       queryClient.invalidateQueries({ queryKey: ["timetable"] })
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update schedule")
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update schedule")
     },
   })
 }
@@ -50,8 +50,8 @@ export const useDeleteSchedule = () => {
       toast.success("Schedule deleted successfully")
       queryClient.invalidateQueries({ queryKey: ["timetable"] })
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete schedule")
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to delete schedule")
     },
   })
 }
