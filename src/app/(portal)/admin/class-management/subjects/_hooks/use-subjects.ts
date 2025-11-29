@@ -125,6 +125,17 @@ export const useUpdateSubject = (subjectID: string) => {
   })
 }
 
+export const useDeleteSubject = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (subjectID: string) => SubjectsAPI.deleteOne(subjectID),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["subjects"] })
+    },
+  })
+}
 
 export const useGetSubject = (subjectId: string) => {
   return useQuery({

@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,7 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Search, MoreVertical, Pencil, BookOpen, Trash2 } from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
-import { useRouter } from "next/navigation"
+import { useDeleteSubject } from "../_hooks/use-subjects"
+import { toast } from "sonner"
 
 interface Subject {
   id: string
@@ -41,7 +40,7 @@ const SubjectManagement = ({
   totalItems: number
   onPageChange?: (page: number) => void
 }) => {
-  const router = useRouter();
+  const deleteSubject = useDeleteSubject().mutateAsync;
 
   return (
     <article className="py-5">
@@ -126,8 +125,18 @@ const SubjectManagement = ({
   function handleAssign(subject: Subject) {
     onAssignSubject(subject.id)
   }
-  function handleDelete(subject: Subject) {
-    // Implement delete functionality here
+  async function handleDelete(subject: Subject) {
+    try {
+      await deleteSubject(subject.id)
+      toast.success(`Subject "${subject.name}" deleted successfully.`)
+
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message)
+        return
+      }
+      toast.error(`Failed to delete subject "${subject.name}". Please try again.`)
+    }
   }
 }
 
