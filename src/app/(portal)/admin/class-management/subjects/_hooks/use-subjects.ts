@@ -43,14 +43,10 @@ export const SubjectsAPI = {
       true
     ),
 
-    getOne: (id: string) =>
-    apiFetch<ResponsePack<Subject>>(
-      `/subjects/${id}`,
-      { method: "GET" },
-      true
-    ),
+  getOne: (id: string) =>
+    apiFetch<ResponsePack<Subject>>(`/subjects/${id}`, { method: "GET" }, true),
 
-  create: (data: {name: string}): Promise<Subject> =>
+  create: (data: { name: string }): Promise<Subject> =>
     apiFetch<ResponsePack<Subject>>(
       "/subjects",
       {
@@ -69,7 +65,7 @@ export const SubjectsAPI = {
         throw error
       }),
 
-  update: (id: string, data: {name?: string}) =>
+  update: (id: string, data: { name?: string }) =>
     apiFetch<ResponsePack<Subject>>(
       `/subjects/${id}`,
       {
@@ -78,13 +74,8 @@ export const SubjectsAPI = {
       },
       true
     ),
-      
-    deleteOne: (id: string) =>
-      apiFetch(
-        `/subjects/${id}`,
-        { method: "DELETE" },
-        true
-      ),
+
+  deleteOne: (id: string) => apiFetch(`/subjects/${id}`, { method: "DELETE" }, true),
 }
 
 export const useGetSubjects = (filters?: GetSubjectsParams) => {
@@ -102,7 +93,7 @@ export const useCreateSubject = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: {name: string}) => SubjectsAPI.create(data),
+    mutationFn: (data: { name: string }) => SubjectsAPI.create(data),
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["subjects"] })
@@ -110,13 +101,13 @@ export const useCreateSubject = () => {
   })
 }
 
-
 export const useUpdateSubject = (subjectID: string) => {
   //  use a mutation hook here to create a subject
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (subjectData: Subject) => SubjectsAPI.update(subjectID, {name: subjectData.name}),
+    mutationFn: (subjectData: Subject) =>
+      SubjectsAPI.update(subjectID, { name: subjectData.name }),
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["subjects"] })

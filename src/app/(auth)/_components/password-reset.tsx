@@ -130,7 +130,9 @@ const PasswordReset = () => {
       if (err instanceof Error) {
         setTokenError(err.message)
       } else {
-        setTokenError("An unexpected error occured while resetting your password. Please try again later")
+        setTokenError(
+          "An unexpected error occured while resetting your password. Please try again later"
+        )
       }
     } finally {
       setIsSubmitting(false)
@@ -180,10 +182,11 @@ const PasswordReset = () => {
                       value={formData.newPassword}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`pr-12 ${touched.newPassword && errors.newPassword
+                      className={`pr-12 ${
+                        touched.newPassword && errors.newPassword
                           ? "border-[#DA3743]"
                           : "border-[#E0E0E0] focus:border-[#2D2D2D]"
-                        }`}
+                      }`}
                     />
 
                     <button
@@ -228,10 +231,11 @@ const PasswordReset = () => {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      className={`pr-12 ${touched.confirmPassword && errors.confirmPassword
+                      className={`pr-12 ${
+                        touched.confirmPassword && errors.confirmPassword
                           ? "border-[#DA3743]"
                           : "border-[#E0E0E0] focus:border-[#2D2D2D]"
-                        }`}
+                      }`}
                     />
 
                     <button

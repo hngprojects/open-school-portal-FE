@@ -10,19 +10,24 @@ import { NewSubjectDialog, EditSubjectDialog } from "./new-subject-dialog"
 import AddedSubjectSuccess from "./add-subject-success"
 import { useRouter } from "next/navigation"
 
-
 export default function SubjectsPageContent() {
   const [search, setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const { data: subjectsData, isLoading, isError, error, refetch } = useGetSubjects({
+  const {
+    data: subjectsData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetSubjects({
     page: currentPage,
     search: search || undefined,
   })
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editSubjectID, setEditSubjectID] = useState<string | null>(null)
   const [showSuccessDialog, setShowSuccessDialog] = useState<boolean | string>(false)
-  const { data: subjects, pagination } = subjectsData || {};
-  const router = useRouter();
+  const { data: subjects, pagination } = subjectsData || {}
+  const router = useRouter()
 
   return (
     <>
@@ -48,7 +53,6 @@ export default function SubjectsPageContent() {
           subjects={subjects}
           onEditSubject={handleEditSubject}
           onAssignSubject={handleAssignSubject}
-
           searchQuery={search}
           setSearchQuery={setSearch}
           currentPage={currentPage || 1}
@@ -63,7 +67,7 @@ export default function SubjectsPageContent() {
         setOpen={setShowCreateDialog}
         onSuccess={setShowSuccessDialog}
       />
-      
+
       <EditSubjectDialog
         open={!!editSubjectID}
         subjectID={editSubjectID as string}

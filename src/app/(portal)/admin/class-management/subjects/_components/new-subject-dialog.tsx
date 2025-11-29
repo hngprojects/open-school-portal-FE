@@ -37,7 +37,7 @@ export function NewSubjectDialog({
     subjectName: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const createSubject = useCreateSubject().mutateAsync;
+  const createSubject = useCreateSubject().mutateAsync
 
   return (
     <>
@@ -114,7 +114,7 @@ export function NewSubjectDialog({
 
   async function handleCreateSubject() {
     setIsSubmitting(true)
-    await createSubject({ name: formData.subjectName });
+    await createSubject({ name: formData.subjectName })
     // Reset form
     setFormData({ department: "", subjectName: "" })
     setIsSubmitting(false)
@@ -122,8 +122,6 @@ export function NewSubjectDialog({
     onSuccess(formData.subjectName)
   }
 }
-
-
 
 export function EditSubjectDialog({
   open,
@@ -137,7 +135,7 @@ export function EditSubjectDialog({
   onSuccess: (subject: string) => void
 }) {
   const { data: subjectData, isLoading, isError } = useGetSubject(subjectID)
-  const updateSubject = useUpdateSubject(subjectID).mutateAsync;
+  const updateSubject = useUpdateSubject(subjectID).mutateAsync
   const [formData, setFormData] = useState({
     subjectName: "",
   })
@@ -188,15 +186,10 @@ export function EditSubjectDialog({
               </Select>
             </div> */}
 
-
             {/* Subject Name Input */}
-            {
-              isLoading ? (
-                <div className="animate-pulse">
-                  Loading subject data...
-                </div>
-              ) : null
-            }
+            {isLoading ? (
+              <div className="animate-pulse">Loading subject data...</div>
+            ) : null}
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">
                 Subject Name
@@ -212,16 +205,12 @@ export function EditSubjectDialog({
                 className="w-full"
               />
             </div>
-            {
-              isError && (
-                <div className="flex items-center gap-1 text-red-600">
-                  <AlertCircleIcon className="size-4" />
-                  <p className="text-sm">
-                    Failed to load subject data. Please try again.
-                  </p>
-                </div>
-              )
-            }
+            {isError && (
+              <div className="flex items-center gap-1 text-red-600">
+                <AlertCircleIcon className="size-4" />
+                <p className="text-sm">Failed to load subject data. Please try again.</p>
+              </div>
+            )}
           </div>
 
           <DialogFooter className="flex flex-col gap-2 sm:flex-col">

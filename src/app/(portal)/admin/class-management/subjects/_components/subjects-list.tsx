@@ -40,7 +40,7 @@ const SubjectManagement = ({
   totalItems: number
   onPageChange?: (page: number) => void
 }) => {
-  const deleteSubject = useDeleteSubject().mutateAsync;
+  const deleteSubject = useDeleteSubject().mutateAsync
 
   return (
     <article className="py-5">
@@ -83,7 +83,10 @@ const SubjectManagement = ({
                     <BookOpen className="mr-2 h-4 w-4" />
                     Assign
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-600 hover:bg-red-50" onClick={() => handleDelete(subject)}>
+                  <DropdownMenuItem
+                    className="text-red-600 hover:bg-red-50"
+                    onClick={() => handleDelete(subject)}
+                  >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
@@ -129,7 +132,6 @@ const SubjectManagement = ({
     try {
       await deleteSubject(subject.id)
       toast.success(`Subject "${subject.name}" deleted successfully.`)
-
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)
