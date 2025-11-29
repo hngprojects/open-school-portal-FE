@@ -18,10 +18,12 @@ import {
 //   SelectTrigger,
 //   SelectValue,
 // } from "@/components/ui/select"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import ActiveSessionGuard from "../../../_components/sessions/active-session-required"
+import { useCreateSubject, useGetSubject, useUpdateSubject } from "../_hooks/use-subjects"
+import { AlertCircleIcon } from "lucide-react"
 
-export default function NewSubjectDialog({
+export function NewSubjectDialog({
   open,
   setOpen,
   onSuccess,
@@ -35,6 +37,7 @@ export default function NewSubjectDialog({
     subjectName: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const createSubject = useCreateSubject().mutateAsync;
 
   return (
     <>
@@ -42,7 +45,7 @@ export default function NewSubjectDialog({
         <DialogOverlay className="z-60" />
         <DialogContent className="z-60 sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold">Subjects</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">New Subject</DialogTitle>
             <DialogDescription className="text-sm">
               Add a new subject to your school curriculum.
             </DialogDescription>
@@ -111,19 +114,143 @@ export default function NewSubjectDialog({
 
   async function handleCreateSubject() {
     setIsSubmitting(true)
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Add new subject to list
-    // const newSubject: Subject = {
-    //   id: Date.now().toString(),
-    //   name: formData.subjectName,
-    //   // department: mockDepartments.find((d) => d.id === formData.department)?.name || "",
-    // }
-
+    await createSubject({ name: formData.subjectName });
     // Reset form
     setFormData({ department: "", subjectName: "" })
+    setIsSubmitting(false)
+    setOpen(false)
+    onSuccess(formData.subjectName)
+  }
+}
+
+
+
+export function EditSubjectDialog({
+  open,
+  subjectID,
+  setOpen,
+  onSuccess,
+}: {
+  open: boolean
+  subjectID: string
+  setOpen: (open: boolean) => void
+  onSuccess: (subject: string) => void
+}) {
+  const { data: subjectData, isLoading, isError } = useGetSubject(subjectID)
+  const updateSubject = useUpdateSubject(subjectID).mutateAsync;
+  const [formData, setFormData] = useState({
+    subjectName: "",
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (subjectData) {
+      setFormData({
+        subjectName: subjectData.name,
+      })
+    }
+  }, [subjectData])
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogOverlay className="z-60" />
+        <DialogContent className="z-60 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-semibold">Edit Subject</DialogTitle>
+            <DialogDescription className="text-sm">
+              Update the subject details below.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Department Select */}
+            {/* <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Department
+              </label>
+              <Select
+                value={formData.department}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, department: value }))
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mockDepartments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id}>
+                      {dept.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div> */}
+
+
+            {/* Subject Name Input */}
+            {
+              isLoading ? (
+                <div className="animate-pulse">
+                  Loading subject data...
+                </div>
+              ) : null
+            }
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">
+                Subject Name
+              </label>
+              <Input
+                type="text"
+                placeholder="Enter Subject name, eg Biology"
+                value={formData.subjectName}
+                disabled={isLoading || isError}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, subjectName: e.target.value }))
+                }
+                className="w-full"
+              />
+            </div>
+            {
+              isError && (
+                <div className="flex items-center gap-1 text-red-600">
+                  <AlertCircleIcon className="size-4" />
+                  <p className="text-sm">
+                    Failed to load subject data. Please try again.
+                  </p>
+                </div>
+              )
+            }
+          </div>
+
+          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+            <Button
+              onClick={handleUpdateSubject}
+              disabled={isSubmitting || !formData.subjectName}
+              className="w-full"
+            >
+              {isSubmitting ? "Updating..." : "Save Changes"}
+            </Button>
+            <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {open && <ActiveSessionGuard />}
+    </>
+  )
+
+  async function handleUpdateSubject() {
+    setIsSubmitting(true)
+
+    // Simulate API call
+    await updateSubject({ id: subjectID, name: formData.subjectName })
+
+    // Reset form
+    setFormData({ subjectName: "" })
     setIsSubmitting(false)
     setOpen(false)
     onSuccess(formData.subjectName)

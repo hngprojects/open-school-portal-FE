@@ -6,13 +6,23 @@ import EmptyState from "../../../_components/empty-state"
 import { useGetSubjects } from "../_hooks/use-subjects"
 import { useState } from "react"
 import SubjectManagement from "./subjects-list"
-import NewSubjectDialog from "./new-subject-dialog"
+import { NewSubjectDialog, EditSubjectDialog } from "./new-subject-dialog"
 import AddedSubjectSuccess from "./add-subject-success"
+import { useRouter } from "next/navigation"
+
 
 export default function SubjectsPageContent() {
-  const { data: subjects, isLoading, isError, error, refetch } = useGetSubjects()
+  const [search, setSearch] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const { data: subjectsData, isLoading, isError, error, refetch } = useGetSubjects({
+    page: currentPage,
+    search: search || undefined,
+  })
   const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [editSubjectID, setEditSubjectID] = useState<string | null>(null)
   const [showSuccessDialog, setShowSuccessDialog] = useState<boolean | string>(false)
+  const { data: subjects, pagination } = subjectsData || {};
+  const router = useRouter();
 
   return (
     <>
@@ -24,7 +34,7 @@ export default function SubjectsPageContent() {
           reload={refetch}
           errorMessage={error?.message || "An unexpected error occurred."}
         />
-      ) : !subjects || subjects.length === 0 ? (
+      ) : !subjects || (subjects.length === 0 && !search) ? (
         <EmptyState
           title="No Subjects Created yet"
           description="Add Subjects."
@@ -36,17 +46,28 @@ export default function SubjectsPageContent() {
         // Render existing subjects here when available
         <SubjectManagement
           subjects={subjects}
-          onAddSubject={handleAddSubject}
-          currentPage={1}
-          totalPages={1}
-          totalItems={subjects.length}
-          onPageChange={() => {}}
+          onEditSubject={handleEditSubject}
+          onAssignSubject={handleAssignSubject}
+
+          searchQuery={search}
+          setSearchQuery={setSearch}
+          currentPage={currentPage || 1}
+          totalPages={pagination?.total_pages || 1}
+          totalItems={pagination?.total || 0}
+          onPageChange={(page: number) => setCurrentPage(page)}
         />
       )}
 
       <NewSubjectDialog
         open={showCreateDialog}
         setOpen={setShowCreateDialog}
+        onSuccess={setShowSuccessDialog}
+      />
+      
+      <EditSubjectDialog
+        open={!!editSubjectID}
+        subjectID={editSubjectID as string}
+        setOpen={() => setEditSubjectID(null)}
         onSuccess={setShowSuccessDialog}
       />
 
@@ -64,8 +85,11 @@ export default function SubjectsPageContent() {
     setShowCreateDialog(true)
   }
 
-  function handleAssignSubject(name: string) {
-    console.log("Assign subject:", name)
-    setShowCreateDialog(false)
+  function handleEditSubject(subjectID: string) {
+    setEditSubjectID(subjectID)
+  }
+
+  function handleAssignSubject(subjectID: string) {
+    router.push(`/admin/class-management/subjects/${subjectID}/assign`)
   }
 }
