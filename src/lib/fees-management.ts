@@ -95,6 +95,17 @@ export const FeesAPI = {
       },
       true
     ),
+
+  // 🔵 NEW: Deactivate fee component
+  deactivate: (id: string, reason: string) =>
+    apiFetch<ResponsePack<FeeComponent>>(
+      `/fees/${id}/deactivate`,
+      {
+        method: "PATCH",
+        data: { reason },
+      },
+      true
+    ),
 }
 // import { apiFetch } from "./api/client"
 

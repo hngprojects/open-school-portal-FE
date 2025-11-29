@@ -13,7 +13,7 @@ const CreateComponentButton = ({ children }: { children?: React.ReactNode }) => 
       <Button
         size="lg"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-2"
+        className="flex w-full items-center gap-2 md:w-fit"
       >
         <Plus className="size-4" />
         {children ?? "Create Component"}
