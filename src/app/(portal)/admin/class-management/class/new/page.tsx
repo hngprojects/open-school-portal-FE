@@ -17,7 +17,7 @@ const AddClass = () => {
       try {
         teacher = await getTeacherByName(data?.classTeacher)
       } catch {
-        throw "An error occurred while adding the teacher to the class."
+        throw new Error("An error occurred while adding the teacher to the class.")
       }
     }
 
