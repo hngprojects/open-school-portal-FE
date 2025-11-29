@@ -140,9 +140,9 @@ export function useDeleteTeacher() {
 // --------------------------
 export function useTeachersCount() {
   return useQuery({
-    queryKey: ["teachers_count"],
+    queryKey: ["teachers_count", "active"],
     queryFn: async () => {
-      const res = await TeachersAPI.getTotal({ limit: 1, page: 1 })
+      const res = await TeachersAPI.getTotal({ is_active: true, limit: 1, page: 1 })
       return res.data?.total ?? 0
     },
   })
