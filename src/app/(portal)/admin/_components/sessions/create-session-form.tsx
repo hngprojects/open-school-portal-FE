@@ -11,7 +11,7 @@ import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useCreateAcademicSession } from "../../class-management/_hooks/use-session"
+import { useActivateAcademicSession, useCreateAcademicSession } from "../../class-management/_hooks/use-session"
 import { Textarea } from "@/components/ui/textarea"
 
 // ===============================
@@ -151,6 +151,7 @@ const CreateSessionForm = () => {
   })
 
   const [firstTermStart, thirdTermEnd] = watch(["firstTermStartDate", "thirdTermEndDate"])
+  const activateSession = useActivateAcademicSession().mutateAsync
 
   const academicSession =
     firstTermStart && thirdTermEnd
@@ -191,9 +192,11 @@ const CreateSessionForm = () => {
         endDate: rest.thirdTermEndDate,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (newSession) => {
           toast.success("Academic session created successfully!")
           router.push("/admin/class-management/session")
+          // Activate the newly created session
+          await activateSession(newSession.id)
         },
         onError: (error) => {
           toast.error(
