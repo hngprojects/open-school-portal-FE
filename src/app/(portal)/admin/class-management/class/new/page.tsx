@@ -22,7 +22,7 @@ const AddClass = () => {
     }
 
     if (!teacher && data.classTeacher) {
-      throw "The specified class teacher does not exist."
+      throw new Error("The specified class teacher does not exist.")
     }
 
     await createNewClass({
