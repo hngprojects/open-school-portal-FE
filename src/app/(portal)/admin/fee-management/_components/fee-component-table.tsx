@@ -89,7 +89,11 @@ const FeeComponentTable: React.FC<FeeComponentTableProps> = ({ feeComponents }) 
                     </span>
                   </TableCell>
                   <TableCell className="px-4 py-2.5 text-center">
-                    <Button size="sm" onClick={() => handleViewClick(fee)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleViewClick(fee)}
+                    >
                       View
                     </Button>
                   </TableCell>

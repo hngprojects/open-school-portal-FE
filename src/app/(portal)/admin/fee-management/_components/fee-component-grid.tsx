@@ -83,7 +83,7 @@ const FeeComponentGrid: React.FC<FeeComponentGridProps> = ({ feeComponents }) =>
 
               {/* Action */}
               <div className="flex items-end">
-                <Button size="sm" onClick={() => handleViewClick(fee)}>
+                <Button size="sm" variant="outline" onClick={() => handleViewClick(fee)}>
                   View
                 </Button>
               </div>
@@ -142,7 +142,7 @@ const FeeComponentGrid: React.FC<FeeComponentGridProps> = ({ feeComponents }) =>
 
           {/* Drawer Footer */}
           <div className="flex justify-end border-t p-4">
-            <Button variant="outline" onClick={() => setOpenDrawer(false)}>
+            <Button variant="outline" size="lg" onClick={() => setOpenDrawer(false)}>
               Close
             </Button>
           </div>
