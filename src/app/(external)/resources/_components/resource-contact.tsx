@@ -11,13 +11,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 const formSchema = z.object({
-  fullName: z.string().min(2, "Full name is required"),
+  fullName: z.string().min(2, "Name is required"),
   email: z.email("Enter a valid email address"),
 })
 
 type FormData = z.infer<typeof formSchema>
 
-export default function ResourceContactForm() {
+type Props = {
+  articleId: number
+}
+
+export default function ResourceContactForm({ articleId }: Props) {
   const router = useRouter()
 
   const {
@@ -36,12 +40,16 @@ export default function ResourceContactForm() {
     toast.success("Details saved successfully")
 
     // Navigate to squeeze page
-    router.push("/resources/squeeze")
+    if (articleId === 1 || articleId === 10) {
+      router.push("/squeeze-dev") // for devs
+    } else {
+      router.push("/squeeze") // schools
+    }
   }
 
   return (
     <div className="max-w-md space-y-5 rounded-xl bg-white p-6 shadow">
-      <h2 className="text-center text-2xl font-semibold">Contact Form</h2>
+      <h2 className="text-center text-2xl font-semibold">Contact School Base</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Full Name */}
