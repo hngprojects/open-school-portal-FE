@@ -3,6 +3,7 @@ import { apiFetch } from "./api/client"
 export type CreateClassData = {
   name: string
   arm?: string
+  teacherIds?: string[]
 }
 
 export type UpdateClassData = Partial<CreateClassData>
@@ -13,7 +14,6 @@ type ResponsePack<T> = {
 }
 
 export interface ClassItem {
-  id: string
   name: string
   academicSession: {
     id: string
@@ -23,6 +23,16 @@ export interface ClassItem {
     id: string
     arm: string
   }[]
+}
+
+export interface SingleClass {
+  id: string
+  name: string
+  arm: string
+  academicSession: {
+    id: string
+    name: string
+  }
 }
 
 interface Pagination {
@@ -53,6 +63,9 @@ export const ClassesAPI = {
       true
     ),
 
+  getOne: (id: string) =>
+    apiFetch<ResponsePack<SingleClass>>(`/classes/${id}`, { method: "GET" }, true),
+
   assignedTeachers: (id: string, session_id?: string) =>
     apiFetch<
       ResponsePack<
@@ -64,4 +77,6 @@ export const ClassesAPI = {
         }[]
       >
     >(`/classes/${id}/teachers`, { params: { session_id } }, true),
+
+  count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }

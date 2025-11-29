@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 
 import { SuccessModal } from "@/components/dashboard/success-modal"
 import { toast } from "sonner"
-import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
+import { useActiveAcademicSession } from "../../class-management/session/_hooks/use-session"
 import ActiveSessionGuard from "../sessions/active-session-required"
 
 // Zod Schema
@@ -73,15 +73,16 @@ const AddClassForm = ({ onSubmit, isLoading, defaultValues }: AddClassFormProps)
     router.push("/admin/class-management/class")
   }
 
+  const defaultSession = defaultValues?.academicSession
   useEffect(() => {
     if (!isLoadingSession) {
-      if (currentSession) {
+      if (currentSession && !defaultSession) {
         reset({
           academicSession: currentSession.name,
         })
       }
     }
-  }, [isLoadingSession, currentSession, reset])
+  }, [isLoadingSession, currentSession, defaultSession, reset])
 
   return (
     <ActiveSessionGuard>

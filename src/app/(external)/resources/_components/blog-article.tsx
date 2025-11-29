@@ -2,8 +2,9 @@
 
 import React, { ReactNode } from "react"
 
-import ContactForm from "../../_components/contact-form"
 import BackButton from "./back-button"
+import ResourceContactForm from "./resource-contact"
+import { articles } from "../_data/article"
 
 type BlogArticleProps = {
   title: string
@@ -12,6 +13,9 @@ type BlogArticleProps = {
 }
 
 export default function BlogArticle({ title, date, children }: BlogArticleProps) {
+  const articleId = articles.findIndex((article) => article.heading === title)
+  const article = articles[articleId]
+
   return (
     <>
       <BackButton />
@@ -26,8 +30,8 @@ export default function BlogArticle({ title, date, children }: BlogArticleProps)
         <div className="prose prose-lg mb-16 leading-relaxed">{children}</div>
 
         {/* Call to Action */}
-        <div className="mt-10 max-w-3xl pt-8">
-          <ContactForm />
+        <div className="mt-10 w-full pt-8">
+          <ResourceContactForm articleId={article.id} />
         </div>
       </article>
     </>

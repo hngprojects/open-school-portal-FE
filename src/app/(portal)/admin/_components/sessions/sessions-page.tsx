@@ -13,7 +13,7 @@ import {
   useAcademicSessions,
   useActivateAcademicSession,
   useDeleteAcademicSession,
-} from "../../class-management/_hooks/use-session"
+} from "../../class-management/session/_hooks/use-session"
 import EmptyState from "../empty-state"
 
 const SessionsPage = () => {
@@ -91,10 +91,10 @@ const SessionsPage = () => {
       return (
         <div className="mt-6">
           <EmptyState
-            title="No results"
-            description="No sessions match your search."
-            buttonText="Clear Search"
-            buttonHref="/admin/class-management/session"
+            title="No Academic Sessions Yet"
+            description="Create your first session to start managing terms, classes, and school activities."
+            buttonText="Create Session"
+            buttonHref="/admin/class-management/session/create-session"
           />
         </div>
       )
@@ -126,7 +126,7 @@ const SessionsPage = () => {
           heading="Create Session"
           description="View, manage, or create academic sessions"
         />
-        <Button className="h-12 w-full lg:w-90">
+        <Button asChild className="h-12 w-full lg:w-90">
           <Link
             href="/admin/class-management/session/create-session"
             className="flex items-center gap-2"
