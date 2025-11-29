@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 
 import { SuccessModal } from "@/components/dashboard/success-modal"
 import { toast } from "sonner"
-import { useActiveAcademicSession } from "../../class-management/_hooks/use-session"
+import { useActiveAcademicSession } from "../../class-management/session/_hooks/use-session"
 import ActiveSessionGuard from "../sessions/active-session-required"
 
 // Zod Schema

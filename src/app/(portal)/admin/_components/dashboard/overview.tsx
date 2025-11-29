@@ -14,13 +14,22 @@ import { Activity, Search, Users, GraduationCap, Book } from "lucide-react"
 import { activityData } from "@/data/activity-data"
 import NotePad from "../../../../../../public/svgs/note-pad"
 import { useTeachersCount } from "../../teachers/_hooks/use-teachers"
+import { useStudentsCount } from "../../students/_hooks/use-students"
+import { useGetClassesInfo } from "../../class-management/_hooks/use-classes"
 
 const Overview = () => {
   const { data: teacherTotal, isLoading } = useTeachersCount()
-
+  const { data: studentTotal, isLoading: studentIsLoading } = useStudentsCount()
+  const { data: classesData, isLoading: classLoading } = useGetClassesInfo({
+    limit: 1,
+    page: 1,
+  })
   const [searchTerm, setSearchTerm] = useState("")
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null)
   const [showAll, setShowAll] = useState(false)
+
+  // Extract total from pagination
+  const classTotal = classesData?.pagination.total ?? 0
 
   const suggestions = useMemo(() => {
     if (!searchTerm) return []
@@ -64,20 +73,44 @@ const Overview = () => {
   }
 
   const formattedTeachers = teacherTotal ? formatNumber(teacherTotal) : "0"
+  // const formattedStudents = studentTotal ? formatNumber(studentTotal) : "0"
+  const formattedStudents = studentIsLoading
+    ? "..."
+    : studentTotal
+      ? formatNumber(studentTotal)
+      : "0"
+  const formattedClass = classLoading ? "..." : formatNumber(classTotal)
 
   const dashboardStats: StatItem[] = useMemo(
     () => [
-      { name: "Total Students", quantity: 3.6, percentage: 10, icon: GraduationCap },
+      {
+        name: "Total Students",
+        quantity: studentIsLoading ? 0 : formattedStudents,
+        percentage: 10,
+        icon: GraduationCap,
+      },
       {
         name: "Total Teachers",
         quantity: isLoading ? 0 : formattedTeachers,
         percentage: 10,
         icon: Users,
       },
-      { name: "Today's Attendance", quantity: 300, percentage: 10, icon: NotePad },
-      { name: "Total Classes", quantity: 50, percentage: 10, icon: Book },
+      { name: "Today's Attendance", quantity: "...", percentage: 10, icon: NotePad },
+      {
+        name: "Total Classes",
+        quantity: classLoading ? 0 : formattedClass,
+        percentage: 10,
+        icon: Book,
+      },
     ],
-    [isLoading, formattedTeachers]
+    [
+      isLoading,
+      formattedTeachers,
+      formattedStudents,
+      studentIsLoading,
+      classLoading,
+      formattedClass,
+    ]
   )
 
   return (
