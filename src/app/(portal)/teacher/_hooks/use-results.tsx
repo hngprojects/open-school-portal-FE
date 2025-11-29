@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { ResultsAPI } from "@/lib/results"
-import type { Grade } from "@/types/result"
+import type { Grade, CreateSubmissionRequest, GradeSubmission } from "@/types/result"
 import { toast } from "sonner"
 
 const RESULTS_KEY = ["results"]
@@ -101,6 +101,69 @@ export function useSaveGrade() {
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "Failed to save grade")
+    },
+  })
+}
+
+export function useGetSubmissionStatus(
+  classId?: string,
+  subjectId?: string,
+  termId?: string
+) {
+  return useQuery({
+    queryKey: [...RESULTS_KEY, "submission-status", classId, subjectId, termId],
+    queryFn: () => {
+      if (!classId || !subjectId || !termId) return Promise.resolve(null)
+
+      // This would call an endpoint to get submission status for the specific filters
+      // For now, return null
+      return Promise.resolve(null)
+    },
+    enabled: !!classId && !!subjectId && !!termId,
+  })
+}
+export function useSaveDraft() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateSubmissionRequest) => ResultsAPI.createSubmission(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...RESULTS_KEY, "submission-status"] })
+      toast.success("Draft saved successfully")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to save draft")
+    },
+  })
+}
+
+export function useSubmitForApproval() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (submissionId: string) => ResultsAPI.submitSubmission(submissionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...RESULTS_KEY, "submission-status"] })
+      toast.success("Submitted for approval successfully")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to submit for approval")
+    },
+  })
+}
+
+export function useUpdateSubmission() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<GradeSubmission> }) =>
+      ResultsAPI.updateSubmission(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...RESULTS_KEY, "submission-status"] })
+      toast.success("Submission updated successfully")
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update submission")
     },
   })
 }

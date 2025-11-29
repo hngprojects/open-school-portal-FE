@@ -20,7 +20,7 @@ export function SubmissionsGrid({ submissions, isLoading }: SubmissionsGridProps
 
   if (submissions.length === 0) {
     return (
-      <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+      <div className="p-12 text-center">
         <div className="mx-auto max-w-md">
           <h3 className="text-lg font-semibold text-gray-900">No submissions found</h3>
           <p className="mt-2 text-gray-600">
