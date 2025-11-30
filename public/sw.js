@@ -69,7 +69,14 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return
 
   // Skip handling for admin paths
-  if (url.pathname.startsWith("/admin")) {
+  if (
+    url.pathname.startsWith("/admin") ||
+    url.pathname.startsWith("/teacher") ||
+    url.pathname.startsWith("/student") ||
+    url.pathname.startsWith("/parent") ||
+    url.pathname.startsWith("/super-admin")
+  ) {
+    // These requests will bypass the Service Worker and go directly to the network.
     return
   }
 
@@ -159,80 +166,6 @@ self.addEventListener("fetch", (event) => {
   }
 })
 
-// ----- Background Sync for offline events -----
-self.addEventListener("sync", (event) => {
-  if (event.tag === "sync-offline-events") {
-    event.waitUntil(syncOfflineEvents())
-  }
-})
-
-// IndexedDB helpers in SW
-const DB_NAME = "school-base-db"
-const DB_VERSION = 1
-const STORE_EVENTS = "events"
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION)
-    req.onupgradeneeded = () => {
-      const db = req.result
-      if (!db.objectStoreNames.contains(STORE_EVENTS)) {
-        db.createObjectStore(STORE_EVENTS, { keyPath: "id", autoIncrement: true })
-      }
-    }
-    req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error)
-  })
-}
-
-async function getAllEvents() {
-  const db = await openDB()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_EVENTS, "readonly")
-    const store = tx.objectStore(STORE_EVENTS)
-    const req = store.getAll()
-    req.onsuccess = () => resolve(req.result || [])
-    req.onerror = () => reject(req.error)
-  })
-}
-
-async function clearEvents() {
-  const db = await openDB()
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_EVENTS, "readwrite")
-    const store = tx.objectStore(STORE_EVENTS)
-    const req = store.clear()
-    req.onsuccess = () => resolve()
-    req.onerror = () => reject(req.error)
-  })
-}
-
-async function sendEventsToServer(events) {
-  // Adjust endpoint to your API
-  const endpoint = "/api/events/bulk"
-  const resp = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ events }),
-  })
-  if (!resp.ok) throw new Error("Failed to sync events")
-  return resp.json()
-}
-
-async function syncOfflineEvents() {
-  try {
-    const events = await getAllEvents()
-    if (!events || events.length === 0) return
-    const result = await sendEventsToServer(events)
-    await clearEvents()
-    console.log("[ServiceWorker] Synced", events.length, "offline events")
-    return result
-  } catch (err) {
-    console.error("[ServiceWorker] Sync failed, will retry later", err)
-    throw err
-  }
-}
-
 // ----- Push Notification Handling -----
 self.addEventListener("push", (event) => {
   console.log("[ServiceWorker] Push received:", event)
@@ -285,7 +218,7 @@ self.addEventListener("notificationclick", (event) => {
   // Handle action clicks
   if (event.action === "explore") {
     event.waitUntil(
-      clients.openWindow("/") // update with notifications page when ready
+      clients.openWindow("/notifications") // dummy route, update with actual notifications page when ready
     )
   } else if (event.action === "close") {
     // Just close the notification
