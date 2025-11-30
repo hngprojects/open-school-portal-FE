@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+// import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { Menu, CalendarDays, FileBadge } from "lucide-react"
@@ -18,13 +18,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
+  // SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar"
 
 import Logo from "@/components/logo"
-import { useLogout } from "@/hooks/use-user-data"
-import { LogoutDialog } from "./logout-confirmation-dialog"
+// import { useLogout } from "@/hooks/use-user-data"
+// import { LogoutDialog } from "./logout-confirmation-dialog"
+import { SidebarFooterUser } from "../sidebar-footer-user"
 
 const items = [
   { title: "Dashboard", url: "/parent", icon: Menu, exactMatch: true },
@@ -37,7 +38,7 @@ const items = [
 export function ParentSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+  // const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -46,11 +47,11 @@ export function ParentSidebar() {
   }
 
   const isCollapsed = state === "collapsed"
-  const sendLogoutRequest = useLogout().mutateAsync
+  // const sendLogoutRequest = useLogout().mutateAsync
 
-  const handleLogout = async () => {
-    await sendLogoutRequest()
-  }
+  // const handleLogout = async () => {
+  //   await sendLogoutRequest()
+  // }
 
   return (
     <Sidebar>
@@ -101,7 +102,8 @@ export function ParentSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+      <SidebarFooterUser />
+      {/* <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
         Log Out
       </SidebarFooter>
 
@@ -109,7 +111,7 @@ export function ParentSidebar() {
         open={showLogoutDialog}
         onOpenChange={setShowLogoutDialog}
         onConfirm={handleLogout}
-      />
+      /> */}
     </Sidebar>
   )
 }
