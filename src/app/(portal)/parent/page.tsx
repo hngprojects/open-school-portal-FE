@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { CalendarDays } from "lucide-react"
 import Link from "next/link"
+// import { useAuthStore } from "@/store/auth-store"
 
 const studentsData = [
   {
@@ -43,6 +44,9 @@ const studentsData = [
 ]
 
 export default function ParentDashboard() {
+  // const { profile, user } = useAuthStore()
+  // console.log(profile)
+  // console.log("user", user)
   const [selectedStudentId, setSelectedStudentId] = useState(studentsData[0].id)
   const student = studentsData.find((s) => s.id === selectedStudentId)
 

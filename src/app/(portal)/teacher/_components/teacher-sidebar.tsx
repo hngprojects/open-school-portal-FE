@@ -6,11 +6,9 @@ import Link from "next/link"
 import {
   LayoutGrid,
   GraduationCap,
-  User,
   NotebookPen,
   CalendarDays,
   FileBadge,
-  Menu,
   Calendar,
   Users,
 } from "lucide-react"
