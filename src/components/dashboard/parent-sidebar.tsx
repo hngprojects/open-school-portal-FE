@@ -25,6 +25,7 @@ import {
 import Logo from "@/components/logo"
 import { useLogout } from "@/hooks/use-user-data"
 import { LogoutDialog } from "./logout-confirmation-dialog"
+import { SidebarFooterUser } from "../sidebar-footer-user"
 
 const items = [
   { title: "Dashboard", url: "/parent", icon: Menu, exactMatch: true },
@@ -101,7 +102,8 @@ export function ParentSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+      <SidebarFooterUser />
+      {/* <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
         Log Out
       </SidebarFooter>
 
@@ -109,7 +111,7 @@ export function ParentSidebar() {
         open={showLogoutDialog}
         onOpenChange={setShowLogoutDialog}
         onConfirm={handleLogout}
-      />
+      /> */}
     </Sidebar>
   )
 }
