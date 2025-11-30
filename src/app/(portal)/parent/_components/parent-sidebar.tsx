@@ -31,7 +31,6 @@ import {
   SidebarMenuSubButton,
   //SidebarFooter,
   useSidebar,
-  SidebarFooter,
 } from "@/components/ui/sidebar"
 import {
   Collapsible,
@@ -39,8 +38,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import Logo from "@/components/logo"
-import { useLogout } from "../_hooks/use-user-data"
-import { LogoutDialog } from "./logout-confirmation-dialog"
+
+import { SidebarFooterUser } from "@/components/sidebar-footer-user"
 
 // Menu items
 const items = [
@@ -67,7 +66,6 @@ export function ParentSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -92,11 +90,11 @@ export function ParentSidebar() {
     return false
   }
 
-  const sendLogoutRequest = useLogout().mutateAsync
+  // const sendLogoutRequest = useLogout().mutateAsync
 
-  const handleLogout = async () => {
-    await sendLogoutRequest()
-  }
+  // const handleLogout = async () => {
+  //   await sendLogoutRequest()
+  // }
 
   return (
     <Sidebar>
@@ -214,14 +212,51 @@ export function ParentSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
+      {/* <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
         Log Out
-      </SidebarFooter>
-      <LogoutDialog
+      </SidebarFooter> */}
+      {/* <SidebarFooter className="border-t border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative h-10 w-10">
+              <Image
+                src="/assets/images/dashboard/avatar.svg"
+                alt="avatar"
+                width={32}
+                height={32}
+                className="w-full object-cover"
+              />
+              <div className="absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-white bg-green-500" />
+            </div>
+            {!isCollapsed && (
+              <div className="flex flex-col">
+                <span className="text-sm font-semibold text-gray-900">
+                  {user?.first_name}{" "}
+                </span>
+                <span className="text-xs text-gray-500">
+                  {" "}
+                  {titleCase(user?.role?.[0] || "")}
+                </span>
+              </div>
+            )}
+          </div>
+          {!isCollapsed && (
+            <button
+              onClick={() => setShowLogoutDialog(true)}
+              className="rounded-md p-1.5 text-[#DA3743] transition-colors hover:bg-red-50"
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          )}
+        </div>
+      </SidebarFooter> */}
+      <SidebarFooterUser />
+      {/* <LogoutDialog
         open={showLogoutDialog}
         onOpenChange={setShowLogoutDialog}
         onConfirm={handleLogout}
-      />
+      /> */}
     </Sidebar>
   )
 }
