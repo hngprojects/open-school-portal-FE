@@ -13,6 +13,7 @@ import { Pagination } from "@/components/ui/pagination"
 import { useDeleteSubject } from "../_hooks/use-subjects"
 import { toast } from "sonner"
 import { useState } from "react"
+import { DeleteConfirmationDialog } from "@/components/users/delete-confirmation-dialog"
 
 interface Subject {
   id: string
@@ -38,6 +39,9 @@ const SubjectManagement = ({
   onPageChange?: (page: number) => void
 }) => {
   const [searchQuery, setSearchQuery] = useState("")
+  const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null)
+  const isDeleteDialogOpen = Boolean(subjectToDelete)
+  
   const deleteSubject = useDeleteSubject().mutateAsync
   const filteredSubjects = subjects.filter((subject) =>
     subject.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -50,7 +54,7 @@ const SubjectManagement = ({
         <div className="relative my-4 w-full">
           <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-[#64748B]" />
           <Input
-            placeholder="Search Sessions"
+            placeholder="Search Subjects"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-h-10 w-full max-w-[20rem] border pl-8"
@@ -91,7 +95,7 @@ const SubjectManagement = ({
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-red-600 hover:bg-red-50"
-                      onClick={() => handleDelete(subject)}
+                      onClick={() => confirmDelete(subject)}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
@@ -121,11 +125,19 @@ const SubjectManagement = ({
             itemName="Subjects"
             currentPage={currentPage}
             totalPages={totalPages}
-            totalItems={totalItems}
-            onPageChange={onPageChange ?? (() => {})}
+            totalItems={searchQuery ? filteredSubjects.length : totalItems}
+            onPageChange={onPageChange ?? (() => { })}
             className="mt-6"
           />
         )}
+
+        <DeleteConfirmationDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={() => setSubjectToDelete(null)}
+          title="Delete Subject"
+          description="Are you sure you want to delete this subject? This action cannot be undone."
+          onConfirm={handleDelete}
+        />
       </article>
     </div>
   )
@@ -136,16 +148,23 @@ const SubjectManagement = ({
   function handleAssign(subject: Subject) {
     onAssignSubject(subject.id)
   }
-  async function handleDelete(subject: Subject) {
+  function confirmDelete(subject: Subject) {
+    setSubjectToDelete(subject)
+  }
+
+  async function handleDelete() {
+    if (!subjectToDelete) return
     try {
-      await deleteSubject(subject.id)
-      toast.success(`Subject "${subject.name}" deleted successfully.`)
+      await deleteSubject(subjectToDelete.id)
+      toast.success(`Subject "${subjectToDelete.name}" deleted successfully.`)
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message)
         return
       }
-      toast.error(`Failed to delete subject "${subject.name}". Please try again.`)
+      toast.error(`Failed to delete subject "${subjectToDelete.name}". Please try again.`)
+    } finally {
+      setSubjectToDelete(null)
     }
   }
 }
