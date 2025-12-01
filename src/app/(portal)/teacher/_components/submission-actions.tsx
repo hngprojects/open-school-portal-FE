@@ -1,7 +1,8 @@
+// Update SubmissionActions to convert GradeEntry[] to Grade[]
 "use client"
 
-import { useState, useMemo } from "react"
-import { Grade, GradeEntry, GradeSubmission } from "@/types/result"
+import { useState } from "react"
+import { GradeEntry, GradeSubmission, Grade } from "@/types/result" // Add Grade import
 import { Button } from "@/components/ui/button"
 import {
   useSaveDraft,
@@ -16,8 +17,7 @@ interface SubmissionActionsProps {
   subjectId: string
   termId: string
   grades: GradeEntry[]
-  submissionStatus?: GradeSubmission | null
-  onSubmissionUpdate: () => void
+  existingSubmission?: GradeSubmission
 }
 
 export function SubmissionActions({
@@ -25,8 +25,7 @@ export function SubmissionActions({
   subjectId,
   termId,
   grades,
-  submissionStatus,
-  onSubmissionUpdate,
+  existingSubmission,
 }: SubmissionActionsProps) {
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
@@ -35,19 +34,20 @@ export function SubmissionActions({
   const submitMutation = useSubmitForApproval()
   const updateSubmissionMutation = useUpdateSubmission()
 
-  const gradesForSubmission: Grade[] = useMemo(
-    () =>
-      grades.map((grade) => ({
-        ...grade,
-        class_id: classId,
-        subject_id: subjectId,
-        term_id: termId,
-        total_score: grade.total_score ?? null,
-        grade: grade.grade ?? null,
-        comment: grade.comment ?? null,
-      })),
-    [grades, classId, subjectId, termId]
-  )
+  // Convert GradeEntry[] to Grade[] for the API
+  const convertToGrades = (gradeEntries: GradeEntry[]): Partial<Grade>[] => {
+    return gradeEntries.map((entry) => ({
+      student_id: entry.student_id,
+      ca_score: entry.ca_score,
+      exam_score: entry.exam_score,
+      total_score: entry.total_score,
+      grade: entry.grade,
+      comment: entry.comment,
+      subject_id: subjectId,
+      class_id: classId,
+      term_id: termId,
+    }))
+  }
 
   const handleSaveDraft = async () => {
     try {
@@ -55,14 +55,21 @@ export function SubmissionActions({
         class_id: classId,
         subject_id: subjectId,
         term_id: termId,
-        grades: gradesForSubmission,
+        grades: grades.map((grade) => ({
+          student_id: grade.student_id,
+          ca_score: grade.ca_score,
+          exam_score: grade.exam_score,
+          comment: grade.comment || null,
+        })),
       }
 
-      if (submissionStatus?.id) {
+      if (existingSubmission?.id) {
         // Update existing submission
         await updateSubmissionMutation.mutateAsync({
-          id: submissionStatus.id,
-          data: { grades: gradesForSubmission },
+          id: existingSubmission.id,
+          data: {
+            grades: convertToGrades(grades) as Grade[], // Type assertion
+          },
         })
       } else {
         // Create new submission
@@ -71,7 +78,6 @@ export function SubmissionActions({
 
       setSuccessMessage("Results saved as draft successfully!")
       setSuccessModalOpen(true)
-      onSubmissionUpdate()
     } catch {
       toast.error("Failed to save draft")
     }
@@ -79,31 +85,37 @@ export function SubmissionActions({
 
   const handleSubmitForApproval = async () => {
     try {
-      if (!submissionStatus?.id) {
+      if (!existingSubmission?.id) {
         // First save as draft, then submit
         const submissionData = {
           class_id: classId,
           subject_id: subjectId,
           term_id: termId,
-          grades: gradesForSubmission,
+          grades: grades.map((grade) => ({
+            student_id: grade.student_id,
+            ca_score: grade.ca_score,
+            exam_score: grade.exam_score,
+            comment: grade.comment || null,
+          })),
         }
 
         const draft = await saveDraftMutation.mutateAsync(submissionData)
         await submitMutation.mutateAsync(draft.id)
       } else {
-        await submitMutation.mutateAsync(submissionStatus.id)
+        await submitMutation.mutateAsync(existingSubmission.id)
       }
 
       setSuccessMessage("Results submitted for approval successfully!")
       setSuccessModalOpen(true)
-      onSubmissionUpdate()
     } catch {
       toast.error("Failed to submit for approval")
     }
   }
 
   const canSubmit =
-    submissionStatus?.status !== "approved" && submissionStatus?.status !== "submitted"
+    !existingSubmission ||
+    (existingSubmission.status !== "approved" &&
+      existingSubmission.status !== "submitted")
 
   return (
     <>

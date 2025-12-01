@@ -15,13 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { format } from "date-fns"
-import {
-  DUMMY_CLASSES,
-  DUMMY_SUBJECTS,
-  DUMMY_TERMS,
-  TEACHER_NAMES,
-  DUMMY_STUDENTS,
-} from "@/lib/dummy-data"
 import { SuccessModal } from "@/components/results/success-modal"
 import { RejectionModal } from "@/components/results/rejection-modal"
 import { useApproveSubmission, useRejectSubmission } from "../_hooks/use-admin-results"
@@ -40,17 +33,9 @@ export function SubmissionReview({ submission }: SubmissionReviewProps) {
   const approveMutation = useApproveSubmission()
   const rejectMutation = useRejectSubmission()
 
-  const teacherName = TEACHER_NAMES[submission.teacher_id] || "Unknown Teacher"
-  const className =
-    DUMMY_CLASSES.find((c) => c.id === submission.class_id)?.name || "Unknown Class"
-  const subjectName =
-    DUMMY_SUBJECTS.find((s) => s.id === submission.subject_id)?.name || "Unknown Subject"
-  const termName =
-    DUMMY_TERMS.find((t) => t.id === submission.term_id)?.name || "Unknown Term"
-
   const handleApprove = async () => {
     try {
-      await approveMutation.mutateAsync(submission.id)
+      await approveMutation.mutateAsync({ id: submission.id })
       setSuccessMessage("Submission approved successfully!")
       setSuccessModalOpen(true)
     } catch (error) {
@@ -99,25 +84,25 @@ export function SubmissionReview({ submission }: SubmissionReviewProps) {
         <p className="text-gray-600">Review and approve teacher-submitted results</p>
       </div>
 
-      {/* Teacher Info Card */}
+      {/* Submission Info Card */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl">{teacherName}</CardTitle>
+              <CardTitle className="text-xl">Teacher: {submission.teacher_id}</CardTitle>
               <div className="mt-4 space-y-2">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                   <div>
                     <span className="text-sm font-medium text-gray-500">Class</span>
-                    <p className="text-lg">{className}</p>
+                    <p className="text-lg">{submission.class_id}</p>
                   </div>
                   <div>
                     <span className="text-sm font-medium text-gray-500">Subject</span>
-                    <p className="text-lg">{subjectName}</p>
+                    <p className="text-lg">{submission.subject_id}</p>
                   </div>
                   <div>
                     <span className="text-sm font-medium text-gray-500">Term</span>
-                    <p className="text-lg">{termName}</p>
+                    <p className="text-lg">{submission.term_id}</p>
                   </div>
                   <div>
                     <span className="text-sm font-medium text-gray-500">
@@ -150,8 +135,7 @@ export function SubmissionReview({ submission }: SubmissionReviewProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>Reg No</TableHead>
+                  <TableHead>Student ID</TableHead>
                   <TableHead className="text-center">CA (30)</TableHead>
                   <TableHead className="text-center">Exam (70)</TableHead>
                   <TableHead className="text-center">Total (100)</TableHead>
@@ -160,30 +144,20 @@ export function SubmissionReview({ submission }: SubmissionReviewProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {submission.grades.map((grade) => {
-                  const student = DUMMY_STUDENTS.find((s) => s.id === grade.student_id)
-                  return (
-                    <TableRow key={grade.student_id}>
-                      <TableCell className="font-medium">
-                        {student
-                          ? `${student.first_name} ${student.last_name}`
-                          : "Unknown Student"}
-                      </TableCell>
-                      <TableCell>{student?.registration_number || "-"}</TableCell>
-                      <TableCell className="text-center">
-                        {grade.ca_score ?? "-"}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {grade.exam_score ?? "-"}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        {grade.total_score ?? "-"}
-                      </TableCell>
-                      <TableCell className="text-center">{grade.grade ?? "-"}</TableCell>
-                      <TableCell>{grade.comment || "-"}</TableCell>
-                    </TableRow>
-                  )
-                })}
+                {submission.grades.map((grade) => (
+                  <TableRow key={grade.student_id}>
+                    <TableCell className="font-medium">{grade.student_id}</TableCell>
+                    <TableCell className="text-center">{grade.ca_score ?? "-"}</TableCell>
+                    <TableCell className="text-center">
+                      {grade.exam_score ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {grade.total_score ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-center">{grade.grade ?? "-"}</TableCell>
+                    <TableCell>{grade.comment || "-"}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>

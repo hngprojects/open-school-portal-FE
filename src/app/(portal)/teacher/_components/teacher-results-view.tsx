@@ -14,7 +14,6 @@ import { FilterSection } from "./filter-section"
 import { GradingScaleCard } from "./grading-scale-card"
 import { StudentsTable } from "./students-table"
 import { SubmissionActions } from "./submission-actions"
-import { useGetSubmissionStatus } from "../_hooks/use-results"
 
 interface TeacherResultsViewProps {
   classes: Class[]
@@ -30,6 +29,8 @@ interface TeacherResultsViewProps {
   onTermChange: (termId: string) => void
   isLoadingStudents: boolean
   canShowResults: boolean
+  existingSubmission?: GradeSubmission
+  showAllStudents: boolean
 }
 
 export function TeacherResultsView({
@@ -46,68 +47,40 @@ export function TeacherResultsView({
   onTermChange,
   isLoadingStudents,
   canShowResults,
+  existingSubmission,
+  showAllStudents,
 }: TeacherResultsViewProps) {
   const [grades, setGrades] = useState<Record<string, GradeEntry>>({})
 
-  const { data: submissionStatus } = useGetSubmissionStatus(
-    selectedClass,
-    selectedSubject,
-    selectedTerm
-  )
-
-  const calculateGrade = useCallback((caScore: number, examScore: number): string => {
-    const total = caScore + examScore
-    if (total >= 80) return "A"
-    if (total >= 70) return "B"
-    if (total >= 60) return "C"
-    if (total >= 50) return "D"
-    if (total >= 40) return "E"
-    return "F"
-  }, [])
-
-  const handleGradeUpdate = useCallback(
-    (studentId: string, field: keyof GradeEntry, value: string) => {
-      setGrades((prev) => {
-        const currentGrade = prev[studentId] || {
-          student_id: studentId,
-          ca_score: null,
-          exam_score: null,
-          comment: null,
-          total_score: null,
-          grade: null,
-        }
-
-        const updatedGrade = { ...currentGrade }
-
-        if (field === "ca_score" || field === "exam_score") {
-          const numValue = value === "" ? null : parseInt(value)
-          updatedGrade[field] = numValue as number | null
-
-          // Auto-calculate total and grade
-          const caScore = field === "ca_score" ? numValue : currentGrade.ca_score
-          const examScore = field === "exam_score" ? numValue : currentGrade.exam_score
-
-          if (caScore !== null && examScore !== null) {
-            const total = caScore + examScore
-            updatedGrade.total_score = total
-            updatedGrade.grade = calculateGrade(caScore, examScore)
-          } else {
-            updatedGrade.total_score = null
-            updatedGrade.grade = null
-          }
-        } else if (field === "comment") {
-          // For comment field
-          updatedGrade[field] = value === "" ? null : value
-        }
-
-        return {
-          ...prev,
-          [studentId]: updatedGrade as GradeEntry,
+  // Initialize grades from existing submission
+  const initialGrades = useMemo(() => {
+    const gradesMap: Record<string, GradeEntry> = {}
+    if (existingSubmission?.grades) {
+      existingSubmission.grades.forEach((grade) => {
+        gradesMap[grade.student_id] = {
+          student_id: grade.student_id,
+          ca_score: grade.ca_score,
+          exam_score: grade.exam_score,
+          total_score: grade.total_score,
+          grade: grade.grade,
+          comment: grade.comment || null,
         }
       })
-    },
-    [calculateGrade]
-  )
+    }
+    return gradesMap
+  }, [existingSubmission])
+
+  // Initialize grades state with initialGrades
+  useState(() => {
+    setGrades(initialGrades)
+  })
+
+  const handleGradeUpdate = useCallback((studentId: string, updatedGrade: GradeEntry) => {
+    setGrades((prev) => ({
+      ...prev,
+      [studentId]: updatedGrade,
+    }))
+  }, [])
 
   const gradeEntries = useMemo(
     () =>
@@ -118,9 +91,6 @@ export function TeacherResultsView({
   )
 
   const hasValidGrades = gradeEntries.length > 0
-
-  // Safely access submission status properties
-  const submissionStatusData = submissionStatus as GradeSubmission | null
 
   return (
     <div className="space-y-6">
@@ -149,29 +119,29 @@ export function TeacherResultsView({
           </div>
 
           {/* Submission Status */}
-          {submissionStatusData && (
+          {existingSubmission && (
             <div className="mt-4">
               <span className="text-sm font-medium text-gray-500">Status: </span>
               <span
                 className={`text-sm font-semibold ${
-                  submissionStatusData.status === "approved"
+                  existingSubmission.status === "approved"
                     ? "text-green-600"
-                    : submissionStatusData.status === "rejected"
+                    : existingSubmission.status === "rejected"
                       ? "text-red-600"
-                      : submissionStatusData.status === "submitted"
+                      : existingSubmission.status === "submitted"
                         ? "text-blue-600"
                         : "text-gray-600"
                 }`}
               >
-                {submissionStatusData.status?.toUpperCase() || "DRAFT"}
+                {existingSubmission.status?.toUpperCase()}
               </span>
-              {submissionStatusData.rejection_reason && (
+              {existingSubmission.rejection_reason && (
                 <div className="mt-2">
                   <span className="text-sm font-medium text-gray-500">
                     Rejection Reason:{" "}
                   </span>
                   <span className="text-sm text-red-600">
-                    {submissionStatusData.rejection_reason}
+                    {existingSubmission.rejection_reason}
                   </span>
                 </div>
               )}
@@ -193,6 +163,15 @@ export function TeacherResultsView({
         onTermChange={onTermChange}
       />
 
+      {/* Info Message */}
+      {showAllStudents && !canShowResults && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">
+            Please select a class, subject, and term to enter grades.
+          </p>
+        </div>
+      )}
+
       {/* Grading Scale */}
       {canShowResults && <GradingScaleCard gradingScale={gradingScale} />}
 
@@ -203,6 +182,9 @@ export function TeacherResultsView({
           grades={grades}
           onGradeUpdate={handleGradeUpdate}
           isLoading={isLoadingStudents}
+          classId={selectedClass}
+          subjectId={selectedSubject}
+          termId={selectedTerm}
         />
       )}
 
@@ -213,16 +195,12 @@ export function TeacherResultsView({
           subjectId={selectedSubject}
           termId={selectedTerm}
           grades={gradeEntries}
-          submissionStatus={submissionStatusData}
-          onSubmissionUpdate={() => {
-            // Refresh submission status
-            // This would be handled by React Query invalidation
-          }}
+          existingSubmission={existingSubmission}
         />
       )}
 
       {/* Empty State */}
-      {!canShowResults && (
+      {!canShowResults && !showAllStudents && (
         <div className="p-12 text-center">
           <div className="mx-auto max-w-md">
             <h3 className="text-lg font-semibold text-gray-900">

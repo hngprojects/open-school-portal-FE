@@ -51,11 +51,8 @@ const Navbar = () => {
 
         {/* Desktop Button */}
         <div className="hidden lg:block">
-          <Link href="/login">
-            <Button
-              variant="outline"
-              className="border-accent text-accent bg-primary-hover"
-            >
+          <Link href="/contact-us">
+            <Button variant="outline" className="">
               Get Started
             </Button>
           </Link>
@@ -107,10 +104,10 @@ const Navbar = () => {
                     )
                   })}
                   <div className="mt-2 px-4">
-                    <Link href="/login">
+                    <Link href="/contact-us">
                       <Button
                         variant="outline"
-                        className="border-accent text-accent bg-primary-hover w-full"
+                        className="w-full"
                         onClick={closeMobileMenu}
                       >
                         Get Started
