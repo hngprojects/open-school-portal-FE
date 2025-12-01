@@ -53,7 +53,7 @@ const Navbar = () => {
         <div className="hidden lg:block">
           <Link href="/contact-us">
             <Button variant="outline" className="">
-              Get Started
+              Consult Us
             </Button>
           </Link>
         </div>
@@ -110,7 +110,7 @@ const Navbar = () => {
                         className="w-full"
                         onClick={closeMobileMenu}
                       >
-                        Get Started
+                        Consult Us
                       </Button>
                     </Link>
                   </div>
