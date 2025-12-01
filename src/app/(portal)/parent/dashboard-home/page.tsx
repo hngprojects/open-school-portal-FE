@@ -1,10 +1,13 @@
-import ComingSoon from "@/components/coming-soon"
+import DashboardTitle from "@/components/dashboard/dashboard-title"
 import React from "react"
 
 const page = () => {
   return (
     <div>
-      <ComingSoon />
+      <DashboardTitle
+        heading="Welcom Dr. Faith"
+        description="Here is your child academic report"
+      />
     </div>
   )
 }

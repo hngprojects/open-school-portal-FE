@@ -28,6 +28,7 @@ export function useAcademicSessions(params?: { page?: number; limit?: number }) 
   return useQuery<PaginatedSessions>({
     queryKey: [ACADEMIC_SESSIONS_KEY[0], params?.page ?? 1, params?.limit ?? 20],
     queryFn: () => AcademicSessionAPI.list(params),
+    refetchOnWindowFocus: false,
   })
 }
 

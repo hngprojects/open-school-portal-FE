@@ -1,4 +1,3 @@
-import React from "react"
 import SessionsPage from "../../_components/sessions/sessions-page"
 
 const page = () => {

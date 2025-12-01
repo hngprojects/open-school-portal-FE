@@ -144,3 +144,29 @@ export function useDeleteStudent() {
     },
   })
 }
+
+// ----------------------------
+// COUNT ACTIVE STUDENTS
+// --------------------------
+
+export function useStudentsCount() {
+  return useQuery({
+    queryKey: ["students_count"],
+    queryFn: async () => {
+      const res = await StudentsAPI.getTotal({ limit: 1, page: 1 })
+      return res.meta?.total ?? 0 // Changed from res.data?.total to res.meta?.total
+    },
+  })
+}
+
+// ----------------------------
+// STUDENT GROWTH REPORT
+// --------------------------
+
+export function useStudentGrowthReport(academic_year?: string) {
+  return useQuery({
+    queryKey: ["student_growth_report", academic_year],
+    queryFn: () => StudentsAPI.getStudentGrowthReport(academic_year),
+    select: (data) => data.data,
+  })
+}
