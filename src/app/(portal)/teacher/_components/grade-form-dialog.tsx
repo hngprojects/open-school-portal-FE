@@ -1,19 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { Student } from "@/types/result"
+import { useState, useMemo } from "react"
+import { Student, GradeEntry } from "@/types/result"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { useSaveGrade } from "../_hooks/use-results"
-import { SuccessModal } from "@/components/classrooms/success-modal"
+import { calculateGrade } from "@/lib/results"
 
 interface GradeFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  student: Student | null
+  student: Student
+  grade?: GradeEntry
+  onSave: (gradeData: GradeEntry) => void
   classId: string
   subjectId: string
   termId: string
@@ -23,174 +24,128 @@ export function GradeFormDialog({
   open,
   onOpenChange,
   student,
-  classId,
-  subjectId,
-  termId,
+  grade,
+  onSave,
 }: GradeFormDialogProps) {
-  const [formData, setFormData] = useState({
-    ca_score: "",
-    exam_score: "",
-    total_score: "",
-    grade: "",
-    comment: "",
-  })
-  const [successModalOpen, setSuccessModalOpen] = useState(false)
+  // Initialize form data from grade prop
+  const initialFormData = useMemo(
+    () => ({
+      ca_score: grade?.ca_score?.toString() || "",
+      exam_score: grade?.exam_score?.toString() || "",
+      comment: grade?.comment || "",
+    }),
+    [grade]
+  )
 
-  const saveGradeMutation = useSaveGrade()
+  const [formData, setFormData] = useState(initialFormData)
 
-  const handleSave = async () => {
-    if (!student) return
-
-    const gradeData = {
-      student_id: student.id,
-      class_id: classId,
-      subject_id: subjectId,
-      term_id: termId,
-      ca_score: formData.ca_score ? parseInt(formData.ca_score) : null,
-      exam_score: formData.exam_score ? parseInt(formData.exam_score) : null,
-      total_score: formData.total_score ? parseInt(formData.total_score) : null,
-      grade: formData.grade || null,
-      comment: formData.comment || null,
-    }
-
-    try {
-      await saveGradeMutation.mutateAsync(gradeData)
-      setSuccessModalOpen(true)
-      onOpenChange(false)
-    } catch (error) {
-      console.error("Failed to save grade:", error)
-    }
-  }
-
-  const calculateTotal = () => {
+  const total = useMemo(() => {
     const ca = parseInt(formData.ca_score) || 0
     const exam = parseInt(formData.exam_score) || 0
     return ca + exam
-  }
+  }, [formData.ca_score, formData.exam_score])
 
-  const handleCaScoreChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      ca_score: value,
-      total_score: calculateTotal().toString(),
-    }))
-  }
+  const gradeLetter = useMemo(() => {
+    return total > 0 ? calculateGrade(total) : ""
+  }, [total])
 
-  const handleExamScoreChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      exam_score: value,
-      total_score: calculateTotal().toString(),
-    }))
-  }
+  const handleSubmit = () => {
+    const caScore = formData.ca_score ? parseInt(formData.ca_score) : null
+    const examScore = formData.exam_score ? parseInt(formData.exam_score) : null
+    const totalScore = caScore !== null && examScore !== null ? caScore + examScore : null
 
-  if (!student) return null
+    const gradeData: GradeEntry = {
+      student_id: student.id,
+      ca_score: caScore,
+      exam_score: examScore,
+      total_score: totalScore,
+      grade: totalScore !== null ? calculateGrade(totalScore) : null,
+      comment: formData.comment || null,
+    }
+
+    onSave(gradeData)
+  }
 
   return (
-    <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-left">
-              Score Details
-              <div className="py-2 font-light text-gray-700">
-                {student.first_name} {student.last_name}
-              </div>
-            </DialogTitle>
-          </DialogHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Enter Grades</DialogTitle>
+          <div className="text-sm text-gray-600">
+            {student.first_name} {student.last_name}
+          </div>
+        </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="ca_score">CA Score</Label>
-                <Input
-                  id="ca_score"
-                  type="number"
-                  min="0"
-                  max="30"
-                  value={formData.ca_score}
-                  onChange={(e) => handleCaScoreChange(e.target.value)}
-                  placeholder="0-30"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="exam_score">Exam Score</Label>
-                <Input
-                  id="exam_score"
-                  type="number"
-                  min="0"
-                  max="70"
-                  value={formData.exam_score}
-                  onChange={(e) => handleExamScoreChange(e.target.value)}
-                  placeholder="0-70"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="total_score">Total Score</Label>
-                <Input
-                  id="total_score"
-                  type="number"
-                  value={formData.total_score}
-                  readOnly
-                  className="min-h-[100px] bg-[rgba(218,55,67,0.2)] text-center"
-                  placeholder="Total Score"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="grade">Grade</Label>
-                <Input
-                  id="grade"
-                  value={formData.grade}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, grade: e.target.value }))
-                  }
-                  className="min-h-[100px] text-center"
-                  placeholder="A, B, C..."
-                />
-              </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="ca_score">CA Score (0-30)</Label>
+              <Input
+                id="ca_score"
+                type="number"
+                min="0"
+                max="30"
+                value={formData.ca_score}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, ca_score: e.target.value }))
+                }
+                placeholder="Enter CA score"
+              />
             </div>
 
             <div>
-              <Label htmlFor="comment">Comment</Label>
-              <Textarea
-                id="comment"
-                value={formData.comment}
+              <Label htmlFor="exam_score">Exam Score (0-70)</Label>
+              <Input
+                id="exam_score"
+                type="number"
+                min="0"
+                max="70"
+                value={formData.exam_score}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, comment: e.target.value }))
+                  setFormData((prev) => ({ ...prev, exam_score: e.target.value }))
                 }
-                className="min-h-[145px]"
-                placeholder="Enter Any Additional comments..."
-                rows={3}
+                placeholder="Enter exam score"
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={saveGradeMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saveGradeMutation.isPending}>
-              {saveGradeMutation.isPending ? "Saving..." : "Save Grade"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Total Score</Label>
+              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+                <span className="font-semibold">{total}</span>
+              </div>
+            </div>
 
-      <SuccessModal
-        open={successModalOpen}
-        onOpenChange={setSuccessModalOpen}
-        title="Grade Saved Successfully"
-        description="The student's grade has been saved successfully."
-      />
-    </>
+            <div>
+              <Label>Grade</Label>
+              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+                <span className="font-semibold">{gradeLetter || "-"}</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="comment">Comment</Label>
+            <Textarea
+              id="comment"
+              value={formData.comment}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, comment: e.target.value }))
+              }
+              placeholder="Enter comment..."
+              rows={3}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4">
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit}>Save Grade</Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
