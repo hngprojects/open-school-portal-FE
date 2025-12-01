@@ -10,7 +10,7 @@ const HomeHero = () => {
   const pathname = usePathname()
 
   return (
-    <section className="w-full bg-[#f5f5f5] pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0">
+    <section className="w-full bg-[#f5f5f5] pt-16 pb-10 sm:pt-20 sm:pb-14 md:pt-32 md:pb-0 lg:px-4">
       <div className="container flex flex-col items-center gap-6 text-center sm:gap-8 md:gap-10">
         <div className="flex w-full max-w-xl flex-col gap-3 sm:gap-4 md:max-w-4xl md:gap-6">
           <h1 className="text-text-primary mx-auto max-w-[20ch] text-4xl leading-tight font-bold sm:text-5xl md:text-6xl md:leading-tight lg:max-w-[16ch]">
