@@ -41,7 +41,7 @@ const SubjectManagement = ({
   const [searchQuery, setSearchQuery] = useState("")
   const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null)
   const isDeleteDialogOpen = Boolean(subjectToDelete)
-  
+
   const deleteSubject = useDeleteSubject().mutateAsync
   const filteredSubjects = subjects.filter((subject) =>
     subject.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -126,7 +126,7 @@ const SubjectManagement = ({
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={searchQuery ? filteredSubjects.length : totalItems}
-            onPageChange={onPageChange ?? (() => { })}
+            onPageChange={onPageChange ?? (() => {})}
             className="mt-6"
           />
         )}
