@@ -5,15 +5,19 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { LuLayoutGrid } from "react-icons/lu"
-import { ChevronDown, GraduationCap, Pencil, Plus, Search } from "lucide-react"
+import { ChevronDown, GraduationCap, Loader2Icon, MoreVerticalIcon, Plus, Search } from "lucide-react"
 import { ClassItem } from "@/lib/classes"
 import { useRouter } from "next/navigation"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useDeleteClass } from "../../class-management/_hooks/use-classes"
 
 const EDIT_CLASS = (classID: string) => `/admin/class-management/class/${classID}/edit`
 
 const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
   const [expandedClasses, setExpandedClasses] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
+  const deleteClasses = useDeleteClass().mutateAsync;
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter()
 
   const toggleClass = (className: string) => {
@@ -88,20 +92,18 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                     aria-label={isExpanded ? "Collapse" : "Expand"}
                   >
                     <ChevronDown
-                      className={`size-5 transition-transform duration-300 ease-in-out ${
-                        isExpanded ? "rotate-180" : "rotate-0"
-                      }`}
+                      className={`size-5 transition-transform duration-300 ease-in-out ${isExpanded ? "rotate-180" : "rotate-0"
+                        }`}
                     />
                   </Button>
                 </div>
 
                 {/* Expandable Arms List */}
                 <div
-                  className={`grid transition-all duration-300 ease-in-out ${
-                    isExpanded
-                      ? "grid-rows-[1fr] opacity-100"
-                      : "grid-rows-[0fr] opacity-0"
-                  }`}
+                  className={`grid transition-all duration-300 ease-in-out ${isExpanded
+                    ? "grid-rows-[1fr] opacity-100"
+                    : "grid-rows-[0fr] opacity-0"
+                    }`}
                 >
                   <div className="overflow-hidden">
                     <ul className="mt-4 space-y-2 border-t pt-3">
@@ -114,20 +116,42 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                             <GraduationCap className="size-5" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{arm.arm}</p>
-                            <p className="text-xs text-gray-500">
-                              {Math.floor(Math.random() * 20) + 25} students
-                            </p>
+                            <p className="text-sm font-medium text-gray-900"> {classItem.name}{arm.arm}</p>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                            aria-label={`Edit ${arm.arm}`}
-                            onClick={() => handleEdit(arm.id)}
-                          >
-                            <Pencil className="size-4" />
-                          </Button>
+
+                          {
+                            isLoading ? (
+                              <Loader2Icon className="text-accent w-5 h-5 animate-spin" />
+                            ) : (
+                              <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                  <MoreVerticalIcon className="text-gray-600" />
+                                </DropdownMenuTrigger>
+
+                                <DropdownMenuContent align="end" className="w-fit">
+                                  <DropdownMenuItem onClick={() => handleEdit(arm.id)}
+                                    className="flex items-center gap-2"
+                                  >
+                                    Edit
+                                  </DropdownMenuItem>
+
+                                  {/* <DropdownMenuItem
+                                    className="flex items-center gap-2"
+                                    // onClick={() => onDelete(item.id)}
+                                    disabled={!item.isActive}
+                                  >
+                                    <Edit size={16} /> Edit
+                                  </DropdownMenuItem> */}
+
+                                  <DropdownMenuItem onClick={() => handleDelete(arm.id)}
+                                    className="flex items-center gap-2"
+                                  >
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            )
+                          }
                         </li>
                       ))}
                     </ul>
@@ -181,13 +205,24 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
       </div>
 
       {/* Button to View Subjects */}
-      <div className="flex justify-center">
+      {/* <div className="flex justify-center">
         <Button asChild className="mx-auto w-full max-w-[400px] shadow-sm" size="lg">
           <Link href="/admin/class-management/subjects">View Subjects</Link>
         </Button>
-      </div>
+      </div> */}
     </article>
   )
+
+  async function handleDelete(armId: string) {
+    setIsLoading(true);
+    try {
+      await deleteClasses(armId)
+    } catch {
+      console.log("Failed to delete class")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   function handleEdit(armId: string) {
     router.push(EDIT_CLASS(armId))
