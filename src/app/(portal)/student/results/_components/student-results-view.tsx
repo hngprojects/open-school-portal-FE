@@ -6,7 +6,7 @@ import { DownloadButton } from "./download-button"
 import { ResultsTable } from "./results-table"
 import { TeacherComment } from "./teacher-comment"
 
-interface ParentResultsViewProps {
+interface StudentResultsViewProps {
   classes: Class[]
   terms: Term[]
   results: Grade[]
@@ -17,7 +17,7 @@ interface ParentResultsViewProps {
   isLoading: boolean
 }
 
-export function ParentResultsView({
+export function StudentResultsView({
   classes,
   terms,
   results,
@@ -26,7 +26,7 @@ export function ParentResultsView({
   onClassChange,
   onTermChange,
   isLoading,
-}: ParentResultsViewProps) {
+}: StudentResultsViewProps) {
   const selectedClassName = classes.find((c) => c.id === selectedClass)?.name || "-"
   const selectedTermName = terms.find((t) => t.id === selectedTerm)?.name || "-"
 
