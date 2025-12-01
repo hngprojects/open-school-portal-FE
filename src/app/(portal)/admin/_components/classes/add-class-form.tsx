@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { SuccessModal } from "@/components/dashboard/success-modal"
 import { toast } from "sonner"
 import { useActiveAcademicSessionFromList } from "../../class-management/session/_hooks/use-session"
-import ActiveSessionGuard from "../sessions/active-session-required"
+import ActiveSessionGuard from "../../class-management/session/_components/active-session-required"
 
 // Zod Schema
 const classFormSchema = z.object({

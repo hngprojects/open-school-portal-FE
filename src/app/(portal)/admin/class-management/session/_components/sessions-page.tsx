@@ -13,8 +13,16 @@ import {
   useAcademicSessions,
   useActivateAcademicSession,
   useDeleteAcademicSession,
-} from "../../class-management/session/_hooks/use-session"
-import EmptyState from "../empty-state"
+} from "../_hooks/use-session"
+import EmptyState from "../../../_components/empty-state"
+
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu"
 
 const SessionsPage = () => {
   const { data, isLoading, isError, error } = useAcademicSessions()
@@ -28,27 +36,41 @@ const SessionsPage = () => {
   const isMutating = isActivating || isDeleting
   // const sessions = data?.data ?? []
 
+  const [filter, setFilter] = useState<"all" | "active" | "archived">("all")
+
   const sessions = useMemo(() => {
     return data?.data ?? []
   }, [data])
 
   // 🔍 FILTER LOGIC
   const filteredSessions = useMemo(() => {
-    if (!searchQuery.trim()) return sessions
+    let items = sessions
 
-    const q = searchQuery.toLowerCase()
+    // TEXT SEARCH FILTER
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      items = items.filter((s) => {
+        const status = s.isActive ? "active" : "archived"
+        return (
+          s.name.toLowerCase().includes(q) ||
+          s.startDate.toLowerCase().includes(q) ||
+          s.endDate.toLowerCase().includes(q) ||
+          status.includes(q)
+        )
+      })
+    }
 
-    return sessions.filter((s) => {
-      const status = s.isActive ? "active" : "archived"
+    // STATUS FILTER
+    if (filter === "active") {
+      items = items.filter((s) => s.isActive)
+    }
 
-      return (
-        s.name.toLowerCase().includes(q) ||
-        s.startDate.toLowerCase().includes(q) ||
-        s.endDate.toLowerCase().includes(q) ||
-        status.includes(q)
-      )
-    })
-  }, [sessions, searchQuery])
+    if (filter === "archived") {
+      items = items.filter((s) => !s.isActive)
+    }
+
+    return items
+  }, [sessions, searchQuery, filter])
 
   const handleActivate = (id: string) =>
     activateSession(id, {
@@ -73,7 +95,7 @@ const SessionsPage = () => {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <div className="mt-10 flex h-60 animate-pulse items-center justify-center rounded-md border bg-white p-6 text-sm text-slate-600 shadow-sm">
+        <div className="text-text-secondary mt-10 flex h-60 animate-pulse items-center justify-center rounded-md border bg-white p-6 text-sm shadow-sm">
           Loading sessions...
         </div>
       )
@@ -150,9 +172,35 @@ const SessionsPage = () => {
         </div>
 
         {/* icon */}
-        <div className="w-fit rounded-md border p-[9px]">
-          <ListFilter />
-        </div>
+        {/* <div className="w-fit rounded-md border p-[9px]">
+          <ListFilter className="size-4" />
+        </div> */}
+        {/* FILTER DROPDOWN */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="w-fit rounded-md border p-[9px] hover:bg-gray-50">
+              <ListFilter className="size-4" />
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuLabel className="text-xs text-gray-500">
+              Filter by
+            </DropdownMenuLabel>
+
+            <DropdownMenuItem onClick={() => setFilter("all")}>
+              All Sessions
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setFilter("active")}>
+              Active
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setFilter("archived")}>
+              Archived
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {renderContent()}
