@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Plus, ChevronDown } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { ClassesAPI } from "@/lib/classes"
 import TimetableGrid from "./_components/timetable-grid"
@@ -60,7 +60,7 @@ export default function TimetablePage() {
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="relative left-10 w-[--radix-dropdown-menu-trigger-width] min-w-[240px]">
+              <DropdownMenuContent className="relative left-10 w-[--radix-dropdown-menu-trigger-width] min-w-60">
                 {classGroups.map((group) => {
                   const hasArms = group.classes.some((cls) => cls.arm)
 
