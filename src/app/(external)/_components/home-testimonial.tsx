@@ -24,7 +24,7 @@ export default function HomeTestimonial() {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className="rounded-2xl border border-gray-100 bg-[#EEEEEE] p-4 shadow-lg transition-shadow duration-300 hover:shadow-2xl md:p-8"
+              className="rounded-2xl border border-gray-100 bg-[#EEEEEE] p-4 shadow-lg transition-shadow duration-300 md:p-8"
             >
               <TestimonialCard testimonial={testimonial} index={index} />
             </div>
@@ -44,7 +44,7 @@ const TestimonialCard = ({
 }) => (
   <div className="flex flex-row gap-6 md:gap-8">
     <div className="shrink-0">
-      <div className="relative mx-auto h-40 w-32 overflow-hidden rounded-xl shadow-lg md:mx-0 md:h-56 md:w-56 lg:h-32">
+      <div className="relative mx-auto h-40 w-32 overflow-hidden rounded-xl shadow-lg md:mx-0 md:h-56 md:w-56 lg:h-60">
         <Image
           src={testimonial.image}
           alt={testimonial.name}
