@@ -8,7 +8,7 @@ import AssignSubjectForm from "./assign-subject-form"
 import AssignSubjectSuccess from "./assign-subject-success"
 import NotFound from "@/app/not-found"
 import { useGetSubject } from "../_hooks/use-subjects"
-import { useGetClasses } from "@/app/(portal)/teacher/_hooks/use-results"
+import { useGetClassesInfo } from "../../_hooks/use-classes"
 
 export default function AssignSubjectPageContent() {
   const subject_id = useParams().subject_id as string
@@ -24,12 +24,13 @@ export default function AssignSubjectPageContent() {
   } = useGetSubject(subject_id)
 
   const {
-    data: classes,
+    data: classesInfo,
     isLoading: isLoadingClasses,
     isError: isErrorClasses,
     error: errorClasses,
     refetch: refetchClasses,
-  } = useGetClasses()
+  } = useGetClassesInfo()
+  const classes = classesInfo && classesInfo.items
 
   const isLoading = isLoadingSubject || isLoadingClasses
   const isError = isErrorSubject || isErrorClasses

@@ -1,4 +1,10 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { CheckCircle } from "lucide-react"
 
@@ -15,15 +21,18 @@ export default function AssignSubjectSuccess({
 }: AssignSubjectSuccessProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
+      <DialogOverlay className="z-60" />
+      <DialogContent className="z-60 sm:max-w-md">
         <div className="flex flex-col items-center py-6 text-center">
           <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="size-10 text-green-600" />
           </div>
-          <h3 className="mb-2 text-xl font-semibold text-gray-900">Subject Assigned</h3>
-          <p className="text-text-secondary mb-6 text-sm">
-            A subject has been successfully assigned to this class.
-          </p>
+          <DialogTitle className="mb-2 text-xl font-semibold text-gray-900">
+            Subject Assigned
+          </DialogTitle>
+          <DialogDescription className="text-text-secondary mb-6 text-sm">
+            A subject has been successfully assigned to this classes.
+          </DialogDescription>
           <Button onClick={handleGoHome} className="w-full">
             Go Home
           </Button>
