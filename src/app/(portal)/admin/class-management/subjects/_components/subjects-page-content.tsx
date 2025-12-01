@@ -9,9 +9,7 @@ import SubjectManagement from "./subjects-list"
 import { NewSubjectDialog, EditSubjectDialog } from "./new-subject-dialog"
 import AddedSubjectSuccess from "./add-subject-success"
 import { useRouter } from "next/navigation"
-
 export default function SubjectsPageContent() {
-  const [search, setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const {
     data: subjectsData,
@@ -21,7 +19,6 @@ export default function SubjectsPageContent() {
     refetch,
   } = useGetSubjects({
     page: currentPage,
-    search: search || undefined,
   })
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editSubjectID, setEditSubjectID] = useState<string | null>(null)
@@ -33,13 +30,15 @@ export default function SubjectsPageContent() {
     <>
       {isLoading ? (
         <ItemLoader item="Subjects" />
+
       ) : isError ? (
         <ItemsError
           item="Subjects"
           reload={refetch}
           errorMessage={error?.message || "An unexpected error occurred."}
         />
-      ) : !subjects || (subjects.length === 0 && !search) ? (
+
+      ) : !subjects || subjects.length === 0 ? (
         <EmptyState
           title="No Subjects Created yet"
           description="Add Subjects."
@@ -48,13 +47,12 @@ export default function SubjectsPageContent() {
           buttonOnClick={handleAddSubject}
         />
       ) : (
-        // Render existing subjects here when available
+
         <SubjectManagement
           subjects={subjects}
+          onNewSubject={handleAddSubject}
           onEditSubject={handleEditSubject}
           onAssignSubject={handleAssignSubject}
-          searchQuery={search}
-          setSearchQuery={setSearch}
           currentPage={currentPage || 1}
           totalPages={pagination?.total_pages || 1}
           totalItems={pagination?.total || 0}

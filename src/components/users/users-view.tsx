@@ -87,6 +87,7 @@ export function UsersView({
 
           {users.length > 0 && (
             <Pagination
+              itemName={userType}
               currentPage={currentPage}
               totalPages={totalPages || 1}
               totalItems={users.length}
