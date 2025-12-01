@@ -50,7 +50,7 @@ type ApiAcademicSession = {
   name: string
   startDate: string
   endDate: string
-  status?: "Active" | "Inactive" | string
+  status?: "Active" | "Inactive" | "Archived" | string
   isActive?: boolean
   createdAt: string
   updatedAt?: string

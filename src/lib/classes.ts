@@ -63,6 +63,9 @@ export const ClassesAPI = {
       true
     ),
 
+  delete: (id: string) =>
+    apiFetch<ResponsePack<null>>(`/classes/${id}`, { method: "DELETE" }, true),
+
   getOne: (id: string) =>
     apiFetch<ResponsePack<SingleClass>>(`/classes/${id}`, { method: "GET" }, true),
 

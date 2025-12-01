@@ -19,7 +19,7 @@ import {
 //   SelectValue,
 // } from "@/components/ui/select"
 import { useEffect, useState } from "react"
-import ActiveSessionGuard from "../../../_components/sessions/active-session-required"
+import ActiveSessionGuard from "../../session/_components/active-session-required"
 import { useCreateSubject, useGetSubject, useUpdateSubject } from "../_hooks/use-subjects"
 import { AlertCircleIcon } from "lucide-react"
 
@@ -124,10 +124,10 @@ export function NewSubjectDialog({
   async function handleCreateSubject() {
     setIsSubmitting(true)
     try {
-      await createSubject({ name: formData.subjectName })
+      const createdSubject = await createSubject({ name: formData.subjectName })
       // Reset form
       setFormData({ subjectName: "" })
-      onSuccess(formData.subjectName)
+      onSuccess(createdSubject?.data?.data?.id || "")
       setOpen(false)
     } catch (err) {
       if (err instanceof Error) {
@@ -160,12 +160,13 @@ export function EditSubjectDialog({
   const [error, setError] = useState("")
 
   useEffect(() => {
-    if (subjectData) {
+    if (!isLoading && subjectData) {
+      console.log("Subject Data:", subjectData)
       setFormData({
         subjectName: subjectData.name,
       })
     }
-  }, [subjectData])
+  }, [subjectData, isLoading])
 
   return (
     <>
