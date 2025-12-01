@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts" // <-- Add YAxis here
+import { BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
   CardHeader,
@@ -23,13 +23,14 @@ interface ReuseableBarChartProps<XKey extends string, BarKey extends string> {
   title: string
   icon: LucideIcon
   xKey: XKey
-  data: Record<XKey, string | number>[] & Record<BarKey, number>[]
+  data: Array<Record<XKey | BarKey, string | number>>
   bars: BarKey[]
   config: TypedChartConfig<BarKey>
   dropdown?: { label: string; value: string }[]
   onDropdownChange?: (value: string) => void
   footer?: { label: string; color: string }[]
   isLoading?: boolean
+  emptyText?: string
 }
 
 export function ReuseableBarChart<XKey extends string, BarKey extends string>({
@@ -43,7 +44,10 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
   onDropdownChange,
   footer,
   isLoading,
+  emptyText = "No data available",
 }: ReuseableBarChartProps<XKey, BarKey>) {
+  const isEmpty = !isLoading && data.length === 0
+
   return (
     <Card className="p-2">
       <CardHeader>
@@ -75,23 +79,20 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
           <div className="flex h-[200px] items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
+        ) : isEmpty ? (
+          <div className="flex h-[200px] w-full items-center justify-center rounded-md border bg-white p-6 text-gray-500 shadow-sm">
+            {emptyText}
+          </div>
         ) : (
           <ChartContainer config={config}>
             <BarChart data={data} barCategoryGap={10} barGap={0}>
               <CartesianGrid vertical={false} />
               <XAxis dataKey={xKey} tickLine={false} axisLine={false} tickMargin={10} />
-              <YAxis
-                tickLine={false}
-                axisLine={false}
-                tickMargin={10}
-                // Optional: format the numbers, e.g., thousands separator
-                // tickFormatter={(value) => value.toLocaleString()}
-              />
+              <YAxis tickLine={false} axisLine={false} tickMargin={10} />
               <ChartTooltip
                 cursor={false}
                 content={<ChartTooltipContent indicator="dot" />}
               />
-
               {bars.map((barKey) => (
                 <Bar
                   key={barKey}
@@ -105,7 +106,7 @@ export function ReuseableBarChart<XKey extends string, BarKey extends string>({
         )}
       </CardContent>
 
-      {footer && (
+      {footer && !isEmpty && (
         <CardFooter className="flex items-center gap-6 text-sm">
           {footer.map((item) => (
             <div key={item.label} className="flex items-center gap-1">

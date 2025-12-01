@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ParentResultsView } from "@/app/(portal)/parent/results/_components/parent-results-view"
+import { StudentResultsView } from "./_components/student-results-view"
 import {
   useGetClasses,
   useGetTerms,
@@ -12,12 +12,12 @@ export default function StudentResultsPage() {
   const [selectedClass, setSelectedClass] = useState("")
   const [selectedTerm, setSelectedTerm] = useState("")
 
+  // In a real app, you would get this from auth context
+  const studentId = "1" // This should come from user context
+
   const { data: classes = [] } = useGetClasses()
   const { data: terms = [] } = useGetTerms()
-  const { data: results = [], isLoading } = useGetStudentResults(
-    selectedClass,
-    selectedTerm
-  )
+  const { data: results = [], isLoading } = useGetStudentResults(studentId, selectedTerm)
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -27,7 +27,7 @@ export default function StudentResultsPage() {
           <p className="text-gray-600">View and download your academic results</p>
         </div>
 
-        <ParentResultsView
+        <StudentResultsView
           classes={classes}
           terms={terms}
           results={results}

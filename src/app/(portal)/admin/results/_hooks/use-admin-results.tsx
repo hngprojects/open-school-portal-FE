@@ -2,16 +2,15 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { ResultsAPI } from "@/lib/results"
-import type { GetGradesParams } from "@/types/result"
 import { toast } from "sonner"
 
 const ADMIN_RESULTS_KEY = ["admin", "results"]
 
-export function useGetSubmissions(params?: GetGradesParams) {
+export function useGetAdminSubmissions(params?: { status?: string }) {
   return useQuery({
     queryKey: [...ADMIN_RESULTS_KEY, "submissions", params],
-    queryFn: () => ResultsAPI.getSubmissions(params),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryFn: () => ResultsAPI.getAdminSubmissions(params),
+    staleTime: 1000 * 60 * 5,
   })
 }
 
@@ -19,14 +18,14 @@ export function useGetSubmissionStats() {
   return useQuery({
     queryKey: [...ADMIN_RESULTS_KEY, "stats"],
     queryFn: async () => {
-      const submissions = await ResultsAPI.getSubmissions()
+      const submissions = await ResultsAPI.getAdminSubmissions()
 
-      return {
-        total: submissions.length,
-        pending: submissions.filter((s) => s.status === "submitted").length,
-        approved: submissions.filter((s) => s.status === "approved").length,
-        rejected: submissions.filter((s) => s.status === "rejected").length,
-      }
+      const total = submissions.length
+      const pending = submissions.filter((s) => s.status === "submitted").length
+      const approved = submissions.filter((s) => s.status === "approved").length
+      const rejected = submissions.filter((s) => s.status === "rejected").length
+
+      return { total, pending, approved, rejected }
     },
     staleTime: 1000 * 60 * 5,
   })
@@ -45,7 +44,8 @@ export function useApproveSubmission() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (submissionId: string) => ResultsAPI.approveSubmission(submissionId),
+    mutationFn: ({ id, reason }: { id: string; reason?: string }) =>
+      ResultsAPI.approveSubmission(id, reason ? { reason } : undefined),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...ADMIN_RESULTS_KEY, "submissions"] })
       queryClient.invalidateQueries({ queryKey: [...ADMIN_RESULTS_KEY, "stats"] })

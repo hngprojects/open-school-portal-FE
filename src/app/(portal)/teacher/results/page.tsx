@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { TeacherResultsView } from "../_components/teacher-results-view"
 import {
   useGetClasses,
@@ -8,6 +8,7 @@ import {
   useGetTerms,
   useGetStudents,
   useGetGradingScale,
+  useGetTeacherSubmissions,
 } from "../_hooks/use-results"
 
 export default function TeacherResultsPage() {
@@ -16,20 +17,34 @@ export default function TeacherResultsPage() {
   const [selectedTerm, setSelectedTerm] = useState<string>("")
 
   const { data: classes = [] } = useGetClasses()
-  const { data: subjects = [] } = useGetSubjects()
+  const { data: subjects = [] } = useGetSubjects(selectedClass)
   const { data: terms = [] } = useGetTerms()
-  const { data: students = [], isLoading: isLoadingStudents } =
-    useGetStudents(selectedClass)
+  const { data: students = [], isLoading: isLoadingStudents } = useGetStudents(
+    selectedClass || undefined,
+    selectedSubject || undefined
+  )
   const { data: gradingScale = [] } = useGetGradingScale()
+  const { data: submissions = [] } = useGetTeacherSubmissions({
+    class_id: selectedClass || undefined,
+    subject_id: selectedSubject || undefined,
+    term_id: selectedTerm || undefined,
+  })
 
-  // Reset students when class changes
-  useEffect(() => {
-    if (selectedClass) {
-      // Students will be automatically fetched by the hook
-    }
-  }, [selectedClass])
+  // Use useMemo instead of useEffect for derived state
+  const showAllStudents = useMemo(() => {
+    return !selectedClass && !selectedSubject && !selectedTerm
+  }, [selectedClass, selectedSubject, selectedTerm])
 
-  // Convert to boolean explicitly
+  // Find existing submission for the selected filters
+  const existingSubmission = useMemo(() => {
+    return submissions.find(
+      (sub) =>
+        sub.class_id === selectedClass &&
+        sub.subject_id === selectedSubject &&
+        sub.term_id === selectedTerm
+    )
+  }, [submissions, selectedClass, selectedSubject, selectedTerm])
+
   const canShowResults = Boolean(selectedClass && selectedSubject && selectedTerm)
 
   return (
@@ -54,6 +69,8 @@ export default function TeacherResultsPage() {
           onTermChange={setSelectedTerm}
           isLoadingStudents={isLoadingStudents}
           canShowResults={canShowResults}
+          existingSubmission={existingSubmission}
+          showAllStudents={showAllStudents}
         />
       </div>
     </div>
