@@ -44,7 +44,7 @@ const TestimonialCard = ({
 }) => (
   <div className="flex flex-row gap-6 md:gap-8">
     <div className="shrink-0">
-      <div className="relative mx-auto h-40 w-32 overflow-hidden rounded-xl shadow-lg md:mx-0 md:h-56 md:w-56 lg:h-32">
+      <div className="relative mx-auto h-40 w-32 overflow-hidden rounded-xl shadow-lg md:mx-0 md:h-56 md:w-56 lg:h-60">
         <Image
           src={testimonial.image}
           alt={testimonial.name}
