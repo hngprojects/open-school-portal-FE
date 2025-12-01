@@ -283,7 +283,7 @@ export const ResultsAPI = {
     if (params?.status) queryParams.append("status", params.status)
 
     return apiFetch<ResponsePack<GradeSubmission[]>>(
-      `/admin/submissions?${queryParams.toString()}`,
+      `/grades/submissions?${queryParams.toString()}`,
       {},
       true
     )
@@ -303,7 +303,7 @@ export const ResultsAPI = {
     data?: ReviewActionRequest
   ): Promise<GradeSubmission> => {
     return apiFetch<ResponsePack<GradeSubmission>>(
-      `/admin/submissions/${id}/approve`,
+      `/grades/submissions/${id}/approve`,
       {
         method: "POST",
         data,
@@ -323,7 +323,7 @@ export const ResultsAPI = {
   // Admin: Reject submission
   rejectSubmission: (id: string, data: ReviewActionRequest): Promise<GradeSubmission> => {
     return apiFetch<ResponsePack<GradeSubmission>>(
-      `/admin/submissions/${id}/reject`,
+      `/grades/submissions/${id}/reject`,
       {
         method: "POST",
         data,
