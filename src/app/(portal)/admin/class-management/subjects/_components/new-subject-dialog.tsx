@@ -19,7 +19,7 @@ import {
 //   SelectValue,
 // } from "@/components/ui/select"
 import { useEffect, useState } from "react"
-import ActiveSessionGuard from "../../../_components/sessions/active-session-required"
+import ActiveSessionGuard from "../../session/_components/active-session-required"
 import { useCreateSubject, useGetSubject, useUpdateSubject } from "../_hooks/use-subjects"
 import { AlertCircleIcon } from "lucide-react"
 
