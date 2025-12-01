@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -53,7 +54,8 @@ export function LogoutDialog({
   if (isLoggingOut) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="gap-0 border-0 p-0 sm:max-w-[425px]">
+        <DialogOverlay className="z-70" />
+        <DialogContent className="z-70 gap-0 border-0 p-0 sm:max-w-[425px]">
           <div className="flex flex-col items-center justify-center px-6 py-12">
             <div className="relative mb-4 h-12 w-12">
               <Loader2 className="h-12 w-12 animate-spin text-red-500" />
