@@ -9,7 +9,6 @@ import {
   User,
   NotebookPen,
   CalendarDays,
-  FileBadge,
   Settings,
   LogOut,
   Calendar,

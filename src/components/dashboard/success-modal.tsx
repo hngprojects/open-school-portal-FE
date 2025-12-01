@@ -23,7 +23,7 @@ export function SuccessModal({
 }: SuccessModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-xl p-6 text-center">
+      <DialogContent className="relative max-w-sm rounded-xl p-6 text-center">
         <DialogHeader>
           <div className="mb-3 flex justify-center">
             <Image

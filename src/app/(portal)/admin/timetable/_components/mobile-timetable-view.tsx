@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Calendar } from "lucide-react"
+import { Pencil } from "lucide-react"
 import { Schedule } from "@/lib/timetable"
 import { cn } from "@/lib/utils"
 

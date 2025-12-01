@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { parseDate, isDateAfter } from "../_utils/date"
+import { isDateAfter } from "../_utils/date"
 
 const termSchema = z.object({
   startDate: z.string().min(1, "Start date is required"),
