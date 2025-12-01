@@ -61,6 +61,20 @@ export function useActivateAcademicSession() {
   })
 }
 
+export function useActiveAcademicSessionFromList() {
+  const { data, isLoading, isError } = useAcademicSessions()
+
+  const active = data?.data.find(
+    (session) => session.isActive || session.status === "Active"
+  )
+
+  return {
+    data: active,
+    isLoading,
+    isError,
+  }
+}
+
 export function useDeleteAcademicSession() {
   const queryClient = useQueryClient()
   return useMutation({
