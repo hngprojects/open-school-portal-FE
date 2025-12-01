@@ -1,18 +1,34 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AdminResultsView } from "./_components/admin-results-view"
-import { useGetSubmissions, useGetSubmissionStats } from "./_hooks/use-admin-results"
+import { useGetAdminSubmissions, useGetSubmissionStats } from "./_hooks/use-admin-results"
 
 export default function AdminResultsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
-  const { data: submissions = [], isLoading } = useGetSubmissions({
-    search: searchQuery,
+  const { data: submissions = [], isLoading } = useGetAdminSubmissions({
     status: statusFilter === "all" ? undefined : statusFilter,
   })
-  const { data: stats } = useGetSubmissionStats()
+  const { data: stats, refetch: refetchStats } = useGetSubmissionStats()
+
+  // Filter submissions by search query
+  const filteredSubmissions = submissions.filter((submission) => {
+    if (!searchQuery) return true
+
+    const searchLower = searchQuery.toLowerCase()
+    return (
+      submission.teacher_id?.toLowerCase().includes(searchLower) ||
+      submission.class_id?.toLowerCase().includes(searchLower) ||
+      submission.subject_id?.toLowerCase().includes(searchLower)
+    )
+  })
+
+  // Refresh stats when submissions change
+  useEffect(() => {
+    refetchStats()
+  }, [submissions, refetchStats])
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -25,7 +41,7 @@ export default function AdminResultsPage() {
         </div>
 
         <AdminResultsView
-          submissions={submissions}
+          submissions={filteredSubmissions}
           stats={stats}
           searchQuery={searchQuery}
           statusFilter={statusFilter}
