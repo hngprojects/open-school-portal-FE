@@ -65,6 +65,24 @@ export const useUpdateClass = (classID: string) => {
   })
 }
 
+// DELETE CLASS
+export const useDeleteClass = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => ClassesAPI.delete(id),
+    onSuccess: () => {
+      toast.success("Class deleted successfully")
+      qc.invalidateQueries({ queryKey: CLASS_KEYS.all })
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.message ?? "Failed to delete class")
+      }
+    },
+  })
+}
+
 // TEACHERS FOR CLASS
 export const useGetClassTeachers = (id: string, session_id?: string) =>
   useQuery({

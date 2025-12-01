@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface PaginationProps {
+  itemName?: string
   currentPage: number
   totalPages: number
   totalItems: number
@@ -13,6 +14,7 @@ interface PaginationProps {
 }
 
 export function Pagination({
+  itemName = "Teachers",
   currentPage,
   totalPages,
   totalItems,
@@ -118,7 +120,7 @@ export function Pagination({
         </div>
 
         <div className="text-muted-foreground hidden text-sm lg:block">
-          Total Teachers:{" "}
+          Total {itemName}:{" "}
           <span className="text-foreground font-medium">{totalItems}</span>
         </div>
       </div>
