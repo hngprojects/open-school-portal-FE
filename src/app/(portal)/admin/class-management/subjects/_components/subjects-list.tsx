@@ -14,7 +14,6 @@ import {
   Pencil,
   BookOpen,
   Trash2,
-  PlusIcon,
   SearchIcon,
 } from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
@@ -30,7 +29,6 @@ interface Subject {
 
 const SubjectManagement = ({
   subjects,
-  onNewSubject,
   onAssignSubject,
   onEditSubject,
   currentPage,
@@ -39,7 +37,6 @@ const SubjectManagement = ({
   onPageChange,
 }: {
   subjects: Subject[]
-  onNewSubject: () => void
   onAssignSubject: (subjectID: string) => void
   onEditSubject: (subjectID: string) => void
   currentPage: number
@@ -55,12 +52,6 @@ const SubjectManagement = ({
 
   return (
     <div>
-      <header className="flex flex-col justify-between gap-4 lg:flex-row">
-        <Button asChild className="h-12 w-full lg:w-90" onClick={onNewSubject}>
-          <PlusIcon />
-          Create Subject
-        </Button>
-      </header>
 
       <div className="flex items-center justify-between gap-4">
         {/* search bar */}
@@ -90,6 +81,7 @@ const SubjectManagement = ({
                   </h5>
                   {/* <p className="text-text-secondary mt-1 text-sm">{subject.department}</p> */}
                 </div>
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">

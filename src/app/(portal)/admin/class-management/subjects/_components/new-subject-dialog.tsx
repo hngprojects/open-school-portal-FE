@@ -124,11 +124,12 @@ export function NewSubjectDialog({
   async function handleCreateSubject() {
     setIsSubmitting(true)
     try {
-      await createSubject({ name: formData.subjectName })
+      const createdSubject = await createSubject({ name: formData.subjectName })
       // Reset form
       setFormData({ subjectName: "" })
-      onSuccess(formData.subjectName)
+      onSuccess(createdSubject?.data?.data?.id || '')
       setOpen(false)
+      
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -160,12 +161,13 @@ export function EditSubjectDialog({
   const [error, setError] = useState("")
 
   useEffect(() => {
-    if (subjectData) {
+    if (!isLoading && subjectData) {
+      console.log("Subject Data:", subjectData)
       setFormData({
         subjectName: subjectData.name,
       })
     }
-  }, [subjectData])
+  }, [subjectData, isLoading])
 
   return (
     <>

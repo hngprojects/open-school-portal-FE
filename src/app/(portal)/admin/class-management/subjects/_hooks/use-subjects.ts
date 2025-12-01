@@ -44,10 +44,10 @@ export const SubjectsAPI = {
     ),
 
   getOne: (id: string) =>
-    apiFetch<ResponsePack<Subject>>(`/subjects/${id}`, { method: "GET" }, true),
+    apiFetch<ResponsePack<ResponsePack<Subject>>>(`/subjects/${id}`, { method: "GET" }, true),
 
-  create: (data: { name: string }): Promise<Subject> =>
-    apiFetch<ResponsePack<Subject>>(
+  create: (data: { name: string }) =>
+    apiFetch<ResponsePack<ResponsePack<ResponsePack<Subject>>>>(
       "/subjects",
       {
         method: "POST",
@@ -131,7 +131,7 @@ export const useDeleteSubject = () => {
 export const useGetSubject = (subjectId: string) => {
   return useQuery({
     queryKey: ["subject", subjectId],
-    queryFn: () => SubjectsAPI.getOne(subjectId).then((res) => res.data),
+    queryFn: () => SubjectsAPI.getOne(subjectId).then((res) => res.data?.data),
     enabled: !!subjectId,
     refetchOnWindowFocus: false,
     retry: 1,
