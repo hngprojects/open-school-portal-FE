@@ -34,11 +34,18 @@ export default function StudentGrowthChart() {
   // Safe initial state
   useEffect(() => {
     if (!selectedYear && sortedSessions.length) {
-      queueMicrotask(() => {
-        setSelectedYear(sortedSessions[0].name)
-      })
+      setSelectedYear(sortedSessions[0].name)
     }
-  }, [sortedSessions, selectedYear])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortedSessions])
+
+  // useEffect(() => {
+  //   if (!selectedYear && sortedSessions.length) {
+  //     queueMicrotask(() => {
+  //       setSelectedYear(sortedSessions[0].name)
+  //     })
+  //   }
+  // }, [sortedSessions, selectedYear])
 
   const { data, isLoading: isLoadingGrowth } = useStudentGrowthReport(selectedYear)
 
