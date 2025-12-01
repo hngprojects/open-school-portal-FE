@@ -80,6 +80,16 @@ export const SubjectsAPI = {
     ),
 
   deleteOne: (id: string) => apiFetch(`/subjects/${id}`, { method: "DELETE" }, true),
+
+  assignToOClasses: (subjectID: string, classIDs: string[]) =>
+    apiFetch<ResponsePack<null>>(
+      `/subjects/${subjectID}/assign-classes`,
+      {
+        method: "POST",
+        data: { classIds: classIDs },
+      },
+      true
+    ),
 }
 
 export const useGetSubjects = (filters?: GetSubjectsParams) => {
@@ -140,5 +150,17 @@ export const useGetSubject = (subjectId: string) => {
     refetchOnWindowFocus: false,
     retry: 1,
     staleTime: 20 * 60 * 1000, // 20 mins
+  })
+}
+
+export const useAssignSubjectToClasses = (subjectID: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (classIDs: string[]) => SubjectsAPI.assignToOClasses(subjectID, classIDs),
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["subject", subjectID] })
+    },
   })
 }

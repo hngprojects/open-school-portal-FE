@@ -4,6 +4,29 @@ import { apiFetch } from "./api/client"
 // Types
 // -------------------------
 
+// export type AcademicSession = {
+//   id: string
+//   name: string
+//   startDate: string
+//   endDate: string
+//   isActive: boolean
+//   status?: "Active" | "Inactive" | "Archived" | string
+//   createdAt: string
+//   updatedAt?: string
+//   description?: string
+// }
+export type AcademicTerm = {
+  id?: string
+  name: "First term" | "Second term" | "Third term" | string
+  startDate: string
+  endDate: string
+  status?: "Active" | "Inactive" | string
+  isCurrent?: boolean
+  createdAt?: string
+  updatedAt?: string
+  deletedAt?: string | null
+}
+
 export type AcademicSession = {
   id: string
   name: string
@@ -14,6 +37,7 @@ export type AcademicSession = {
   createdAt: string
   updatedAt?: string
   description?: string
+  terms?: AcademicTerm[] // <-- added
 }
 
 export type PaginatedSessions = {
@@ -51,6 +75,18 @@ export type CreateAcademicSessionData = {
 
 export type UpdateAcademicSessionData = Partial<CreateAcademicSessionData>
 
+// type ApiAcademicSession = {
+//   id: string
+//   name: string
+//   startDate: string
+//   endDate: string
+//   status?: "Active" | "Inactive" | "Archived" | string
+//   isActive?: boolean
+//   createdAt: string
+//   updatedAt?: string
+//   description?: string
+// }
+
 type ApiAcademicSession = {
   id: string
   name: string
@@ -61,6 +97,7 @@ type ApiAcademicSession = {
   createdAt: string
   updatedAt?: string
   description?: string
+  terms?: AcademicTerm[] // <-- added
 }
 
 type PaginatedApiResponse = {
@@ -74,6 +111,15 @@ type PaginatedApiResponse = {
 // Normalizers
 // -------------------------
 
+// const normalizeSession = (session: ApiAcademicSession): AcademicSession => {
+//   const inferredActive = session.status === "Active" || session.isActive === true
+
+//   return {
+//     ...session,
+//     isActive: inferredActive,
+//     status: session.status ?? (inferredActive ? "Active" : "Inactive"),
+//   }
+// }
 const normalizeSession = (session: ApiAcademicSession): AcademicSession => {
   const inferredActive = session.status === "Active" || session.isActive === true
 
@@ -81,6 +127,7 @@ const normalizeSession = (session: ApiAcademicSession): AcademicSession => {
     ...session,
     isActive: inferredActive,
     status: session.status ?? (inferredActive ? "Active" : "Inactive"),
+    terms: session.terms ?? [], // <-- ensures terms array exists
   }
 }
 

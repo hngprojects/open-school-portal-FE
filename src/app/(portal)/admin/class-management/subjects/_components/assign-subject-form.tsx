@@ -12,21 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Search, MoreVertical, UserPlus } from "lucide-react"
+import { useAssignSubjectToClasses } from "../_hooks/use-subjects"
+import { ClassItem } from "@/lib/classes"
 
 interface Subject {
   id: string
   name: string
 }
 
-interface ClassArm {
-  id: string
-  name: string
-  teacherId?: string
-}
-
 interface AssignSubjectFormProps {
   subject: Subject
-  classes: ClassArm[]
+  classes: ClassItem[]
   onSuccess: () => void
 }
 
@@ -40,7 +36,7 @@ export default function AssignSubjectForm({
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  // const assignMutation = useAssignSubjectToClasses
+  const assignMutation = useAssignSubjectToClasses(subject.id)
 
   const filteredClasses = classes.filter((classItem) =>
     classItem.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -75,11 +71,11 @@ export default function AssignSubjectForm({
       <section className="mb-6 space-y-3">
         {paginatedClasses.length > 0 ? (
           paginatedClasses.map((classItem) => {
-            const isSelected = selectedClasses.has(classItem.id)
+            const isSelected = selectedClasses.has(classItem.name)
 
             return (
               <div
-                key={classItem.id}
+                key={classItem.name}
                 className={`flex items-center justify-between rounded-xl border bg-white p-4 transition-all ${
                   isSelected ? "border-green-500 bg-green-50" : "border-gray-200"
                 }`}
@@ -87,8 +83,12 @@ export default function AssignSubjectForm({
                 <div className="flex items-center gap-3">
                   <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() => handleToggleClass(classItem.id)}
-                    className={isSelected ? "border-green-600 bg-green-600" : ""}
+                    onCheckedChange={() => handleToggleClass(classItem.name)}
+                    className={
+                      isSelected
+                        ? "accent-accent border-green-600 bg-green-600"
+                        : "accent-accent"
+                    }
                   />
                   <div>
                     <h5 className="text-base font-semibold text-gray-900">
@@ -159,11 +159,10 @@ export default function AssignSubjectForm({
       {/* Save Button */}
       <Button
         onClick={handleSaveChanges}
-        disabled={selectedClasses.size === 0} // || assignMutation.isPending}
+        disabled={selectedClasses.size === 0 || assignMutation.isPending}
         className="w-full"
       >
-        Save Changes
-        {/* {assignMutation.isPending ? "Saving..." : "Save Changes"} */}
+        {assignMutation.isPending ? "Saving..." : "Save Changes"}
       </Button>
     </div>
   )
@@ -181,12 +180,15 @@ export default function AssignSubjectForm({
   }
 
   async function handleSaveChanges() {
+    // map through classes for each arm and collate a list of the arms ids
+    const allAssignedClasses = classes.filter((classItem) =>
+      selectedClasses.has(classItem.name)
+    )
+    const allAssignedArms = allAssignedClasses.flatMap((classItem) =>
+      classItem.classes.map((arm) => arm.id)
+    )
     try {
-      // await assignMutation.mutateAsync({
-      //   subjectId: subject.id,
-      //   classIds: Array.from(selectedClasses),
-      // })
-      await new Promise((res) => setTimeout(res, 1000))
+      await assignMutation.mutateAsync(allAssignedArms)
       onSuccess()
     } catch (error) {
       console.error("Failed to assign subject:", error)
