@@ -28,21 +28,25 @@ const AboutHero = () => {
           <h2 className="text-lg font-medium sm:text-2xl lg:text-3xl">
             We’re Building a Smarter, Connected School Experience
           </h2>
-          <p className="text-sm text-[#535353] md:text-lg">
+          <p className="text-base leading-relaxed text-[#535353] md:text-lg">
             School Base is a modern, all-in-one school management system designed to help
             schools automate daily tasks, enhance communication, and deliver a seamless
             digital experience for students, teachers, and parents.
-            <br />
+          </p>
+          <p className="text-base leading-relaxed text-[#535353] md:text-lg">
             We focus on making everyday operations faster, easier, and more transparent,
             allowing schools to work smarter—not harder. With powerful tools for
             attendance, results, fees, communication, reporting, and classroom management,
             School Base brings your entire school ecosystem into one simple, intuitive
-            platform. Whether you are an administrator aiming for efficiency, a teacher
-            needing better classroom tools, a parent seeking clarity, or a student who
-            wants easy access to learning resources, School Base ensures everyone stays
-            connected, informed, and empowered. Our goal is to help schools transition
-            into a fully digital learning environment—organized, transparent, and built
-            for the future of education.
+            platform.
+          </p>
+          <p className="text-base leading-relaxed text-[#535353] md:text-lg">
+            Whether you are an administrator aiming for efficiency, a teacher needing
+            better classroom tools, a parent seeking clarity, or a student who wants easy
+            access to learning resources, School Base ensures everyone stays connected,
+            informed, and empowered. Our goal is to help schools transition into a fully
+            digital learning environment—organized, transparent, and built for the future
+            of education.
           </p>
         </section>
       </div>
