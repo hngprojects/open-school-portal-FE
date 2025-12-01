@@ -47,7 +47,7 @@ export default function HomeFAQ() {
       id="faq"
       className="font-outfit mb-8 h-full w-full scroll-mt-20 bg-[#fafafa] px-4 py-8 sm:px-4 lg:px-8"
     >
-      <div className="mx-auto max-w-full lg:max-w-[1285px]">
+      <div className="mx-auto max-w-full px-4 lg:max-w-[1285px]">
         <h2
           className="mb-8 leading-none font-semibold text-gray-900"
           style={{ fontSize: "clamp(24px, 3vw, 32px)" }}

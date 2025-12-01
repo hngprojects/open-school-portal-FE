@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import WatchDemoButton from "./demo-video2"
 
 const ReadyToSimplify = () => {
   return (
@@ -16,20 +18,17 @@ const ReadyToSimplify = () => {
 
         {/* Buttons */}
         <div className="mx-auto flex items-center justify-center gap-4 max-md:w-[214px] md:w-[358px]">
-          <Button
-            variant={"tertiary"}
-            size={"sm"}
-            className="rounded max-md:w-24 max-md:text-[12px] md:h-12 md:w-[167px] md:text-lg"
-          >
-            Get Started
-          </Button>
-          <Button
-            variant={"outline"}
-            size={"sm"}
-            className="rounded border-[#FAFAFA] text-[#FAFAFA] max-md:w-24 max-md:text-[12px] md:h-12 md:w-[167px] md:text-lg"
-          >
-            Watch Demo
-          </Button>
+          <Link href={"/login"}>
+            <Button
+              variant={"tertiary"}
+              size={"sm"}
+              className="rounded max-md:w-24 max-md:text-[12px] md:h-12 md:w-[167px] md:text-lg"
+            >
+              Get Started
+            </Button>
+          </Link>
+
+          <WatchDemoButton />
         </div>
       </div>
     </div>
