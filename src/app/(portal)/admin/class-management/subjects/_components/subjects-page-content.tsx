@@ -30,14 +30,12 @@ export default function SubjectsPageContent() {
     <>
       {isLoading ? (
         <ItemLoader item="Subjects" />
-
       ) : isError ? (
         <ItemsError
           item="Subjects"
           reload={refetch}
           errorMessage={error?.message || "An unexpected error occurred."}
         />
-
       ) : !subjects || subjects.length === 0 ? (
         <EmptyState
           title="No Subjects Created yet"
@@ -47,7 +45,6 @@ export default function SubjectsPageContent() {
           buttonOnClick={handleAddSubject}
         />
       ) : (
-
         <SubjectManagement
           subjects={subjects}
           onNewSubject={handleAddSubject}

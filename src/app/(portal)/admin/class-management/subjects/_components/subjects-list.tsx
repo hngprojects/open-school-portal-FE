@@ -8,7 +8,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, MoreVertical, Pencil, BookOpen, Trash2, PlusIcon, SearchIcon } from "lucide-react"
+import {
+  Search,
+  MoreVertical,
+  Pencil,
+  BookOpen,
+  Trash2,
+  PlusIcon,
+  SearchIcon,
+} from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
 import { useDeleteSubject } from "../_hooks/use-subjects"
 import { toast } from "sonner"
@@ -41,7 +49,9 @@ const SubjectManagement = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const deleteSubject = useDeleteSubject().mutateAsync
-  const filteredSubjects = subjects.filter((subject) => subject.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredSubjects = subjects.filter((subject) =>
+    subject.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   return (
     <div>
@@ -75,7 +85,9 @@ const SubjectManagement = ({
                 className="flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="flex-1">
-                  <h5 className="text-base font-semibold text-gray-900">{subject.name}</h5>
+                  <h5 className="text-base font-semibold text-gray-900">
+                    {subject.name}
+                  </h5>
                   {/* <p className="text-text-secondary mt-1 text-sm">{subject.department}</p> */}
                 </div>
                 <DropdownMenu>
@@ -126,7 +138,7 @@ const SubjectManagement = ({
             currentPage={currentPage}
             totalPages={totalPages}
             totalItems={totalItems}
-            onPageChange={onPageChange ?? (() => { })}
+            onPageChange={onPageChange ?? (() => {})}
             className="mt-6"
           />
         )}
