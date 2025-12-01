@@ -54,7 +54,7 @@ const HomeWhyUs = () => {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group flex flex-col overflow-hidden rounded-2xl bg-[#f9fafc] transition-all duration-300 hover:shadow-xl"
+              className="group flex flex-col overflow-hidden rounded-2xl bg-[#f9fafc] transition-all duration-300"
             >
               <div>
                 <div className="flex items-center justify-center pt-8">

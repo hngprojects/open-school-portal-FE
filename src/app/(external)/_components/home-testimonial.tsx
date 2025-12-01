@@ -24,7 +24,7 @@ export default function HomeTestimonial() {
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className="rounded-2xl border border-gray-100 bg-[#EEEEEE] p-4 shadow-lg transition-shadow duration-300 hover:shadow-2xl md:p-8"
+              className="rounded-2xl border border-gray-100 bg-[#EEEEEE] p-4 shadow-lg transition-shadow duration-300 md:p-8"
             >
               <TestimonialCard testimonial={testimonial} index={index} />
             </div>
