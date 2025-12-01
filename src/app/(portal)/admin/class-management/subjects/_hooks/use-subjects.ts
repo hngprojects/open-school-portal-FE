@@ -44,7 +44,11 @@ export const SubjectsAPI = {
     ),
 
   getOne: (id: string) =>
-    apiFetch<ResponsePack<ResponsePack<Subject>>>(`/subjects/${id}`, { method: "GET" }, true),
+    apiFetch<ResponsePack<ResponsePack<Subject>>>(
+      `/subjects/${id}`,
+      { method: "GET" },
+      true
+    ),
 
   create: (data: { name: string }) =>
     apiFetch<ResponsePack<ResponsePack<ResponsePack<Subject>>>>(

@@ -4,7 +4,7 @@ const SubjectPage = () => {
   return (
     <div className="px-2 pt-4 lg:px-4">
       {/* empty state */}
-        <SubjectsPageContent />
+      <SubjectsPageContent />
     </div>
   )
 }

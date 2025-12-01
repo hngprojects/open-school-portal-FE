@@ -13,7 +13,6 @@ import DashboardTitle from "@/components/dashboard/dashboard-title"
 import { PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-
 export default function SubjectsPageContent() {
   const [currentPage, setCurrentPage] = useState(1)
   const {
@@ -38,9 +37,12 @@ export default function SubjectsPageContent() {
           heading="Subjects"
           description="View, manage, or create subjects "
         />
-        <Button className="h-12 w-full lg:w-90 flex items-center gap-2" onClick={handleAddSubject}>
-            <PlusIcon />
-            Create Subject
+        <Button
+          className="flex h-12 w-full items-center gap-2 lg:w-90"
+          onClick={handleAddSubject}
+        >
+          <PlusIcon />
+          Create Subject
         </Button>
       </header>
 
@@ -64,7 +66,6 @@ export default function SubjectsPageContent() {
         ) : (
           <SubjectManagement
             subjects={subjects}
-            onNewSubject={handleAddSubject}
             onEditSubject={handleEditSubject}
             onAssignSubject={handleAssignSubject}
             currentPage={currentPage || 1}

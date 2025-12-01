@@ -127,9 +127,8 @@ export function NewSubjectDialog({
       const createdSubject = await createSubject({ name: formData.subjectName })
       // Reset form
       setFormData({ subjectName: "" })
-      onSuccess(createdSubject?.data?.data?.id || '')
+      onSuccess(createdSubject?.data?.data?.id || "")
       setOpen(false)
-      
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)

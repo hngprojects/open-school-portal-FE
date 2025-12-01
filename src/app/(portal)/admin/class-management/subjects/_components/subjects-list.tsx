@@ -8,14 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Search,
-  MoreVertical,
-  Pencil,
-  BookOpen,
-  Trash2,
-  SearchIcon,
-} from "lucide-react"
+import { Search, MoreVertical, Pencil, BookOpen, Trash2, SearchIcon } from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
 import { useDeleteSubject } from "../_hooks/use-subjects"
 import { toast } from "sonner"
@@ -52,7 +45,6 @@ const SubjectManagement = ({
 
   return (
     <div>
-
       <div className="flex items-center justify-between gap-4">
         {/* search bar */}
         <div className="relative my-4 w-full">
