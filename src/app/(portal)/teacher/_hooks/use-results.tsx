@@ -37,14 +37,15 @@ export function useGetTerms(sessionId?: string) {
   })
 }
 
+// In use-results.ts, modify the useGetStudents hook:
 export function useGetStudents(classId?: string, subjectId?: string) {
   return useQuery({
     queryKey: [...RESULTS_KEY, "students", classId, subjectId],
     queryFn: () => {
       if (!classId) return Promise.resolve([])
-      return ResultsAPI.getStudentsForGradeEntry(classId, subjectId)
+      return ResultsAPI.getStudentsForGradeEntry(classId)
     },
-    enabled: !!classId,
+    enabled: !!classId, // This ensures it only runs when classId is truthy
     staleTime: 1000 * 60 * 5,
   })
 }

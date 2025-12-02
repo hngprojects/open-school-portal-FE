@@ -30,7 +30,51 @@ interface TeacherResultsViewProps {
   isLoadingStudents: boolean
   canShowResults: boolean
   existingSubmission?: GradeSubmission
-  showAllStudents: boolean
+  academicSessionId: string
+  showAllStudents?: boolean
+}
+
+// Helper function to create empty grade entry
+const createEmptyGradeEntry = (studentId: string): GradeEntry => ({
+  student_id: studentId,
+  ca_score: null,
+  exam_score: null,
+  total_score: null,
+  grade: null,
+  comment: null,
+})
+
+// Helper function to initialize grades from students and existing submission
+const initializeGrades = (
+  students: Student[],
+  existingSubmission?: GradeSubmission
+): Record<string, GradeEntry> => {
+  const newGrades: Record<string, GradeEntry> = {}
+
+  // First, populate from existing submission if available
+  if (existingSubmission?.grades) {
+    existingSubmission.grades.forEach((grade) => {
+      if (grade.student_id) {
+        newGrades[grade.student_id] = {
+          student_id: grade.student_id,
+          ca_score: grade.ca_score,
+          exam_score: grade.exam_score,
+          total_score: grade.total_score,
+          grade: grade.grade,
+          comment: grade.comment || null,
+        }
+      }
+    })
+  }
+
+  // Then ensure all current students have an entry
+  students.forEach((student) => {
+    if (!newGrades[student.id]) {
+      newGrades[student.id] = createEmptyGradeEntry(student.id)
+    }
+  })
+
+  return newGrades
 }
 
 export function TeacherResultsView({
@@ -48,56 +92,65 @@ export function TeacherResultsView({
   isLoadingStudents,
   canShowResults,
   existingSubmission,
-  showAllStudents,
+  academicSessionId,
 }: TeacherResultsViewProps) {
-  const [grades, setGrades] = useState<Record<string, GradeEntry>>({})
+  // Create a unique key that changes when filters change
+  const filterKey = `${selectedClass}-${selectedSubject}-${selectedTerm}`
 
-  // Initialize grades from existing submission
-  const initialGrades = useMemo(() => {
-    const gradesMap: Record<string, GradeEntry> = {}
-    if (existingSubmission?.grades) {
-      existingSubmission.grades.forEach((grade) => {
-        gradesMap[grade.student_id] = {
-          student_id: grade.student_id,
-          ca_score: grade.ca_score,
-          exam_score: grade.exam_score,
-          total_score: grade.total_score,
-          grade: grade.grade,
-          comment: grade.comment || null,
-        }
-      })
-    }
-    return gradesMap
-  }, [existingSubmission])
+  // Store grades with student_id as key
+  // Initialize with a function to avoid computation on every render
+  const [grades, setGrades] = useState<Record<string, GradeEntry>>(() =>
+    initializeGrades(students, existingSubmission)
+  )
 
-  // Initialize grades state with initialGrades
-  useState(() => {
-    setGrades(initialGrades)
-  })
+  // Track the previous filter key to detect changes
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey)
+
+  // When filters change, reset grades
+  // This runs synchronously during render, not in an effect
+  if (filterKey !== prevFilterKey) {
+    setPrevFilterKey(filterKey)
+    setGrades(initializeGrades(students, existingSubmission))
+  }
 
   const handleGradeUpdate = useCallback((studentId: string, updatedGrade: GradeEntry) => {
+    // Always ensure student_id is set
+    const gradeWithStudentId: GradeEntry = {
+      ...updatedGrade,
+      student_id: studentId,
+    }
+
     setGrades((prev) => ({
       ...prev,
-      [studentId]: updatedGrade,
+      [studentId]: gradeWithStudentId,
     }))
   }, [])
 
-  const gradeEntries = useMemo(
-    () =>
-      Object.values(grades).filter(
-        (grade) => grade.ca_score !== null || grade.exam_score !== null
-      ),
-    [grades]
-  )
+  // Get grade entries ready for submission
+  const gradeEntries = useMemo(() => {
+    return Object.values(grades)
+      .filter(
+        (grade) =>
+          grade.student_id && (grade.ca_score !== null || grade.exam_score !== null)
+      )
+      .map((grade) => ({
+        student_id: grade.student_id,
+        ca_score: grade.ca_score,
+        exam_score: grade.exam_score,
+        total_score: grade.total_score,
+        grade: grade.grade,
+        comment: grade.comment,
+      }))
+  }, [grades])
 
   const hasValidGrades = gradeEntries.length > 0
 
   return (
     <div className="space-y-6">
-      {/* Class Info */}
+      {/* Class Info - Show Academic Session */}
       {canShowResults && (
         <div className="rounded-lg border bg-white p-4">
-          <div className="grid grid-cols-3 gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-4 gap-4 md:grid-cols-4">
             <div>
               <span className="text-sm font-medium text-gray-500">Class</span>
               <p className="text-lg font-semibold">
@@ -115,6 +168,10 @@ export function TeacherResultsView({
               <p className="text-lg font-semibold">
                 {terms.find((t) => t.id === selectedTerm)?.name || "-"}
               </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-500">Academic Session</span>
+              <p className="text-lg font-semibold">{academicSessionId || "2025/2026"}</p>
             </div>
           </div>
 
@@ -163,20 +220,35 @@ export function TeacherResultsView({
         onTermChange={onTermChange}
       />
 
-      {/* Info Message */}
-      {showAllStudents && !canShowResults && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-600">
-            Please select a class, subject, and term to enter grades.
+      {/* Info Messages */}
+      {!selectedClass && !selectedSubject && !selectedTerm && (
+        <div className="rounded-lg border border-red-200 bg-amber-50 p-4">
+          <p className="text-sm text-red-700">
+            Please select a class to view students. Then select a subject and term to
+            enter grades.
           </p>
         </div>
       )}
 
-      {/* Grading Scale */}
-      {canShowResults && <GradingScaleCard gradingScale={gradingScale} />}
+      {selectedClass && !selectedSubject && !selectedTerm && (
+        <div className="rounded-lg border border-red-200 bg-blue-50 p-4">
+          <p className="text-sm text-red-700">
+            All students in {classes.find((c) => c.id === selectedClass)?.name} are
+            displayed. Select a subject and term to enter grades.
+          </p>
+        </div>
+      )}
 
-      {/* Students Table */}
-      {canShowResults && (
+      {selectedClass && (selectedSubject || selectedTerm) && !canShowResults && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-700">
+            Please select both a subject and term to enter grades.
+          </p>
+        </div>
+      )}
+
+      {/* Show students table if class is selected */}
+      {selectedClass && (
         <StudentsTable
           students={students}
           grades={grades}
@@ -185,32 +257,26 @@ export function TeacherResultsView({
           classId={selectedClass}
           subjectId={selectedSubject}
           termId={selectedTerm}
+          academicSessionId={academicSessionId}
         />
       )}
 
-      {/* Submission Actions */}
-      {canShowResults && hasValidGrades && (
-        <SubmissionActions
-          classId={selectedClass}
-          subjectId={selectedSubject}
-          termId={selectedTerm}
-          grades={gradeEntries}
-          existingSubmission={existingSubmission}
-        />
-      )}
+      {/* Only show grading scale and actions when all filters are selected */}
+      {canShowResults && (
+        <>
+          <GradingScaleCard gradingScale={gradingScale} />
 
-      {/* Empty State */}
-      {!canShowResults && !showAllStudents && (
-        <div className="p-12 text-center">
-          <div className="mx-auto max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Select filters to view students
-            </h3>
-            <p className="mt-2 text-gray-600">
-              Please select a class, subject, and term to view and manage student results.
-            </p>
-          </div>
-        </div>
+          {hasValidGrades && (
+            <SubmissionActions
+              classId={selectedClass}
+              subjectId={selectedSubject}
+              termId={selectedTerm}
+              grades={gradeEntries}
+              existingSubmission={existingSubmission}
+              academicSessionId={academicSessionId}
+            />
+          )}
+        </>
       )}
     </div>
   )
