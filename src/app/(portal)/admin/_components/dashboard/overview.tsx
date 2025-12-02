@@ -95,7 +95,7 @@ const Overview = () => {
         percentage: 10,
         icon: Users,
       },
-      { name: "Today's Attendance", quantity: "...", percentage: 10, icon: NotePad },
+      { name: "Today's Attendance", quantity: 0, percentage: 10, icon: NotePad },
       {
         name: "Total Classes",
         quantity: classLoading ? 0 : formattedClass,
