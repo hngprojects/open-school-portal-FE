@@ -81,5 +81,60 @@ export const ClassesAPI = {
       >
     >(`/classes/${id}/teachers`, { params: { session_id } }, true),
 
+  getSubjectsForClass: (id: string) =>
+    apiFetch<ResponsePack<ClassSubjectsResponse>>(
+      `/classes/${id}/subjects`,
+      { method: "GET" },
+      true
+    ),
+
+  assignTeachersToClassSubject: (classId: string, subjectId: string, teacherId: string) =>
+    apiFetch<ResponsePack<null>>(
+      `/classes/${classId}/subjects/${subjectId}/assign-teacher`,
+      { method: "POST", data: { teacherId: teacherId } },
+      true
+    ),
+
+  unassignTeachersFromClassSubject: (classId: string, subjectId: string) =>
+    apiFetch<ResponsePack<null>>(
+      `/classes/${classId}/subjects/${subjectId}/assign-teacher`,
+      { method: "POST" },
+      true
+    ),
+
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
+}
+
+export type ClassSubjectsResponse = {
+  payload: ClassSubject[]
+  paginationMeta: {
+    total: number
+  }
+}
+
+export interface ClassSubject {
+  id: string
+  createdAt: string
+  updatedAt: string
+  teacher_assignment_date: string
+  subject: Subject
+  teacher: Teacher
+}
+
+export interface Subject {
+  id: string
+  createdAt: string
+  updatedAt: string
+  name: string
+}
+
+export interface Teacher {
+  id: string
+  createdAt: string
+  updatedAt: string
+  user_id: string
+  employment_id: string
+  title: string
+  photo_url: string
+  is_active: boolean
 }

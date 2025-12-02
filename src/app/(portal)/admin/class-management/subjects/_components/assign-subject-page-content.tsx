@@ -31,6 +31,16 @@ export default function AssignSubjectPageContent() {
     refetch: refetchClasses,
   } = useGetClassesInfo()
   const classes = classesInfo && classesInfo.items
+  const classItems =
+    classes &&
+    classes.flatMap((cls) =>
+      cls.classes.map((c) => {
+        return {
+          id: c.id,
+          name: `${cls.name} ${c.arm ?? ""}`,
+        }
+      })
+    )
 
   const isLoading = isLoadingSubject || isLoadingClasses
   const isError = isErrorSubject || isErrorClasses
@@ -59,7 +69,7 @@ export default function AssignSubjectPageContent() {
           reload={refetchSubject}
           errorMessage="Subject not found"
         />
-      ) : !classes || classes.length === 0 ? (
+      ) : !classItems || classItems.length === 0 ? (
         <ItemsError
           item="Classes"
           reload={refetchClasses}
@@ -68,7 +78,7 @@ export default function AssignSubjectPageContent() {
       ) : (
         <AssignSubjectForm
           subject={subject}
-          classes={classes}
+          classes={classItems}
           onSuccess={handleSuccess}
         />
       )}
