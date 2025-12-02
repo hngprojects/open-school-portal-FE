@@ -48,31 +48,37 @@ const TodayActivityGrid = ({
             !showAll && i >= 5 ? "hidden" : ""
           }`}
         >
-          <CardContent className="grid grid-cols-[1.5fr_1fr_1fr] gap-2 px-2 py-4">
-            <div>
-              <span className="text-primary text-sm font-medium">Teacher:</span>
-              <p className="text-sm font-medium">{activity?.teacher?.full_name}</p>
+          <CardContent className="grid grid-cols-[2fr_1fr_1fr] gap-2 px-2 py-4">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-primary text-xs font-medium">Teacher:</span>
+              <p className="text-sm font-medium">
+                {activity?.teacher?.full_name || "Unassigned"}
+              </p>
             </div>
-            <div>
-              <span className="text-primary text-sm font-medium">Subject:</span>
-              <p className="text-sm font-medium">{activity?.subject?.name}</p>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-primary text-xs font-medium">Subject:</span>
+              <p className="text-sm font-medium">
+                {activity?.subject?.name || "Unassigned"}
+              </p>
             </div>
-            <div>
-              <span className="text-primary text-sm font-medium">Class:</span>
-              <p className="text-sm font-medium">{activity?.class?.name}</p>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-primary text-xs font-medium">Class:</span>
+              <p className="text-sm font-medium">
+                {activity?.class?.name || "Unassigned"}
+              </p>
             </div>
-            <div>
+            <div className="flex flex-col gap-1.5">
               <span className="text-primary text-sm font-medium">Time:</span>
               <p className="text-sm font-medium">
                 {activity?.start_time} - {activity?.end_time}
               </p>
             </div>
-            <div>
-              <span className="text-primary text-sm font-medium">Venue:</span>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-primary text-xs font-medium">Venue:</span>
               <p className="text-sm font-medium">{activity?.venue}</p>
             </div>
-            <div>
-              <span className="text-primary text-sm font-medium">Status:</span>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-primary text-xs font-medium">Status:</span>
               <span
                 className={`rounded-2xl px-2 py-0.5 text-xs font-medium ${
                   activity?.progress_status === "COMPLETED"
