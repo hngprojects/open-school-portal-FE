@@ -76,7 +76,7 @@ const WaitlistNavbar = () => {
           </>
         )}
 
-        <Link href="/waitlist">
+        <Link href="/waitlist" className="hidden lg:flex">
           <Logo />
         </Link>
 
