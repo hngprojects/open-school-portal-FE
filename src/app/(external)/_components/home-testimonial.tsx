@@ -4,10 +4,10 @@ import { testimonials } from "@/data/testimonials"
 
 export default function HomeTestimonial() {
   return (
-    <section className="w-full bg-[#fafafa] py-20 text-black">
+    <section className="w-full bg-[#fafafa] px-4 py-20 text-black md:px-6 lg:px-8">
       <div className="font-outfit mx-auto max-w-[1285px] px-4">
         <div className="mb-12">
-          <p className="text-primary mb-4 text-lg font-medium lg:hidden">Testimonials</p>
+          <p className="text-primary mb-4 text-lg font-medium">Testimonials</p>
           <h3
             className="text-text-secondary mb-4 text-base leading-tight font-semibold md:text-2xl"
             // style={{ fontSize: "clamp(28px, 5vw, 40px)" }}

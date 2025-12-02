@@ -103,7 +103,7 @@ const HomeDemo: React.FC = () => {
                   className="bg-white text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
-                  <Link href="/login">Get Started</Link>
+                  <Link href="/contact-us">Consult Us</Link>
                 </Button>
                 <WatchDemoButton className="hover:bg-accent border-white px-6 py-3 text-sm text-white hover:border-white/90" />
               </div>
@@ -127,10 +127,10 @@ const HomeDemo: React.FC = () => {
               <div className="flex items-center justify-center gap-1 sm:flex-row sm:gap-2">
                 <Button
                   asChild
-                  className="bg-white px-4 py-2 font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
+                  className="bg-white font-semibold whitespace-nowrap text-[#DA3743] transition-colors duration-300 hover:bg-gray-100"
                   style={{ fontSize: "clamp(14px, 3vw, 16px)" }}
                 >
-                  <Link href="/login">Get Started</Link>
+                  <Link href="/contact-us">Consult Us</Link>
                 </Button>
                 <WatchDemoButton className="hover:bg-opacity-10 rounded-md border border-white px-4 py-2 font-semibold whitespace-nowrap text-white transition-colors duration-300 hover:bg-white" />
               </div>
