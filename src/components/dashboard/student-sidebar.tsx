@@ -41,7 +41,7 @@ const items = [
 
 const bottomItems = [
   // { title: "Help", url: "/teacher/support", icon: HelpCircle },
-  { title: "Settings", url: "/teacher/settings", icon: SettingsIcon },
+  { title: "Settings", url: "/student/settings", icon: SettingsIcon },
 ]
 
 export function StudentSidebar() {
