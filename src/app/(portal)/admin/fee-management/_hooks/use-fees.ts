@@ -116,6 +116,28 @@ export const useDeactivateFee = (id: string) => {
 }
 
 // ----------------------
+// ACTIVATE FEE
+// ----------------------
+export const useAactivateFee = (id: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<FeeItemResponse, Error, string>({
+    // reason is the variable
+    mutationFn: (reason) => FeesAPI.activate(id, reason),
+
+    onSuccess: () => {
+      toast.success("Fee component activated successfully")
+      queryClient.invalidateQueries({ queryKey: ["fee", id] })
+      queryClient.invalidateQueries({ queryKey: ["fees"] })
+    },
+
+    onError: (err) => {
+      toast.error(err.message || "Failed to activate fee component")
+    },
+  })
+}
+
+// ----------------------
 // DELETE FEE
 // ----------------------
 // export const useDeleteFee = () => {
