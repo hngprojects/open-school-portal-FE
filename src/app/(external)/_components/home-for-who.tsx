@@ -35,7 +35,7 @@ const HomeForWho = () => {
   return (
     <div
       id="for-who"
-      className="flex scroll-mt-9 flex-col gap-6 bg-white py-8 md:gap-8 md:py-12 lg:py-18"
+      className="flex scroll-mt-9 flex-col gap-6 bg-white pb-8 md:gap-8 md:pb-12 lg:pb-18"
     >
       <div className="container flex flex-col gap-6 md:gap-8">
         <section className="flex w-full max-w-[1285px] flex-col gap-3 px-4 text-left md:gap-4">

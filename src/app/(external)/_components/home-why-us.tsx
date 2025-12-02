@@ -35,7 +35,7 @@ const HomeWhyUs = () => {
   return (
     <section
       id="benefits"
-      className="w-full scroll-mt-16 bg-white px-4 py-16 md:px-6 lg:px-8 lg:py-24"
+      className="w-full scroll-mt-16 bg-white px-4 pb-16 md:px-6 lg:px-8 lg:pb-24"
     >
       <div className="mx-auto max-w-[1285px] px-4 lg:px-8">
         <div className="mb-12 text-left lg:mb-16">
