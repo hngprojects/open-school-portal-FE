@@ -87,37 +87,36 @@ export const ClassesAPI = {
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }
 
-
 export type ClassSubjectsResponse = {
-  payload: ClassSubject[];
+  payload: ClassSubject[]
   paginationMeta: {
-    total: number;
-  };
+    total: number
+  }
 }
 
 export interface ClassSubject {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  teacher_assignment_date: string;
-  subject: Subject;
-  teacher: Teacher;
+  id: string
+  createdAt: string
+  updatedAt: string
+  teacher_assignment_date: string
+  subject: Subject
+  teacher: Teacher
 }
 
 export interface Subject {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  name: string;
+  id: string
+  createdAt: string
+  updatedAt: string
+  name: string
 }
 
 export interface Teacher {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  user_id: string;
-  employment_id: string;
-  title: string;
-  photo_url: string;
-  is_active: boolean;
+  id: string
+  createdAt: string
+  updatedAt: string
+  user_id: string
+  employment_id: string
+  title: string
+  photo_url: string
+  is_active: boolean
 }

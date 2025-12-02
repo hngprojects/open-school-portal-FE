@@ -37,7 +37,11 @@ const EditClass = () => {
   return (
     <div className="p-4">
       <Button asChild className="bg-gray-100" variant="ghost" size="icon">
-        <Link href="/admin/class-management/class" aria-label="Go back to classes" className="flex">
+        <Link
+          href="/admin/class-management/class"
+          aria-label="Go back to classes"
+          className="flex"
+        >
           <ArrowLeft className="size-5" />
         </Link>
       </Button>
