@@ -56,7 +56,7 @@ const mainItems = [
   { title: "Students", url: "/admin/students", icon: GraduationCap },
   { title: "Parents", url: "/admin/parents", icon: FaRegUser },
   { title: "Timetable", url: "/admin/timetable", icon: Calendar },
-  { title: "Results", url: "/admin/results", icon: Calendar },
+  // { title: "Results", url: "/admin/results", icon: Calendar },
   {
     title: "Class Management",
     url: "/admin/class-management",
