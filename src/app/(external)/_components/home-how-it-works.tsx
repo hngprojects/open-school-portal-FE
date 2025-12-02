@@ -2,7 +2,7 @@ import { FaUserEdit } from "react-icons/fa"
 
 const HomeHowItWorks = () => {
   return (
-    <div className="bg-white px-4 py-8 md:gap-8 md:py-12 lg:py-20">
+    <div className="bg-white px-4 pb-8 md:gap-8 md:pb-12 lg:pb-20">
       <div className="container flex flex-col gap-10">
         <section className="flex flex-col gap-4">
           <h2 className="text-3xl font-medium">How it works</h2>
