@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import {
@@ -10,8 +9,7 @@ import {
   NotebookPen,
   CalendarDays,
   FileBadge,
-  Settings,
-  LogOut,
+  SettingsIcon,
 } from "lucide-react"
 
 import {
@@ -26,11 +24,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  SidebarFooter,
 } from "@/components/ui/sidebar"
 import Logo from "@/components/logo"
-import { useLogout } from "@/hooks/use-user-data"
-import { LogoutDialog } from "./logout-confirmation-dialog"
+import { SidebarFooterUser } from "../sidebar-footer-user"
 
 // Menu items
 const items = [
@@ -43,10 +39,14 @@ const items = [
   { title: "Results", url: "/student/results", icon: FileBadge },
 ]
 
+const bottomItems = [
+  // { title: "Help", url: "/teacher/support", icon: HelpCircle },
+  { title: "Settings", url: "/teacher/settings", icon: SettingsIcon },
+]
+
 export function StudentSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   // Close mobile sidebar when link is clicked
   const handleLinkClick = () => {
@@ -56,11 +56,6 @@ export function StudentSidebar() {
   }
 
   const isCollapsed = state === "collapsed"
-
-  const sendLogoutRequest = useLogout().mutateAsync
-  const handleLogout = async () => {
-    await sendLogoutRequest()
-  }
 
   return (
     <Sidebar>
@@ -108,25 +103,40 @@ export function StudentSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="cursor-pointer">
-        <div className="flex items-center gap-2">
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </div>
-      </SidebarFooter>
 
-      <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
-        <div className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          <span>Log Out</span>
+        {/* Bottom Items */}
+        <div className="mt-auto px-3 pb-2">
+          <SidebarMenu className="space-y-1">
+            {bottomItems.map((item) => {
+              const isActive =
+                pathname === item.url || pathname.startsWith(item.url + "/")
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    className={`rounded-md px-3 py-2.5 ${
+                      isActive
+                        ? "bg-[#DA3743] text-white hover:bg-[#DA3743] hover:text-white"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <Link
+                      href={item.url || "#"}
+                      className="flex items-center gap-3"
+                      onClick={handleLinkClick}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
         </div>
-      </SidebarFooter>
-      <LogoutDialog
-        open={showLogoutDialog}
-        onOpenChange={setShowLogoutDialog}
-        onConfirm={handleLogout}
-      />
+      </SidebarContent>
+
+      <SidebarFooterUser />
     </Sidebar>
   )
 }
