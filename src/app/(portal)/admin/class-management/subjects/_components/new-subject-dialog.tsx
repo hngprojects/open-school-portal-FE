@@ -260,7 +260,7 @@ export function EditSubjectDialog({
   async function handleUpdateSubject() {
     setIsSubmitting(true)
     try {
-      await updateSubject({ id: subjectID, name: formData.subjectName })
+      await updateSubject({ name: formData.subjectName })
 
       // Reset form
       setFormData({ subjectName: "" })
