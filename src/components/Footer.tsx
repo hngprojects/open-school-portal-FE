@@ -4,7 +4,7 @@ import React from "react"
 import Link from "next/link"
 import { Mail, Phone, Home } from "lucide-react"
 import Logo from "./logo"
-import SocialLinks from "./social-links"
+// import SocialLinks from "./social-links"
 import { usePathname } from "next/navigation"
 
 const product = [
@@ -36,7 +36,7 @@ const Footer = () => {
               results, timetables, fees, and NFC, all in one place
             </p>
 
-            <SocialLinks />
+            {/* <SocialLinks /> */}
           </section>
 
           <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
