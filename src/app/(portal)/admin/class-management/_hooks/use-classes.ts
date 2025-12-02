@@ -90,3 +90,10 @@ export const useGetClassTeachers = (id: string, session_id?: string) =>
     queryFn: () => ClassesAPI.assignedTeachers(id, session_id),
     enabled: !!id,
   })
+
+export const useGetSubjectsForClass = (classID: string) =>
+  useQuery({
+    queryKey: ["class_subjects", classID],
+    queryFn: () => ClassesAPI.getSubjectsForClass(classID),
+    enabled: !!classID,
+  })
