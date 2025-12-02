@@ -5,8 +5,7 @@ import { LogOut } from "lucide-react"
 import { useState } from "react"
 import { useAuthStore } from "@/store/auth-store"
 import { titleCase } from "@/lib/utils"
-import { LogoutDialog } from "@/app/(portal)/admin/_components/logout-confirmation-dialog"
-// import { LogoutDialog } from "@/components/dashboard/logout-confirmation-dialog"
+import { LogoutDialog } from "@/components/dashboard/logout-confirmation-dialog"
 import { useLogout } from "@/hooks/use-user-data"
 
 interface SidebarFooterUserProps {
@@ -17,6 +16,7 @@ export function SidebarFooterUser({ isCollapsed = false }: SidebarFooterUserProp
   const user = useAuthStore((state) => state.user)
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const sendLogoutRequest = useLogout().mutateAsync
+  const userTitle = user?.title ? `${user.title}.` : ""
 
   const handleLogout = async () => {
     await sendLogoutRequest()
@@ -40,7 +40,7 @@ export function SidebarFooterUser({ isCollapsed = false }: SidebarFooterUserProp
             {!isCollapsed && (
               <div className="flex flex-col">
                 <span className="text-sm font-semibold text-gray-900">
-                  {user?.first_name}
+                  {userTitle} {user?.first_name}
                 </span>
                 <span className="text-xs text-gray-500">
                   {titleCase(user?.role?.[0] || "")}

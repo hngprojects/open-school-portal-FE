@@ -17,8 +17,8 @@ import {
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
 import { TbSettingsCog } from "react-icons/tb"
-import NotePad from "../../../../../public/svgs/note-pad"
-import Users from "../../../../../public/svgs/users"
+import NotePad from "../../../public/svgs/note-pad"
+import Users from "../../../public/svgs/users"
 
 import {
   Sidebar,
