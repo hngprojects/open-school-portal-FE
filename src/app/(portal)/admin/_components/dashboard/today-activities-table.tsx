@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-// import { activityData } from "../../_data/activity-data"
 import {
   Table,
   TableBody,
@@ -10,18 +9,60 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-// import { getActivityStatusStyles } from "../../_utils/activity-status"
+import { useTodayActivities } from "../../_hooks/today-activity"
 
-const TodayActivities = (
-  {
-    // highlightedIndex,
-    // showAll,
-  }: {
-    highlightedIndex: number | null
-    showAll: boolean
-    search?: string
+const TodayActivities = ({
+  highlightedIndex,
+  showAll,
+  search,
+}: {
+  highlightedIndex: number | null
+  showAll: boolean
+  search?: string
+}) => {
+  const { data, isLoading } = useTodayActivities()
+  console.log("activity", data)
+  if (isLoading) {
+    return <p className="hidden py-10 text-center lg:block">Loading activities...</p>
   }
-) => {
+
+  const activities = data?.todays_activities ?? []
+
+  if (activities.length === 0) {
+    return (
+      <div className="hidden lg:block">
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell className="py-10 text-center" colSpan={8}>
+                No Activity yet
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    )
+  }
+
+  // Filter by search term if provided
+  // Filter by search term if provided
+  const filteredActivities = search
+    ? activities.filter(
+        (act) =>
+          act?.teacher?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+          act?.subject?.name?.toLowerCase().includes(search.toLowerCase()) ||
+          act?.class?.name?.toLowerCase().includes(search.toLowerCase())
+      )
+    : activities
+  // const filteredActivities = search
+  //   ? activities.filter(
+  //       (act) =>
+  //         act?.teacher?.full_name.toLowerCase().includes(search.toLowerCase()) ||
+  //         act.subject.name.toLowerCase().includes(search.toLowerCase()) ||
+  //         act.class.name.toLowerCase().includes(search.toLowerCase())
+  //     )
+  //   : activities
+
   return (
     <div className="hidden lg:block">
       <Table>
@@ -33,43 +74,48 @@ const TodayActivities = (
             <TableHead className="px-4 py-2.5 text-center">Time</TableHead>
             <TableHead className="px-4 py-2.5 text-center">Status</TableHead>
             <TableHead className="px-4 py-2.5 text-center">Class</TableHead>
-            <TableHead className="px-4 py-2.5 text-center">No of Students</TableHead>
             <TableHead className="px-4 py-2.5 text-center">Venue</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {/* {activityData.map((activity, i) => (
+          {filteredActivities.map((activity, i) => (
             <TableRow
+              key={activity.schedule_id}
               id={`activity-${i}`}
-              key={i}
-              className={`${highlightedIndex === i ? "bg-accent/10 transition-all" : ""} ${!showAll && i >= 5 ? "hidden" : ""}`}
+              className={`${highlightedIndex === i ? "bg-accent/10 transition-all" : ""} ${
+                !showAll && i >= 5 ? "hidden" : ""
+              }`}
             >
               <TableCell className="px-4 py-2.5">{i + 1}</TableCell>
-              <TableCell className="px-4 py-2.5">{activity.teacher}</TableCell>
-              <TableCell>{activity.subject}</TableCell>
-              <TableCell className="text-center">
-                {`${activity["time-start"]} - ${activity["time-end"]}`}
+              <TableCell className="px-4 py-2.5 text-center">
+                {activity?.teacher?.full_name || "Unassigned"}
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="px-4 py-2.5">
+                {activity?.subject?.name || "Unassigned"}
+              </TableCell>
+              <TableCell className="px-4 py-2.5 text-center">
+                {activity?.start_time} - {activity?.end_time}
+              </TableCell>
+              <TableCell className="px-4 py-2.5 text-center">
                 <span
-                  className={`rounded-2xl px-2 py-0.5 text-sm font-medium ${getActivityStatusStyles(
-                    activity.status
-                  )}`}
+                  className={`rounded-2xl px-2 py-0.5 text-xs font-medium ${
+                    activity?.progress_status === "COMPLETED"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
+                  } `}
                 >
-                  {activity.status}
+                  {activity?.progress_status || "Unassigned"}
                 </span>
               </TableCell>
-              <TableCell className="text-center">{activity.class}</TableCell>
-              <TableCell className="text-center">{activity.students}</TableCell>
-              <TableCell className="text-center">{activity.venue}</TableCell>
+              <TableCell className="px-4 py-2.5 text-center">
+                {activity?.class?.name || "Unassigned"}
+              </TableCell>
+              <TableCell className="px-4 py-2.5 text-center">
+                {activity?.venue || "Unassigned"}
+              </TableCell>
             </TableRow>
-          ))} */}
-          <TableRow>
-            <TableCell className="py-10 text-center" colSpan={8}>
-              No Activity yet
-            </TableCell>
-          </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>
@@ -77,3 +123,81 @@ const TodayActivities = (
 }
 
 export default TodayActivities
+
+// "use client"
+
+// import React from "react"
+// import {
+//   Table,
+//   TableBody,
+//   TableCell,
+//   TableHead,
+//   TableHeader,
+//   TableRow,
+// } from "@/components/ui/table"
+
+// const TodayActivities = (
+//   {
+//     // highlightedIndex,
+//     // showAll,
+//   }: {
+//     highlightedIndex: number | null
+//     showAll: boolean
+//     search?: string
+//   }
+// ) => {
+//   return (
+//     <div className="hidden lg:block">
+//       <Table>
+//         <TableHeader className="bg-tint h-13">
+//           <TableRow>
+//             <TableHead></TableHead>
+//             <TableHead className="w-[150px] px-4 py-2.5 text-center">Teacher</TableHead>
+//             <TableHead className="px-4 py-2.5">Subject</TableHead>
+//             <TableHead className="px-4 py-2.5 text-center">Time</TableHead>
+//             <TableHead className="px-4 py-2.5 text-center">Status</TableHead>
+//             <TableHead className="px-4 py-2.5 text-center">Class</TableHead>
+//             <TableHead className="px-4 py-2.5 text-center">No of Students</TableHead>
+//             <TableHead className="px-4 py-2.5 text-center">Venue</TableHead>
+//           </TableRow>
+//         </TableHeader>
+
+//         <TableBody>
+//           {/* {activityData.map((activity, i) => (
+//             <TableRow
+//               id={`activity-${i}`}
+//               key={i}
+//               className={`${highlightedIndex === i ? "bg-accent/10 transition-all" : ""} ${!showAll && i >= 5 ? "hidden" : ""}`}
+//             >
+//               <TableCell className="px-4 py-2.5">{i + 1}</TableCell>
+//               <TableCell className="px-4 py-2.5">{activity.teacher}</TableCell>
+//               <TableCell>{activity.subject}</TableCell>
+//               <TableCell className="text-center">
+//                 {`${activity["time-start"]} - ${activity["time-end"]}`}
+//               </TableCell>
+//               <TableCell className="text-center">
+//                 <span
+//                   className={`rounded-2xl px-2 py-0.5 text-sm font-medium ${getActivityStatusStyles(
+//                     activity.status
+//                   )}`}
+//                 >
+//                   {activity.status}
+//                 </span>
+//               </TableCell>
+//               <TableCell className="text-center">{activity.class}</TableCell>
+//               <TableCell className="text-center">{activity.students}</TableCell>
+//               <TableCell className="text-center">{activity.venue}</TableCell>
+//             </TableRow>
+//           ))} */}
+//           <TableRow>
+//             <TableCell className="py-10 text-center" colSpan={8}>
+//               No Activity yet
+//             </TableCell>
+//           </TableRow>
+//         </TableBody>
+//       </Table>
+//     </div>
+//   )
+// }
+
+// export default TodayActivities

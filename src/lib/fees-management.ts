@@ -13,25 +13,64 @@ export type CreateFeeComponentData = {
 
 export type UpdateFeeComponentData = Partial<CreateFeeComponentData>
 
+// export interface FeeComponent {
+//   id: string
+//   component_name: string
+//   description: string
+//   amount: number
+//   term: {
+//     id: string
+//     name: string
+//     startDate?: string
+//     endDate?: string
+//   }
+
+//   classes: { id: string; name?: string }[] | null
+//   status: string
+//   created_by: string
+//   created_at: string
+//   updated_at: string
+// }
+
 export interface FeeComponent {
   id: string
   component_name: string
   description: string
-  amount: number
+  amount: string // backend sends "16500.00" as STRING
+  term_id?: string
+
   term: {
     id: string
     name: string
+    createdAt?: string
+    updatedAt?: string
     startDate?: string
     endDate?: string
+    sessionId?: string
   }
+
   classes: { id: string; name?: string }[] | null
-  status: string
-  created_by: string
-  created_at: string
-  updated_at: string
+
+  status: "ACTIVE" | "INACTIVE" | string // backend uses uppercase
+
+  createdAt: string // FIX camelCase
+  updatedAt: string
+  createdBy: {
+    id: string
+    first_name: string
+    last_name: string
+    middle_name?: string
+  }
 }
 
 // This matches your ACTUAL API response structure
+// interface FeeListData {
+//   fees: FeeComponent[] | null
+//   total: number
+//   page: number
+//   limit: number
+//   totalPages: number
+// }
 interface FeeListData {
   fees: FeeComponent[] | null
   total: number
@@ -96,10 +135,20 @@ export const FeesAPI = {
       true
     ),
 
-  // 🔵 NEW: Deactivate fee component
+  // Deactivate fee component
   deactivate: (id: string, reason: string) =>
     apiFetch<ResponsePack<FeeComponent>>(
       `/fees/${id}/deactivate`,
+      {
+        method: "PATCH",
+        data: { reason },
+      },
+      true
+    ),
+  //  Activate fee component
+  activate: (id: string, reason: string) =>
+    apiFetch<ResponsePack<FeeComponent>>(
+      `/fees/${id}/activate`,
       {
         method: "PATCH",
         data: { reason },

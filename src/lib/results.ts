@@ -117,20 +117,14 @@ export const ResultsAPI = {
 
   // Get all terms - Use the correct endpoint
   getTerms: (): Promise<Term[]> => {
-    // First get the current session, then get terms for that session
-    return apiFetch<ResponsePack<Term[]>>("/academic-term/active", {}, true)
+    return apiFetch<ResponsePack<Term>>("/academic-term/active", {}, true)
       .then((response) => {
-        const terms = ensureArray<Term>(extractData(response))
-        return terms
+        const term = extractData(response)
+        return term ? [term] : []
       })
       .catch((error) => {
-        console.error("Error fetching terms:", error)
-        // Fallback: Return a basic list of terms
-        return [
-          { id: "1", name: "First Term", academic_year: "2024/2025", is_active: true },
-          { id: "2", name: "Second Term", academic_year: "2024/2025", is_active: false },
-          { id: "3", name: "Third Term", academic_year: "2024/2025", is_active: false },
-        ]
+        console.error("Error fetching active term:", error)
+        return []
       })
   },
 
