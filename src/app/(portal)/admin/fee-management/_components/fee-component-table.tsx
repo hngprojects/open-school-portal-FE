@@ -24,16 +24,6 @@ import {
 import { toast } from "sonner"
 import { useDeactivateFee, useAactivateFee } from "../_hooks/use-fees"
 import type { FeeComponent } from "@/lib/fees-management"
-// type FeeComponent = {
-//   id: string
-//   component_name: string
-//   description?: string
-//   term?: { id: string; name: string }
-//   created_by: string
-//   amount: number
-//   status: string
-//   created_at: string
-// }
 
 interface FeeComponentTableProps {
   feeComponents: FeeComponent[]
