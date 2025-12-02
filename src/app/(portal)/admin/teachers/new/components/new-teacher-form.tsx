@@ -72,6 +72,7 @@ export const teacherFormConfig: NewPersonFormConfig = {
       label: "Date of Birth",
       type: "date",
       required: true,
+      minAge: 18,
     },
     {
       name: "generatedPassword",
