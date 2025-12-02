@@ -41,6 +41,7 @@ export interface FormField {
     message?: string
     validate?: (value: string) => string | null
   }
+  minAge?: number
 }
 
 export interface NewPersonFormConfig {
@@ -100,8 +101,27 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
   }
 
   const validateField = (name: string, value: string): string | null => {
-    if (!value && config.fields.find((f) => f.name === name)?.required) {
+    const field = config.fields.find((f) => f.name === name)
+
+    if (!value && field?.required) {
       return "This field is required"
+    }
+
+    // ✅ AGE VALIDATION (Teacher & Parent only)
+    if (field?.type === "date" && field?.minAge) {
+      const dob = new Date(value)
+      const today = new Date()
+
+      let age = today.getFullYear() - dob.getFullYear()
+      const monthDiff = today.getMonth() - dob.getMonth()
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--
+      }
+
+      if (age < field.minAge) {
+        return `Must be at least ${field.minAge} years old`
+      }
     }
 
     switch (name) {
@@ -109,6 +129,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
         return validateEmail(value)
       case "phone":
       case "phoneNumber":
+      case "phone":
         return validatePhone(value)
       default:
         return null
@@ -216,6 +237,15 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
 
     const disabled = isEditMode && isEmailField
 
+    const maxDate =
+      field.minAge !== undefined
+        ? (() => {
+            const d = new Date()
+            d.setFullYear(d.getFullYear() - field.minAge)
+            return d.toISOString().split("T")[0]
+          })()
+        : undefined
+
     switch (field.type) {
       case "select":
         return (
@@ -261,6 +291,7 @@ export const NewPersonFormBuilder: React.FC<FormBuilderProps> = ({
                 required={field.required}
                 value={formData[field.name] as string}
                 onChange={handleChange}
+                max={maxDate}
                 className={cn(inputClasses, "before:hidden after:hidden")}
               />
               <div className="absolute top-1/2 right-px -translate-y-1/2 bg-white pr-3">
