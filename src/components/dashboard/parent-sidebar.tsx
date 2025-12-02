@@ -23,8 +23,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import Logo from "@/components/logo"
-// import { useLogout } from "@/hooks/use-user-data"
-// import { LogoutDialog } from "./logout-confirmation-dialog"
+
 import { SidebarFooterUser } from "../sidebar-footer-user"
 
 const items = [
@@ -103,15 +102,6 @@ export function ParentSidebar() {
       </SidebarContent>
 
       <SidebarFooterUser />
-      {/* <SidebarFooter onClick={() => setShowLogoutDialog(true)} className="cursor-pointer">
-        Log Out
-      </SidebarFooter>
-
-      <LogoutDialog
-        open={showLogoutDialog}
-        onOpenChange={setShowLogoutDialog}
-        onConfirm={handleLogout}
-      /> */}
     </Sidebar>
   )
 }

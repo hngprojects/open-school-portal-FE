@@ -20,6 +20,7 @@ export interface AuthApiResponse<Data = unknown> {
 
 export interface UserProfileResponse {
   id: string
+  title?: string
   email: string
   first_name: string
   last_name: string
