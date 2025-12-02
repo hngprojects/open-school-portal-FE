@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react"
-import { Clock, Bell, ArrowLeft } from "lucide-react"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
+import { Clock, ArrowLeft } from "lucide-react"
+// import { Button } from "./ui/button"
+// import { Input } from "./ui/input"
 
 interface ComingSoonProps {
   pageTitle?: string
@@ -15,23 +15,23 @@ interface ComingSoonProps {
 const ComingSoon: React.FC<ComingSoonProps> = ({
   pageTitle = "Coming Soon",
   message = "We're working hard to bring you this feature. Stay tuned!",
-  showNotifyButton = true,
+  // showNotifyButton = true,
   onBackClick = null,
 }) => {
-  const [email, setEmail] = React.useState<string>("")
-  const [subscribed, setSubscribed] = React.useState<boolean>(false)
+  // const [email, setEmail] = React.useState<string>("")
+  // const [subscribed, setSubscribed] = React.useState<boolean>(false)
 
-  const handleNotify = () => {
-    if (!email) alert("Please enter your email address.")
+  // const handleNotify = () => {
+  //   if (!email) alert("Please enter your email address.")
 
-    if (email) {
-      setSubscribed(true)
-      setTimeout(() => {
-        setEmail("")
-        setSubscribed(false)
-      }, 3000)
-    }
-  }
+  //   if (email) {
+  //     setSubscribed(true)
+  //     setTimeout(() => {
+  //       setEmail("")
+  //       setSubscribed(false)
+  //     }, 3000)
+  //   }
+  // }
 
   return (
     <div className="flex min-h-[85vh] items-center justify-center bg-linear-to-b from-gray-50 to-white px-4">
@@ -66,7 +66,7 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
         </p>
 
         {/* Notify Form */}
-        {showNotifyButton && !subscribed && (
+        {/* {showNotifyButton && !subscribed && (
           <div className="mx-auto mb-8 max-w-md">
             <div className="flex flex-col gap-3 lg:flex-row">
               <Input
@@ -85,16 +85,16 @@ const ComingSoon: React.FC<ComingSoonProps> = ({
               </Button>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Success Message */}
-        {subscribed && (
+        {/* {subscribed && (
           <div className="mx-auto mb-8 max-w-md rounded-full border-2 border-green-200 bg-green-50 px-6 py-3">
             <p className="font-semibold text-green-700">
               ✓ Thanks! We&apos;ll notify you when it&apos;s ready.
             </p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )
