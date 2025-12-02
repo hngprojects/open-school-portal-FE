@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import { SuperAdminSidebar } from "./_components/super-admin-sidebar"
 import DashboardHeader from "@/components/dashboard/dashboard-header"
 import { GeneralQueryProvider } from "@/providers/general-query-provider"
+import { SuperAdminSidebar } from "@/components/dashboard/super-admin-sidebar"
+import { UserProvider } from "@/providers/user-provider"
 
 export const metadata: Metadata = {
   title: "Super Admin Dashboard | School Base",
@@ -13,13 +14,15 @@ export const metadata: Metadata = {
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <GeneralQueryProvider>
-      <SidebarProvider>
-        <SuperAdminSidebar />
-        <main className="mt-[72px] h-full w-full">
-          <DashboardHeader />
-          {children}
-        </main>
-      </SidebarProvider>
+      <UserProvider>
+        <SidebarProvider>
+          <SuperAdminSidebar />
+          <main className="mt-[72px] h-full w-full">
+            <DashboardHeader />
+            {children}
+          </main>
+        </SidebarProvider>
+      </UserProvider>
     </GeneralQueryProvider>
   )
 }

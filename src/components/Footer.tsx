@@ -4,7 +4,7 @@ import React from "react"
 import Link from "next/link"
 import { Mail, Phone, Home } from "lucide-react"
 import Logo from "./logo"
-import SocialLinks from "./social-links"
+// import SocialLinks from "./social-links"
 import { usePathname } from "next/navigation"
 
 const product = [
@@ -36,7 +36,7 @@ const Footer = () => {
               results, timetables, fees, and NFC, all in one place
             </p>
 
-            <SocialLinks />
+            {/* <SocialLinks /> */}
           </section>
 
           <section className="flex flex-col items-start gap-5 lg:w-auto lg:pt-10">
@@ -91,7 +91,7 @@ const Footer = () => {
           </section>
         </section>
 
-        <section className="flex justify-between border-t border-white/20 pt-6">
+        <section className="flex flex-col items-center justify-between border-t border-white/20 pt-6 md:flex-row md:items-center">
           <p className="text-[#fafafa]">Copyright &copy; {new Date().getFullYear()}</p>
           <div className="flex items-center gap-6 text-[#FAFAFA] [&_p]:cursor-pointer">
             <Link href="/terms">
