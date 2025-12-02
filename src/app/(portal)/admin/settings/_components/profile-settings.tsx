@@ -5,7 +5,7 @@ import { useGetUser } from "@/hooks/use-user-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
@@ -65,9 +65,14 @@ export const ProfileSettings = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center p-8">
-        <Loader2 className="text-primary h-8 w-8 animate-spin" />
-      </div>
+      <Card>
+        <div className="flex min-h-[400px] items-center justify-center p-6">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-red-600" />
+            <p className="text-gray-600">Loading profile...</p>
+          </div>
+        </div>
+      </Card>
     )
   }
 
@@ -83,7 +88,7 @@ export const ProfileSettings = () => {
       </div>
 
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="px-6">
           <div className="flex items-center gap-6">
             <Avatar className="border-border h-20 w-20 border-2">
               <AvatarImage src={extendedUser?.avatar_url} />
@@ -92,18 +97,16 @@ export const ProfileSettings = () => {
                 {user?.last_name?.[0]}
               </AvatarFallback>
             </Avatar>
-            <Button variant="outline" className="bg-white">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2 border text-sm text-[#535353] hover:border-2 hover:bg-white"
+            >
               Change photo
             </Button>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-        </CardHeader>
-        <CardContent>
+          <h2 className="my-6 text-lg font-medium">Personal Information</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
@@ -181,7 +184,7 @@ export const ProfileSettings = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="bg-accent hover:bg-accent/90 min-w-[150px] text-white"
+                className="bg-accent hover:bg-accent/90 w-full text-white lg:w-fit"
                 disabled={isSaving}
               >
                 {isSaving ? (

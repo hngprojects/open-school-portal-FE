@@ -90,7 +90,7 @@ export const NotificationSettings = () => {
           <div className="flex justify-end pt-4">
             <Button
               onClick={handleSubmit}
-              className="bg-accent hover:bg-accent/90 min-w-[150px] text-white"
+              className="bg-accent hover:bg-accent/90 w-full text-white lg:w-fit"
               disabled={isSaving}
             >
               {isSaving ? (

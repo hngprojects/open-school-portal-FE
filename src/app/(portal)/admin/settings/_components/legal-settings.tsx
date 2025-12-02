@@ -22,11 +22,19 @@ const DocumentItem = ({ title, lastUpdated }: DocumentItemProps) => {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 border text-sm text-[#535353] hover:border-2 hover:bg-white"
+        >
           <ExternalLink className="h-4 w-4" />
           View
         </Button>
-        <Button variant="outline" size="sm" className="gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2 border text-sm text-[#535353] hover:border-2 hover:bg-white"
+        >
           <Download className="h-4 w-4" />
           Download
         </Button>
@@ -46,7 +54,7 @@ export const LegalSettings = () => {
       </div>
 
       <Card>
-        <CardContent className="space-y-4 p-6">
+        <CardContent className="space-y-4 px-6">
           <DocumentItem title="Terms of Service" lastUpdated="January 2024" />
           <DocumentItem title="Privacy Policy" lastUpdated="January 2024" />
           <DocumentItem title="Data Processing Agreement" lastUpdated="January 2024" />

@@ -41,17 +41,14 @@ export const DeleteAccountSettings = () => {
       </div>
 
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="px-6">
           <div className="flex flex-col gap-6">
-            <div>
-              <h3 className="mb-2 text-base font-semibold">Delete Account</h3>
-              <div className="text-muted-foreground flex items-start gap-2 rounded-md border border-red-100 bg-red-50 p-3 text-sm">
-                <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
-                <p>
-                  This action will permanently remove the account and all associated data.
-                  This cannot be undone. Please confirm to proceed.
-                </p>
-              </div>
+            <div className="text-muted-foreground flex items-start gap-2 rounded-md border border-red-100 bg-red-50 p-3 text-sm">
+              <AlertCircle className="h-5 w-5 shrink-0 text-red-500" />
+              <p>
+                This action will permanently remove the account and all associated data.
+                This cannot be undone. Please confirm to proceed.
+              </p>
             </div>
 
             <div className="flex justify-end">
@@ -71,10 +68,7 @@ export const DeleteAccountSettings = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleDelete}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
+                    <AlertDialogAction onClick={handleDelete}>
                       {isDeleting ? "Deleting..." : "Delete Account"}
                     </AlertDialogAction>
                   </AlertDialogFooter>

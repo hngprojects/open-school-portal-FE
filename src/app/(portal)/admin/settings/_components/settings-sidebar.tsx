@@ -1,14 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { Bell, Building2, ChevronDown, FileText, Lock, Trash2, User } from "lucide-react"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import { cn } from "@/lib/utils"
+import { Bell, Building2, ChevronDown, FileText, Lock, Trash2, User } from "lucide-react"
+import Link from "next/link"
+import { useState } from "react"
 
 interface SettingsSidebarProps {
   activeTab: string
@@ -54,11 +54,11 @@ export const SettingsSidebar = ({ activeTab }: SettingsSidebarProps) => {
   const ActiveIcon = activeItem.icon
 
   return (
-    <div className="border-border h-fit w-full shrink-0 space-y-6 rounded-xl border bg-white p-4 md:w-64">
+    <div className="border-border h-fit w-full shrink-0 space-y-6 rounded-xl bg-white lg:w-64 lg:border lg:p-4">
       {/* Desktop View */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <h2 className="text-foreground mb-4 text-lg font-bold">Settings</h2>
-        <nav className="space-y-1">
+        <nav className="divide-y">
           {menuItems.map((item) => {
             const Icon = item.icon
             const isActive = activeTab === item.id
@@ -67,9 +67,9 @@ export const SettingsSidebar = ({ activeTab }: SettingsSidebarProps) => {
                 key={item.id}
                 href={`/admin/settings?tab=${item.id}`}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "text-accent border-accent border-l-2"
+                    ? "text-accent border-l-accent border-l-2"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >
@@ -87,7 +87,7 @@ export const SettingsSidebar = ({ activeTab }: SettingsSidebarProps) => {
       </div>
 
       {/* Mobile View */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <Collapsible open={isOpen} onOpenChange={setIsOpen}>
           <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border bg-white p-3 shadow-sm">
             <div className="flex items-center gap-3">
@@ -111,7 +111,7 @@ export const SettingsSidebar = ({ activeTab }: SettingsSidebarProps) => {
                   href={`/admin/settings?tab=${item.id}`}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
                       ? "text-accent"
                       : "text-muted-foreground hover:bg-muted hover:text-foreground"

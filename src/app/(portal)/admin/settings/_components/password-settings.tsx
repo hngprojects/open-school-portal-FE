@@ -145,7 +145,7 @@ export const PasswordSettings = () => {
             <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="bg-accent hover:bg-accent/90 min-w-[150px] text-white"
+                className="bg-accent hover:bg-accent/90 w-full text-white lg:w-fit"
                 disabled={isSaving}
               >
                 {isSaving ? (

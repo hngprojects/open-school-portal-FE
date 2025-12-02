@@ -15,9 +15,9 @@ export default async function SettingsPage({ searchParams }: PageProps) {
   const activeTab = tab || "school-info"
 
   return (
-    <div className="mx-auto p-4 sm:p-10">
-      <div className="flex flex-col gap-8 md:flex-row">
-        <aside className="h-fit shrink-0 md:sticky md:top-6 md:w-64">
+    <div className="mx-auto p-4 sm:p-6">
+      <div className="flex flex-col gap-8 lg:flex-row">
+        <aside className="h-fit shrink-0 lg:sticky lg:top-6 lg:w-64">
           <SettingsSidebar activeTab={activeTab} />
         </aside>
 

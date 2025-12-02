@@ -47,7 +47,7 @@ export const SchoolInfoSettings = () => {
       </div>
 
       <Card>
-        <CardContent className="space-y-6 p-6">
+        <CardContent className="space-y-6 px-6">
           <div className="space-y-4">
             <div>
               <h3 className="text-base font-semibold">School Logo</h3>
@@ -64,7 +64,11 @@ export const SchoolInfoSettings = () => {
                   className="h-full w-full object-contain"
                 />
               </div>
-              <Button variant="outline" className="bg-white">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 border text-sm text-[#535353] hover:border-2 hover:bg-white"
+              >
                 Change photo
               </Button>
             </div>
@@ -90,7 +94,7 @@ export const SchoolInfoSettings = () => {
                 Primary Brand Color <span className="text-red-500">*</span>
               </Label>
               <div className="flex gap-4">
-                <div className="relative h-10 w-16 overflow-hidden rounded-md border">
+                <div className="relative h-12 w-16 overflow-hidden rounded-md border">
                   <input
                     type="color"
                     name="brandColor"
@@ -140,10 +144,10 @@ export const SchoolInfoSettings = () => {
               />
             </div>
 
-            <div className="pt-4">
+            <div className="flex justify-end pt-4">
               <Button
                 type="submit"
-                className="bg-accent hover:bg-accent/90 w-full text-white"
+                className="bg-accent hover:bg-accent/90 w-full text-white lg:w-fit"
                 disabled={isSaving}
               >
                 {isSaving ? (
