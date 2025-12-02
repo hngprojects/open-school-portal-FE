@@ -9,6 +9,8 @@ import AddClassForm, {
 import { useUpdateClass, useGetClass } from "../../../_hooks/use-classes"
 import { ItemLoader } from "@/app/(portal)/admin/_components/sub-loader"
 import { ItemsError } from "@/app/(portal)/admin/_components/loading-error"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const EditClass = () => {
   const classID = useParams().classID as string
@@ -34,13 +36,11 @@ const EditClass = () => {
 
   return (
     <div className="p-4">
-      <button
-        onClick={() => router.back()}
-        className="flex cursor-pointer items-center gap-2 text-gray-600 transition-colors hover:text-gray-900"
-        aria-label="Go back"
-      >
-        <ArrowLeft className="size-5" />
-      </button>
+      <Button asChild className="bg-gray-100" variant="ghost" size="icon">
+        <Link href="/admin/class-management/class" aria-label="Go back to classes" className="flex">
+          <ArrowLeft className="size-5" />
+        </Link>
+      </Button>
 
       <section className="mt-5 lg:ml-10">
         <DashboardTitle
