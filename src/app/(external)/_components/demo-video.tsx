@@ -10,6 +10,7 @@ const DemoVideo = forwardRef<HTMLVideoElement, DemoVideoProps>(({ ...props }, re
       <video
         ref={ref}
         controls
+        autoPlay
         // loop
         preload="metadata"
         {...props}

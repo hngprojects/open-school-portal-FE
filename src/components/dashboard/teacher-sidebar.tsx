@@ -22,6 +22,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
+import { SidebarFooterUser } from "../sidebar-footer-user"
+
 import Logo from "@/components/logo"
 
 // ----------------------------
@@ -99,6 +101,8 @@ export function TeacherSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooterUser />
     </Sidebar>
   )
 }

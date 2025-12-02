@@ -16,9 +16,9 @@ export const sessionFormSchema = z
       third_term: termSchema,
     }),
 
-    acknowledge: z.boolean().refine((v) => v === true, {
-      message: "You must acknowledge to continue",
-    }),
+    // acknowledge: z.boolean().refine((v) => v === true, {
+    //   message: "You must acknowledge to continue",
+    // }),
   })
   .superRefine((data, ctx) => {
     const { first_term, second_term, third_term } = data.terms

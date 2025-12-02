@@ -1,8 +1,8 @@
 "use client"
 
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar"
-import { BellIcon } from "lucide-react"
-import { Button } from "../ui/button"
+// import { BellIcon } from "lucide-react"
+// import { Button } from "../ui/button"
 
 const DashboardHeader = () => {
   const { state, isMobile, openMobile } = useSidebar()
@@ -16,15 +16,15 @@ const DashboardHeader = () => {
   const showTrigger = showDesktopTrigger || showMobileTrigger
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-50 flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
+    // <header className="fixed top-0 right-0 left-0 z-50 flex h-[72px] w-full items-center justify-between border-b bg-white px-4">
+    <header className="fixed top-0 right-0 left-0 z-50 flex h-[72px] w-full items-center justify-between px-4">
       <div className="relative z-50">{showTrigger && <SidebarTrigger />}</div>
 
       <aside className="flex items-center gap-4">
-        {/* bell icon */}
-        <Button variant="ghost" size="icon" className="relative">
+        {/* <Button variant="ghost" size="icon" className="relative">
           <BellIcon className="text-text-secondary size-5" />
           <span className="bg-accent absolute top-0 right-0.5 h-1.5 w-1.5 rounded-full"></span>
-        </Button>
+        </Button> */}
       </aside>
     </header>
   )

@@ -89,7 +89,7 @@ export const SetupWizardAPI = {
   // Super Admin Signup
   createSuperAdmin: (data: SuperAdminSignupData) =>
     apiFetch<SuperAdminResponse>(
-      "api/auth/superadmin",
+      "/superadmin",
       {
         method: "POST",
         data,
@@ -100,7 +100,7 @@ export const SetupWizardAPI = {
   // Super Admin Login
   login: (data: SuperAdminLoginData) =>
     apiFetch<{ message: string }>(
-      "/superadmin/login",
+      "/api/auth/superadmin/login",
       {
         method: "POST",
         data,
