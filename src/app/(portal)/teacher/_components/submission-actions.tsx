@@ -1,8 +1,7 @@
-// Update SubmissionActions to convert GradeEntry[] to Grade[]
 "use client"
 
 import { useState } from "react"
-import { GradeEntry, GradeSubmission, Grade } from "@/types/result" // Add Grade import
+import { GradeEntry, GradeSubmission, Grade } from "@/types/result"
 import { Button } from "@/components/ui/button"
 import {
   useSaveDraft,
@@ -18,6 +17,7 @@ interface SubmissionActionsProps {
   termId: string
   grades: GradeEntry[]
   existingSubmission?: GradeSubmission
+  academicSessionId: string
 }
 
 export function SubmissionActions({
@@ -26,6 +26,7 @@ export function SubmissionActions({
   termId,
   grades,
   existingSubmission,
+  academicSessionId,
 }: SubmissionActionsProps) {
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
@@ -34,28 +35,35 @@ export function SubmissionActions({
   const submitMutation = useSubmitForApproval()
   const updateSubmissionMutation = useUpdateSubmission()
 
-  // Convert GradeEntry[] to Grade[] for the API
-  const convertToGrades = (gradeEntries: GradeEntry[]): Partial<Grade>[] => {
-    return gradeEntries.map((entry) => ({
-      student_id: entry.student_id,
-      ca_score: entry.ca_score,
-      exam_score: entry.exam_score,
-      total_score: entry.total_score,
-      grade: entry.grade,
-      comment: entry.comment,
-      subject_id: subjectId,
-      class_id: classId,
-      term_id: termId,
-    }))
-  }
-
   const handleSaveDraft = async () => {
     try {
+      if (!academicSessionId) {
+        toast.error("Academic session ID is required")
+        return
+      }
+
+      // Validate all grades have student_id
+      const validGrades = grades.filter((grade) => {
+        if (!grade.student_id || grade.student_id.trim() === "") {
+          console.error("Grade missing student_id:", grade)
+          return false
+        }
+        return true
+      })
+
+      if (validGrades.length === 0) {
+        toast.error(
+          "No valid grades to save. Please enter grades for at least one student."
+        )
+        return
+      }
+
       const submissionData = {
         class_id: classId,
         subject_id: subjectId,
         term_id: termId,
-        grades: grades.map((grade) => ({
+        academic_session_id: academicSessionId,
+        grades: validGrades.map((grade) => ({
           student_id: grade.student_id,
           ca_score: grade.ca_score,
           exam_score: grade.exam_score,
@@ -68,7 +76,17 @@ export function SubmissionActions({
         await updateSubmissionMutation.mutateAsync({
           id: existingSubmission.id,
           data: {
-            grades: convertToGrades(grades) as Grade[], // Type assertion
+            grades: validGrades.map((grade) => ({
+              student_id: grade.student_id,
+              ca_score: grade.ca_score,
+              exam_score: grade.exam_score,
+              total_score: grade.total_score,
+              grade: grade.grade,
+              comment: grade.comment,
+              subject_id: subjectId,
+              class_id: classId,
+              term_id: termId,
+            })) as Grade[],
           },
         })
       } else {
@@ -78,20 +96,50 @@ export function SubmissionActions({
 
       setSuccessMessage("Results saved as draft successfully!")
       setSuccessModalOpen(true)
-    } catch {
-      toast.error("Failed to save draft")
+
+      // Clear localStorage after successful save
+      const storageKey = `grades_${classId}_${subjectId}_${termId}`
+      localStorage.removeItem(storageKey)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to save draft")
+      } else {
+        toast.error("Failed to save draft")
+      }
     }
   }
 
   const handleSubmitForApproval = async () => {
     try {
+      if (!academicSessionId) {
+        toast.error("Academic session ID is required")
+        return
+      }
+
+      // Validate all grades have student_id
+      const validGrades = grades.filter((grade) => {
+        if (!grade.student_id || grade.student_id.trim() === "") {
+          console.error("Grade missing student_id:", grade)
+          return false
+        }
+        return true
+      })
+
+      if (validGrades.length === 0) {
+        toast.error(
+          "No valid grades to submit. Please enter grades for at least one student."
+        )
+        return
+      }
+
       if (!existingSubmission?.id) {
         // First save as draft, then submit
         const submissionData = {
           class_id: classId,
           subject_id: subjectId,
           term_id: termId,
-          grades: grades.map((grade) => ({
+          academic_session_id: academicSessionId,
+          grades: validGrades.map((grade) => ({
             student_id: grade.student_id,
             ca_score: grade.ca_score,
             exam_score: grade.exam_score,
@@ -107,8 +155,16 @@ export function SubmissionActions({
 
       setSuccessMessage("Results submitted for approval successfully!")
       setSuccessModalOpen(true)
-    } catch {
-      toast.error("Failed to submit for approval")
+
+      // Clear localStorage after successful submission
+      const storageKey = `grades_${classId}_${subjectId}_${termId}`
+      localStorage.removeItem(storageKey)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to submit for approval")
+      } else {
+        toast.error("Failed to submit for approval")
+      }
     }
   }
 

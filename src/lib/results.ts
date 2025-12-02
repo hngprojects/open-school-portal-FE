@@ -29,63 +29,70 @@ const ensureArray = <T>(data: unknown): T[] => {
   return []
 }
 
-// Interface for the actual classes response
-interface ClassesResponse {
-  items: Array<{
+interface ClassWithSession {
+  id: string
+  name: string
+  arm: string
+  academicSession: {
+    id: string
     name: string
-    academicSession: {
-      id: string
-      name: string
-    }
-    classes: Array<{
-      id: string
-      arm: string
-    }>
-  }>
-  pagination: {
-    total: number
-    limit: number
-    page: number
-    total_pages: number
-    has_next: boolean
-    has_previous: boolean
   }
 }
 
 // Interface for the actual subjects response
-interface SubjectsResponse {
-  data: Subject[]
-  pagination: {
+// Actual response shape from /classes/{id}/subjects
+interface ClassSubjectsResponsePayload {
+  payload: Array<{
+    id: string
+    createdAt: string
+    updatedAt: string
+    teacher_assignment_date: string | null
+    subject: {
+      id: string
+      createdAt: string
+      updatedAt: string
+      name: string
+    }
+    teacher: unknown | null
+  }>
+  paginationMeta: {
     total: number
-    page: number
-    limit: number
-    total_pages: number
-    has_next: boolean
-    has_previous: boolean
   }
 }
 
+// Actual response shape from /academic-term/active
+interface ActiveTermResponse {
+  id: string
+  createdAt: string
+  updatedAt: string
+  sessionId: string
+  name: string
+  startDate: string
+  endDate: string
+  status: string
+  isCurrent: boolean
+  deletedAt: string | null
+}
 export const ResultsAPI = {
   // Get classes for teacher - Use the correct endpoint from your backend
+  // Replace the entire getClasses function with:
+  // Replace the getClasses function with type-safe version:
   getClasses: (): Promise<Class[]> => {
-    return apiFetch<ResponsePack<ClassesResponse>>("/classes", {}, true)
+    return apiFetch<ResponsePack<ClassWithSession[]>>(
+      "/classes/teacher/assigned",
+      {},
+      true
+    )
       .then((response) => {
-        const data = extractData(response)
+        const classItems = extractData(response)
 
-        // Transform the nested structure to flat Class array
-        const classes: Class[] = []
-
-        data.items.forEach((item) => {
-          item.classes.forEach((classItem) => {
-            classes.push({
-              id: classItem.id,
-              name: `${item.name} ${classItem.arm}`,
-              level: item.name.includes("SS") ? "Senior Secondary" : "Junior Secondary",
-            })
-          })
-        })
-
-        return classes
+        // Transform the response to match your Class interface
+        return classItems.map((classItem) => ({
+          id: classItem.id,
+          name: `${classItem.name} ${classItem.arm}`,
+          level: classItem.name.includes("SS") ? "Senior Secondary" : "Junior Secondary",
+          academic_session_id: classItem.academicSession.id, // Store this for later use
+        }))
       })
       .catch((error) => {
         console.error("Error fetching classes:", error)
@@ -94,33 +101,58 @@ export const ResultsAPI = {
   },
 
   // Get subjects for a class - Use the correct endpoint
+  // Get subjects for a class - fully typed
   getSubjects: (classId?: string): Promise<Subject[]> => {
-    if (!classId) {
-      return Promise.resolve([])
-    }
+    if (!classId) return Promise.resolve([])
 
-    return apiFetch<ResponsePack<SubjectsResponse>>(
+    return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(
       `/classes/${classId}/subjects`,
       {},
       true
     )
       .then((response) => {
-        const data = extractData(response)
-        const subjects = ensureArray<Subject>(data.data)
-        return subjects
+        const backendData = extractData(response)
+
+        // Safely extract the payload array
+        const items = backendData.payload ?? []
+
+        return items.map(
+          (item) =>
+            ({
+              id: item.subject.id,
+              name: item.subject.name,
+              // Add other fields if your Subject type has more
+            }) satisfies Subject
+        ) // satisfies ensures exact match
       })
-      .catch((error) => {
-        console.error("Error fetching subjects:", error)
+      .catch((err) => {
+        console.error("Failed to fetch subjects:", err)
         return []
       })
   },
 
-  // Get all terms - Use the correct endpoint
+  // Get active term - fully typed
   getTerms: (): Promise<Term[]> => {
-    return apiFetch<ResponsePack<Term>>("/academic-term/active", {}, true)
+    return apiFetch<ResponsePack<ActiveTermResponse>>("/academic-term/active", {}, true)
       .then((response) => {
-        const term = extractData(response)
-        return term ? [term] : []
+        const termData = extractData(response)
+
+        // The endpoint returns a single term object directly under "data"
+        if (termData && termData.id) {
+          return [
+            {
+              id: termData.id,
+              name: termData.name,
+              start_date: termData.startDate,
+              end_date: termData.endDate,
+              status: termData.status,
+              is_active: termData.isCurrent,
+              // map other fields as needed by your Term type
+            } satisfies Term,
+          ]
+        }
+
+        return []
       })
       .catch((error) => {
         console.error("Error fetching active term:", error)
@@ -128,19 +160,15 @@ export const ResultsAPI = {
       })
   },
 
+  // Get all terms - Use the correct endpoint
+
   // Get students for grade entry
-  getStudentsForGradeEntry: (classId: string, subjectId?: string): Promise<Student[]> => {
+  getStudentsForGradeEntry: (classId: string): Promise<Student[]> => {
     if (!classId) {
       return Promise.resolve([])
     }
 
-    const queryString = subjectId ? `?subject_id=${subjectId}` : ""
-
-    return apiFetch<ResponsePack<Student[]>>(
-      `/grades/class/${classId}/students${queryString}`,
-      {},
-      true
-    )
+    return apiFetch<ResponsePack<Student[]>>(`classes/${classId}/students`, {}, true)
       .then((response) => {
         const students = ensureArray<Student>(extractData(response))
         return students
