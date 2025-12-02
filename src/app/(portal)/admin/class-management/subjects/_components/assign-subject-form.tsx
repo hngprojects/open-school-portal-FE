@@ -5,24 +5,20 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Search } from "lucide-react"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Search, MoreVertical, UserPlus } from "lucide-react"
-import { useAssignSubjectToClasses } from "../_hooks/use-subjects"
+  Subject,
+  useAssignSubjectToClasses,
+  useUnAssignSubjectToClasses,
+} from "../_hooks/use-subjects"
 import { ClassItem } from "@/lib/classes"
-
-interface Subject {
-  id: string
-  name: string
-}
 
 interface AssignSubjectFormProps {
   subject: Subject
-  classes: ClassItem[]
+  classes: {
+    id: string
+    name: string
+  }[]
   onSuccess: () => void
 }
 
@@ -31,12 +27,18 @@ export default function AssignSubjectForm({
   classes,
   onSuccess,
 }: AssignSubjectFormProps) {
+  const initAssignedClasses = subject.classes.map((cls) => cls.id)
+
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedClasses, setSelectedClasses] = useState<Set<string>>(new Set())
+  const [selectedClasses, setSelectedClasses] = useState<Set<string>>(
+    new Set(initAssignedClasses)
+  )
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
   const assignMutation = useAssignSubjectToClasses(subject.id)
+  const unAssignMutation = useUnAssignSubjectToClasses(subject.id)
+  const isPending = assignMutation.isPending || unAssignMutation.isPending
 
   const filteredClasses = classes.filter((classItem) =>
     classItem.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -71,11 +73,11 @@ export default function AssignSubjectForm({
       <section className="mb-6 space-y-3">
         {paginatedClasses.length > 0 ? (
           paginatedClasses.map((classItem) => {
-            const isSelected = selectedClasses.has(classItem.name)
+            const isSelected = selectedClasses.has(classItem.id)
 
             return (
               <div
-                key={classItem.name}
+                key={classItem.id}
                 className={`flex items-center justify-between rounded-xl border bg-white p-4 transition-all ${
                   isSelected ? "border-green-500 bg-green-50" : "border-gray-200"
                 }`}
@@ -83,7 +85,7 @@ export default function AssignSubjectForm({
                 <div className="flex items-center gap-3">
                   <Checkbox
                     checked={isSelected}
-                    onCheckedChange={() => handleToggleClass(classItem.name)}
+                    onCheckedChange={() => handleToggleClass(classItem.id)}
                     className={
                       isSelected
                         ? "accent-accent border-green-600 bg-green-600"
@@ -96,19 +98,6 @@ export default function AssignSubjectForm({
                     </h5>
                   </div>
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreVertical className="size-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem>
-                      <UserPlus className="mr-2 h-4 w-4" />
-                      Assign teacher
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             )
           })
@@ -159,10 +148,10 @@ export default function AssignSubjectForm({
       {/* Save Button */}
       <Button
         onClick={handleSaveChanges}
-        disabled={selectedClasses.size === 0 || assignMutation.isPending}
+        disabled={selectedClasses.size === 0 || isPending}
         className="w-full"
       >
-        {assignMutation.isPending ? "Saving..." : "Save Changes"}
+        {isPending ? "Saving..." : "Save Changes"}
       </Button>
     </div>
   )
@@ -180,15 +169,19 @@ export default function AssignSubjectForm({
   }
 
   async function handleSaveChanges() {
+    const allAssignedArms = Array.from(selectedClasses)
     // map through classes for each arm and collate a list of the arms ids
-    const allAssignedClasses = classes.filter((classItem) =>
-      selectedClasses.has(classItem.name)
+    const newlyAssignedArms = allAssignedArms.filter(
+      (armId) => !initAssignedClasses.includes(armId)
     )
-    const allAssignedArms = allAssignedClasses.flatMap((classItem) =>
-      classItem.classes.map((arm) => arm.id)
+    const newlyUnassignedArms = initAssignedClasses.filter(
+      (armId) => !allAssignedArms.includes(armId)
     )
     try {
-      await assignMutation.mutateAsync(allAssignedArms)
+      await Promise.all([
+        assignMutation.mutateAsync(newlyAssignedArms),
+        unAssignMutation.mutateAsync(newlyUnassignedArms),
+      ])
       onSuccess()
     } catch (error) {
       console.error("Failed to assign subject:", error)
