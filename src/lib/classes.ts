@@ -81,5 +81,43 @@ export const ClassesAPI = {
       >
     >(`/classes/${id}/teachers`, { params: { session_id } }, true),
 
+  getSubjectsForClass: (id: string) =>
+    apiFetch<ClassSubjectsResponse>(`/classes/${id}/subjects`, { method: "GET" }, true),
+
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
+}
+
+
+export type ClassSubjectsResponse = {
+  payload: ClassSubject[];
+  paginationMeta: {
+    total: number;
+  };
+}
+
+export interface ClassSubject {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  teacher_assignment_date: string;
+  subject: Subject;
+  teacher: Teacher;
+}
+
+export interface Subject {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  name: string;
+}
+
+export interface Teacher {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  user_id: string;
+  employment_id: string;
+  title: string;
+  photo_url: string;
+  is_active: boolean;
 }
