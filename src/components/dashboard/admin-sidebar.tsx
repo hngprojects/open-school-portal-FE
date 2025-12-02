@@ -17,8 +17,8 @@ import {
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
 import { TbSettingsCog } from "react-icons/tb"
-import NotePad from "../../../../../public/svgs/note-pad"
-import Users from "../../../../../public/svgs/users"
+import NotePad from "../../../public/svgs/note-pad"
+import Users from "../../../public/svgs/users"
 
 import {
   Sidebar,
@@ -55,7 +55,7 @@ const mainItems = [
   { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
   { title: "Parents", url: "/admin/parents", icon: FaRegUser },
-  { title: "Timetable", url: "/admin/timetable", icon: Calendar },
+  // { title: "Timetable", url: "/admin/timetable", icon: Calendar },
   // { title: "Results", url: "/admin/results", icon: Calendar },
   {
     title: "Class Management",
@@ -66,8 +66,9 @@ const mainItems = [
       { title: "Class", url: "/admin/class-management/class" },
       { title: "Subjects", url: "/admin/class-management/subjects" },
       { title: "Room", url: "/admin/class-management/classrooms" },
-      // { title: "Timetable Setup", url: "/admin/class-management/timetable-setup" },
-      // { title: "Result Management", url: "/admin/class-management/result-management" },
+      { title: "Timetable Setup", url: "/admin/timetable" },
+
+      { title: "Result Management", url: "/admin/results" },
     ],
   },
   { title: "User Configuration", url: "/admin/user-configuration", icon: TbSettingsCog },

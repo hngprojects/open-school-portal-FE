@@ -11,9 +11,7 @@ import {
   ChevronRight,
   NotebookPen,
   CalendarDays,
-  Settings,
   LifeBuoy,
-  LogOut,
 } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 
@@ -31,7 +29,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-  //SidebarFooter,
   useSidebar,
   SidebarFooter,
 } from "@/components/ui/sidebar"
@@ -41,10 +38,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import Logo from "@/components/logo"
-import { useLogout } from "@/hooks/use-user-data"
-import { LogoutDialog } from "./logout-confirmation-dialog"
-import Image from "next/image"
-import { useAuthStore } from "@/store/auth-store"
+
+import { SidebarFooterUser } from "../sidebar-footer-user"
 
 // Menu items
 const items = [
@@ -75,8 +70,6 @@ export function SuperAdminSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
   const [openItems, setOpenItems] = useState<string[]>([])
-  const [showLogoutDialog, setShowLogoutDialog] = useState(false)
-  const user = useAuthStore((state) => state.user)
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -99,12 +92,6 @@ export function SuperAdminSidebar() {
       return item.subItems.some((subItem) => pathname === subItem.url)
     }
     return false
-  }
-
-  const sendLogoutRequest = useLogout().mutateAsync
-
-  const handleLogout = async () => {
-    await sendLogoutRequest()
   }
 
   return (
@@ -231,42 +218,7 @@ export function SuperAdminSidebar() {
         </div>
       </SidebarFooter>
 
-      <SidebarFooter className="cursor-pointer">
-        <div className="flex items-center gap-2 text-sm">
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
-        </div>
-      </SidebarFooter>
-      <SidebarFooter className="cursor-pointer">
-        <div className="flex items-center gap-1 rounded-[0.625rem] border px-3.5 py-1 text-sm transition-all duration-200 ease-in-out hover:shadow">
-          <div>
-            <Image
-              src="/assets/images/dashboard/avatar.svg"
-              alt="avatar"
-              width={32}
-              height={32}
-            />
-          </div>
-          <div className="flex items-center justify-end gap-4">
-            <div>
-              <p className="space-x-2">
-                <span>{user?.first_name || "User"}</span>
-                <span>{user?.last_name || "Name"}</span>
-              </p>
-              <p>
-                <span>{user?.email || "email@gmail.com"}</span>
-              </p>
-            </div>
-
-            <LogOut className="text-sm text-[#f42c2c]" />
-          </div>
-        </div>
-      </SidebarFooter>
-      <LogoutDialog
-        open={showLogoutDialog}
-        onOpenChange={setShowLogoutDialog}
-        onConfirm={handleLogout}
-      />
+      <SidebarFooterUser />
     </Sidebar>
   )
 }
