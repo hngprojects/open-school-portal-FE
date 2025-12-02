@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftIcon, MoreVerticalIcon, UserPlusIcon } from "lucide-react"
+import { ArrowLeftIcon } from "lucide-react"
 import { useParams } from "next/navigation"
 import { SubjectsLoadingSkeleton } from "./subjects-loading-skeleton"
 import { ItemsError } from "../loading-error"
@@ -14,15 +14,12 @@ import {
 } from "../../class-management/_hooks/use-classes"
 import { ClassSubject } from "@/lib/classes"
 import { useGetTeacher } from "../../teachers/_hooks/use-teachers"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import AssignSubjectsDialog from "./assign-subject-to-class-dialog"
+import { useState } from "react"
 
 export default function ViewClassSubjects() {
   const { classID } = useParams<{ classID: string }>()
+  const [showDialog, setShowDialog] = useState(false)
 
   const {
     data: classData,
@@ -58,10 +55,15 @@ export default function ViewClassSubjects() {
       </Button>
 
       <section className="mt-5 lg:ml-10">
-        <DashboardTitle
-          heading="Class Subjects"
-          description="View the subjects assigned to this class"
-        />
+        <div className="flex flex-col items-start justify-between space-y-3 md:flex-row">
+          <DashboardTitle
+            heading="Class Subjects"
+            description="View the subjects assigned to this class"
+          />
+          <Button className="h-10 w-full md:w-auto" onClick={() => setShowDialog(true)}>
+            Assign Subjects
+          </Button>
+        </div>
 
         {isLoading ? (
           <div className="space-y-3">
@@ -102,9 +104,10 @@ export default function ViewClassSubjects() {
                 description="This class has no subjects assigned yet."
                 buttonText="Assign Subjects"
                 buttonHref={`/admin/class-management/class/${classID}/assign-subjects`}
+                buttonOnClick={() => setShowDialog(true)}
               />
             ) : (
-              <div className="space-y-3">
+              <div className="mt-5 space-y-3">
                 {subjects.map((subject) => (
                   <SubjectCard key={subject.id} subject={subject} />
                 ))}
@@ -113,12 +116,19 @@ export default function ViewClassSubjects() {
           </div>
         )}
       </section>
+
+      <AssignSubjectsDialog
+        open={showDialog}
+        setOpen={setShowDialog}
+        classId={classID}
+        className={classData?.name || ""}
+      />
     </div>
   )
 }
 
 function SubjectCard({ subject }: { subject: ClassSubject }) {
-  const { data: teacher } = useGetTeacher(subject.teacher.id)
+  const { data: teacher } = useGetTeacher(subject.teacher?.id)
 
   return (
     <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
@@ -130,7 +140,8 @@ function SubjectCard({ subject }: { subject: ClassSubject }) {
         </p>
       </div>
 
-      <DropdownMenu>
+      <div />
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreVerticalIcon className="size-5" />
@@ -142,7 +153,7 @@ function SubjectCard({ subject }: { subject: ClassSubject }) {
             {teacher ? "Unassign Teacher" : "Assign Teacher"}
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
     </div>
   )
 }

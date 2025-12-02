@@ -82,7 +82,11 @@ export const ClassesAPI = {
     >(`/classes/${id}/teachers`, { params: { session_id } }, true),
 
   getSubjectsForClass: (id: string) =>
-    apiFetch<ClassSubjectsResponse>(`/classes/${id}/subjects`, { method: "GET" }, true),
+    apiFetch<ResponsePack<ClassSubjectsResponse>>(
+      `/classes/${id}/subjects`,
+      { method: "GET" },
+      true
+    ),
 
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }

@@ -11,7 +11,6 @@ import {
   useAssignSubjectToClasses,
   useUnAssignSubjectToClasses,
 } from "../_hooks/use-subjects"
-import { ClassItem } from "@/lib/classes"
 
 interface AssignSubjectFormProps {
   subject: Subject
