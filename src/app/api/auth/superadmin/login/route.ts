@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
-import { proxyAuthRequest } from "../_proxy"
+import { proxyAuthRequest } from "../../_proxy"
 
 export async function POST(req: Request) {
   // Call your backend
-  const backendResponse = await proxyAuthRequest(req, "/superadmin")
+  const backendResponse = await proxyAuthRequest(req, "/superadmin/login")
 
   const data = await backendResponse.json()
 
