@@ -1,6 +1,11 @@
 "use client"
 
-import { ArrowLeftIcon } from "lucide-react"
+import {
+  ArrowLeftIcon,
+  CircleSlash2Icon,
+  MoreVerticalIcon,
+  UserPlusIcon,
+} from "lucide-react"
 import { useParams } from "next/navigation"
 import { SubjectsLoadingSkeleton } from "./subjects-loading-skeleton"
 import { ItemsError } from "../loading-error"
@@ -11,15 +16,29 @@ import Link from "next/link"
 import {
   useGetClass,
   useGetSubjectsForClass,
+  useUnassignTeachersToClassSubject,
 } from "../../class-management/_hooks/use-classes"
 import { ClassSubject } from "@/lib/classes"
 import { useGetTeacher } from "../../teachers/_hooks/use-teachers"
 import AssignSubjectsDialog from "./assign-subject-to-class-dialog"
 import { useState } from "react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import AssignTeacherDialog from "./assign-teacher-class-subject-dialog"
+import { toast } from "sonner"
+import { UnassignConfirmationDialog } from "./unassign-confirmation-dialog"
 
 export default function ViewClassSubjects() {
   const { classID } = useParams<{ classID: string }>()
   const [showDialog, setShowDialog] = useState(false)
+  const [assignTeacherSubject, setAssignTeacher] = useState<ClassSubject | null>(null)
+  const [openUnassignDialog, setOpenUnassignDialog] = useState<ClassSubject | boolean>(
+    false
+  )
 
   const {
     data: classData,
@@ -37,6 +56,8 @@ export default function ViewClassSubjects() {
     refetch: refetchSubjects,
   } = useGetSubjectsForClass(classID)
   const subjects = subjectsInfo && subjectsInfo.payload
+
+  const unAssignMutation = useUnassignTeachersToClassSubject(classID)
 
   const isLoading = isLoadingClass || isLoadingSubjects
   const isError = isErrorClass || isErrorSubjects
@@ -60,7 +81,11 @@ export default function ViewClassSubjects() {
             heading="Class Subjects"
             description="View the subjects assigned to this class"
           />
-          <Button className="h-10 w-full md:w-auto" onClick={() => setShowDialog(true)}>
+          <Button
+            className="h-10 w-full md:w-auto"
+            disabled={!classData}
+            onClick={() => setShowDialog(true)}
+          >
             Assign Subjects
           </Button>
         </div>
@@ -107,9 +132,15 @@ export default function ViewClassSubjects() {
                 buttonOnClick={() => setShowDialog(true)}
               />
             ) : (
-              <div className="mt-5 space-y-3">
+              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
                 {subjects.map((subject) => (
-                  <SubjectCard key={subject.id} subject={subject} />
+                  <SubjectCard
+                    key={subject.id}
+                    subject={subject}
+                    onToggleAssignTeacher={(bool: boolean) =>
+                      handleToggleAssignTeacher(bool, subject)
+                    }
+                  />
                 ))}
               </div>
             )}
@@ -123,11 +154,62 @@ export default function ViewClassSubjects() {
         classId={classID}
         className={classData?.name || ""}
       />
+
+      <UnassignConfirmationDialog
+        open={!!openUnassignDialog}
+        onOpenChange={setOpenUnassignDialog}
+        subjectName={
+          openUnassignDialog && typeof openUnassignDialog !== "boolean"
+            ? openUnassignDialog.subject.name
+            : ""
+        }
+        onConfirm={async () => {
+          if (openUnassignDialog && typeof openUnassignDialog !== "boolean") {
+            await handleUnassignTeacher(openUnassignDialog)
+          }
+        }}
+      />
+
+      <AssignTeacherDialog
+        open={!!assignTeacherSubject}
+        setOpen={() => setAssignTeacher(null)}
+        classSubjectId={assignTeacherSubject?.subject?.id || ""}
+        subjectName={assignTeacherSubject?.subject.name || ""}
+        classId={classID}
+        className={classData?.name || ""}
+      />
     </div>
   )
+
+  async function handleToggleAssignTeacher(bool: boolean, subject: ClassSubject) {
+    if (bool) {
+      if (!subject?.subject?.id) {
+        toast.error("Cannot unassign teacher from an invalid subject.")
+        return
+      }
+      setOpenUnassignDialog(subject)
+    } else {
+      setAssignTeacher(subject)
+    }
+  }
+
+  async function handleUnassignTeacher(subject: ClassSubject) {
+    try {
+      await unAssignMutation.mutateAsync(subject.subject.id)
+    } catch (error) {
+      // The hook's onError will show a toast, but we can log here for debugging.
+      console.error("Failed to unassign teacher", error)
+    }
+  }
 }
 
-function SubjectCard({ subject }: { subject: ClassSubject }) {
+function SubjectCard({
+  subject,
+  onToggleAssignTeacher,
+}: {
+  subject: ClassSubject
+  onToggleAssignTeacher: (bool: boolean) => void
+}) {
   const { data: teacher } = useGetTeacher(subject.teacher?.id)
 
   return (
@@ -140,20 +222,28 @@ function SubjectCard({ subject }: { subject: ClassSubject }) {
         </p>
       </div>
 
-      <div />
-      {/* <DropdownMenu>
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreVerticalIcon className="size-5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem>
-            <UserPlusIcon className="mr-2 h-4 w-4" />
-            {teacher ? "Unassign Teacher" : "Assign Teacher"}
+          <DropdownMenuItem onClick={() => onToggleAssignTeacher(!!teacher)}>
+            {teacher ? (
+              <>
+                <CircleSlash2Icon className="mr-2 h-4 w-4" />
+                Unassign Teacher
+              </>
+            ) : (
+              <>
+                <UserPlusIcon className="mr-2 h-4 w-4" />
+                Assign Teacher
+              </>
+            )}
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu> */}
+      </DropdownMenu>
     </div>
   )
 }

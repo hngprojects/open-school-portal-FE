@@ -1,5 +1,8 @@
 // ----- Cache versions -----
-const BUILD_HASH = "${BUILD_HASH}"
+// Auto-generated version based on service worker registration time
+const BUILD_HASH =
+  self.__BUILD_MANIFEST?.buildId ??
+  `v${new Date().toISOString().split("T")[0].replace(/-/g, "")}`
 
 const STATIC_CACHE = `school-base-static-${BUILD_HASH}`
 const API_CACHE = `school-base-api-${BUILD_HASH}`
