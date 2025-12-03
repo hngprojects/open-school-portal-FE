@@ -137,27 +137,27 @@ export function GradeFormDialog({
     }
   }
 
-  // const handleSubmit = () => {
-  //   if (!validateScores()) {
-  //     return
-  //   }
+  const handleSubmit = () => {
+    if (!validateScores()) {
+      return
+    }
 
-  //   const caScore = formData.ca_score ? parseInt(formData.ca_score) : null
-  //   const examScore = formData.exam_score ? parseInt(formData.exam_score) : null
-  //   const totalScore = caScore !== null && examScore !== null ? caScore + examScore : null
+    const caScore = formData.ca_score ? parseInt(formData.ca_score) : null
+    const examScore = formData.exam_score ? parseInt(formData.exam_score) : null
+    const totalScore = caScore !== null && examScore !== null ? caScore + examScore : null
 
-  //   const gradeData: GradeEntry = {
-  //     student_id: student.id,
-  //     ca_score: caScore,
-  //     exam_score: examScore,
-  //     total_score: totalScore,
-  //     grade: totalScore !== null ? calculateGrade(totalScore) : null,
-  //     comment: formData.comment || null,
-  //   }
+    const gradeData: GradeEntry = {
+      student_id: student.id,
+      ca_score: caScore,
+      exam_score: examScore,
+      total_score: totalScore,
+      grade: totalScore !== null ? calculateGrade(totalScore) : null,
+      comment: formData.comment || null,
+    }
 
-  //   onSave(gradeData)
-  //   onOpenChange(false)
-  // }
+    onSave(gradeData)
+    onOpenChange(false)
+  }
 
   const handleInputChange = (field: "ca_score" | "exam_score", value: string) => {
     // Clear validation error when user starts typing
