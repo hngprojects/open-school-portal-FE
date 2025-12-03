@@ -30,11 +30,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import AssignTeacherDialog from "./assign-teacher-class-subject-dialog"
 import { toast } from "sonner"
+import { UnassignConfirmationDialog } from "./unassign-confirmation-dialog"
 
 export default function ViewClassSubjects() {
   const { classID } = useParams<{ classID: string }>()
   const [showDialog, setShowDialog] = useState(false)
   const [assignTeacherSubject, setAssignTeacher] = useState<ClassSubject | null>(null)
+  const [openUnassignDialog, setOpenUnassignDialog] = useState<ClassSubject | boolean>(
+    false
+  )
 
   const {
     data: classData,
@@ -77,7 +81,11 @@ export default function ViewClassSubjects() {
             heading="Class Subjects"
             description="View the subjects assigned to this class"
           />
-          <Button className="h-10 w-full md:w-auto" onClick={() => setShowDialog(true)}>
+          <Button
+            className="h-10 w-full md:w-auto"
+            disabled={!classData}
+            onClick={() => setShowDialog(true)}
+          >
             Assign Subjects
           </Button>
         </div>
@@ -147,6 +155,21 @@ export default function ViewClassSubjects() {
         className={classData?.name || ""}
       />
 
+      <UnassignConfirmationDialog
+        open={!!openUnassignDialog}
+        onOpenChange={setOpenUnassignDialog}
+        subjectName={
+          openUnassignDialog && typeof openUnassignDialog !== "boolean"
+            ? openUnassignDialog.subject.name
+            : ""
+        }
+        onConfirm={async () => {
+          if (openUnassignDialog && typeof openUnassignDialog !== "boolean") {
+            await handleUnassignTeacher(openUnassignDialog)
+          }
+        }}
+      />
+
       <AssignTeacherDialog
         open={!!assignTeacherSubject}
         setOpen={() => setAssignTeacher(null)}
@@ -160,14 +183,22 @@ export default function ViewClassSubjects() {
 
   async function handleToggleAssignTeacher(bool: boolean, subject: ClassSubject) {
     if (bool) {
-      try {
-        await unAssignMutation.mutateAsync(subject?.subject?.id)
-        toast.success("Teacher unassigned successfully")
-      } catch {
-        console.error("Failed to unassign teacher")
+      if (!subject?.subject?.id) {
+        toast.error("Cannot unassign teacher from an invalid subject.")
+        return
       }
+      setOpenUnassignDialog(subject)
     } else {
       setAssignTeacher(subject)
+    }
+  }
+
+  async function handleUnassignTeacher(subject: ClassSubject) {
+    try {
+      await unAssignMutation.mutateAsync(subject.subject.id)
+    } catch (error) {
+      // The hook's onError will show a toast, but we can log here for debugging.
+      console.error("Failed to unassign teacher", error)
     }
   }
 }

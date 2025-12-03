@@ -83,14 +83,6 @@ export const useDeleteClass = () => {
   })
 }
 
-// TEACHERS FOR CLASS
-export const useGetClassTeachers = (id: string, session_id?: string) =>
-  useQuery({
-    queryKey: CLASS_KEYS.teachers(id),
-    queryFn: () => ClassesAPI.assignedTeachers(id, session_id),
-    enabled: !!id,
-  })
-
 export const SUBJECTS_FOR_CLASS_KEY = "class_subjects"
 
 export const useGetSubjectsForClass = (classID: string) =>
@@ -112,7 +104,7 @@ export const useAssignTeachersToClassSubject = (classID: string) => {
       ClassesAPI.assignTeachersToClassSubject(classID, data.subject_id, data.teacher_id),
     onSuccess: () => {
       toast.success("Teachers assigned successfully")
-      qc.invalidateQueries({ queryKey: CLASS_KEYS.teachers(classID) })
+      qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -130,7 +122,7 @@ export const useUnassignTeachersToClassSubject = (classID: string) => {
       ClassesAPI.unassignTeachersFromClassSubject(classID, subject_id),
     onSuccess: () => {
       toast.success("Teacher unassigned successfully")
-      qc.invalidateQueries({ queryKey: CLASS_KEYS.teachers(classID) })
+      qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
