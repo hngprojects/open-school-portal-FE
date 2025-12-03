@@ -26,10 +26,10 @@ export default function AssignSubjectSuccess({
             <CheckCircle className="size-10 text-green-600" />
           </div>
           <DialogTitle className="mb-2 text-xl font-semibold text-gray-900">
-            Subject Assigned
+            Subject Assignments Updated
           </DialogTitle>
           <DialogDescription className="text-text-secondary mb-6 text-sm">
-            A subject has been successfully assigned to this classes.
+            The subject assignments have been successfully updated.
           </DialogDescription>
           <Button onClick={handleGoHome} className="w-full">
             Go Home
