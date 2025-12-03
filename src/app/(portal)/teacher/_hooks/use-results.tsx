@@ -42,7 +42,7 @@ export function useGetStudents(classId?: string, subjectId?: string) {
     queryKey: [...RESULTS_KEY, "students", classId, subjectId],
     queryFn: () => {
       if (!classId) return Promise.resolve([])
-      return ResultsAPI.getStudentsForGradeEntry(classId, subjectId)
+      return ResultsAPI.getStudentsForGradeEntry(classId)
     },
     enabled: !!classId,
     staleTime: 1000 * 60 * 5,
