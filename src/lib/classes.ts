@@ -88,20 +88,6 @@ export const ClassesAPI = {
       true
     ),
 
-  assignTeachersToClassSubject: (classId: string, subjectId: string, teacherId: string) =>
-    apiFetch<ResponsePack<null>>(
-      `/classes/${classId}/subjects/${subjectId}/assign-teacher`,
-      { method: "POST", data: { teacherId: teacherId } },
-      true
-    ),
-
-  unassignTeachersFromClassSubject: (classId: string, subjectId: string) =>
-    apiFetch<ResponsePack<null>>(
-      `/classes/${classId}/subjects/${subjectId}/unassign-teacher`,
-      { method: "POST" },
-      true
-    ),
-
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }
 

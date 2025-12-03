@@ -265,7 +265,7 @@ export default function AssignSubjectsDialog({
               <CheckCircle className="size-10 text-green-600" />
             </div>
             <DialogTitle className="mb-2 text-xl font-semibold text-gray-900">
-              Class Subjects Updated Successfully
+              Subjects Assigned Successfully
             </DialogTitle>
             <DialogDescription className="text-text-secondary mb-6 text-sm">
               {selectedSubjects.size}{" "}

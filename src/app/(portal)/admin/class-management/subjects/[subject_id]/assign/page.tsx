@@ -17,7 +17,7 @@ export default function AssignSubjectPage() {
       <header className="mb-6">
         <h2 className="text-xl font-semibold text-gray-900">Assign Subject</h2>
         <p className="text-text-secondary mt-1 text-sm">
-          Assign subject to respective classes
+          Assign subjects to respective classes
         </p>
       </header>
 
