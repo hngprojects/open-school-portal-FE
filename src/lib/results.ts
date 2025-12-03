@@ -74,9 +74,7 @@ interface ActiveTermResponse {
   deletedAt: string | null
 }
 export const ResultsAPI = {
-  // Get classes for teacher - Use the correct endpoint from your backend
-  // Replace the entire getClasses function with:
-  // Replace the getClasses function with type-safe version:
+  // Get classes for teacher
   getClasses: (): Promise<Class[]> => {
     return apiFetch<ResponsePack<ClassWithSession[]>>(
       "/classes/teacher/assigned",
@@ -100,8 +98,7 @@ export const ResultsAPI = {
       })
   },
 
-  // Get subjects for a class - Use the correct endpoint
-  // Get subjects for a class - fully typed
+  // Get subjects for a class
   getSubjects: (classId?: string): Promise<Subject[]> => {
     if (!classId) return Promise.resolve([])
 
@@ -160,9 +157,6 @@ export const ResultsAPI = {
       })
   },
 
-  // Get all terms - Use the correct endpoint
-
-  // Get students for grade entry
   // Get students for grade entry
   getStudentsForGradeEntry: (classId: string): Promise<Student[]> => {
     if (!classId) {
@@ -191,20 +185,19 @@ export const ResultsAPI = {
 
         // Transform the backend response to match our Student interface
         const students: Student[] = studentData.map((item) => {
-          // Split the name into first and last name
           const nameParts = item.name.split(" ")
           const firstName = nameParts[0] || ""
           const lastName = nameParts.slice(1).join(" ") || ""
 
           return {
-            id: item.student_id, // Use student_id as id
+            id: item.student_id,
             first_name: firstName,
             last_name: lastName,
             registration_number: item.registration_number,
           }
         })
 
-        console.log("Transformed students:", students) // Debug log
+        console.log("Transformed students:", students)
         return students
       })
       .catch((error) => {

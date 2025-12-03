@@ -18,7 +18,6 @@ interface Class {
 }
 
 export default function TeacherResultsPage() {
-  // Remove typeof window checks from useState initializers
   const [selectedClass, setSelectedClass] = useState<string>("")
   const [selectedSubject, setSelectedSubject] = useState<string>("")
   const [selectedTerm, setSelectedTerm] = useState<string>("")
@@ -72,9 +71,9 @@ export default function TeacherResultsPage() {
     }
   }
 
-  // Use useMemo for derived state
+  // Use useMemo for derived state - Show students if class is selected
   const showAllStudents = useMemo(() => {
-    return !!selectedClass // Show students if class is selected
+    return !!selectedClass
   }, [selectedClass])
 
   // Find existing submission for the selected filters
