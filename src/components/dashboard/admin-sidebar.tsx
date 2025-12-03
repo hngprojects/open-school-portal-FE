@@ -12,7 +12,6 @@ import {
   LogOut,
   BookIcon,
   Menu,
-  Calendar,
 } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"

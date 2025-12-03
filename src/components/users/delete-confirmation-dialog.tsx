@@ -7,7 +7,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -48,8 +47,7 @@ export function DeleteConfirmationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogOverlay className="z-60" />
-      <DialogContent className="z-60 sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <AlertTriangle className="h-6 w-6 text-red-600" />
