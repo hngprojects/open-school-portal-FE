@@ -82,7 +82,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
       </div>
 
       {/* Classes List */}
-      <section className="mt-5 space-y-3">
+      <section className="mt-5 grid grid-cols-1 gap-5 space-y-3">
         {filteredClasses.length > 0 ? (
           filteredClasses.map((classItem) => {
             const isExpanded = expandedClasses.has(classItem.name)
@@ -144,9 +144,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium text-gray-900">
-                              {" "}
-                              {classItem.name}
-                              {arm.arm}
+                              {classItem.name} {arm.arm}
                             </p>
                           </div>
 
