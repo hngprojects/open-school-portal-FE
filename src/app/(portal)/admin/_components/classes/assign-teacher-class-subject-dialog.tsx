@@ -55,10 +55,10 @@ export default function AssignTeacherDialog({
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedQuery({
-        ...debouncedQuery,
+      setDebouncedQuery((prev) => ({
+        ...prev,
         search: searchQuery,
-      })
+      }))
     }, 500)
 
     return () => clearTimeout(timer)
