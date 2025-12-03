@@ -24,7 +24,7 @@ const initialValues: ResetPasswordFormValues = {
   confirmPassword: "",
 }
 
-const PasswordReset = () => {
+const PasswordCreate = () => {
   const searchParams = useSearchParams()
 
   const token = useMemo(() => {
