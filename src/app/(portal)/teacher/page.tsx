@@ -40,9 +40,6 @@ interface ApiAssignment {
 interface ApiGradeSubmission {
   id: string
 }
-interface ApiFee {
-  id: string
-}
 
 // ──────────────────────────────────────────────────────────────
 // Skeleton Components

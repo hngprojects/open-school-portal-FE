@@ -10,6 +10,7 @@ export interface Class {
   id: string
   name: string
   level?: string
+  academic_session_id?: string
 }
 
 export interface Subject {
@@ -23,6 +24,9 @@ export interface Term {
   name: string
   academic_year?: string
   is_active?: boolean
+  start_date?: string
+  end_date?: string
+  status?: string
 }
 
 export interface Grade {
@@ -47,6 +51,7 @@ export interface GradeSubmission {
   class_id: string
   subject_id: string
   term_id: string
+  academic_session_id: string
   grades: Grade[]
   status: "draft" | "submitted" | "approved" | "rejected"
   submitted_at?: string
