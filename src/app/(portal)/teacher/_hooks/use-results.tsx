@@ -9,6 +9,11 @@ import type {
   GetGradesParams,
 } from "@/types/result"
 import { toast } from "sonner"
+import {
+  getResultsErrorMessage,
+  // validateGradeScores,
+  // validateAllGradeScores,
+} from "@/lib/results/error-handler"
 
 const RESULTS_KEY = ["results"]
 
@@ -75,7 +80,8 @@ export function useSaveDraft() {
       toast.success("Draft saved successfully")
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to save draft")
+      const errorMessage = getResultsErrorMessage(error)
+      toast.error(errorMessage)
     },
   })
 }
