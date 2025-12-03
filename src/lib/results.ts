@@ -73,6 +73,7 @@ interface ActiveTermResponse {
   isCurrent: boolean
   deletedAt: string | null
 }
+
 export const ResultsAPI = {
   // Get classes for teacher
   getClasses: (): Promise<Class[]> => {
@@ -99,18 +100,44 @@ export const ResultsAPI = {
   },
 
   // Get subjects for a class
-  getSubjects: (classId?: string): Promise<Subject[]> => {
-    if (!classId) return Promise.resolve([])
+  // getSubjects: (classId?: string, teacherId?: string): Promise<Subject[]> => {
+  //   const queryParams = new URLSearchParams()
 
-    return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(
-      `/classes/${classId}/subjects`,
-      {},
-      true
-    )
+  //   if (classId) queryParams.append("class_id", classId)
+  //   if (teacherId) queryParams.append("teacher_id", teacherId)
+
+  //   // Only add "?" if there are query params
+  //   const queryString = queryParams.toString()
+  //   const url = queryString ? `/class-subjects?${queryString}` : `/class-subjects`
+
+  //   return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(url, {}, true)
+  //     .then((response) => {
+  //       const backendData = extractData(response)
+  //       const items = backendData.payload ?? []
+
+  //       return items.map(
+  //         (item) =>
+  //           ({
+  //             id: item.subject.id,
+  //             name: item.subject.name,
+  //           }) satisfies Subject
+  //       )
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to fetch subjects:", err)
+  //       return []
+  //     })
+  // },
+
+  getSubjects: (): Promise<Subject[]> => {
+    const queryParams = new URLSearchParams()
+
+    const queryString = queryParams.toString()
+    const url = queryString ? `/class-subjects?${queryString}` : `/class-subjects`
+
+    return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(url, {}, true)
       .then((response) => {
         const backendData = extractData(response)
-
-        // Safely extract the payload array
         const items = backendData.payload ?? []
 
         return items.map(
@@ -118,9 +145,8 @@ export const ResultsAPI = {
             ({
               id: item.subject.id,
               name: item.subject.name,
-              // Add other fields if your Subject type has more
             }) satisfies Subject
-        ) // satisfies ensures exact match
+        )
       })
       .catch((err) => {
         console.error("Failed to fetch subjects:", err)
