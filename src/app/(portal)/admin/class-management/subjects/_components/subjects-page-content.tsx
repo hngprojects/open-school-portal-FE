@@ -29,7 +29,7 @@ export default function SubjectsPageContent() {
   const [showSuccessDialog, setShowSuccessDialog] = useState<boolean | string>(false)
   const { data: subjects, pagination } = subjectsData || {}
   const router = useRouter()
-  console.log("subjects", subjects)
+
   return (
     <div className="p-5">
       <header className="flex flex-col justify-between gap-4 lg:flex-row">

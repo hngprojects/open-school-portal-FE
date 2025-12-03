@@ -9,12 +9,13 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { useGetSubject } from "../_hooks/use-subjects"
+import { X } from "lucide-react"
 
 export const SubjectViewDrawer = ({
   open,
   onOpenChange,
   subjectID,
-  onAssign,
+  //   onAssign,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -22,15 +23,24 @@ export const SubjectViewDrawer = ({
   onAssign: (subjectID: string) => void
 }) => {
   const { data: subject, isLoading } = useGetSubject(subjectID ?? "")
-
+  console.log("subjects", subject)
   return (
     <Drawer direction="right" open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="ml-auto h-full space-y-6 overflow-x-hidden overflow-y-auto p-6">
-        <DrawerHeader>
-          <DrawerTitle className="text-xl font-semibold">
-            Subject: {subject?.name ?? "Loading..."}
-          </DrawerTitle>
-          <DrawerDescription>View subject details</DrawerDescription>
+        <DrawerHeader className="flex flex-row items-center justify-between">
+          <div>
+            <DrawerTitle className="text-xl font-semibold">
+              Subject: {subject?.name ?? "Loading..."}
+            </DrawerTitle>
+            <DrawerDescription>View subject details</DrawerDescription>
+          </div>
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="w-fit rounded-full"
+          >
+            <X className="text-text-secondary size-5" />
+          </Button>
         </DrawerHeader>
 
         {isLoading && <p className="text-sm text-gray-500">Loading details...</p>}
@@ -49,8 +59,8 @@ export const SubjectViewDrawer = ({
                       className="space-y-1 rounded-lg border bg-gray-50 p-4"
                     >
                       <p>
-                        <span className="font-medium">Class:</span> {cls.name}{" "}
-                        {cls.arm && `(${cls.arm})`}
+                        <span className="font-medium">Class:</span> {cls.name}
+                        {cls.arm && cls.arm !== null && `(${cls.arm})`}
                       </p>
                       {/* <p>
                         <span className="font-medium">Stream:</span> {cls.stream}
@@ -72,9 +82,9 @@ export const SubjectViewDrawer = ({
             </section>
 
             {/* Assign Button */}
-            <Button onClick={() => onAssign(subject.id)} className="w-full">
+            {/* <Button onClick={() => onAssign(subject.id)} className="w-full">
               Assign to Classes
-            </Button>
+            </Button> */}
           </div>
         )}
       </DrawerContent>
