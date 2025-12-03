@@ -37,7 +37,7 @@ export default function AssignSubjectPageContent() {
       cls.classes.map((c) => {
         return {
           id: c.id,
-          name: `${cls.name} ${c.arm ?? ""}`,
+          name: `${cls.name}${c.arm}`,
         }
       })
     )

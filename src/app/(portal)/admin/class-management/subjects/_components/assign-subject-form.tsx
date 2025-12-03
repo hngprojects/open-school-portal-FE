@@ -69,7 +69,7 @@ export default function AssignSubjectForm({
       </div>
 
       {/* Classes List */}
-      <section className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <section className="mb-6 space-y-3">
         {paginatedClasses.length > 0 ? (
           paginatedClasses.map((classItem) => {
             const isSelected = selectedClasses.has(classItem.id)

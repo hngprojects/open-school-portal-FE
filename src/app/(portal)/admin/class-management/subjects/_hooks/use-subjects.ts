@@ -111,7 +111,7 @@ export const SubjectsAPI = {
     apiFetch<ResponsePack<null>>(
       `/subjects/${subjectID}/unassign-classes`,
       {
-        method: "DELETE",
+        method: "POST",
         data: { classIds: classIDs },
       },
       true

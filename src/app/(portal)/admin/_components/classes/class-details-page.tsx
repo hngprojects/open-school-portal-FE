@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  ArrowLeftIcon,
-  CircleSlash2Icon,
-  MoreVerticalIcon,
-  UserPlusIcon,
-} from "lucide-react"
+import { ArrowLeftIcon } from "lucide-react"
 import { useParams } from "next/navigation"
 import { SubjectsLoadingSkeleton } from "./subjects-loading-skeleton"
 import { ItemsError } from "../loading-error"
@@ -16,25 +11,15 @@ import Link from "next/link"
 import {
   useGetClass,
   useGetSubjectsForClass,
-  useUnassignTeachersToClassSubject,
 } from "../../class-management/_hooks/use-classes"
 import { ClassSubject } from "@/lib/classes"
 import { useGetTeacher } from "../../teachers/_hooks/use-teachers"
 import AssignSubjectsDialog from "./assign-subject-to-class-dialog"
 import { useState } from "react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import AssignTeacherDialog from "./assign-teacher-class-subject-dialog"
-import { toast } from "sonner"
 
 export default function ViewClassSubjects() {
   const { classID } = useParams<{ classID: string }>()
   const [showDialog, setShowDialog] = useState(false)
-  const [assignTeacherSubject, setAssignTeacher] = useState<ClassSubject | null>(null)
 
   const {
     data: classData,
@@ -52,8 +37,6 @@ export default function ViewClassSubjects() {
     refetch: refetchSubjects,
   } = useGetSubjectsForClass(classID)
   const subjects = subjectsInfo && subjectsInfo.payload
-
-  const unAssignMutation = useUnassignTeachersToClassSubject(classID)
 
   const isLoading = isLoadingClass || isLoadingSubjects
   const isError = isErrorClass || isErrorSubjects
@@ -124,15 +107,9 @@ export default function ViewClassSubjects() {
                 buttonOnClick={() => setShowDialog(true)}
               />
             ) : (
-              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="mt-5 space-y-3">
                 {subjects.map((subject) => (
-                  <SubjectCard
-                    key={subject.id}
-                    subject={subject}
-                    onToggleAssignTeacher={(bool: boolean) =>
-                      handleToggleAssignTeacher(bool, subject)
-                    }
-                  />
+                  <SubjectCard key={subject.id} subject={subject} />
                 ))}
               </div>
             )}
@@ -146,39 +123,11 @@ export default function ViewClassSubjects() {
         classId={classID}
         className={classData?.name || ""}
       />
-
-      <AssignTeacherDialog
-        open={!!assignTeacherSubject}
-        setOpen={() => setAssignTeacher(null)}
-        classSubjectId={assignTeacherSubject?.subject?.id || ""}
-        subjectName={assignTeacherSubject?.subject.name || ""}
-        classId={classID}
-        className={classData?.name || ""}
-      />
     </div>
   )
-
-  async function handleToggleAssignTeacher(bool: boolean, subject: ClassSubject) {
-    if (bool) {
-      try {
-        await unAssignMutation.mutateAsync(subject?.subject?.id)
-        toast.success("Teacher unassigned successfully")
-      } catch {
-        console.error("Failed to unassign teacher")
-      }
-    } else {
-      setAssignTeacher(subject)
-    }
-  }
 }
 
-function SubjectCard({
-  subject,
-  onToggleAssignTeacher,
-}: {
-  subject: ClassSubject
-  onToggleAssignTeacher: (bool: boolean) => void
-}) {
+function SubjectCard({ subject }: { subject: ClassSubject }) {
   const { data: teacher } = useGetTeacher(subject.teacher?.id)
 
   return (
@@ -191,28 +140,20 @@ function SubjectCard({
         </p>
       </div>
 
-      <DropdownMenu>
+      <div />
+      {/* <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreVerticalIcon className="size-5" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={() => onToggleAssignTeacher(!!teacher)}>
-            {teacher ? (
-              <>
-                <CircleSlash2Icon className="mr-2 h-4 w-4" />
-                Unassign Teacher
-              </>
-            ) : (
-              <>
-                <UserPlusIcon className="mr-2 h-4 w-4" />
-                Assign Teacher
-              </>
-            )}
+          <DropdownMenuItem>
+            <UserPlusIcon className="mr-2 h-4 w-4" />
+            {teacher ? "Unassign Teacher" : "Assign Teacher"}
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
+      </DropdownMenu> */}
     </div>
   )
 }
