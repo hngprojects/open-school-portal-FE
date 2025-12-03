@@ -266,7 +266,7 @@ const LoginForm = () => {
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <input
+                {/* <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
@@ -280,7 +280,7 @@ const LoginForm = () => {
                   }`}
                 >
                   Remember me
-                </label>
+                </label> */}
               </div>
 
               <div className="text-sm">

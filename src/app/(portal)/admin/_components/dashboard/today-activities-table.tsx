@@ -21,7 +21,7 @@ const TodayActivities = ({
   search?: string
 }) => {
   const { data, isLoading } = useTodayActivities()
-  console.log("activity", data)
+  // console.log("activity", data)
   if (isLoading) {
     return <p className="hidden py-10 text-center lg:block">Loading activities...</p>
   }

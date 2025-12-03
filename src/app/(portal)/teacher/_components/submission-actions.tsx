@@ -1,8 +1,7 @@
-// Update SubmissionActions to convert GradeEntry[] to Grade[]
 "use client"
 
 import { useState } from "react"
-import { GradeEntry, GradeSubmission, Grade } from "@/types/result" // Add Grade import
+import { GradeEntry, GradeSubmission, Grade } from "@/types/result"
 import { Button } from "@/components/ui/button"
 import {
   useSaveDraft,
@@ -18,6 +17,7 @@ interface SubmissionActionsProps {
   termId: string
   grades: GradeEntry[]
   existingSubmission?: GradeSubmission
+  academicSessionId: string
 }
 
 export function SubmissionActions({
@@ -26,6 +26,7 @@ export function SubmissionActions({
   termId,
   grades,
   existingSubmission,
+  academicSessionId,
 }: SubmissionActionsProps) {
   const [successModalOpen, setSuccessModalOpen] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
@@ -34,28 +35,81 @@ export function SubmissionActions({
   const submitMutation = useSubmitForApproval()
   const updateSubmissionMutation = useUpdateSubmission()
 
-  // Convert GradeEntry[] to Grade[] for the API
-  const convertToGrades = (gradeEntries: GradeEntry[]): Partial<Grade>[] => {
-    return gradeEntries.map((entry) => ({
-      student_id: entry.student_id,
-      ca_score: entry.ca_score,
-      exam_score: entry.exam_score,
-      total_score: entry.total_score,
-      grade: entry.grade,
-      comment: entry.comment,
-      subject_id: subjectId,
-      class_id: classId,
-      term_id: termId,
-    }))
-  }
-
   const handleSaveDraft = async () => {
     try {
+      if (!academicSessionId) {
+        toast.error("Academic session ID is required")
+        return
+      }
+
+      // Debug: Check all required fields
+      console.log("DEBUG - Required fields:", {
+        classId,
+        subjectId,
+        termId,
+        academicSessionId,
+        gradesCount: grades.length,
+        grades: grades,
+      })
+
+      // Check if required fields are valid UUIDs
+      const isValidUUID = (id: string) => {
+        const uuidRegex =
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        return uuidRegex.test(id)
+      }
+
+      if (!classId || !isValidUUID(classId)) {
+        toast.error("Invalid class ID")
+        console.error("Invalid classId:", classId)
+        return
+      }
+
+      if (!subjectId || !isValidUUID(subjectId)) {
+        toast.error("Invalid subject ID")
+        console.error("Invalid subjectId:", subjectId)
+        return
+      }
+
+      if (!termId || !isValidUUID(termId)) {
+        toast.error("Invalid term ID")
+        console.error("Invalid termId:", termId)
+        return
+      }
+
+      if (!academicSessionId || !isValidUUID(academicSessionId)) {
+        toast.error("Invalid academic session ID")
+        console.error("Invalid academicSessionId:", academicSessionId)
+        return
+      }
+
+      // Filter out grades that have at least one score
+      const validGrades = grades.filter((grade) => {
+        const hasScore = grade.ca_score !== null || grade.exam_score !== null
+        if (!hasScore) return false
+
+        if (!grade.student_id || !isValidUUID(grade.student_id)) {
+          console.error("Grade has invalid student_id:", grade)
+          return false
+        }
+        return true
+      })
+
+      console.log("Valid grades after filtering:", validGrades)
+
+      if (validGrades.length === 0) {
+        toast.error(
+          "No valid grades to save. Please enter CA or exam scores for at least one student."
+        )
+        return
+      }
+
       const submissionData = {
         class_id: classId,
         subject_id: subjectId,
         term_id: termId,
-        grades: grades.map((grade) => ({
+        academic_session_id: academicSessionId,
+        grades: validGrades.map((grade) => ({
           student_id: grade.student_id,
           ca_score: grade.ca_score,
           exam_score: grade.exam_score,
@@ -63,12 +117,24 @@ export function SubmissionActions({
         })),
       }
 
+      console.log("Submitting data to backend:", JSON.stringify(submissionData, null, 2))
+
       if (existingSubmission?.id) {
         // Update existing submission
         await updateSubmissionMutation.mutateAsync({
           id: existingSubmission.id,
           data: {
-            grades: convertToGrades(grades) as Grade[], // Type assertion
+            grades: validGrades.map((grade) => ({
+              student_id: grade.student_id,
+              ca_score: grade.ca_score,
+              exam_score: grade.exam_score,
+              total_score: grade.total_score,
+              grade: grade.grade,
+              comment: grade.comment,
+              subject_id: subjectId,
+              class_id: classId,
+              term_id: termId,
+            })) as Grade[],
           },
         })
       } else {
@@ -78,20 +144,50 @@ export function SubmissionActions({
 
       setSuccessMessage("Results saved as draft successfully!")
       setSuccessModalOpen(true)
-    } catch {
-      toast.error("Failed to save draft")
+    } catch (error: unknown) {
+      console.error("Save draft error:", error)
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to save draft")
+      } else {
+        toast.error("Failed to save draft")
+      }
     }
   }
 
   const handleSubmitForApproval = async () => {
     try {
+      if (!academicSessionId) {
+        toast.error("Academic session ID is required")
+        return
+      }
+
+      // Filter out grades that have at least one score
+      const validGrades = grades.filter((grade) => {
+        const hasScore = grade.ca_score !== null || grade.exam_score !== null
+        if (!hasScore) return false
+
+        if (!grade.student_id || grade.student_id.trim() === "") {
+          console.error("Grade has score but missing student_id:", grade)
+          return false
+        }
+        return true
+      })
+
+      if (validGrades.length === 0) {
+        toast.error(
+          "No valid grades to submit. Please enter CA or exam scores for at least one student."
+        )
+        return
+      }
+
       if (!existingSubmission?.id) {
         // First save as draft, then submit
         const submissionData = {
           class_id: classId,
           subject_id: subjectId,
           term_id: termId,
-          grades: grades.map((grade) => ({
+          academic_session_id: academicSessionId,
+          grades: validGrades.map((grade) => ({
             student_id: grade.student_id,
             ca_score: grade.ca_score,
             exam_score: grade.exam_score,
@@ -107,8 +203,13 @@ export function SubmissionActions({
 
       setSuccessMessage("Results submitted for approval successfully!")
       setSuccessModalOpen(true)
-    } catch {
-      toast.error("Failed to submit for approval")
+    } catch (error: unknown) {
+      console.error("Submit for approval error:", error)
+      if (error instanceof Error) {
+        toast.error(error.message || "Failed to submit for approval")
+      } else {
+        toast.error("Failed to submit for approval")
+      }
     }
   }
 

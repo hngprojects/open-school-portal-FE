@@ -110,14 +110,13 @@ export default function HomeFAQ() {
               </p>
 
               <div className="my-2 w-full space-y-4 lg:my-0 lg:mt-6">
-                <Link href="/contact-us">
-                  <Button
-                    className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
-                    style={{ fontSize: "clamp(14px, 2vw, 16px)" }}
-                  >
-                    Request Installation
-                  </Button>
-                </Link>
+                <Button
+                  asChild
+                  className="w-full rounded-lg bg-[#DA3743] px-8 py-2 font-semibold text-white transition-colors duration-200"
+                  style={{ fontSize: "clamp(14px, 2vw, 16px)" }}
+                >
+                  <Link href="/contact-us">Request Installation</Link>
+                </Button>
               </div>
             </div>
           </div>

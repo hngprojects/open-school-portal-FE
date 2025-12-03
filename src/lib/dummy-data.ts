@@ -153,6 +153,7 @@ export const DUMMY_SUBMISSIONS: GradeSubmission[] = [
     submitted_at: "2024-11-20T10:00:00Z",
     created_at: "2024-11-20T09:00:00Z",
     updated_at: "2024-11-20T10:00:00Z",
+    academic_session_id: "2024/2025",
   },
   {
     id: "2",
@@ -166,6 +167,7 @@ export const DUMMY_SUBMISSIONS: GradeSubmission[] = [
     reviewed_at: "2024-11-20T09:00:00Z",
     created_at: "2024-11-19T14:00:00Z",
     updated_at: "2024-11-20T09:00:00Z",
+    academic_session_id: "2024/2025",
   },
   {
     id: "3",
@@ -179,6 +181,7 @@ export const DUMMY_SUBMISSIONS: GradeSubmission[] = [
     reviewed_at: "2024-11-19T10:00:00Z",
     created_at: "2024-11-18T10:00:00Z",
     updated_at: "2024-11-19T10:00:00Z",
+    academic_session_id: "2024/2025",
   },
   {
     id: "4",
@@ -191,6 +194,7 @@ export const DUMMY_SUBMISSIONS: GradeSubmission[] = [
     submitted_at: "2024-11-21T08:00:00Z",
     created_at: "2024-11-20T16:00:00Z",
     updated_at: "2024-11-21T08:00:00Z",
+    academic_session_id: "2024/2025",
   },
 ]
 

@@ -23,9 +23,25 @@ export interface GetSubjectsParams {
   total?: number
 }
 
+type SubjectCore = {
+  id?: string
+  name: string
+}
+
 export type Subject = {
   id: string
   name: string
+  classes: {
+    id: string
+    name: string
+    arm: string
+    stream: string
+    academicSession: {
+      id: string
+      name: string
+    }
+    teacher_assignment_date: string
+  }[]
 }
 
 export interface SubjectsListResponse {
@@ -81,9 +97,19 @@ export const SubjectsAPI = {
 
   deleteOne: (id: string) => apiFetch(`/subjects/${id}`, { method: "DELETE" }, true),
 
-  assignToOClasses: (subjectID: string, classIDs: string[]) =>
+  assignToClasses: (subjectID: string, classIDs: string[]) =>
     apiFetch<ResponsePack<null>>(
       `/subjects/${subjectID}/assign-classes`,
+      {
+        method: "POST",
+        data: { classIds: classIDs },
+      },
+      true
+    ),
+
+  unAssignToClasses: (subjectID: string, classIDs: string[]) =>
+    apiFetch<ResponsePack<null>>(
+      `/subjects/${subjectID}/unassign-classes`,
       {
         method: "POST",
         data: { classIds: classIDs },
@@ -120,7 +146,7 @@ export const useUpdateSubject = (subjectID: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (subjectData: Subject) =>
+    mutationFn: (subjectData: SubjectCore) =>
       SubjectsAPI.update(subjectID, { name: subjectData.name }),
     onSuccess: () => {
       // Invalidate and refetch
@@ -156,10 +182,30 @@ export const useGetSubject = (subjectId: string) => {
 export const useAssignSubjectToClasses = (subjectID: string) => {
   const queryClient = useQueryClient()
 
-  return useMutation({
-    mutationFn: (classIDs: string[]) => SubjectsAPI.assignToOClasses(subjectID, classIDs),
+  return useMutation<ResponsePack<null> | void, Error, string[]>({
+    mutationFn: (classIDs) => {
+      if (classIDs.length === 0) {
+        return Promise.resolve()
+      }
+      return SubjectsAPI.assignToClasses(subjectID, classIDs)
+    },
     onSuccess: () => {
-      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["subject", subjectID] })
+    },
+  })
+}
+
+export const useUnAssignSubjectToClasses = (subjectID: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation<ResponsePack<null> | void, Error, string[]>({
+    mutationFn: (classIDs) => {
+      if (classIDs.length === 0) {
+        return Promise.resolve()
+      }
+      return SubjectsAPI.unAssignToClasses(subjectID, classIDs)
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subject", subjectID] })
     },
   })

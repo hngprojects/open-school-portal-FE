@@ -90,3 +90,15 @@ export const useGetClassTeachers = (id: string, session_id?: string) =>
     queryFn: () => ClassesAPI.assignedTeachers(id, session_id),
     enabled: !!id,
   })
+
+export const SUBJECTS_FOR_CLASS_KEY = "class_subjects"
+
+export const useGetSubjectsForClass = (classID: string) =>
+  useQuery({
+    queryKey: [SUBJECTS_FOR_CLASS_KEY, classID],
+    queryFn: async () => {
+      const res = await ClassesAPI.getSubjectsForClass(classID)
+      return res?.data
+    },
+    enabled: !!classID,
+  })

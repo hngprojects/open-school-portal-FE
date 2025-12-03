@@ -8,12 +8,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, MoreVertical, Pencil, BookOpen, Trash2, SearchIcon } from "lucide-react"
+import {
+  Search,
+  MoreVertical,
+  Pencil,
+  BookOpen,
+  Trash2,
+  SearchIcon,
+  Eye,
+} from "lucide-react"
 import { Pagination } from "@/components/ui/pagination"
 import { useDeleteSubject } from "../_hooks/use-subjects"
 import { toast } from "sonner"
 import { useState } from "react"
 import { DeleteConfirmationDialog } from "@/components/users/delete-confirmation-dialog"
+import { SubjectViewDrawer } from "./subject-view-drawer"
 
 interface Subject {
   id: string
@@ -41,6 +50,7 @@ const SubjectManagement = ({
   const [searchQuery, setSearchQuery] = useState("")
   const [subjectToDelete, setSubjectToDelete] = useState<Subject | null>(null)
   const isDeleteDialogOpen = Boolean(subjectToDelete)
+  const [viewSubjectID, setViewSubjectID] = useState<string | null>(null)
 
   const deleteSubject = useDeleteSubject().mutateAsync
   const filteredSubjects = subjects.filter((subject) =>
@@ -64,7 +74,7 @@ const SubjectManagement = ({
 
       <article className="py-5">
         {/* Subjects List */}
-        <section className="space-y-3">
+        <section className="grid grid-cols-1 gap-4 space-y-3 sm:grid-cols-2">
           {filteredSubjects.length > 0 ? (
             filteredSubjects.map((subject, id) => (
               <div
@@ -84,7 +94,12 @@ const SubjectManagement = ({
                       <MoreVertical className="size-5" />
                     </Button>
                   </DropdownMenuTrigger>
+
                   <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem onClick={() => setViewSubjectID(subject.id)}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      View
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleEdit(subject)}>
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit
@@ -139,6 +154,16 @@ const SubjectManagement = ({
           onConfirm={handleDelete}
         />
       </article>
+
+      <SubjectViewDrawer
+        open={!!viewSubjectID}
+        subjectID={viewSubjectID}
+        onOpenChange={() => setViewSubjectID(null)}
+        onAssign={(id) => {
+          onAssignSubject(id)
+          setViewSubjectID(null)
+        }}
+      />
     </div>
   )
 

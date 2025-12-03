@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Loader2, Edit } from "lucide-react"
+import { Loader2, Edit, Users } from "lucide-react"
 import { GradeFormDialog } from "./grade-form-dialog"
 
 interface StudentsTableProps {
@@ -23,6 +23,7 @@ interface StudentsTableProps {
   classId: string
   subjectId: string
   termId: string
+  academicSessionId: string
 }
 
 export function StudentsTable({
@@ -33,6 +34,7 @@ export function StudentsTable({
   classId,
   subjectId,
   termId,
+  academicSessionId,
 }: StudentsTableProps) {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -42,6 +44,22 @@ export function StudentsTable({
       <div className="flex justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
       </div>
+    )
+  }
+
+  // Handle empty students array
+  if (students.length === 0 && classId) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center p-8">
+          <Users className="mb-4 h-12 w-12 text-gray-300" />
+          <h3 className="mb-2 text-lg font-semibold text-gray-700">No Students Found</h3>
+          <p className="max-w-md text-center text-gray-500">
+            There are no students assigned to this class. Please contact the administrator
+            to add students to the class.
+          </p>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -78,7 +96,7 @@ export function StudentsTable({
                 {students.map((student, index) => {
                   const grade = grades[student.id]
                   return (
-                    <TableRow key={student.id}>
+                    <TableRow key={`student-${student.id}-${index}`}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="font-medium">
                         {student.first_name} {student.last_name}
@@ -116,6 +134,7 @@ export function StudentsTable({
       </Card>
 
       {selectedStudent && (
+        // In StudentsTable component, update the GradeFormDialog usage:
         <GradeFormDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
@@ -124,6 +143,7 @@ export function StudentsTable({
           classId={classId}
           subjectId={subjectId}
           termId={termId}
+          academicSessionId={academicSessionId}
           onSave={(data) => handleSaveGrade(selectedStudent.id, data)}
         />
       )}

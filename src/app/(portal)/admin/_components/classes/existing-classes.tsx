@@ -52,10 +52,23 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
     filteredClasses.length < classesData.length && searchQuery === ""
 
   return (
-    <article className="pb-5">
+    <article className="py-5">
       {/* Header with Search */}
-      <div className="flex items-center justify-between gap-3">
-        <h3 className="text-lg font-semibold">Classes</h3>
+      <div className="relative flex items-center justify-start gap-3">
+        {classesData.length > 0 && (
+          <div className="absolute right-0 bottom-full mb-10 hidden md:block">
+            <Button asChild className="h-12 w-full lg:w-90">
+              <Link
+                href="/admin/class-management/class/new"
+                className="flex items-center gap-2"
+              >
+                <Plus />
+                Create Class
+              </Link>
+            </Button>
+          </div>
+        )}
+
         <div className="relative max-w-[250px] flex-1">
           <Search className="text-text-secondary absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
@@ -69,7 +82,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
       </div>
 
       {/* Classes List */}
-      <section className="mt-5 space-y-3">
+      <section className="mt-5 grid grid-cols-1 gap-5 space-y-3">
         {filteredClasses.length > 0 ? (
           filteredClasses.map((classItem) => {
             const isExpanded = expandedClasses.has(classItem.name)
@@ -131,9 +144,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium text-gray-900">
-                              {" "}
-                              {classItem.name}
-                              {arm.arm}
+                              {classItem.name} {arm.arm}
                             </p>
                           </div>
 
@@ -146,6 +157,15 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                               </DropdownMenuTrigger>
 
                               <DropdownMenuContent align="end" className="w-fit">
+                                <DropdownMenuItem
+                                  asChild
+                                  className="flex items-center gap-2"
+                                >
+                                  <Link href={`/admin/class-management/class/${arm.id}`}>
+                                    View Subjects
+                                  </Link>
+                                </DropdownMenuItem>
+
                                 <DropdownMenuItem
                                   onClick={() => handleEdit(arm.id)}
                                   className="flex items-center gap-2"
@@ -203,14 +223,14 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
           <h5 className="text-primary text-center text-xl font-semibold">
             All Classes Loaded
           </h5>
-          <p className="text-text-secondary text-center text-sm">
+          <p className="text-text-secondary text-center text-sm md:hidden">
             Tap the {`'+'`} button below to create a new class
           </p>
         </div>
       )}
 
       {/* Button to Add New Class */}
-      <div className="my-5 flex justify-end">
+      <div className="sticky bottom-10 my-5 flex justify-end md:hidden">
         <Button
           asChild
           className="h-12 w-12 rounded-full shadow-lg transition-transform hover:scale-110"

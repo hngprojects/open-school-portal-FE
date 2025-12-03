@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { calculateGrade } from "@/lib/results"
+import { useSaveDraft } from "../_hooks/use-results"
+import { toast } from "sonner"
 
 interface GradeFormDialogProps {
   open: boolean
@@ -18,6 +20,8 @@ interface GradeFormDialogProps {
   classId: string
   subjectId: string
   termId: string
+  academicSessionId: string
+  existingSubmissionId?: string
 }
 
 export function GradeFormDialog({
@@ -26,18 +30,19 @@ export function GradeFormDialog({
   student,
   grade,
   onSave,
+  classId,
+  subjectId,
+  termId,
+  academicSessionId,
+  existingSubmissionId,
 }: GradeFormDialogProps) {
-  // Initialize form data from grade prop
-  const initialFormData = useMemo(
-    () => ({
-      ca_score: grade?.ca_score?.toString() || "",
-      exam_score: grade?.exam_score?.toString() || "",
-      comment: grade?.comment || "",
-    }),
-    [grade]
-  )
+  const [formData, setFormData] = useState({
+    ca_score: grade?.ca_score?.toString() || "",
+    exam_score: grade?.exam_score?.toString() || "",
+    comment: grade?.comment || "",
+  })
 
-  const [formData, setFormData] = useState(initialFormData)
+  const saveDraftMutation = useSaveDraft()
 
   const total = useMemo(() => {
     const ca = parseInt(formData.ca_score) || 0
@@ -48,6 +53,53 @@ export function GradeFormDialog({
   const gradeLetter = useMemo(() => {
     return total > 0 ? calculateGrade(total) : ""
   }, [total])
+
+  const handleSaveToBackend = async () => {
+    try {
+      if (!academicSessionId) {
+        toast.error("Academic session ID is required")
+        return
+      }
+
+      const caScore = formData.ca_score ? parseInt(formData.ca_score) : null
+      const examScore = formData.exam_score ? parseInt(formData.exam_score) : null
+
+      const submissionData = {
+        class_id: classId,
+        subject_id: subjectId,
+        term_id: termId,
+        academic_session_id: academicSessionId,
+        grades: [
+          {
+            student_id: student.id,
+            ca_score: caScore,
+            exam_score: examScore,
+            comment: formData.comment || null,
+          },
+        ],
+      }
+
+      await saveDraftMutation.mutateAsync(submissionData)
+
+      // Also update local state
+      const totalScore =
+        caScore !== null && examScore !== null ? caScore + examScore : null
+      const gradeData: GradeEntry = {
+        student_id: student.id,
+        ca_score: caScore,
+        exam_score: examScore,
+        total_score: totalScore,
+        grade: totalScore !== null ? calculateGrade(totalScore) : null,
+        comment: formData.comment || null,
+      }
+
+      onSave(gradeData)
+      toast.success("Grade saved successfully")
+      onOpenChange(false)
+    } catch {
+      toast.error("Failed to save grade")
+    }
+  }
 
   const handleSubmit = () => {
     const caScore = formData.ca_score ? parseInt(formData.ca_score) : null
@@ -64,6 +116,7 @@ export function GradeFormDialog({
     }
 
     onSave(gradeData)
+    onOpenChange(false)
   }
 
   return (
@@ -111,15 +164,15 @@ export function GradeFormDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Total Score</Label>
-              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+              <div className="flex h-30 flex-col items-center justify-center rounded-md border bg-red-100">
+                <Label>Total Score</Label>
                 <span className="font-semibold">{total}</span>
               </div>
             </div>
 
             <div>
-              <Label>Grade</Label>
-              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+              <div className="flex h-30 flex-col items-center justify-center rounded-md border border-red-500 bg-transparent">
+                <Label>Grade</Label>
                 <span className="font-semibold">{gradeLetter || "-"}</span>
               </div>
             </div>
@@ -143,7 +196,9 @@ export function GradeFormDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Save Grade</Button>
+          <Button onClick={handleSaveToBackend} disabled={saveDraftMutation.isPending}>
+            {saveDraftMutation.isPending ? "Saving..." : "Save Grade"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
