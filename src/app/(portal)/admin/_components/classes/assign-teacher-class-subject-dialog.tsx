@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { CheckCircle, Loader2Icon, Search, UserCircle } from "lucide-react"
@@ -103,8 +102,7 @@ export default function AssignTeacherDialog({
   return (
     <>
       <Dialog open={open && !showSuccessDialog} onOpenChange={handleClose}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 sm:max-w-md">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Assign Teacher</DialogTitle>
             <DialogDescription className="text-sm">
@@ -324,6 +322,7 @@ export default function AssignTeacherDialog({
         teacher_id: selectedTeacher.id,
       })
       setShowSuccessDialog(true)
+      setOpen(false)
     } catch (error) {
       console.error("Failed to assign teacher:", error)
       toast.error("Failed to assign teacher. Please try again.")
@@ -339,7 +338,6 @@ export default function AssignTeacherDialog({
 
   function handleCloseSuccess() {
     setShowSuccessDialog(false)
-    setOpen(false)
     resetForm()
   }
 

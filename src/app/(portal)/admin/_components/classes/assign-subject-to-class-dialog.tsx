@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Search, CheckCircle, Loader2Icon } from "lucide-react"
@@ -114,8 +113,7 @@ export default function AssignSubjectsDialog({
   return (
     <>
       <Dialog open={open && !showSuccessDialog} onOpenChange={setOpen}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
               Assign Subjects to {className}

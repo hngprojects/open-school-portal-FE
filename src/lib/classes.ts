@@ -97,7 +97,7 @@ export const ClassesAPI = {
 
   unassignTeachersFromClassSubject: (classId: string, subjectId: string) =>
     apiFetch<ResponsePack<null>>(
-      `/classes/${classId}/subjects/${subjectId}/assign-teacher`,
+      `/classes/${classId}/subjects/${subjectId}/unassign-teacher`,
       { method: "POST" },
       true
     ),

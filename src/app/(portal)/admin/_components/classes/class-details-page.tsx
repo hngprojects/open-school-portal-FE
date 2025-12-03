@@ -150,7 +150,7 @@ export default function ViewClassSubjects() {
       <AssignTeacherDialog
         open={!!assignTeacherSubject}
         setOpen={() => setAssignTeacher(null)}
-        classSubjectId={assignTeacherSubject?.id || ""}
+        classSubjectId={assignTeacherSubject?.subject?.id || ""}
         subjectName={assignTeacherSubject?.subject.name || ""}
         classId={classID}
         className={classData?.name || ""}
@@ -161,7 +161,7 @@ export default function ViewClassSubjects() {
   async function handleToggleAssignTeacher(bool: boolean, subject: ClassSubject) {
     if (bool) {
       try {
-        await unAssignMutation.mutateAsync(subject.id)
+        await unAssignMutation.mutateAsync(subject?.subject?.id)
         toast.success("Teacher unassigned successfully")
       } catch {
         console.error("Failed to unassign teacher")
