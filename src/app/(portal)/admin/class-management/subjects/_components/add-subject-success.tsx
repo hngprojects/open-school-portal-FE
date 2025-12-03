@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { CheckCircle } from "lucide-react"
@@ -21,8 +20,7 @@ export default function AddedSubjectSuccess({
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogOverlay className="z-60" />
-      <DialogContent className="z-60 sm:max-w-md">
+      <DialogContent className="sm:max-w-md">
         <div className="flex flex-col items-center py-6 text-center">
           <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="size-10 text-green-600" />

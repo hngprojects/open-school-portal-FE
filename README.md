@@ -28,6 +28,7 @@ Unlike traditional SaaS solutions, the platform is deployed per school, offering
 - **ShadCN UI**
 - **Framer Motion**
 - **TanStack Query**
+- **Zustand**
 - **Zod**
 - **pnpm** (package manager)
 
@@ -42,30 +43,28 @@ Unlike traditional SaaS solutions, the platform is deployed per school, offering
 ## Repository Structure
 ```
 open-school-portal-frontend/
-├── app/                         # Next.js app router structure
-│   ├── layout.tsx               # Root layout
-│   ├── page.tsx                 # Landing page
-│   ├── (auth)/                  # Authentication pages
-│   ├── (admin)/                 # Admin dashboards
-│   ├── (teacher)/               # Teacher portal
-│   ├── (student)/               # Student portal
-│   ├── (parent)/                # Parent portal
-│   ├── api/                     # Optional API route handlers
-│   └── ...
-├── components/                  # Shared and UI components
-│   ├── ui/                      # ShadCN UI components
-│   ├── charts/                  # Chart components
-│   └── ...
-├── lib/
-│   ├── api/                     # API layer
-│   ├── validation/              # Zod schemas
+├── src/
+│   ├── app/                     # Next.js app router
+│   │   ├── (auth)/              # Authentication pages
+│   │   ├── (portal)/            # Main portal pages (admin, teacher, student, parent)
+│   │   ├── (external)/          # External facing pages
+│   │   ├── (squeeze)/           # Squeeze pages
+│   │   ├── api/                 # API route handlers
+│   │   └── ...
+│   ├── components/              # Shared and UI components
+│   │   ├── ui/                  # ShadCN UI components
+│   │   └── ...
+│   ├── lib/                     # Libraries and utilities
+│   ├── store/                   # State management (Zustand)
 │   ├── hooks/                   # Custom hooks
-│   └── utils/                   # Utility functions
+│   ├── services/                # Service layer
+│   ├── types/                   # TypeScript types
+│   ├── utils/                   # Utility functions
+│   ├── providers/               # Context providers
+│   └── data/                    # Static data
 ├── public/                      # Static assets
-├── styles/                      # Global styles
 ├── package.json
-├── tailwind.config.ts
-├── next.config.js
+├── next.config.ts
 └── README.md
 ```
 

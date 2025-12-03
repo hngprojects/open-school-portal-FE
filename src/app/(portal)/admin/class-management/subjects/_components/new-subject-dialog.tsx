@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogOverlay,
   DialogFooter,
 } from "@/components/ui/dialog"
 // import {
@@ -43,8 +42,7 @@ export function NewSubjectDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 sm:max-w-md">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">New Subject</DialogTitle>
             <DialogDescription className="text-sm">
@@ -171,8 +169,7 @@ export function EditSubjectDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogOverlay className="z-60" />
-        <DialogContent className="z-60 sm:max-w-md">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Edit Subject</DialogTitle>
             <DialogDescription className="text-sm">
