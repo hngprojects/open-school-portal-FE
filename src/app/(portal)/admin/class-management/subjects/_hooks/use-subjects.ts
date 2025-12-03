@@ -23,6 +23,11 @@ export interface GetSubjectsParams {
   total?: number
 }
 
+type SubjectCore = {
+  id?: string
+  name: string
+}
+
 export type Subject = {
   id: string
   name: string
@@ -141,7 +146,7 @@ export const useUpdateSubject = (subjectID: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (subjectData: { name: string }) =>
+    mutationFn: (subjectData: SubjectCore) =>
       SubjectsAPI.update(subjectID, { name: subjectData.name }),
     onSuccess: () => {
       // Invalidate and refetch

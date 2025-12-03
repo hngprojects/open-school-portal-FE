@@ -6,7 +6,6 @@ import {
   DrawerTrigger,
   DrawerHeader,
   DrawerTitle,
-  DrawerDescription,
 } from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
 import { Bell, Building2, ChevronDown, FileText, Lock, Trash2, User } from "lucide-react"
