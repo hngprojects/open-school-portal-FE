@@ -57,7 +57,7 @@ export default function ViewClassSubjects() {
   } = useGetSubjectsForClass(classID)
   const subjects = subjectsInfo && subjectsInfo.payload
 
-  const unAssignMutation = useUnassignTeachersToClassSubject(classID)
+  const unAssignMutation = useUnassignTeachersToClassSubject()
 
   const isLoading = isLoadingClass || isLoadingSubjects
   const isError = isErrorClass || isErrorSubjects
@@ -173,7 +173,7 @@ export default function ViewClassSubjects() {
       <AssignTeacherDialog
         open={!!assignTeacherSubject}
         setOpen={() => setAssignTeacher(null)}
-        classSubjectId={assignTeacherSubject?.subject?.id || ""}
+        classSubjectId={assignTeacherSubject?.id || ""}
         subjectName={assignTeacherSubject?.subject.name || ""}
         classId={classID}
         className={classData?.name || ""}
@@ -183,7 +183,7 @@ export default function ViewClassSubjects() {
 
   async function handleToggleAssignTeacher(bool: boolean, subject: ClassSubject) {
     if (bool) {
-      if (!subject?.subject?.id) {
+      if (!subject?.id) {
         toast.error("Cannot unassign teacher from an invalid subject.")
         return
       }
@@ -195,7 +195,7 @@ export default function ViewClassSubjects() {
 
   async function handleUnassignTeacher(subject: ClassSubject) {
     try {
-      await unAssignMutation.mutateAsync(subject.subject.id)
+      await unAssignMutation.mutateAsync(subject.id)
     } catch (error) {
       // The hook's onError will show a toast, but we can log here for debugging.
       console.error("Failed to unassign teacher", error)
