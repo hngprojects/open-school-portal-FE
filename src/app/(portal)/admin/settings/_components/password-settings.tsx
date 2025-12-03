@@ -65,7 +65,7 @@ export const PasswordSettings = () => {
       </div>
 
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="px-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Current Password</Label>

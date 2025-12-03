@@ -1,10 +1,13 @@
 "use client"
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer"
 import { cn } from "@/lib/utils"
 import { Bell, Building2, ChevronDown, FileText, Lock, Trash2, User } from "lucide-react"
 import Link from "next/link"
@@ -88,47 +91,49 @@ export const SettingsSidebar = ({ activeTab }: SettingsSidebarProps) => {
 
       {/* Mobile View */}
       <div className="lg:hidden">
-        <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-          <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border bg-white p-3 shadow-sm">
-            <div className="flex items-center gap-3">
-              <ActiveIcon className="text-accent h-5 w-5" />
-              <span className="text-foreground font-medium">{activeItem.label}</span>
-            </div>
-            <ChevronDown
-              className={cn(
-                "text-muted-foreground h-4 w-4 transition-transform duration-200",
-                isOpen && "rotate-180"
-              )}
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-2 space-y-1 rounded-lg border bg-white p-2 shadow-sm">
-            {menuItems.map((item) => {
-              const Icon = item.icon
-              const isActive = activeTab === item.id
-              return (
-                <Link
-                  key={item.id}
-                  href={`/admin/settings?tab=${item.id}`}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    "flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
-                    isActive
-                      ? "text-accent"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  <Icon
+        <Drawer open={isOpen} onOpenChange={setIsOpen}>
+          <DrawerTrigger asChild>
+            <button className="flex w-full items-center justify-between rounded-lg border bg-white p-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <ActiveIcon className="text-accent h-5 w-5" />
+                <span className="text-foreground font-medium">{activeItem.label}</span>
+              </div>
+              <ChevronDown className="text-muted-foreground h-4 w-4" />
+            </button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader className="text-left">
+              <DrawerTitle>Settings Menu</DrawerTitle>
+            </DrawerHeader>
+            <div className="space-y-1 p-4 pt-0">
+              {menuItems.map((item) => {
+                const Icon = item.icon
+                const isActive = activeTab === item.id
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/admin/settings?tab=${item.id}`}
+                    onClick={() => setIsOpen(false)}
                     className={cn(
-                      "h-4 w-4",
-                      isActive ? "text-accent" : "text-muted-foreground"
+                      "flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-accent/10 text-accent"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
-                  />
-                  {item.label}
-                </Link>
-              )
-            })}
-          </CollapsibleContent>
-        </Collapsible>
+                  >
+                    <Icon
+                      className={cn(
+                        "h-4 w-4",
+                        isActive ? "text-accent" : "text-muted-foreground"
+                      )}
+                    />
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </div>
   )

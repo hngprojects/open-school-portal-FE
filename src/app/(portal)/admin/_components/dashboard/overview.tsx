@@ -25,7 +25,7 @@ const Overview = () => {
     page: 1,
   })
 
-  const { data: todayActivitiesData, isLoading: activitiesLoading } = useTodayActivities()
+  const { data: todayActivitiesData } = useTodayActivities()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null)

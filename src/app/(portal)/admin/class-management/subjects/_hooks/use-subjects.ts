@@ -141,7 +141,7 @@ export const useUpdateSubject = (subjectID: string) => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (subjectData: Subject) =>
+    mutationFn: (subjectData: { name: string }) =>
       SubjectsAPI.update(subjectID, { name: subjectData.name }),
     onSuccess: () => {
       // Invalidate and refetch

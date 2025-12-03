@@ -54,7 +54,7 @@ export const DeleteAccountSettings = () => {
             <div className="flex justify-end">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="bg-accent hover:bg-accent/90 text-white">
+                  <Button className="bg-accent hover:bg-accent/90 w-full text-white lg:w-fit">
                     Delete account
                   </Button>
                 </AlertDialogTrigger>

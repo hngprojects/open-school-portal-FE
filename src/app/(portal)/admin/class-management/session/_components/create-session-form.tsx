@@ -34,44 +34,6 @@ const CreateSessionForm = () => {
 
   const { mutate: createMutate, isPending: createPending } = useCreateAcademicSession()
 
-  // Fetch session data on mount if editing
-  useEffect(() => {
-    if (sessionId) {
-      setIsLoadingSession(true)
-      AcademicSessionAPI.getOne(sessionId)
-        .then((data) => {
-          setSession(data)
-          // Update form with fetched data
-          reset({
-            description: data.description ?? "",
-            terms: {
-              first_term: getTermDates(data, "first"),
-              second_term: getTermDates(data, "second"),
-              third_term: getTermDates(data, "third"),
-            },
-          })
-        })
-        .catch((error) => {
-          toast.error("Failed to load session data")
-        })
-        .finally(() => {
-          setIsLoadingSession(false)
-        })
-    }
-  }, [sessionId])
-
-  const isArchived = session?.status === "Archived"
-
-  // Get term dates helper
-  const getTermDates = (sessionData: AcademicSession, termName: string) => {
-    const term = sessionData?.terms?.find((t) =>
-      t.name.toLowerCase().includes(termName.toLowerCase())
-    )
-    return term
-      ? { startDate: term.startDate, endDate: term.endDate }
-      : { startDate: "", endDate: "" }
-  }
-
   const {
     register,
     watch,
@@ -90,6 +52,44 @@ const CreateSessionForm = () => {
     },
     mode: "onChange",
   })
+
+  // Get term dates helper
+  const getTermDates = (sessionData: AcademicSession, termName: string) => {
+    const term = sessionData?.terms?.find((t) =>
+      t.name.toLowerCase().includes(termName.toLowerCase())
+    )
+    return term
+      ? { startDate: term.startDate, endDate: term.endDate }
+      : { startDate: "", endDate: "" }
+  }
+
+  const isArchived = session?.status === "Archived"
+
+  // Fetch session data on mount if editing
+  useEffect(() => {
+    if (sessionId) {
+      setIsLoadingSession(true)
+      AcademicSessionAPI.getOne(sessionId)
+        .then((data) => {
+          setSession(data)
+          // Update form with fetched data
+          reset({
+            description: data.description ?? "",
+            terms: {
+              first_term: getTermDates(data, "first"),
+              second_term: getTermDates(data, "second"),
+              third_term: getTermDates(data, "third"),
+            },
+          })
+        })
+        .catch(() => {
+          toast.error("Failed to load session data")
+        })
+        .finally(() => {
+          setIsLoadingSession(false)
+        })
+    }
+  }, [sessionId, reset])
 
   const [start, end] = watch(["terms.first_term.startDate", "terms.third_term.endDate"])
   const academicSession =

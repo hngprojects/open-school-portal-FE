@@ -18,7 +18,7 @@ export const NotificationSettings = () => {
   const [isSaving, setIsSaving] = useState(false)
   const [settings, setSettings] = useState({
     inviteNotification: true,
-    attendanceNotification: false,
+    attendanceNotification: true,
   })
 
   const handleToggle = (key: keyof typeof settings) => {
@@ -53,7 +53,7 @@ export const NotificationSettings = () => {
           <CardDescription>Receive notifications via email</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between space-x-2">
+          <div className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
               <Label htmlFor="invite-notification" className="text-base font-medium">
                 Invite Notification
@@ -70,7 +70,7 @@ export const NotificationSettings = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between space-x-2">
+          <div className="flex items-center justify-between gap-4">
             <div className="space-y-0.5">
               <Label htmlFor="attendance-notification" className="text-base font-medium">
                 Attendance Notification
