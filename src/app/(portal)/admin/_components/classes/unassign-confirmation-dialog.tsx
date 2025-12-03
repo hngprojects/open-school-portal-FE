@@ -29,11 +29,17 @@ export function UnassignConfirmationDialog({
   subjectName,
 }: UnassignConfirmationDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
+
   const handleConfirm = async () => {
     setIsLoading(true)
-    await onConfirm()
-    setIsLoading(false)
-    onOpenChange(false)
+    try {
+      await onConfirm()
+      onOpenChange(false)
+    } catch {
+      console.error("An unexpected error occured while unassigning the teacher.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
