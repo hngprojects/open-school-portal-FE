@@ -35,6 +35,29 @@ export function SubmissionActions({
   const submitMutation = useSubmitForApproval()
   const updateSubmissionMutation = useUpdateSubmission()
 
+  // Validate all grades before submission
+  const validateAllGrades = (gradesToValidate: GradeEntry[]): boolean => {
+    let hasErrors = false
+
+    for (const grade of gradesToValidate) {
+      if (grade.ca_score !== null) {
+        if (grade.ca_score < 0 || grade.ca_score > 30) {
+          toast.error(`CA score for student must be between 0 and 30`)
+          hasErrors = true
+        }
+      }
+
+      if (grade.exam_score !== null) {
+        if (grade.exam_score < 0 || grade.exam_score > 70) {
+          toast.error(`Exam score for student must be between 0 and 70`)
+          hasErrors = true
+        }
+      }
+    }
+
+    return !hasErrors
+  }
+
   const handleSaveDraft = async () => {
     try {
       if (!academicSessionId) {
@@ -42,44 +65,27 @@ export function SubmissionActions({
         return
       }
 
-      // Debug: Check all required fields
-      console.log("DEBUG - Required fields:", {
-        classId,
-        subjectId,
-        termId,
-        academicSessionId,
-        gradesCount: grades.length,
-        grades: grades,
-      })
+      // Validate all grades
+      if (!validateAllGrades(grades)) {
+        return
+      }
 
-      // Check if required fields are valid UUIDs
       const isValidUUID = (id: string) => {
         const uuidRegex =
           /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
         return uuidRegex.test(id)
       }
 
-      if (!classId || !isValidUUID(classId)) {
-        toast.error("Invalid class ID")
-        console.error("Invalid classId:", classId)
-        return
-      }
+      // Check for valid UUIDs
+      const invalidFields = []
+      if (!classId || !isValidUUID(classId)) invalidFields.push("class")
+      if (!subjectId || !isValidUUID(subjectId)) invalidFields.push("subject")
+      if (!termId || !isValidUUID(termId)) invalidFields.push("term")
+      if (!academicSessionId || !isValidUUID(academicSessionId))
+        invalidFields.push("academic session")
 
-      if (!subjectId || !isValidUUID(subjectId)) {
-        toast.error("Invalid subject ID")
-        console.error("Invalid subjectId:", subjectId)
-        return
-      }
-
-      if (!termId || !isValidUUID(termId)) {
-        toast.error("Invalid term ID")
-        console.error("Invalid termId:", termId)
-        return
-      }
-
-      if (!academicSessionId || !isValidUUID(academicSessionId)) {
-        toast.error("Invalid academic session ID")
-        console.error("Invalid academicSessionId:", academicSessionId)
+      if (invalidFields.length > 0) {
+        toast.error(`Invalid ${invalidFields.join(", ")} ID(s)`)
         return
       }
 
@@ -94,8 +100,6 @@ export function SubmissionActions({
         }
         return true
       })
-
-      console.log("Valid grades after filtering:", validGrades)
 
       if (validGrades.length === 0) {
         toast.error(
@@ -116,8 +120,6 @@ export function SubmissionActions({
           comment: grade.comment || null,
         })),
       }
-
-      console.log("Submitting data to backend:", JSON.stringify(submissionData, null, 2))
 
       if (existingSubmission?.id) {
         // Update existing submission
@@ -145,12 +147,8 @@ export function SubmissionActions({
       setSuccessMessage("Results saved as draft successfully!")
       setSuccessModalOpen(true)
     } catch (error: unknown) {
+      // Error is already handled by the mutation hook
       console.error("Save draft error:", error)
-      if (error instanceof Error) {
-        toast.error(error.message || "Failed to save draft")
-      } else {
-        toast.error("Failed to save draft")
-      }
     }
   }
 
@@ -158,6 +156,11 @@ export function SubmissionActions({
     try {
       if (!academicSessionId) {
         toast.error("Academic session ID is required")
+        return
+      }
+
+      // Validate all grades
+      if (!validateAllGrades(grades)) {
         return
       }
 
@@ -204,12 +207,8 @@ export function SubmissionActions({
       setSuccessMessage("Results submitted for approval successfully!")
       setSuccessModalOpen(true)
     } catch (error: unknown) {
+      // Error is already handled by the mutation hook
       console.error("Submit for approval error:", error)
-      if (error instanceof Error) {
-        toast.error(error.message || "Failed to submit for approval")
-      } else {
-        toast.error("Failed to submit for approval")
-      }
     }
   }
 

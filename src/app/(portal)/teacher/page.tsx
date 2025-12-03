@@ -40,9 +40,6 @@ interface ApiAssignment {
 interface ApiGradeSubmission {
   id: string
 }
-interface ApiFee {
-  id: string
-}
 
 // ──────────────────────────────────────────────────────────────
 // Skeleton Components
@@ -117,7 +114,7 @@ export default function TeachersPage() {
     const fetchDashboardData = async () => {
       try {
         const [classesRes, assignmentsRes, gradesRes] = await Promise.all([
-          api.get<ApiClass[]>("/classes"),
+          api.get<ApiClass[]>("/classes/teacher/assigned"),
           api.get<ApiAssignment[]>("/assignments"),
           api.get<ApiGradeSubmission[]>("/grades/submissions"),
         ])

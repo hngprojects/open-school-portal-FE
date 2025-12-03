@@ -34,6 +34,11 @@ export const metadata: Metadata = {
     "NFC",
     "Nigeria schools",
   ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "School Base",
+  },
   openGraph: {
     title: "School Base",
     description:
