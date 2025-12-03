@@ -147,32 +147,90 @@ export function TeacherResultsView({
 
   return (
     <div className="space-y-6">
+      {/* Filters */}
+      <FilterSection
+        classes={classes}
+        subjects={subjects}
+        terms={terms}
+        selectedClass={selectedClass}
+        selectedSubject={selectedSubject}
+        selectedTerm={selectedTerm}
+        onClassChange={onClassChange}
+        onSubjectChange={onSubjectChange}
+        onTermChange={onTermChange}
+      />
+
+      {/* Info Messages */}
+      {!selectedClass && !selectedSubject && !selectedTerm && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">
+            Please select a class to view students. Then select a subject and term to
+            enter grades.
+          </p>
+        </div>
+      )}
+
+      {selectedClass && !selectedSubject && !selectedTerm && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">
+            All students in {classes.find((c) => c.id === selectedClass)?.name} are
+            displayed. Select a subject and term to enter grades.
+          </p>
+        </div>
+      )}
+
+      {selectedClass && (selectedSubject || selectedTerm) && !canShowResults && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-sm text-red-600">
+            Please select both a subject and term to enter grades.
+          </p>
+        </div>
+      )}
+
+      {/* Only show grading scale and actions when all filters are selected */}
+      {canShowResults && (
+        <>
+          <GradingScaleCard gradingScale={gradingScale} />
+
+          {hasValidGrades && (
+            <SubmissionActions
+              classId={selectedClass}
+              subjectId={selectedSubject}
+              termId={selectedTerm}
+              grades={gradeEntries}
+              existingSubmission={existingSubmission}
+              academicSessionId={academicSessionId}
+            />
+          )}
+        </>
+      )}
+
       {/* Class Info - Show Academic Session */}
       {canShowResults && (
         <div className="rounded-lg border bg-white p-4">
-          <div className="grid grid-cols-4 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-3 gap-4 md:grid-cols-4">
             <div>
-              <span className="text-sm font-medium text-gray-500">Class</span>
+              {/* <span className="text-sm font-medium text-gray-500">Class</span> */}
               <p className="text-lg font-semibold">
                 {classes.find((c) => c.id === selectedClass)?.name || "-"}
               </p>
             </div>
             <div>
-              <span className="text-sm font-medium text-gray-500">Subject</span>
+              {/* <span className="text-sm font-medium text-gray-500">Subject</span> */}
               <p className="text-lg font-semibold">
                 {subjects.find((s) => s.id === selectedSubject)?.name || "-"}
               </p>
             </div>
             <div>
-              <span className="text-sm font-medium text-gray-500">Term</span>
+              {/* <span className="text-sm font-medium text-gray-500">Term</span> */}
               <p className="text-lg font-semibold">
                 {terms.find((t) => t.id === selectedTerm)?.name || "-"}
               </p>
             </div>
-            <div>
+            {/* <div>
               <span className="text-sm font-medium text-gray-500">Academic Session</span>
               <p className="text-lg font-semibold">{academicSessionId || "2025/2026"}</p>
-            </div>
+            </div> */}
           </div>
 
           {/* Submission Status */}
@@ -207,46 +265,6 @@ export function TeacherResultsView({
         </div>
       )}
 
-      {/* Filters */}
-      <FilterSection
-        classes={classes}
-        subjects={subjects}
-        terms={terms}
-        selectedClass={selectedClass}
-        selectedSubject={selectedSubject}
-        selectedTerm={selectedTerm}
-        onClassChange={onClassChange}
-        onSubjectChange={onSubjectChange}
-        onTermChange={onTermChange}
-      />
-
-      {/* Info Messages */}
-      {!selectedClass && !selectedSubject && !selectedTerm && (
-        <div className="rounded-lg border border-red-200 bg-amber-50 p-4">
-          <p className="text-sm text-red-700">
-            Please select a class to view students. Then select a subject and term to
-            enter grades.
-          </p>
-        </div>
-      )}
-
-      {selectedClass && !selectedSubject && !selectedTerm && (
-        <div className="rounded-lg border border-red-200 bg-blue-50 p-4">
-          <p className="text-sm text-red-700">
-            All students in {classes.find((c) => c.id === selectedClass)?.name} are
-            displayed. Select a subject and term to enter grades.
-          </p>
-        </div>
-      )}
-
-      {selectedClass && (selectedSubject || selectedTerm) && !canShowResults && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-700">
-            Please select both a subject and term to enter grades.
-          </p>
-        </div>
-      )}
-
       {/* Show students table if class is selected */}
       {selectedClass && (
         <StudentsTable
@@ -259,24 +277,6 @@ export function TeacherResultsView({
           termId={selectedTerm}
           academicSessionId={academicSessionId}
         />
-      )}
-
-      {/* Only show grading scale and actions when all filters are selected */}
-      {canShowResults && (
-        <>
-          <GradingScaleCard gradingScale={gradingScale} />
-
-          {hasValidGrades && (
-            <SubmissionActions
-              classId={selectedClass}
-              subjectId={selectedSubject}
-              termId={selectedTerm}
-              grades={gradeEntries}
-              existingSubmission={existingSubmission}
-              academicSessionId={academicSessionId}
-            />
-          )}
-        </>
       )}
     </div>
   )
