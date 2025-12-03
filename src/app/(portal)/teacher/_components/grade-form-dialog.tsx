@@ -96,7 +96,7 @@ export function GradeFormDialog({
       onSave(gradeData)
       toast.success("Grade saved successfully")
       onOpenChange(false)
-    } catch (error) {
+    } catch {
       toast.error("Failed to save grade")
     }
   }
@@ -164,15 +164,15 @@ export function GradeFormDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Total Score</Label>
-              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+              <div className="flex h-30 flex-col items-center justify-center rounded-md border bg-red-100">
+                <Label>Total Score</Label>
                 <span className="font-semibold">{total}</span>
               </div>
             </div>
 
             <div>
-              <Label>Grade</Label>
-              <div className="flex h-10 items-center justify-center rounded-md border bg-gray-50">
+              <div className="flex h-30 flex-col items-center justify-center rounded-md border border-red-500 bg-transparent">
+                <Label>Grade</Label>
                 <span className="font-semibold">{gradeLetter || "-"}</span>
               </div>
             </div>
