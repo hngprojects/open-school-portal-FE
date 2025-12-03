@@ -8,15 +8,15 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { calculateGrade } from "@/lib/results"
-import { useSaveDraft } from "../_hooks/use-results"
+import { useSaveDraft, useUpdateGrade } from "../_hooks/use-results" // Import useUpdateGrade
 import { toast } from "sonner"
 
 interface GradeFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   student: Student
-  grade?: GradeEntry
-  onSave: (gradeData: GradeEntry) => void
+  grade?: GradeEntry & { id?: string } // Add id for existing grades
+  onSave: (gradeData: GradeEntry & { id?: string }) => void // Update to include id
   classId: string
   subjectId: string
   termId: string
@@ -34,7 +34,7 @@ export function GradeFormDialog({
   subjectId,
   termId,
   academicSessionId,
-  // existingSubmissionId,
+  existingSubmissionId,
 }: GradeFormDialogProps) {
   const [formData, setFormData] = useState({
     ca_score: grade?.ca_score?.toString() || "",
@@ -48,6 +48,7 @@ export function GradeFormDialog({
   }>({})
 
   const saveDraftMutation = useSaveDraft()
+  const updateGradeMutation = useUpdateGrade() // Add update mutation
 
   const total = useMemo(() => {
     const ca = parseInt(formData.ca_score) || 0
@@ -114,12 +115,25 @@ export function GradeFormDialog({
         ],
       }
 
-      await saveDraftMutation.mutateAsync(submissionData)
+      // If we have an existing grade ID, update it instead of creating new
+      if (grade?.id) {
+        await updateGradeMutation.mutateAsync({
+          gradeId: grade.id,
+          data: {
+            ca_score: caScore,
+            exam_score: examScore,
+            comment: formData.comment || null,
+          },
+        })
+      } else {
+        await saveDraftMutation.mutateAsync(submissionData)
+      }
 
       // Also update local state
       const totalScore =
         caScore !== null && examScore !== null ? caScore + examScore : null
-      const gradeData: GradeEntry = {
+      const gradeData: GradeEntry & { id?: string } = {
+        id: grade?.id, // Preserve the ID if it exists
         student_id: student.id,
         ca_score: caScore,
         exam_score: examScore,
@@ -146,7 +160,8 @@ export function GradeFormDialog({
     const examScore = formData.exam_score ? parseInt(formData.exam_score) : null
     const totalScore = caScore !== null && examScore !== null ? caScore + examScore : null
 
-    const gradeData: GradeEntry = {
+    const gradeData: GradeEntry & { id?: string } = {
+      id: grade?.id, // Preserve the ID if it exists
       student_id: student.id,
       ca_score: caScore,
       exam_score: examScore,
@@ -172,7 +187,7 @@ export function GradeFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Enter Grades</DialogTitle>
+          <DialogTitle>{grade?.id ? "Edit Grade" : "Enter Grade"}</DialogTitle>
           <div className="text-sm text-gray-600">
             {student.first_name} {student.last_name}
           </div>
@@ -251,8 +266,15 @@ export function GradeFormDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSaveToBackend} disabled={saveDraftMutation.isPending}>
-            {saveDraftMutation.isPending ? "Saving..." : "Save Grade"}
+          <Button
+            onClick={handleSaveToBackend}
+            disabled={saveDraftMutation.isPending || updateGradeMutation.isPending}
+          >
+            {saveDraftMutation.isPending || updateGradeMutation.isPending
+              ? "Saving..."
+              : grade?.id
+                ? "Update Grade"
+                : "Save Grade"}
           </Button>
         </div>
       </DialogContent>

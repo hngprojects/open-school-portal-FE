@@ -74,6 +74,172 @@ interface ActiveTermResponse {
   deletedAt: string | null
 }
 
+// Interface for the paginated submissions response
+interface PaginatedSubmissionsResponse {
+  items: Array<{
+    id: string
+    teacher: {
+      id: string
+      name: string
+      title: string
+    }
+    class: {
+      id: string
+      name: string
+      arm: string
+    }
+    subject: {
+      id: string
+      name: string
+    }
+    term: {
+      id: string
+      name: string
+    }
+    status: string
+    student_count: number
+    submitted_at: string | null
+    reviewed_at: string | null
+    rejection_reason: string | null
+    grades: Array<{
+      id: string
+      student: {
+        id: string
+        name: string
+        registration_number: string
+      }
+      ca_score: string
+      exam_score: string
+      total_score: string
+      grade_letter: string
+      comment: string | null
+    }>
+    created_at: string
+    updated_at: string
+  }>
+  meta: {
+    total: number
+    limit: number
+    page: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
+  }
+}
+
+// Helper to transform backend submission to our GradeSubmission type
+// Helper to transform backend submission to our GradeSubmission type
+// In your lib/results.ts file, update the transformBackendSubmission function:
+const transformBackendSubmission = (backendSubmission: {
+  id: string
+  teacher: {
+    id: string
+    name: string
+    title: string
+  }
+  class: {
+    id: string
+    name: string
+    arm: string
+  }
+  subject: {
+    id: string
+    name: string
+  }
+  term: {
+    id: string
+    name: string
+  }
+  status: string
+  student_count: number
+  submitted_at: string | null
+  reviewed_at: string | null
+  rejection_reason: string | null
+  grades: Array<{
+    id: string
+    student: {
+      id: string
+      name: string
+      registration_number: string
+    }
+    ca_score: string
+    exam_score: string
+    total_score: string
+    grade_letter: string
+    comment: string | null
+  }>
+  created_at: string
+  updated_at: string
+}): GradeSubmission => {
+  // Parse student name to get first and last names
+  const parseStudentName = (
+    fullName: string
+  ): { firstName: string; lastName: string } => {
+    const nameParts = fullName.trim().split(/\s+/)
+    const firstName = nameParts[0] || ""
+    const lastName = nameParts.slice(1).join(" ") || ""
+    return { firstName, lastName }
+  }
+
+  // Convert status to lowercase
+  const status = backendSubmission.status.toLowerCase() as
+    | "draft"
+    | "submitted"
+    | "approved"
+    | "rejected"
+
+  return {
+    id: backendSubmission.id,
+    teacher_id: backendSubmission.teacher.id,
+    teacher: {
+      id: backendSubmission.teacher.id,
+      name: backendSubmission.teacher.name,
+      title: backendSubmission.teacher.title,
+    },
+    class_id: backendSubmission.class.id,
+    class: {
+      id: backendSubmission.class.id,
+      name: backendSubmission.class.name,
+      arm: backendSubmission.class.arm,
+    },
+    subject_id: backendSubmission.subject.id,
+    subject: {
+      id: backendSubmission.subject.id,
+      name: backendSubmission.subject.name,
+    },
+    term_id: backendSubmission.term.id,
+    term: {
+      id: backendSubmission.term.id,
+      name: backendSubmission.term.name,
+    },
+    academic_session_id: "", // This might need to be fetched separately
+    grades: backendSubmission.grades.map((grade) => {
+      const { firstName, lastName } = parseStudentName(grade.student.name)
+      return {
+        id: grade.id,
+        student_id: grade.student.id,
+        subject_id: backendSubmission.subject.id,
+        class_id: backendSubmission.class.id,
+        term_id: backendSubmission.term.id,
+        ca_score: grade.ca_score ? parseFloat(grade.ca_score) : null,
+        exam_score: grade.exam_score ? parseFloat(grade.exam_score) : null,
+        total_score: grade.total_score ? parseFloat(grade.total_score) : null,
+        grade: grade.grade_letter,
+        comment: grade.comment || null,
+        status: status,
+        created_at: backendSubmission.created_at,
+        updated_at: backendSubmission.updated_at,
+      } satisfies Grade
+    }),
+    status: status,
+    submitted_at: backendSubmission.submitted_at || undefined,
+    reviewed_at: backendSubmission.reviewed_at || undefined,
+    rejection_reason: backendSubmission.rejection_reason || undefined,
+    created_at: backendSubmission.created_at,
+    updated_at: backendSubmission.updated_at,
+  }
+}
+
 export const ResultsAPI = {
   // Get classes for teacher
   getClasses: (): Promise<Class[]> => {
@@ -100,56 +266,43 @@ export const ResultsAPI = {
   },
 
   // Get subjects for a class
-  // getSubjects: (classId?: string, teacherId?: string): Promise<Subject[]> => {
-  //   const queryParams = new URLSearchParams()
-
-  //   if (classId) queryParams.append("class_id", classId)
-  //   if (teacherId) queryParams.append("teacher_id", teacherId)
-
-  //   // Only add "?" if there are query params
-  //   const queryString = queryParams.toString()
-  //   const url = queryString ? `/class-subjects?${queryString}` : `/class-subjects`
-
-  //   return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(url, {}, true)
-  //     .then((response) => {
-  //       const backendData = extractData(response)
-  //       const items = backendData.payload ?? []
-
-  //       return items.map(
-  //         (item) =>
-  //           ({
-  //             id: item.subject.id,
-  //             name: item.subject.name,
-  //           }) satisfies Subject
-  //       )
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch subjects:", err)
-  //       return []
-  //     })
-  // },
-
-  getSubjects: (classId?: string): Promise<Subject[]> => {
-    const queryParams = new URLSearchParams()
-
-    if (classId) queryParams.append("class_id", classId)
-
-    // Only add "?" if there are query params
-    const queryString = queryParams.toString()
-    const url = queryString ? `/class-subjects?${queryString}` : `/class-subjects`
-
-    return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(url, {}, true)
+  getSubjects: (): Promise<Subject[]> => {
+    return apiFetch<ResponsePack<ClassSubjectsResponsePayload>>(
+      "/class-subjects",
+      {},
+      true
+    )
       .then((response) => {
         const backendData = extractData(response)
         const items = backendData.payload ?? []
 
-        return items.map(
-          (item) =>
-            ({
+        // Debug: log duplicates
+        const subjectIds = items.map((item) => item.subject.id)
+        const duplicateIds = subjectIds.filter(
+          (id, index) => subjectIds.indexOf(id) !== index
+        )
+
+        if (duplicateIds.length > 0) {
+          console.warn(`Found duplicate subject ids:`, duplicateIds)
+          console.warn(
+            `Total subjects: ${items.length}, Unique: ${new Set(subjectIds).size}`
+          )
+        }
+
+        // Use a Map to deduplicate by subject id
+        const subjectMap = new Map<string, Subject>()
+
+        items.forEach((item) => {
+          if (!subjectMap.has(item.subject.id)) {
+            subjectMap.set(item.subject.id, {
               id: item.subject.id,
               name: item.subject.name,
-            }) satisfies Subject
-        )
+            })
+          }
+        })
+
+        // Convert Map values to array
+        return Array.from(subjectMap.values())
       })
       .catch((err) => {
         console.error("Failed to fetch subjects:", err)
@@ -173,7 +326,6 @@ export const ResultsAPI = {
               end_date: termData.endDate,
               status: termData.status,
               is_active: termData.isCurrent,
-              // map other fields as needed by your Term type
             } satisfies Term,
           ]
         }
@@ -226,7 +378,6 @@ export const ResultsAPI = {
           }
         })
 
-        console.log("Transformed students:", students)
         return students
       })
       .catch((error) => {
@@ -295,7 +446,7 @@ export const ResultsAPI = {
       })
   },
 
-  // Get teacher's submissions with filters
+  // Get teacher's submissions with filters - UPDATED!
   getTeacherSubmissions: (params?: GetGradesParams): Promise<GradeSubmission[]> => {
     const queryParams = new URLSearchParams()
 
@@ -306,13 +457,21 @@ export const ResultsAPI = {
     if (params?.page) queryParams.append("page", params.page.toString())
     if (params?.limit) queryParams.append("limit", params.limit.toString())
 
-    return apiFetch<ResponsePack<GradeSubmission[]>>(
+    return apiFetch<ResponsePack<PaginatedSubmissionsResponse>>(
       `/grades/submissions?${queryParams.toString()}`,
       {},
       true
     )
       .then((response) => {
-        const submissions = ensureArray<GradeSubmission>(extractData(response))
+        const paginatedData = extractData(response)
+        const backendSubmissions = paginatedData.items || []
+
+        console.log("Backend submissions received:", backendSubmissions)
+
+        // Transform each backend submission to our format
+        const submissions = backendSubmissions.map(transformBackendSubmission)
+
+        console.log("Transformed submissions:", submissions)
         return submissions
       })
       .catch((error) => {
@@ -322,14 +481,31 @@ export const ResultsAPI = {
   },
 
   // Get specific submission
+  // In lib/results.ts, update getSubmission to ensure it includes nested data
   getSubmission: (id: string): Promise<GradeSubmission> => {
     return apiFetch<ResponsePack<GradeSubmission>>(`/grades/submissions/${id}`, {}, true)
       .then((response) => {
         const submission = extractData(response)
+        console.log("DEBUG - Full submission data:", submission) // Add this for debugging
         return submission
       })
       .catch((error) => {
         console.error("Error fetching submission:", error)
+        throw error
+      })
+  },
+
+  // In lib/results.ts
+  // Add a method to get student info
+  getStudentInfo: (
+    studentId: string
+  ): Promise<{ id: string; name: string; registration_number?: string }> => {
+    return apiFetch<
+      ResponsePack<{ id: string; name: string; registration_number?: string }>
+    >(`/students/${studentId}`, {}, true)
+      .then((response) => extractData(response))
+      .catch((error) => {
+        console.error("Error fetching student info:", error)
         throw error
       })
   },
@@ -360,13 +536,17 @@ export const ResultsAPI = {
 
     if (params?.status) queryParams.append("status", params.status)
 
-    return apiFetch<ResponsePack<GradeSubmission[]>>(
+    return apiFetch<ResponsePack<PaginatedSubmissionsResponse>>(
       `/grades/submissions?${queryParams.toString()}`,
       {},
       true
     )
       .then((response) => {
-        const submissions = ensureArray<GradeSubmission>(extractData(response))
+        const paginatedData = extractData(response)
+        const backendSubmissions = paginatedData.items || []
+
+        // Transform each backend submission to our format
+        const submissions = backendSubmissions.map(transformBackendSubmission)
         return submissions
       })
       .catch((error) => {
