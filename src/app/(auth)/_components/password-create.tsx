@@ -269,7 +269,7 @@ const PasswordCreate = () => {
                 {/* REQUIREMENTS */}
                 <ul className="mb-8 list-inside list-disc space-y-2 text-xs text-[#6B6B6B]">
                   <li>6 characters (20 max)</li>
-                  <li>1 letter, 1 number, 1 special character (# ? ! @ $)</li>
+                  <li>1 letter, 1 number, 1 special character (#?!@$%^&*-)</li>
                 </ul>
 
                 <Button
