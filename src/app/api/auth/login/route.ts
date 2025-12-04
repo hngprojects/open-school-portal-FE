@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       status: 200,
     })
 
-    const SECURE = true // so i fit comot am while testing
+    const SECURE = false // so i fit comot am while testing
 
     // Set cookies — HTTP-only for security
     response.cookies.set("access_token", access_token, {

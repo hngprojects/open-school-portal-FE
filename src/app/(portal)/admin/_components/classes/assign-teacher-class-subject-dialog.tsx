@@ -21,7 +21,6 @@ import { toast } from "sonner"
 interface AssignTeacherDialogProps {
   open: boolean
   setOpen: (open: boolean) => void
-  classId: string
   classSubjectId: string
   subjectName: string
   className: string
@@ -34,7 +33,6 @@ interface AssignTeacherDialogProps {
 export default function AssignTeacherDialog({
   open,
   setOpen,
-  classId,
   classSubjectId,
   subjectName,
   className,
@@ -118,7 +116,7 @@ export default function AssignTeacherDialog({
 
             {/* Teacher Search Input */}
             <div className="relative">
-              <label className="mb-2 block text-sm font-medium text-gray-900">
+              <label className="mb-2 block cursor-pointer text-sm font-medium text-gray-900">
                 Search Teacher
               </label>
               <div className="relative">

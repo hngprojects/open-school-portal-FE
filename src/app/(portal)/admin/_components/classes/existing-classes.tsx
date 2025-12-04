@@ -90,7 +90,8 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
             return (
               <div
                 key={classItem.name}
-                className="rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="cursor-pointer rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                onClick={() => toggleClass(classItem.name)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -112,7 +113,6 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => toggleClass(classItem.name)}
                     className="h-9 w-9 hover:bg-gray-100"
                     aria-label={isExpanded ? "Collapse" : "Expand"}
                   >

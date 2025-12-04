@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useState } from "react"
 import { useGetParentStudents } from "../_hooks/use-parent-students"
 import { Student } from "@/lib/parents/client"
 
@@ -15,7 +15,7 @@ interface StudentContextParams {
 const StudentContext = createContext<StudentContextParams | null>(null)
 
 export const StudentProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: students, isLoading, isError } = useGetParentStudents()
+  const { data: students, isLoading } = useGetParentStudents()
   const [_selectedID, setSelectedID] = useState<string>()
   const selectedID = _selectedID ?? (students && students?.[0]?.id)
 
