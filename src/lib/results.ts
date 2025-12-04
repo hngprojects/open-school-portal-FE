@@ -39,8 +39,6 @@ interface ClassWithSession {
   }
 }
 
-// Interface for the actual subjects response
-// Actual response shape from /classes/{id}/subjects
 interface ClassSubjectsResponsePayload {
   payload: Array<{
     id: string
@@ -60,7 +58,6 @@ interface ClassSubjectsResponsePayload {
   }
 }
 
-// Actual response shape from /academic-term/active
 interface ActiveTermResponse {
   id: string
   createdAt: string
@@ -74,7 +71,6 @@ interface ActiveTermResponse {
   deletedAt: string | null
 }
 
-// Interface for the paginated submissions response
 interface PaginatedSubmissionsResponse {
   items: Array<{
     id: string
@@ -127,8 +123,93 @@ interface PaginatedSubmissionsResponse {
   }
 }
 
-// Helper to transform backend submission to our GradeSubmission type
-// Helper to transform backend submission to our GradeSubmission type
+// Result-related interfaces
+interface StudentResult {
+  id: string
+  student_id: string
+  class_id: string
+  class_name?: string
+  term_id: string
+  term_name?: string
+  academic_session_id: string
+  academic_session_name?: string
+  total_score: number
+  average_score: number
+  grade_letter: string
+  position: number | null
+  remark: string | null
+  subject_count: number
+  generated_at: string
+  subjects: Array<{
+    id: string
+    result_id: string
+    subject_id: string
+    subject_name?: string
+    ca_score: number | null
+    exam_score: number | null
+    total_score: number | null
+    grade_letter: string
+    remark?: string | null
+  }>
+}
+
+interface ClassStatistics {
+  highest_score: number
+  lowest_score: number
+  class_average: number
+  total_students: number
+}
+
+interface PaginatedResults {
+  data: StudentResult[]
+  meta: {
+    total: number
+    page: number
+    limit: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
+  }
+  class_statistics?: ClassStatistics
+}
+
+interface GenerateResultRequest {
+  term_id: string
+  academic_session_id?: string
+  student_id?: string
+  class_id?: string
+}
+
+interface GenerateResultResponse {
+  generated_count: number
+  result_ids: string[]
+}
+
+interface ResultResponsePayload {
+  id: string
+  student_id: string
+  class_id: string
+  term_id: string
+  academic_session_id: string
+  total_score: number
+  average_score: number
+  grade_letter: string
+  position: number | null
+  remark: string | null
+  subject_count: number
+  generated_at: string
+  subject_lines?: Array<{
+    id: string
+    result_id: string
+    subject_id: string
+    ca_score: string | null
+    exam_score: string | null
+    total_score: string | null
+    grade_letter: string
+    remark: string | null
+  }>
+}
+// Transform backend submission to our GradeSubmission type
 const transformBackendSubmission = (backendSubmission: {
   id: string
   teacher: {
@@ -190,11 +271,30 @@ const transformBackendSubmission = (backendSubmission: {
   return {
     id: backendSubmission.id,
     teacher_id: backendSubmission.teacher.id,
+    teacher: {
+      id: backendSubmission.teacher.id,
+      name: backendSubmission.teacher.name,
+      title: backendSubmission.teacher.title,
+    },
     class_id: backendSubmission.class.id,
+    class: {
+      id: backendSubmission.class.id,
+      name: backendSubmission.class.name,
+      arm: backendSubmission.class.arm,
+    },
     subject_id: backendSubmission.subject.id,
+    subject: {
+      id: backendSubmission.subject.id,
+      name: backendSubmission.subject.name,
+    },
     term_id: backendSubmission.term.id,
-    academic_session_id: "", // This might need to be fetched separately
+    term: {
+      id: backendSubmission.term.id,
+      name: backendSubmission.term.name,
+    },
+    academic_session_id: "",
     grades: backendSubmission.grades.map((grade) => {
+      const { firstName, lastName } = parseStudentName(grade.student.name)
       return {
         id: grade.id,
         student_id: grade.student.id,
@@ -217,6 +317,34 @@ const transformBackendSubmission = (backendSubmission: {
     rejection_reason: backendSubmission.rejection_reason || undefined,
     created_at: backendSubmission.created_at,
     updated_at: backendSubmission.updated_at,
+  }
+}
+
+// Transform backend result to our StudentResult type
+const transformBackendResult = (backendResult: ResultResponsePayload): StudentResult => {
+  return {
+    id: backendResult.id,
+    student_id: backendResult.student_id,
+    class_id: backendResult.class_id,
+    term_id: backendResult.term_id,
+    academic_session_id: backendResult.academic_session_id,
+    total_score: backendResult.total_score,
+    average_score: backendResult.average_score,
+    grade_letter: backendResult.grade_letter,
+    position: backendResult.position,
+    remark: backendResult.remark,
+    subject_count: backendResult.subject_count,
+    generated_at: backendResult.generated_at,
+    subjects: (backendResult.subject_lines || []).map((subject) => ({
+      id: subject.id,
+      result_id: subject.result_id,
+      subject_id: subject.subject_id,
+      ca_score: subject.ca_score ? parseFloat(subject.ca_score) : null,
+      exam_score: subject.exam_score ? parseFloat(subject.exam_score) : null,
+      total_score: subject.total_score ? parseFloat(subject.total_score) : null,
+      grade_letter: subject.grade_letter,
+      remark: subject.remark,
+    })),
   }
 }
 
@@ -465,10 +593,25 @@ export const ResultsAPI = {
     return apiFetch<ResponsePack<GradeSubmission>>(`/grades/submissions/${id}`, {}, true)
       .then((response) => {
         const submission = extractData(response)
+        console.log("DEBUG - Full submission data:", submission) // Add this for debugging
         return submission
       })
       .catch((error) => {
         console.error("Error fetching submission:", error)
+        throw error
+      })
+  },
+
+  // Add a method to get student info
+  getStudentInfo: (
+    studentId: string
+  ): Promise<{ id: string; name: string; registration_number?: string }> => {
+    return apiFetch<
+      ResponsePack<{ id: string; name: string; registration_number?: string }>
+    >(`/students/${studentId}`, {}, true)
+      .then((response) => extractData(response))
+      .catch((error) => {
+        console.error("Error fetching student info:", error)
         throw error
       })
   },
@@ -493,7 +636,7 @@ export const ResultsAPI = {
       })
   },
 
-  // Admin: Get all submissions - Use the correct endpoint
+  // Admin: Get all submissions with filters
   getAdminSubmissions: (params?: { status?: string }): Promise<GradeSubmission[]> => {
     const queryParams = new URLSearchParams()
 
@@ -561,25 +704,6 @@ export const ResultsAPI = {
       })
   },
 
-  // Get student results for parent/student view
-  getStudentResults: (studentId: string, termId?: string): Promise<Grade[]> => {
-    const queryString = termId ? `?term_id=${termId}` : ""
-
-    return apiFetch<ResponsePack<Grade[]>>(
-      `/results/student/${studentId}${queryString}`,
-      {},
-      true
-    )
-      .then((response) => {
-        const results = ensureArray<Grade>(extractData(response))
-        return results
-      })
-      .catch((error) => {
-        console.error("Error fetching student results:", error)
-        return []
-      })
-  },
-
   // Get grading scale
   getGradingScale: (): Promise<GradingScale[]> => {
     // This would need a real endpoint
@@ -594,6 +718,142 @@ export const ResultsAPI = {
     ]
 
     return Promise.resolve(DEFAULT_GRADING_SCALE)
+  },
+
+  // Generate results for a student
+  generateResult: (data: GenerateResultRequest): Promise<GenerateResultResponse> => {
+    return apiFetch<ResponsePack<GenerateResultResponse>>(
+      "/results/generate",
+      {
+        method: "POST",
+        data,
+      },
+      true
+    )
+      .then((response) => {
+        const result = extractData(response)
+        return result
+      })
+      .catch((error) => {
+        console.error("Error generating result:", error)
+        throw error
+      })
+  },
+
+  // Get student results with optional filters
+  getStudentResults: (
+    studentId: string,
+    params?: { term_id?: string; page?: number; limit?: number }
+  ): Promise<PaginatedResults> => {
+    const queryParams = new URLSearchParams()
+
+    if (params?.term_id) queryParams.append("term_id", params.term_id)
+    if (params?.page) queryParams.append("page", params.page.toString())
+    if (params?.limit) queryParams.append("limit", params.limit.toString())
+
+    const queryString = queryParams.toString() ? `?${queryParams.toString()}` : ""
+
+    return apiFetch<ResponsePack<PaginatedResults>>(
+      `/results/student/${studentId}${queryString}`,
+      {},
+      true
+    )
+      .then((response) => {
+        const paginatedData = extractData(response)
+
+        // Transform each backend result
+        const transformedData = {
+          ...paginatedData,
+          data: paginatedData.data.map(transformBackendResult),
+        }
+
+        return transformedData
+      })
+      .catch((error) => {
+        console.error("Error fetching student results:", error)
+        throw error
+      })
+  },
+
+  // Get specific result by ID
+  getResultById: (resultId: string): Promise<StudentResult> => {
+    return apiFetch<ResponsePack<ResultResponsePayload>>(`/results/${resultId}`, {}, true)
+      .then((response) => {
+        const result = extractData(response)
+        return transformBackendResult(result)
+      })
+      .catch((error) => {
+        console.error("Error fetching result by ID:", error)
+        throw error
+      })
+  },
+
+  // Get class results with statistics
+  getClassResults: (
+    classId: string,
+    termId: string,
+    academicSessionId?: string
+  ): Promise<{ data: StudentResult[]; class_statistics: ClassStatistics }> => {
+    const queryParams = new URLSearchParams()
+    queryParams.append("term_id", termId)
+    if (academicSessionId) queryParams.append("academic_session_id", academicSessionId)
+
+    return apiFetch<
+      ResponsePack<{
+        data: ResultResponsePayload[]
+        class_statistics: ClassStatistics
+      }>
+    >(`/results/class/${classId}?${queryParams.toString()}`, {}, true)
+      .then((response) => {
+        const resultData = extractData(response)
+
+        return {
+          data: resultData.data.map(transformBackendResult),
+          class_statistics: resultData.class_statistics,
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching class results:", error)
+        throw error
+      })
+  },
+
+  // List all results with filters
+  listResults: (params?: {
+    term_id?: string
+    academic_session_id?: string
+    class_id?: string
+    page?: number
+    limit?: number
+  }): Promise<PaginatedResults> => {
+    const queryParams = new URLSearchParams()
+
+    if (params?.term_id) queryParams.append("term_id", params.term_id)
+    if (params?.academic_session_id)
+      queryParams.append("academic_session_id", params.academic_session_id)
+    if (params?.class_id) queryParams.append("class_id", params.class_id)
+    if (params?.page) queryParams.append("page", params.page.toString())
+    if (params?.limit) queryParams.append("limit", params.limit.toString())
+
+    return apiFetch<ResponsePack<PaginatedResults>>(
+      `/results?${queryParams.toString()}`,
+      {},
+      true
+    )
+      .then((response) => {
+        const paginatedData = extractData(response)
+
+        const transformedData = {
+          ...paginatedData,
+          data: paginatedData.data.map(transformBackendResult),
+        }
+
+        return transformedData
+      })
+      .catch((error) => {
+        console.error("Error listing results:", error)
+        throw error
+      })
   },
 }
 
