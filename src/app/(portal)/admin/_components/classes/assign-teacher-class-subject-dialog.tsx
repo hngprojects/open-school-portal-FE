@@ -47,18 +47,11 @@ export default function AssignTeacherDialog({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [debouncedQuery, setDebouncedQuery] = useState({
-    is_active: true,
-    search: "",
-    limit: 3,
-  })
+  const [debouncedSearch, setDebouncedSearch] = useState("")
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedQuery((prev) => ({
-        ...prev,
-        search: searchQuery,
-      }))
+      setDebouncedSearch(searchQuery)
     }, 500)
 
     return () => clearTimeout(timer)
@@ -69,7 +62,11 @@ export default function AssignTeacherDialog({
     data: teachersData,
     isLoading: isLoadingTeachers,
     isError: isErrorTeachers,
-  } = useGetTeachers(debouncedQuery)
+  } = useGetTeachers({
+    is_active: true,
+    search: debouncedSearch,
+    limit: 3,
+  })
 
   const assignMutation = useAssignTeachersToClassSubject()
 

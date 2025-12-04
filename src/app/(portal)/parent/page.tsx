@@ -1,90 +1,38 @@
 "use client"
 
 import Image from "next/image"
-import React, { useState } from "react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { CalendarDays } from "lucide-react"
 import Link from "next/link"
-// import { useAuthStore } from "@/store/auth-store"
-
-const studentsData = [
-  {
-    id: 1,
-    name: "Sarah F.",
-    class: "Jss3C",
-    photo: "/assets/images/parent.png",
-    academic: { term: "2nd", grade: "A" },
-    attendance: { present: 85, absent: 3 },
-    fees: { amount: 300000, dueDate: "1 March 2025", status: "Unpaid" },
-    events: [
-      { title: "Mid-Term Break", date: "27-28 December 2025" },
-      { title: "Christmas Carol", date: "29 December 2025" },
-    ],
-  },
-  {
-    id: 2,
-    name: "John D.",
-    class: "Jss2A",
-    photo: "/assets/images/parent.png",
-    academic: { term: "Term 2", grade: "B+" },
-    attendance: { present: 90, absent: 2 },
-    fees: { amount: 250000, dueDate: "25 September 2025", status: "Paid" },
-    events: [
-      { title: "Science Fair", date: "10 November 2025" },
-      { title: "Sports Day", date: "5 December 2025" },
-    ],
-  },
-]
+import { useAuthStore } from "@/store/auth-store"
+import { useParentStudents } from "./_components/student-provider"
 
 export default function ParentDashboard() {
-  // const { profile, user } = useAuthStore()
-  // console.log(profile)
-  // console.log("user", user)
-  const [selectedStudentId, setSelectedStudentId] = useState(studentsData[0].id)
-  const student = studentsData.find((s) => s.id === selectedStudentId)
+  const user = useAuthStore((state) => state.user)
+  const userTitle = user?.title ? `${user.title}.` : ""
+  const { selectedStudent: student } = useParentStudents()
+  const studentName = student && `${student.first_name} ${student.last_name}.`
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="mb-2 text-2xl font-semibold">Welcome, Dr. Faith</h1>
-      <p className="mb-6 text-gray-600">Here is your child’s academic report</p>
+      <h1 className="mb-2 text-2xl font-semibold">
+        Welcome, {userTitle} {user?.first_name}
+      </h1>
+      <p className="mb-6 text-gray-600">Here is your child&apos;s academic report</p>
 
       <div className="mb-6 flex items-center justify-between space-x-6">
-        {/* Shadcn Select */}
-        <Select
-          value={selectedStudentId.toString()}
-          onValueChange={(value) => setSelectedStudentId(Number(value))}
-        >
-          <SelectTrigger className="border-accent text-accent w-30">
-            <SelectValue placeholder="Select Student" />
-          </SelectTrigger>
-          <SelectContent>
-            {studentsData.map((s) => (
-              <SelectItem key={s.id} value={s.id.toString()}>
-                {s.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
         <div className="flex flex-col items-center space-x-4">
           <div>
             <Image
-              src={student?.photo || "/assets/images/parent.png"}
-              alt={student?.name || "Student"}
+              src={student?.photo_url || "/assets/images/parent.png"}
+              alt={studentName || "Student"}
               width={70}
               height={70}
               className="h-20 w-20 rounded-full object-cover"
             />
           </div>
           <div>
-            <p className="font-semibold">{student?.name}</p>
+            <p className="font-semibold">{studentName}</p>
             <p className="text-gray-500">{student?.class}</p>
           </div>
         </div>
