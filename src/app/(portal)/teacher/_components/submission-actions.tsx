@@ -15,7 +15,7 @@ interface SubmissionActionsProps {
   classId: string
   subjectId: string
   termId: string
-  grades: GradeEntry[]
+  grades: Array<GradeEntry & { id?: string }> // Update to include id
   existingSubmission?: GradeSubmission
   academicSessionId: string
 }

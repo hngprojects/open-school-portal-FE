@@ -28,7 +28,7 @@ export function useGetClasses() {
 export function useGetSubjects(classId?: string) {
   return useQuery({
     queryKey: [...RESULTS_KEY, "subjects", classId],
-    queryFn: () => ResultsAPI.getSubjects(classId),
+    queryFn: () => ResultsAPI.getSubjects(),
     enabled: !!classId,
     staleTime: 1000 * 60 * 5,
   })

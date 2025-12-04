@@ -96,12 +96,12 @@ export const useGetSubjectsForClass = (classID: string) =>
   })
 
 // ASSIGN TEACHERS TO CLASS SUBJECT
-export const useAssignTeachersToClassSubject = (classID: string) => {
+export const useAssignTeachersToClassSubject = () => {
   const qc = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { subject_id: string; teacher_id: string }) =>
-      ClassesAPI.assignTeachersToClassSubject(classID, data.subject_id, data.teacher_id),
+    mutationFn: (data: { class_subject_id: string; teacher_id: string }) =>
+      ClassesAPI.assignTeachersToClassSubject(data.class_subject_id, data.teacher_id),
     onSuccess: () => {
       toast.success("Teachers assigned successfully")
       qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
@@ -114,12 +114,12 @@ export const useAssignTeachersToClassSubject = (classID: string) => {
   })
 }
 
-export const useUnassignTeachersToClassSubject = (classID: string) => {
+export const useUnassignTeachersToClassSubject = () => {
   const qc = useQueryClient()
 
   return useMutation({
-    mutationFn: (subject_id: string) =>
-      ClassesAPI.unassignTeachersFromClassSubject(classID, subject_id),
+    mutationFn: (class_subject_id: string) =>
+      ClassesAPI.unassignTeachersFromClassSubject(class_subject_id),
     onSuccess: () => {
       toast.success("Teacher unassigned successfully")
       qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
