@@ -77,7 +77,7 @@ export default function LinkConfirmationDialog({
                   {student.first_name} {student.last_name}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {student.reg_number} • {student.class}
+                  {student.registration_number} {/*  • {student.class}  */}
                 </p>
               </div>
               <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">

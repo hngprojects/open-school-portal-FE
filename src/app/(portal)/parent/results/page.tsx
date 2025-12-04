@@ -63,10 +63,8 @@ export default function ParentResultsPage() {
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">My Results</h1>
-          <p className="text-gray-600">
-            View and download your academic results, {studentName}
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">Student Results</h1>
+          <p className="text-gray-600">View your child &#39; s academic results</p>
         </div>
 
         <ParentResultsView

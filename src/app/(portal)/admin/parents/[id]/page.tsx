@@ -136,8 +136,8 @@ export default function EditParentPage() {
 
   return (
     <div className="mb-10 w-full space-y-8 bg-white p-4 md:p-10">
-      <div>
-        <div className="mb-4 md:mb-0 md:hidden">
+      <div className="flex items-start gap-4">
+        <div className="mb-4 md:mb-0">
           <Button
             asChild
             variant="ghost"
@@ -149,8 +149,10 @@ export default function EditParentPage() {
             </Link>
           </Button>
         </div>
-        <h1 className="mb-2 text-xl font-bold text-gray-900">Edit Parent</h1>
-        <p className="text-gray-600">Update parent details.</p>
+        <div>
+          <h1 className="mb-2 text-xl font-bold text-gray-900">Edit Parent</h1>
+          <p className="text-gray-600">Update parent details.</p>
+        </div>
       </div>
       <div>
         <NewPersonFormBuilder

@@ -133,3 +133,27 @@ export function useDeleteParent() {
     },
   })
 }
+
+export const useLinkParentToStudents = (parentId: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (studentIds: string[]) => ParentsAPI.linkToStudents(parentId, studentIds),
+    onSuccess: () => {
+      toast.success("Students linked to parent successfully")
+      queryClient.invalidateQueries({
+        queryKey: ["parent", parentId, "students"],
+      })
+    },
+  })
+}
+
+export const useGetLinkedStudents = (parentId: string) => {
+  return useQuery({
+    queryKey: ["parent", parentId, "students"],
+    queryFn: () => ParentsAPI.getLinkedStudents(parentId),
+    select: (data) => data.data as User[],
+    staleTime: 1000 * 60 * 20,
+    enabled: !!parentId,
+  })
+}
