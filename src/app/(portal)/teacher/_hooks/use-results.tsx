@@ -9,6 +9,11 @@ import type {
   GetGradesParams,
 } from "@/types/result"
 import { toast } from "sonner"
+import {
+  getResultsErrorMessage,
+  // validateGradeScores,
+  // validateAllGradeScores,
+} from "@/lib/results/error-handler"
 
 const RESULTS_KEY = ["results"]
 
@@ -23,7 +28,7 @@ export function useGetClasses() {
 export function useGetSubjects(classId?: string) {
   return useQuery({
     queryKey: [...RESULTS_KEY, "subjects", classId],
-    queryFn: () => ResultsAPI.getSubjects(classId),
+    queryFn: () => ResultsAPI.getSubjects(),
     enabled: !!classId,
     staleTime: 1000 * 60 * 5,
   })
@@ -75,7 +80,8 @@ export function useSaveDraft() {
       toast.success("Draft saved successfully")
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to save draft")
+      const errorMessage = getResultsErrorMessage(error)
+      toast.error(errorMessage)
     },
   })
 }

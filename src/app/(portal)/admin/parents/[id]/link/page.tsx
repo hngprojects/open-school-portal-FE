@@ -1,12 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeftIcon, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
-import { useGetParent } from "../../_hooks/use-parents"
+import {
+  useGetLinkedStudents,
+  useGetParent,
+  useLinkParentToStudents,
+} from "../../_hooks/use-parents"
 import { useGetStudents } from "@/app/(portal)/admin/students/_hooks/use-students"
 import { SnakeUser as User } from "@/types/user"
 import { toast } from "sonner"
@@ -20,25 +24,29 @@ type SelectedStudent = {
 }
 
 export default function LinkParentPage() {
-  const { id } = useParams()
+  const id = useParams()?.id as string
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedStudents, setSelectedStudents] = useState<SelectedStudent[]>([])
   const [showConfirmation, setShowConfirmation] = useState(false)
 
+  const { data: initLinkedStudents, isLoading: isLoadingLinked } =
+    useGetLinkedStudents(id)
+  const initiallySelected = useMemo(() => {
+    if (!initLinkedStudents) return []
+
+    return initLinkedStudents.map((student) => ({
+      student,
+      relationship: "",
+    }))
+  }, [initLinkedStudents])
+
+  const linkParentToStudentsMutation = useLinkParentToStudents(id)
+
   const { data: parent, isLoading: isLoadingParent } = useGetParent(id as string)
   const { data: students, isLoading: isLoadingStudents } = useGetStudents({
     search: searchQuery,
   })
-
-  // Update toast when selection changes
-  useEffect(() => {
-    if (selectedStudents.length > 0) {
-      toast.info(
-        `${selectedStudents.length} student${selectedStudents.length > 1 ? "s" : ""} selected for linking`
-      )
-    }
-  }, [selectedStudents.length])
 
   const handleStudentSelect = (student: User, selected: boolean) => {
     if (selected) {
@@ -57,16 +65,9 @@ export default function LinkParentPage() {
   }
 
   const handleLinkStudents = async () => {
-    // TODO: Implement API call to link parent to students
-    console.log("Linking parent to students:", {
-      parentId: id,
-      students: selectedStudents,
-    })
-
+    const studentIds = selectedStudents.map((s) => s.student.id)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
+      await linkParentToStudentsMutation.mutateAsync(studentIds)
       toast.success(
         `Successfully linked ${selectedStudents.length} student${selectedStudents.length > 1 ? "s" : ""} to parent`
       )
@@ -82,7 +83,13 @@ export default function LinkParentPage() {
         !selectedStudents.some((selected) => selected.student.id === student.id)
     ) || []
 
-  if (isLoadingParent) {
+  useEffect(() => {
+    if (initiallySelected) {
+      setSelectedStudents(initiallySelected)
+    }
+  }, [initiallySelected])
+
+  if (isLoadingParent || isLoadingLinked) {
     return (
       <div className="min-h-screen bg-gray-50 p-4">
         <div className="flex min-h-[400px] items-center justify-center">
@@ -151,11 +158,14 @@ export default function LinkParentPage() {
 
         {/* Selected Students Summary */}
         {selectedStudents.length > 0 && (
-          <div className="mb-6 rounded-lg bg-blue-50 p-4">
+          <div className="mb-6 flex items-center justify-between rounded-lg bg-blue-50 px-4 py-2">
             <h3 className="font-semibold text-blue-900">
               {selectedStudents.length} student{selectedStudents.length > 1 ? "s" : ""}{" "}
               selected for linking
             </h3>
+            <Button variant="outline" className="mt-2 h-8" onClick={handleClearSelection}>
+              <span className="text-sm">Clear Selection</span>
+            </Button>
           </div>
         )}
 
@@ -208,4 +218,8 @@ export default function LinkParentPage() {
       </div>
     </div>
   )
+
+  function handleClearSelection() {
+    setSelectedStudents(initiallySelected || [])
+  }
 }

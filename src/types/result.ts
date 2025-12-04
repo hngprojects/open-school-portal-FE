@@ -48,12 +48,31 @@ export interface Grade {
 export interface GradeSubmission {
   id: string
   teacher_id: string
+  teacher?: {
+    id: string
+    name: string
+    title: string
+  }
   class_id: string
+  class?: {
+    id: string
+    name: string
+    arm: string
+  }
   subject_id: string
+  subject?: {
+    id: string
+    name: string
+  }
   term_id: string
+  term?: {
+    id: string
+    name: string
+  }
   academic_session_id: string
   grades: Grade[]
   status: "draft" | "submitted" | "approved" | "rejected"
+  student_count?: number
   submitted_at?: string
   reviewed_at?: string
   reviewed_by?: string
@@ -106,4 +125,66 @@ export interface SubmissionStats {
 export interface ReviewActionRequest {
   reason?: string
   comment?: string
+}
+
+export interface ResultSubjectLine {
+  id: string
+  result_id: string
+  subject_id: string
+  subject_name?: string
+  ca_score: number | null
+  exam_score: number | null
+  total_score: number | null
+  grade_letter: string
+  remark?: string | null
+}
+
+export interface StudentResult {
+  id: string
+  student_id: string
+  class_id: string
+  class_name?: string
+  term_id: string
+  term_name?: string
+  academic_session_id: string
+  academic_session_name?: string
+  total_score: number
+  average_score: number
+  grade_letter: string
+  position: number | null
+  remark: string | null
+  subject_count: number
+  generated_at: string
+  subjects: ResultSubjectLine[]
+}
+
+export interface ClassStatistics {
+  highest_score: number
+  lowest_score: number
+  class_average: number
+  total_students: number
+}
+
+export interface PaginatedResults {
+  data: StudentResult[]
+  meta: {
+    total: number
+    page: number
+    limit: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
+  }
+}
+
+export interface GenerateResultRequest {
+  term_id: string
+  academic_session_id?: string
+  student_id?: string
+  class_id?: string
+}
+
+export interface GenerateResultResponse {
+  generated_count: number
+  result_ids: string[]
 }

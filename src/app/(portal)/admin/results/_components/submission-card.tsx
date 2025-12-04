@@ -6,15 +6,28 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
-import {
-  DUMMY_CLASSES,
-  DUMMY_SUBJECTS,
-  DUMMY_TERMS,
-  TEACHER_NAMES,
-} from "@/lib/dummy-data"
 
 interface SubmissionCardProps {
   submission: GradeSubmission
+}
+
+// Helper type for nested objects
+interface TeacherInfo {
+  name?: string
+  title?: string
+}
+
+interface ClassInfo {
+  name?: string
+  arm?: string
+}
+
+interface SubjectInfo {
+  name?: string
+}
+
+interface TermInfo {
+  name?: string
 }
 
 export function SubmissionCard({ submission }: SubmissionCardProps) {
@@ -25,7 +38,7 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
       case "approved":
         return "default"
       case "rejected":
-        return "outline"
+        return "inactive" // Changed from "destructive" to "inactive"
       case "submitted":
         return "outline"
       default:
@@ -42,17 +55,39 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
       case "rejected":
         return "Rejected"
       default:
-        return status
+        return status.charAt(0).toUpperCase() + status.slice(1)
     }
   }
 
-  const teacherName = TEACHER_NAMES[submission.teacher_id] || "Unknown Teacher"
+  // Helper function to safely extract object properties without 'any'
+  const getNestedProperty = <T,>(obj: unknown, key: string): T | undefined => {
+    if (!obj || typeof obj !== "object") return undefined
+    return (obj as Record<string, T>)[key]
+  }
+
+  // Extract names from submission data
+  const teacherName =
+    getNestedProperty<string>(submission.teacher, "name") ||
+    getNestedProperty<string>(submission.teacher, "title") ||
+    submission.teacher_id ||
+    "Unknown Teacher"
+
   const className =
-    DUMMY_CLASSES.find((c) => c.id === submission.class_id)?.name || "Unknown Class"
+    getNestedProperty<string>(submission.class, "name") ||
+    (getNestedProperty<string>(submission.class, "arm")
+      ? `${getNestedProperty<string>(submission.class, "name") || ""} ${getNestedProperty<string>(submission.class, "arm") || ""}`.trim()
+      : submission.class_id) ||
+    "Unknown Class"
+
   const subjectName =
-    DUMMY_SUBJECTS.find((s) => s.id === submission.subject_id)?.name || "Unknown Subject"
+    getNestedProperty<string>(submission.subject, "name") ||
+    submission.subject_id ||
+    "Unknown Subject"
+
   const termName =
-    DUMMY_TERMS.find((t) => t.id === submission.term_id)?.name || "Unknown Term"
+    getNestedProperty<string>(submission.term, "name") ||
+    submission.term_id ||
+    "Unknown Term"
 
   const handleReview = () => {
     router.push(`/admin/results/${submission.id}`)
@@ -80,7 +115,7 @@ export function SubmissionCard({ submission }: SubmissionCardProps) {
         </div>
         <div className="text-sm">
           <span className="font-medium">Students:</span>{" "}
-          {submission.grades.length || "Multiple"}
+          {submission.grades?.length || submission.student_count || "Multiple"}
         </div>
         {submission.submitted_at && (
           <div className="text-sm text-gray-600">

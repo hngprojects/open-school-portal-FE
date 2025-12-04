@@ -8,9 +8,9 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Banknote } from "lucide-react"
 
 const chartData = [
-  { name: "Paid", value: 8600000, fill: "#00A878" },
-  { name: "Unpaid", value: 4600000, fill: "#D64545" },
-  { name: "Invoice", value: 1600000, fill: "#FFAE4C" },
+  { name: "Paid", value: 0, fill: "#00A878" },
+  { name: "Unpaid", value: 0, fill: "#D64545" },
+  { name: "Invoice", value: 0, fill: "#FFAE4C" },
 ]
 
 // ✅ REQUIRED: ChartContainer config

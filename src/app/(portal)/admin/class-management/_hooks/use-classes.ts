@@ -83,14 +83,6 @@ export const useDeleteClass = () => {
   })
 }
 
-// TEACHERS FOR CLASS
-export const useGetClassTeachers = (id: string, session_id?: string) =>
-  useQuery({
-    queryKey: CLASS_KEYS.teachers(id),
-    queryFn: () => ClassesAPI.assignedTeachers(id, session_id),
-    enabled: !!id,
-  })
-
 export const SUBJECTS_FOR_CLASS_KEY = "class_subjects"
 
 export const useGetSubjectsForClass = (classID: string) =>
@@ -102,3 +94,40 @@ export const useGetSubjectsForClass = (classID: string) =>
     },
     enabled: !!classID,
   })
+
+// ASSIGN TEACHERS TO CLASS SUBJECT
+export const useAssignTeachersToClassSubject = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { class_subject_id: string; teacher_id: string }) =>
+      ClassesAPI.assignTeachersToClassSubject(data.class_subject_id, data.teacher_id),
+    onSuccess: () => {
+      toast.success("Teachers assigned successfully")
+      qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to assign teachers")
+      }
+    },
+  })
+}
+
+export const useUnassignTeachersToClassSubject = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (class_subject_id: string) =>
+      ClassesAPI.unassignTeachersFromClassSubject(class_subject_id),
+    onSuccess: () => {
+      toast.success("Teacher unassigned successfully")
+      qc.invalidateQueries({ queryKey: [SUBJECTS_FOR_CLASS_KEY] })
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to unassign teacher")
+      }
+    },
+  })
+}

@@ -18,8 +18,9 @@ export default function Teacherlayout({ children }: { children: React.ReactNode 
       <UserProvider>
         <SidebarProvider>
           <TeacherSidebar />
-          <main className="w-full pt-16">
+          <main className="min-h-screen w-full pt-10 lg:pt-20">
             <DashboardHeader />
+
             {children}
           </main>
         </SidebarProvider>

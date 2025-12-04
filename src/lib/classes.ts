@@ -83,8 +83,38 @@ export const ClassesAPI = {
 
   getSubjectsForClass: (id: string) =>
     apiFetch<ResponsePack<ClassSubjectsResponse>>(
-      `/classes/${id}/subjects`,
-      { method: "GET" },
+      `/class-subjects`,
+      {
+        method: "GET",
+        params: { class_id: id },
+      },
+      true
+    ),
+
+  createSubjectsForClass: (id: string, subjectIds: string[]) =>
+    apiFetch<ResponsePack<ClassSubjectsResponse>>(
+      `/class-subjects`,
+      {
+        method: "POST",
+        data: {
+          classId: id,
+          subjectIds: subjectIds,
+        },
+      },
+      true
+    ),
+
+  assignTeachersToClassSubject: (classSubjectId: string, teacherId: string) =>
+    apiFetch<ResponsePack<null>>(
+      `/class-subjects/${classSubjectId}/teacher`,
+      { method: "POST", data: { teacherId: teacherId } },
+      true
+    ),
+
+  unassignTeachersFromClassSubject: (classSubjectId: string) =>
+    apiFetch<ResponsePack<null>>(
+      `/class-subjects/${classSubjectId}/teacher`,
+      { method: "DELETE" },
       true
     ),
 

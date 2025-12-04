@@ -26,7 +26,7 @@ export default function AssignSubjectForm({
   classes,
   onSuccess,
 }: AssignSubjectFormProps) {
-  const initAssignedClasses = subject.classes.map((cls) => cls.id)
+  const initAssignedClasses = subject.classes?.map((cls) => cls.id)
 
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedClasses, setSelectedClasses] = useState<Set<string>>(
@@ -69,13 +69,13 @@ export default function AssignSubjectForm({
       </div>
 
       {/* Classes List */}
-      <section className="mb-6 space-y-3">
+      <section className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-2">
         {paginatedClasses.length > 0 ? (
           paginatedClasses.map((classItem) => {
             const isSelected = selectedClasses.has(classItem.id)
 
             return (
-              <div
+              <label
                 key={classItem.id}
                 className={`flex items-center justify-between rounded-xl border bg-white p-4 transition-all ${
                   isSelected ? "border-green-500 bg-green-50" : "border-gray-200"
@@ -97,7 +97,7 @@ export default function AssignSubjectForm({
                     </h5>
                   </div>
                 </div>
-              </div>
+              </label>
             )
           })
         ) : (
