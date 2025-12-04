@@ -129,6 +129,7 @@ interface PaginatedSubmissionsResponse {
 
 // Helper to transform backend submission to our GradeSubmission type
 // Helper to transform backend submission to our GradeSubmission type
+// In your lib/results.ts file, update the transformBackendSubmission function:
 const transformBackendSubmission = (backendSubmission: {
   id: string
   teacher: {
@@ -190,11 +191,30 @@ const transformBackendSubmission = (backendSubmission: {
   return {
     id: backendSubmission.id,
     teacher_id: backendSubmission.teacher.id,
+    teacher: {
+      id: backendSubmission.teacher.id,
+      name: backendSubmission.teacher.name,
+      title: backendSubmission.teacher.title,
+    },
     class_id: backendSubmission.class.id,
+    class: {
+      id: backendSubmission.class.id,
+      name: backendSubmission.class.name,
+      arm: backendSubmission.class.arm,
+    },
     subject_id: backendSubmission.subject.id,
+    subject: {
+      id: backendSubmission.subject.id,
+      name: backendSubmission.subject.name,
+    },
     term_id: backendSubmission.term.id,
+    term: {
+      id: backendSubmission.term.id,
+      name: backendSubmission.term.name,
+    },
     academic_session_id: "", // This might need to be fetched separately
     grades: backendSubmission.grades.map((grade) => {
+      const { firstName, lastName } = parseStudentName(grade.student.name)
       return {
         id: grade.id,
         student_id: grade.student.id,
@@ -461,14 +481,31 @@ export const ResultsAPI = {
   },
 
   // Get specific submission
+  // In lib/results.ts, update getSubmission to ensure it includes nested data
   getSubmission: (id: string): Promise<GradeSubmission> => {
     return apiFetch<ResponsePack<GradeSubmission>>(`/grades/submissions/${id}`, {}, true)
       .then((response) => {
         const submission = extractData(response)
+        console.log("DEBUG - Full submission data:", submission) // Add this for debugging
         return submission
       })
       .catch((error) => {
         console.error("Error fetching submission:", error)
+        throw error
+      })
+  },
+
+  // In lib/results.ts
+  // Add a method to get student info
+  getStudentInfo: (
+    studentId: string
+  ): Promise<{ id: string; name: string; registration_number?: string }> => {
+    return apiFetch<
+      ResponsePack<{ id: string; name: string; registration_number?: string }>
+    >(`/students/${studentId}`, {}, true)
+      .then((response) => extractData(response))
+      .catch((error) => {
+        console.error("Error fetching student info:", error)
         throw error
       })
   },

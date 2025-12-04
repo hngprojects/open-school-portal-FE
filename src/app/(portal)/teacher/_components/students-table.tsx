@@ -17,8 +17,8 @@ import { GradeFormDialog } from "./grade-form-dialog"
 
 interface StudentsTableProps {
   students: Student[]
-  grades: Record<string, GradeEntry>
-  onGradeUpdate: (studentId: string, updatedGrade: GradeEntry) => void
+  grades: Record<string, GradeEntry & { id?: string }> // Update to include id
+  onGradeUpdate: (studentId: string, updatedGrade: GradeEntry & { id?: string }) => void // Update to include id
   isLoading: boolean
   classId: string
   subjectId: string
@@ -68,7 +68,10 @@ export function StudentsTable({
     setDialogOpen(true)
   }
 
-  const handleSaveGrade = (studentId: string, gradeData: GradeEntry) => {
+  const handleSaveGrade = (
+    studentId: string,
+    gradeData: GradeEntry & { id?: string }
+  ) => {
     onGradeUpdate(studentId, gradeData)
     setDialogOpen(false)
     setSelectedStudent(null)
@@ -134,12 +137,11 @@ export function StudentsTable({
       </Card>
 
       {selectedStudent && (
-        // In StudentsTable component, update the GradeFormDialog usage:
         <GradeFormDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           student={selectedStudent}
-          grade={grades[selectedStudent.id]}
+          grade={grades[selectedStudent.id]} // Just pass the grade directly
           classId={classId}
           subjectId={subjectId}
           termId={termId}
