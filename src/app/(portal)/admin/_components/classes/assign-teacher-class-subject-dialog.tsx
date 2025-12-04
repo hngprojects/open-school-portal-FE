@@ -71,7 +71,7 @@ export default function AssignTeacherDialog({
     isError: isErrorTeachers,
   } = useGetTeachers(debouncedQuery)
 
-  const assignMutation = useAssignTeachersToClassSubject(classId)
+  const assignMutation = useAssignTeachersToClassSubject()
 
   const topThreeTeachers = teachersData?.slice(0, 3)
 
@@ -318,7 +318,7 @@ export default function AssignTeacherDialog({
 
     try {
       await assignMutation.mutateAsync({
-        subject_id: classSubjectId,
+        class_subject_id: classSubjectId,
         teacher_id: selectedTeacher.id,
       })
       setShowSuccessDialog(true)
