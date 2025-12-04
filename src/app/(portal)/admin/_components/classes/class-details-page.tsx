@@ -175,7 +175,6 @@ export default function ViewClassSubjects() {
         setOpen={() => setAssignTeacher(null)}
         classSubjectId={assignTeacherSubject?.id || ""}
         subjectName={assignTeacherSubject?.subject.name || ""}
-        classId={classID}
         className={classData?.name || ""}
       />
     </div>
