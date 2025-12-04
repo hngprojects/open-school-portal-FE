@@ -35,7 +35,7 @@ interface TeacherResultsViewProps {
 }
 
 // Helper function to create empty grade entry
-const createEmptyGradeEntry = (studentId: string): GradeEntry => ({
+const createEmptyGradeEntry = (studentId: string): GradeEntry & { id?: string } => ({
   student_id: studentId,
   ca_score: null,
   exam_score: null,
@@ -48,14 +48,15 @@ const createEmptyGradeEntry = (studentId: string): GradeEntry => ({
 const initializeGrades = (
   students: Student[],
   existingSubmission?: GradeSubmission
-): Record<string, GradeEntry> => {
-  const newGrades: Record<string, GradeEntry> = {}
+): Record<string, GradeEntry & { id?: string }> => {
+  const newGrades: Record<string, GradeEntry & { id?: string }> = {}
 
   // First, populate from existing submission if available
   if (existingSubmission?.grades) {
     existingSubmission.grades.forEach((grade) => {
       if (grade.student_id) {
         newGrades[grade.student_id] = {
+          id: grade.id, // Preserve the grade ID
           student_id: grade.student_id,
           ca_score: grade.ca_score,
           exam_score: grade.exam_score,
@@ -98,8 +99,7 @@ export function TeacherResultsView({
   const filterKey = `${selectedClass}-${selectedSubject}-${selectedTerm}`
 
   // Store grades with student_id as key
-  // Initialize with a function to avoid computation on every render
-  const [grades, setGrades] = useState<Record<string, GradeEntry>>(() =>
+  const [grades, setGrades] = useState<Record<string, GradeEntry & { id?: string }>>(() =>
     initializeGrades(students, existingSubmission)
   )
 
@@ -107,24 +107,20 @@ export function TeacherResultsView({
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey)
 
   // When filters change, reset grades
-  // This runs synchronously during render, not in an effect
   if (filterKey !== prevFilterKey) {
     setPrevFilterKey(filterKey)
     setGrades(initializeGrades(students, existingSubmission))
   }
 
-  const handleGradeUpdate = useCallback((studentId: string, updatedGrade: GradeEntry) => {
-    // Always ensure student_id is set
-    const gradeWithStudentId: GradeEntry = {
-      ...updatedGrade,
-      student_id: studentId,
-    }
-
-    setGrades((prev) => ({
-      ...prev,
-      [studentId]: gradeWithStudentId,
-    }))
-  }, [])
+  const handleGradeUpdate = useCallback(
+    (studentId: string, updatedGrade: GradeEntry & { id?: string }) => {
+      setGrades((prev) => ({
+        ...prev,
+        [studentId]: updatedGrade,
+      }))
+    },
+    []
+  )
 
   // Get grade entries ready for submission
   const gradeEntries = useMemo(() => {
@@ -134,6 +130,7 @@ export function TeacherResultsView({
           grade.student_id && (grade.ca_score !== null || grade.exam_score !== null)
       )
       .map((grade) => ({
+        id: grade.id, // Include ID for updates
         student_id: grade.student_id,
         ca_score: grade.ca_score,
         exam_score: grade.exam_score,
@@ -210,27 +207,20 @@ export function TeacherResultsView({
         <div className="rounded-lg border bg-white p-4">
           <div className="grid grid-cols-3 gap-4 md:grid-cols-4">
             <div>
-              {/* <span className="text-sm font-medium text-gray-500">Class</span> */}
               <p className="text-lg font-semibold">
                 {classes.find((c) => c.id === selectedClass)?.name || "-"}
               </p>
             </div>
             <div>
-              {/* <span className="text-sm font-medium text-gray-500">Subject</span> */}
               <p className="text-lg font-semibold">
                 {subjects.find((s) => s.id === selectedSubject)?.name || "-"}
               </p>
             </div>
             <div>
-              {/* <span className="text-sm font-medium text-gray-500">Term</span> */}
               <p className="text-lg font-semibold">
                 {terms.find((t) => t.id === selectedTerm)?.name || "-"}
               </p>
             </div>
-            {/* <div>
-              <span className="text-sm font-medium text-gray-500">Academic Session</span>
-              <p className="text-lg font-semibold">{academicSessionId || "2025/2026"}</p>
-            </div> */}
           </div>
 
           {/* Submission Status */}

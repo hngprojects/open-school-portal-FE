@@ -45,15 +45,35 @@ export interface Grade {
   updated_at?: string
 }
 
+// Update your GradeSubmission interface
 export interface GradeSubmission {
   id: string
   teacher_id: string
+  teacher?: {
+    id: string
+    name: string
+    title: string
+  }
   class_id: string
+  class?: {
+    id: string
+    name: string
+    arm: string
+  }
   subject_id: string
+  subject?: {
+    id: string
+    name: string
+  }
   term_id: string
+  term?: {
+    id: string
+    name: string
+  }
   academic_session_id: string
   grades: Grade[]
   status: "draft" | "submitted" | "approved" | "rejected"
+  student_count?: number
   submitted_at?: string
   reviewed_at?: string
   reviewed_by?: string
