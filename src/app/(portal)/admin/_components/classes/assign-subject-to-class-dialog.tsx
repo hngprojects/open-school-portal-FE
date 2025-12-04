@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -86,9 +86,9 @@ export default function AssignSubjectsDialog({
   const totalPages = subjectsData?.pagination?.total_pages || 1
 
   // Get IDs of already assigned subjects
-  const assignedSubjectIds = new Set(
-    assignedSubjects.map((item: AssignedSubject) => item.subject.id)
-  )
+  const assignedSubjectIds = useMemo(() => {
+    return new Set(assignedSubjects.map((item) => item.subject.id))
+  }, [assignedSubjects])
 
   const [isPending, setPending] = useState(false)
 

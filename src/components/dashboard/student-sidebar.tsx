@@ -5,8 +5,6 @@ import Link from "next/link"
 import {
   LayoutGrid,
   GraduationCap,
-  User,
-  NotebookPen,
   CalendarDays,
   FileBadge,
   SettingsIcon,
@@ -31,12 +29,9 @@ import { SidebarFooterUser } from "../sidebar-footer-user"
 // Menu items
 const items = [
   { title: "Dashboard", url: "/student", icon: LayoutGrid, exactMatch: true },
-  { title: "Classes", url: "/student/classes", icon: User },
-  { title: "Attendance", url: "/student/attendance", icon: GraduationCap },
-  { title: "Messages", url: "/student/messages", icon: User },
-  { title: "Assignments", url: "/student/assignments", icon: NotebookPen },
-  { title: "Timetable", url: "/student/timetable", icon: CalendarDays },
   { title: "Results", url: "/student/results", icon: FileBadge },
+  { title: "Timetable", url: "/student/timetable", icon: CalendarDays },
+  { title: "Attendance", url: "/student/attendance", icon: GraduationCap },
 ]
 
 const bottomItems = [

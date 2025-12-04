@@ -34,7 +34,7 @@ export default function AssignSubjectPageContent() {
   const classItems =
     classes &&
     classes.flatMap((cls) =>
-      cls.classes.map((c) => {
+      cls.classes?.map((c) => {
         return {
           id: c.id,
           name: `${cls.name} ${c.arm ?? ""}`,
