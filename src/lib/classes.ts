@@ -118,6 +118,29 @@ export const ClassesAPI = {
       true
     ),
 
+  getStudentsForClass: (classId: string) =>
+    apiFetch<ResponsePack<StudentsForClass[]>>(
+      `/classes/${classId}/students`,
+      { method: "GET" },
+      true
+    ),
+
+  addStudentsToClass: (classId: string, studentIds: string[]) =>
+    apiFetch<ResponsePack<null>>(
+      `/classes/${classId}/students`,
+      { method: "POST", data: { studentIds } },
+      true
+    ),
+
+  removeStudentFromClass: (classId: string, studentId: string) => {
+    return new Promise((resolve) => setTimeout(resolve, 1000))
+    //   return apiFetch<ResponsePack<null>>(
+    //     `/classes/${classId}/students/${studentId}`,
+    //     { method: "DELETE" },
+    //     true
+    //   )
+  },
+
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
 }
 
@@ -152,5 +175,13 @@ export interface Teacher {
   employment_id: string
   title: string
   photo_url: string
+  is_active: boolean
+}
+
+export interface StudentsForClass {
+  student_id: string
+  registration_number: string
+  name: string
+  enrollment_date: string // ISO timestamp
   is_active: boolean
 }
