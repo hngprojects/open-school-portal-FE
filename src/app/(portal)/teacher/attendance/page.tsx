@@ -44,13 +44,13 @@ const AttendancePage = () => {
     // Load from localStorage if available
     const studentsWithSaved = dummyStudents.map((student) => ({
       ...student,
-      present: localStorage.getItem(`attendance_${today}_${student.id}`) === "true",
+      // present: localStorage.getItem(`attendance_${today}_${student.id}`) === "true",
     }))
 
     return { date: today, students: studentsWithSaved }
   })
 
-  const isToday = selectedDate === today
+  // const isToday = selectedDate === today
   const isLocked = false
 
   const toggleStudent = (id: string) => {
