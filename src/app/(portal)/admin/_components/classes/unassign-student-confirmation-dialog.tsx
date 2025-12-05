@@ -17,16 +17,16 @@ interface UnassignConfirmationDialogProps {
   onConfirm: () => Promise<void>
   title?: string
   description?: string
-  subjectName: string
+  className: string
 }
 
-export function UnassignConfirmationDialog({
+export function UnassignStudentConfirmationDialog({
   open,
   onOpenChange,
   onConfirm,
-  title = "Unassign Teacher from Subject",
-  description = "Are you sure you want to unassign this teacher from the subject?",
-  subjectName,
+  title = "Unassign Student from Class",
+  description = "Are you sure you want to unassign this student from the class?",
+  className,
 }: UnassignConfirmationDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -36,7 +36,7 @@ export function UnassignConfirmationDialog({
       await onConfirm()
       onOpenChange(false)
     } catch {
-      console.error("An unexpected error occured while unassigning the teacher.")
+      console.error("An unexpected error occured while unassigning the student.")
     } finally {
       setIsLoading(false)
     }
@@ -51,11 +51,11 @@ export function UnassignConfirmationDialog({
         </DialogHeader>
         <div className="py-4">
           <p className="text-sm text-gray-600">
-            You are about to unassign the teacher from the subject{" "}
-            <strong>{subjectName}</strong>.
+            You are about to unassign the student from the class{" "}
+            <strong> {className} </strong>.
           </p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="grid grid-cols-1 md:grid-cols-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
@@ -64,7 +64,7 @@ export function UnassignConfirmationDialog({
             Cancel
           </Button>
           <Button variant="default" onClick={handleConfirm} disabled={isLoading}>
-            {isLoading ? "Unassigning..." : "Unassign Teacher"}
+            {isLoading ? "Unassigning..." : "Unassign Student"}
           </Button>
         </DialogFooter>
       </DialogContent>

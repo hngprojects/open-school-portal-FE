@@ -46,7 +46,7 @@ const EditClass = () => {
         </Link>
       </Button>
 
-      <section className="mt-5 lg:ml-10">
+      <section className="mt-5 lg:mx-5">
         <DashboardTitle
           heading="Edit Class"
           description="Update the details of an existing class"
@@ -84,7 +84,7 @@ export default EditClass
 //     <div className="p-4">
 //       <ArrowLeft />
 
-//       <section className="mt-5 lg:ml-10">
+//       <section className="mt-5 lg:mx-5">
 //         <DashboardTitle
 //           heading="Add New Class"
 //           description="Enter the details of the new teacher"
