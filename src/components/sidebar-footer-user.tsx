@@ -7,6 +7,8 @@ import { useAuthStore } from "@/store/auth-store"
 import { titleCase } from "@/lib/utils"
 import { LogoutDialog } from "@/components/dashboard/logout-confirmation-dialog"
 import { useLogout } from "@/hooks/use-user-data"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface SidebarFooterUserProps {
   isCollapsed?: boolean
@@ -17,6 +19,11 @@ export function SidebarFooterUser({ isCollapsed = false }: SidebarFooterUserProp
   const [showLogoutDialog, setShowLogoutDialog] = useState(false)
   const sendLogoutRequest = useLogout().mutateAsync
   const userTitle = user?.title ? `${user.title}.` : ""
+  const pathname = usePathname()
+
+  // Extract role from pathname to determine profile route
+  const segments = pathname.split("/").filter(Boolean)
+  const role = segments[0] || "student" // student, teacher, parent, admin
 
   const handleLogout = async () => {
     await sendLogoutRequest()
@@ -26,7 +33,7 @@ export function SidebarFooterUser({ isCollapsed = false }: SidebarFooterUserProp
     <>
       <div className="border-t border-gray-200 p-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link href={`/${role}/profile`} className="flex flex-1 items-center gap-3">
             <div className="relative h-10 w-10">
               <Image
                 src={"/assets/images/dashboard/avatar.svg"}
@@ -47,11 +54,11 @@ export function SidebarFooterUser({ isCollapsed = false }: SidebarFooterUserProp
                 </span>
               </div>
             )}
-          </div>
+          </Link>
           {!isCollapsed && (
             <button
               onClick={() => setShowLogoutDialog(true)}
-              className="cursor-pointer rounded-md p-1.5 text-[#DA3743] transition-colors hover:bg-red-50"
+              className="ml-2 cursor-pointer rounded-md p-1.5 text-[#DA3743] transition-colors hover:bg-red-50"
               aria-label="Logout"
             >
               <LogOut className="h-5 w-5" />
