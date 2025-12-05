@@ -21,7 +21,11 @@ const classFormSchema = z.object({
     .min(1, "Academic session is required")
     .regex(/^\d{4}\/\d{4}$/, "Format must be YYYY/YYYY (e.g., 2025/2026)"),
   className: z.string().min(1, "Class name is required").min(2),
-  arm: z.string().optional(),
+  arm: z
+    .string()
+    .max(1, "Arm must be a single letter (e.g., A)")
+    .regex(/^[A-Za-z]?$/, "Arm must be a single letter")
+    .optional(),
   classTeacher: z.string().optional(),
 })
 
