@@ -23,6 +23,8 @@ import NotFound from "@/app/not-found"
 import { StudentsLoadingSkeleton } from "./students-loading-skeleton"
 import Link from "next/link"
 
+const CLASS_PAGE = (classID: string) => `/admin/class-management/class/${classID}`
+
 export default function AssignStudentsPageContent() {
   const classID = useParams().classID as string
   const [searchQuery, setSearchQuery] = useState<string>()
@@ -67,7 +69,7 @@ export default function AssignStudentsPageContent() {
       (s) => classmatesIDs && !classmatesIDs.includes(s.id) && s.current_class_id === null
     )
 
-  const isLoading = isLoadingStudents && isLoadingClassmates && isLoadingClass
+  const isLoading = isLoadingStudents || isLoadingClassmates || isLoadingClass
   const isError = isErrorStudents || isErrorClassmates || isErrorClass
   const error = errorStudents || errorClassmates || errorClass
 
@@ -134,7 +136,6 @@ export default function AssignStudentsPageContent() {
                   >
                     <Checkbox
                       checked={isSelected}
-                      onCheckedChange={() => handleToggleStudent(student.id)}
                       className={`mt-0.5 ${
                         isSelected ? "border-green-600 bg-green-600" : ""
                       }`}
@@ -189,7 +190,7 @@ export default function AssignStudentsPageContent() {
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2">
             <Button asChild className="flex-1" disabled={addStudentsMutation.isPending}>
-              <Link href="/admin/class-management/class">Cancel</Link>
+              <Link href={CLASS_PAGE(classID)}>Cancel</Link>
             </Button>
             <Button
               onClick={handleAssignStudents}
@@ -225,9 +226,7 @@ export default function AssignStudentsPageContent() {
               assigned to {className}
             </DialogDescription>
             <Button asChild className="w-full">
-              <Link href={`/admin/class-management/class/${classID}`}>
-                View Updated ClassList
-              </Link>
+              <Link href={CLASS_PAGE(classID)}>View Updated ClassList</Link>
             </Button>
           </div>
         </DialogContent>

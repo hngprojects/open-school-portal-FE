@@ -8,7 +8,7 @@ import {
 import { useParentStudents } from "./student-provider"
 import { cn } from "@/lib/utils"
 
-export const StudentSelector = ({ className }: { className: string }) => {
+export const StudentSelector = ({ className }: { className?: string }) => {
   const { students: studentsData, studentID, setSelectedStudentID } = useParentStudents()
 
   return (

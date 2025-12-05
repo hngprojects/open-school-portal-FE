@@ -13,3 +13,13 @@ export function useGetParentStudents() {
     refetchOnWindowFocus: false,
   })
 }
+
+export function useGetExtraDummy() {
+  return useQuery({
+    queryKey: [...PARENT_STUDENTS_KEY, "dummy-extras"],
+    queryFn: () => ParentStudents.getDummyExtras(),
+    staleTime: 1000 * 60 * 60,
+    retry: 2,
+    refetchOnWindowFocus: false,
+  })
+}

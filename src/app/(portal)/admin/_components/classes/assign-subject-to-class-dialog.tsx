@@ -45,7 +45,6 @@ export default function AssignSubjectsDialog({
   className,
 }: AssignSubjectsDialogProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const queryClient = useQueryClient()
@@ -72,6 +71,9 @@ export default function AssignSubjectsDialog({
   const assignedSubjects = assignedSubjectsData?.payload || []
   const assignedSubjectIds =
     assignedSubjects && assignedSubjects.map((item) => item.subject.id)
+  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(
+    new Set(assignedSubjectIds)
+  )
 
   const totalPages = subjectsData?.pagination?.total_pages || 1
 
@@ -85,13 +87,6 @@ export default function AssignSubjectsDialog({
   const isLoading = isLoadingSubjects || isLoadingAssigned
   const isError = isErrorSubjects || isErrorAssigned
   const error = errorSubjects || errorAssigned
-
-  useEffect(() => {
-    if (!isLoadingAssigned && assignedSubjectIds) {
-      const assignedIds = new Set(assignedSubjectIds)
-      setSelectedSubjects(assignedIds)
-    }
-  }, [isLoadingAssigned])
 
   return (
     <>
@@ -121,7 +116,7 @@ export default function AssignSubjectsDialog({
               errorMessage={error?.message || "An unexpected error occurred."}
             />
           ) : (
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 pt-4">
               {/* Search Bar */}
               <div className="relative">
                 <Search className="text-text-secondary absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -144,7 +139,7 @@ export default function AssignSubjectsDialog({
               </div>
 
               {/* Subjects List */}
-              <div className="max-h-[400px] space-y-2">
+              <div className="space-y-2">
                 {availableSubjects.length > 0 ? (
                   availableSubjects.map((subject: Subject) => {
                     const isSelected = selectedSubjects.has(subject.id)
@@ -214,7 +209,7 @@ export default function AssignSubjectsDialog({
               )}
 
               {/* Action Buttons */}
-              <div className="flex gap-2 pt-2">
+              <div className="sticky -bottom-2 flex gap-2 bg-white py-4">
                 <Button
                   variant="outline"
                   onClick={() => setOpen(false)}

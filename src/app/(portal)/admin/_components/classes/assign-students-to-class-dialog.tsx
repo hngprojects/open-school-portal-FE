@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Search, Loader2Icon } from "lucide-react"
+import { Search, Loader2Icon, CheckCircleIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ItemsError } from "../loading-error"
 import { useGetStudentsWithMeta } from "../../students/_hooks/use-students"
@@ -95,7 +95,7 @@ export default function AssignStudentsDialog({
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
                   {availableStudents.length} available{" "}
-                  {availableStudents.length === 1 ? "subject" : "students"}
+                  {availableStudents.length === 1 ? "student" : "students"}
                 </p>
                 <p className="text-sm text-gray-600">{selectedStudents.size} selected</p>
               </div>
@@ -112,11 +112,11 @@ export default function AssignStudentsDialog({
                         className={`flex cursor-pointer items-start gap-3 rounded-lg border bg-white p-3 transition-all hover:border-gray-300 ${
                           isSelected ? "border-green-500 bg-green-50" : "border-gray-200"
                         }`}
-                        onClick={() => handleToggleSubject(student.id)}
+                        onClick={() => handleToggleStudent(student.id)}
                       >
                         <Checkbox
                           checked={isSelected}
-                          onCheckedChange={() => handleToggleSubject(student.id)}
+                          onCheckedChange={() => handleToggleStudent(student.id)}
                           className={`mt-0.5 ${
                             isSelected ? "border-green-600 bg-green-600" : ""
                           }`}
@@ -189,7 +189,7 @@ export default function AssignStudentsDialog({
                       Assigning...
                     </>
                   ) : (
-                    `Assign ${selectedStudents.size} ${selectedStudents.size === 1 ? "Subject" : "Students"}`
+                    `Assign ${selectedStudents.size} ${selectedStudents.size === 1 ? "Student" : "Students"}`
                   )}
                 </Button>
               </div>
@@ -197,16 +197,38 @@ export default function AssignStudentsDialog({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="w-[90vw] sm:max-w-md">
+          <div className="flex w-full flex-col items-center py-6 text-center">
+            <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircleIcon className="size-10 text-green-600" />
+            </div>
+            <DialogTitle className="mb-2 text-xl font-semibold text-gray-900">
+              Class Students Updated Successfully
+            </DialogTitle>
+            <DialogDescription className="text-text-secondary mb-6 text-sm">
+              {selectedStudents.size}{" "}
+              {selectedStudents.size === 1 ? "student has" : "students have"} been
+              assigned to {className}
+            </DialogDescription>
+            <Button onClick={handleCloseSuccess} className="w-full">
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   )
 
-  function handleToggleSubject(subjectId: string) {
+  function handleToggleStudent(studentId: string) {
     setSelectedStudents((prev) => {
       const newSet = new Set(prev)
-      if (newSet.has(subjectId)) {
-        newSet.delete(subjectId)
+      if (newSet.has(studentId)) {
+        newSet.delete(studentId)
       } else {
-        newSet.add(subjectId)
+        newSet.add(studentId)
       }
       return newSet
     })
@@ -219,7 +241,7 @@ export default function AssignStudentsDialog({
       await addStudentsMutation.mutateAsync(allAssignedStudents)
       setShowSuccessDialog(true)
     } catch (error) {
-      console.error("Failed to assign subject:", error)
+      console.error("Failed to assign student:", error)
     }
   }
 

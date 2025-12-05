@@ -55,7 +55,7 @@ export function UnassignConfirmationDialog({
             <strong>{subjectName}</strong>.
           </p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="grid grid-cols-1 gap-2 md:grid-cols-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
