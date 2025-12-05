@@ -43,7 +43,7 @@ const AddClass = () => {
         <ArrowLeft className="size-5" />
       </button>
 
-      <section className="mt-5 lg:ml-10">
+      <section className="mt-5 lg:mx-5">
         <DashboardTitle
           heading="Add New Class"
           description="Enter the details of the new class"
@@ -67,7 +67,7 @@ export default AddClass
 //     <div className="p-4">
 //       <ArrowLeft />
 
-//       <section className="mt-5 lg:ml-10">
+//       <section className="mt-5 lg:mx-5">
 //         <DashboardTitle
 //           heading="Add New Class"
 //           description="Enter the details of the new teacher"

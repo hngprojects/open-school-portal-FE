@@ -1,11 +1,11 @@
-import ViewClassSubjects from "../../../_components/classes/class-details-page"
+import ViewClassStudents from "@/app/(portal)/admin/_components/classes/class-students-page"
 
-const ClassPage = () => {
+const ClassSubjectsPage = () => {
   return (
-    <div className="p-4 md:not-first:bg-[#FAFAFA]">
-      <ViewClassSubjects />
+    <div className="min-h-screen p-4 md:not-first:bg-[#FAFAFA]">
+      <ViewClassStudents />
     </div>
   )
 }
 
-export default ClassPage
+export default ClassSubjectsPage

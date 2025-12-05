@@ -39,7 +39,7 @@ export const useCreateClass = () => {
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message ?? "Failed to create class")
+        toast.error(err?.message ?? "Failed to create class")
       }
     },
   })
@@ -59,7 +59,7 @@ export const useUpdateClass = (classID: string) => {
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message ?? "Failed to update class")
+        toast.error(err?.message ?? "Failed to update class")
       }
     },
   })
@@ -108,7 +108,7 @@ export const useAssignTeachersToClassSubject = () => {
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message ?? "Failed to assign teachers")
+        toast.error(err?.message ?? "Failed to assign teachers")
       }
     },
   })
@@ -126,7 +126,53 @@ export const useUnassignTeachersToClassSubject = () => {
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
-        toast.error(err?.response?.data?.message ?? "Failed to unassign teacher")
+        toast.error(err?.message ?? "Failed to unassign teacher")
+      }
+    },
+  })
+}
+
+export const useGetClassStudents = (classID: string) => {
+  return useQuery({
+    queryKey: ["class_students", classID],
+    queryFn: () => ClassesAPI.getStudentsForClass(classID),
+    select: (data) => data.data,
+    enabled: !!classID,
+    refetchOnWindowFocus: false,
+  })
+}
+
+export const useAddStudentsToClass = (classID: string) => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (studentIds: string[]) =>
+      ClassesAPI.addStudentsToClass(classID, studentIds),
+    onSuccess: () => {
+      toast.success("Students added to class successfully")
+      qc.invalidateQueries({ queryKey: ["class_students", classID] })
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.message ?? "Failed to add students to class")
+      }
+    },
+  })
+}
+
+export const useRemoveStudentFromClass = (classID: string) => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (studentId: string) =>
+      ClassesAPI.removeStudentFromClass(classID, studentId),
+    onSuccess: () => {
+      toast.success("Student removed from class successfully")
+      qc.invalidateQueries({ queryKey: ["class_students", classID] })
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.message ?? "Failed to remove student from class")
       }
     },
   })

@@ -49,4 +49,5 @@ export interface SnakeUser {
   avatar?: string
   photo_url?: string
   password?: string
+  current_class_id?: string | null
 }

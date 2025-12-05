@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -11,163 +11,123 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Search, CheckCircle, Loader2Icon } from "lucide-react"
+import { Search, Loader2Icon, CheckCircleIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ItemsError } from "../loading-error"
-import {
-  SubjectsAPI,
-  useGetSubjects,
-} from "../../class-management/subjects/_hooks/use-subjects"
-import {
-  useGetSubjectsForClass,
-  SUBJECTS_FOR_CLASS_KEY,
-} from "../../class-management/_hooks/use-classes"
-import { toast } from "sonner"
-import { useQueryClient } from "@tanstack/react-query"
+import { useGetStudentsWithMeta } from "../../students/_hooks/use-students"
+import { useAddStudentsToClass } from "../../class-management/_hooks/use-classes"
 
-interface Subject {
-  id: string
-  name: string
-  department?: string
-}
-
-interface AssignSubjectsDialogProps {
+interface AssignStudentsDialogProps {
   open: boolean
   setOpen: (open: boolean) => void
   classId: string
   className: string
+  classmates: string[]
 }
 
-export default function AssignSubjectsDialog({
+export default function AssignStudentsDialog({
   open,
   setOpen,
   classId,
   className,
-}: AssignSubjectsDialogProps) {
-  const [searchQuery, setSearchQuery] = useState("")
+  classmates,
+}: AssignStudentsDialogProps) {
+  const [searchQuery, setSearchQuery] = useState<string>()
+  const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set())
   const [currentPage, setCurrentPage] = useState(1)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
-  const queryClient = useQueryClient()
 
-  // Fetch all available subjects
+  // Fetch all available students
   const {
-    data: subjectsData,
-    isLoading: isLoadingSubjects,
-    isError: isErrorSubjects,
-    error: errorSubjects,
-    refetch: refetchSubjects,
-  } = useGetSubjects({ page: currentPage })
+    data: studentsData,
+    isLoading: isLoadingStudents,
+    isError: isErrorStudents,
+    error: errorStudents,
+    refetch: refetchStudents,
+  } = useGetStudentsWithMeta({ page: currentPage, search: searchQuery, limit: 20 })
 
-  // Fetch subjects already assigned to this class
-  const {
-    data: assignedSubjectsData,
-    isLoading: isLoadingAssigned,
-    isError: isErrorAssigned,
-    error: errorAssigned,
-    refetch: refetchAssigned,
-  } = useGetSubjectsForClass(classId)
+  const addStudentsMutation = useAddStudentsToClass(classId)
 
-  const subjects = subjectsData?.data || []
-  const assignedSubjects = assignedSubjectsData?.payload || []
-  const assignedSubjectIds =
-    assignedSubjects && assignedSubjects.map((item) => item.subject.id)
-  const [selectedSubjects, setSelectedSubjects] = useState<Set<string>>(
-    new Set(assignedSubjectIds)
-  )
+  const students = studentsData?.data || []
+  const totalPages = studentsData?.meta?.total_pages || 1
+  const availableStudents = students && students.filter((s) => !classmates.includes(s.id))
 
-  const totalPages = subjectsData?.pagination?.total_pages || 1
-
-  const [isPending, setPending] = useState(false)
-
-  // Filter out already assigned subjects and apply search
-  const availableSubjects = subjects.filter((subject: Subject) =>
-    subject.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
-  const isLoading = isLoadingSubjects || isLoadingAssigned
-  const isError = isErrorSubjects || isErrorAssigned
-  const error = errorSubjects || errorAssigned
+  const isLoading = isLoadingStudents
+  const isError = isErrorStudents
+  const error = errorStudents
 
   return (
     <>
-      <Dialog
-        open={open && !showSuccessDialog}
-        onOpenChange={isPending ? () => {} : setOpen}
-      >
+      <Dialog open={open && !showSuccessDialog} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">
-              Assign Subjects to {className}
+              Assign Students to {className}
             </DialogTitle>
             <DialogDescription className="text-sm">
-              Select subjects to assign to this class
+              Select students to assign to this class
             </DialogDescription>
           </DialogHeader>
 
           {isLoading ? (
-            <SubjectsLoadingSkeleton />
+            <StudentsLoadingSkeleton />
           ) : isError ? (
             <ItemsError
-              item="Subjects"
-              reload={() => {
-                refetchSubjects()
-                refetchAssigned()
-              }}
+              item="Students"
+              reload={refetchStudents}
               errorMessage={error?.message || "An unexpected error occurred."}
             />
           ) : (
-            <div className="space-y-4 pt-4">
+            <div className="space-y-4 py-4">
               {/* Search Bar */}
               <div className="relative">
                 <Search className="text-text-secondary absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                 <Input
                   type="search"
-                  placeholder="Search subjects..."
+                  placeholder="Search students..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="h-11 pr-4 pl-9"
                 />
               </div>
 
-              {/* Available Subjects Count */}
+              {/* Available Students Count */}
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">
-                  {availableSubjects.length} available{" "}
-                  {availableSubjects.length === 1 ? "subject" : "subjects"}
+                  {availableStudents.length} available{" "}
+                  {availableStudents.length === 1 ? "student" : "students"}
                 </p>
-                <p className="text-sm text-gray-600">{selectedSubjects.size} selected</p>
+                <p className="text-sm text-gray-600">{selectedStudents.size} selected</p>
               </div>
 
-              {/* Subjects List */}
-              <div className="space-y-2">
-                {availableSubjects.length > 0 ? (
-                  availableSubjects.map((subject: Subject) => {
-                    const isSelected = selectedSubjects.has(subject.id)
+              {/* Students List */}
+              <div className="max-h-[400px] space-y-2 overflow-y-auto">
+                {availableStudents.length > 0 ? (
+                  availableStudents.map((student) => {
+                    const isSelected = selectedStudents.has(student.id)
 
                     return (
                       <div
-                        key={subject.id}
+                        key={student.id}
                         className={`flex cursor-pointer items-start gap-3 rounded-lg border bg-white p-3 transition-all hover:border-gray-300 ${
                           isSelected ? "border-green-500 bg-green-50" : "border-gray-200"
                         }`}
-                        onClick={() => handleToggleSubject(subject.id)}
+                        onClick={() => handleToggleStudent(student.id)}
                       >
                         <Checkbox
                           checked={isSelected}
-                          onCheckedChange={() => handleToggleSubject(subject.id)}
+                          onCheckedChange={() => handleToggleStudent(student.id)}
                           className={`mt-0.5 ${
                             isSelected ? "border-green-600 bg-green-600" : ""
                           }`}
                         />
                         <div className="flex-1">
                           <h5 className="text-sm font-semibold text-gray-900">
-                            {subject.name}
+                            {student.full_name}
                           </h5>
-                          {subject.department && (
-                            <p className="text-text-secondary mt-0.5 text-xs">
-                              {subject.department}
-                            </p>
-                          )}
+                          <p className="text-text-secondary mt-0.5 text-xs">
+                            {student.registration_number}
+                          </p>
                         </div>
                       </div>
                     )
@@ -176,8 +136,8 @@ export default function AssignSubjectsDialog({
                   <div className="py-12 text-center">
                     <p className="text-text-secondary text-sm">
                       {searchQuery
-                        ? "No subjects found matching your search"
-                        : "All subjects have been assigned to this class"}
+                        ? "No students found matching your search"
+                        : "All students have been assigned to this class"}
                     </p>
                   </div>
                 )}
@@ -185,7 +145,7 @@ export default function AssignSubjectsDialog({
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-5 flex items-center justify-center gap-2 pt-2">
+                <div className="flex items-center justify-center gap-2 pt-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -209,27 +169,27 @@ export default function AssignSubjectsDialog({
               )}
 
               {/* Action Buttons */}
-              <div className="sticky -bottom-2 flex gap-2 bg-white py-4">
+              <div className="flex gap-2 pt-2">
                 <Button
                   variant="outline"
                   onClick={() => setOpen(false)}
                   className="flex-1"
-                  disabled={isPending}
+                  disabled={addStudentsMutation.isPending}
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleAssignSubjects}
-                  disabled={selectedSubjects.size === 0 || isPending}
+                  onClick={handleAssignStudents}
+                  disabled={selectedStudents.size === 0 || addStudentsMutation.isPending}
                   className="flex-1"
                 >
-                  {isPending ? (
+                  {addStudentsMutation.isPending ? (
                     <>
                       <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                       Assigning...
                     </>
                   ) : (
-                    `Assign ${selectedSubjects.size} ${selectedSubjects.size === 1 ? "Subject" : "Subjects"}`
+                    `Assign ${selectedStudents.size} ${selectedStudents.size === 1 ? "Student" : "Students"}`
                   )}
                 </Button>
               </div>
@@ -243,14 +203,14 @@ export default function AssignSubjectsDialog({
         <DialogContent className="w-[90vw] sm:max-w-md">
           <div className="flex w-full flex-col items-center py-6 text-center">
             <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-green-100">
-              <CheckCircle className="size-10 text-green-600" />
+              <CheckCircleIcon className="size-10 text-green-600" />
             </div>
             <DialogTitle className="mb-2 text-xl font-semibold text-gray-900">
-              Class Subjects Updated Successfully
+              Class Students Updated Successfully
             </DialogTitle>
             <DialogDescription className="text-text-secondary mb-6 text-sm">
-              {selectedSubjects.size}{" "}
-              {selectedSubjects.size === 1 ? "subject has" : "subjects have"} been
+              {selectedStudents.size}{" "}
+              {selectedStudents.size === 1 ? "student has" : "students have"} been
               assigned to {className}
             </DialogDescription>
             <Button onClick={handleCloseSuccess} className="w-full">
@@ -262,59 +222,37 @@ export default function AssignSubjectsDialog({
     </>
   )
 
-  function handleToggleSubject(subjectId: string) {
-    setSelectedSubjects((prev) => {
+  function handleToggleStudent(studentId: string) {
+    setSelectedStudents((prev) => {
       const newSet = new Set(prev)
-      if (newSet.has(subjectId)) {
-        newSet.delete(subjectId)
+      if (newSet.has(studentId)) {
+        newSet.delete(studentId)
       } else {
-        newSet.add(subjectId)
+        newSet.add(studentId)
       }
       return newSet
     })
   }
 
-  async function handleAssignSubjects() {
-    setPending(true)
-    const allAssignedSubjects = Array.from(selectedSubjects)
-    const newlyAssignedSubjects = allAssignedSubjects.filter(
-      (sId) => !assignedSubjectIds.includes(sId)
-    )
-    const newlyUnassignedSubjects = assignedSubjectIds.filter(
-      (sId) => !allAssignedSubjects.includes(sId)
-    )
+  async function handleAssignStudents() {
+    const allAssignedStudents = Array.from(selectedStudents)
 
     try {
-      await Promise.all([
-        // Assign newly selected subjects
-        ...newlyAssignedSubjects.map((subjectId) =>
-          SubjectsAPI.assignToClasses(subjectId, [classId])
-        ),
-        // Unassign deselected subjects
-        ...newlyUnassignedSubjects.map((subjectId) =>
-          SubjectsAPI.unAssignToClasses(subjectId, [classId])
-        ),
-      ])
+      await addStudentsMutation.mutateAsync(allAssignedStudents)
       setShowSuccessDialog(true)
-      await queryClient.invalidateQueries({
-        queryKey: [SUBJECTS_FOR_CLASS_KEY, classId],
-      })
     } catch (error) {
-      console.error("Failed to assign subject:", error)
-      toast.error("Failed to assign subjects. Please try again.")
-    } finally {
-      setPending(false)
+      console.error("Failed to assign student:", error)
     }
   }
 
   function handleCloseSuccess() {
-    setSelectedSubjects(new Set())
+    setSelectedStudents(new Set())
     setShowSuccessDialog(false)
     setOpen(false)
   }
 }
 
-function SubjectsLoadingSkeleton() {
+function StudentsLoadingSkeleton() {
   return (
     <div className="space-y-4 py-4">
       {/* Search Skeleton */}
@@ -326,7 +264,7 @@ function SubjectsLoadingSkeleton() {
         <Skeleton className="h-5 w-24" />
       </div>
 
-      {/* Subjects List Skeleton */}
+      {/* Students List Skeleton */}
       <div className="space-y-2">
         {Array.from({ length: 5 }).map((_, index) => (
           <div
