@@ -25,7 +25,7 @@ export interface UserProfileResponse {
   first_name: string
   last_name: string
   middle_name?: string | null | undefined
-  gender?: "MALE" | "FEMALE" | "OTHER" | null
+  gender?: "MALE" | "FEMALE" | "OTHER" | "male" | "female" | "other" | null | undefined
   dob?: string
   phone?: string
   is_active: boolean
