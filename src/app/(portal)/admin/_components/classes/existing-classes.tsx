@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useDeleteClass } from "../../class-management/_hooks/use-classes"
+import { DeleteConfirmationDialog } from "@/components/users/delete-confirmation-dialog"
 
 const EDIT_CLASS = (classID: string) => `/admin/class-management/class/${classID}/edit`
 
@@ -31,6 +32,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
   const deleteClasses = useDeleteClass().mutateAsync
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const [toDelete, setToDelete] = useState<string>()
 
   const toggleClass = (className: string) => {
     setExpandedClasses((prev) => {
@@ -90,7 +92,8 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
             return (
               <div
                 key={classItem.name}
-                className="rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="cursor-pointer rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                onClick={() => toggleClass(classItem.name)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
@@ -112,7 +115,6 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => toggleClass(classItem.name)}
                     className="h-9 w-9 hover:bg-gray-100"
                     aria-label={isExpanded ? "Collapse" : "Expand"}
                   >
@@ -138,6 +140,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                         <li
                           key={arm.id}
                           className="group grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                          onClick={() => viewClass(arm.id)}
                         >
                           <div className="text-accent bg-accent/10 group-hover:bg-accent/20 flex size-9 items-center justify-center rounded-full transition-all duration-200 group-hover:scale-110">
                             <GraduationCap className="size-5" />
@@ -156,12 +159,18 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                                 <MoreVerticalIcon className="text-gray-600" />
                               </DropdownMenuTrigger>
 
-                              <DropdownMenuContent align="end" className="w-fit">
+                              <DropdownMenuContent
+                                align="end"
+                                className="w-fit"
+                                onClick={(e) => e.stopPropagation()}
+                              >
                                 <DropdownMenuItem
                                   asChild
                                   className="flex items-center gap-2"
                                 >
-                                  <Link href={`/admin/class-management/class/${arm.id}`}>
+                                  <Link
+                                    href={`/admin/class-management/class/${arm.id}/subjects`}
+                                  >
                                     View Subjects
                                   </Link>
                                 </DropdownMenuItem>
@@ -182,7 +191,7 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
                                   </DropdownMenuItem> */}
 
                                 <DropdownMenuItem
-                                  onClick={() => handleDelete(arm.id)}
+                                  onClick={() => handleConfirmDelete(arm.id)}
                                   className="flex items-center gap-2"
                                 >
                                   Delete
@@ -242,6 +251,14 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
         </Button>
       </div>
 
+      <DeleteConfirmationDialog
+        open={!!toDelete}
+        onOpenChange={(open) => !open && setToDelete(undefined)}
+        onConfirm={() => handleDelete(toDelete as string)}
+        title="Delete Class"
+        description="This action cannot be undone and will remove all associated data with this class."
+      />
+
       {/* Button to View Subjects */}
       {/* <div className="flex justify-center">
         <Button asChild className="mx-auto w-full max-w-[400px] shadow-sm" size="lg">
@@ -262,8 +279,19 @@ const ExistingClasses = ({ classesData }: { classesData: ClassItem[] }) => {
     }
   }
 
+  async function handleConfirmDelete(armId: string) {
+    if (!armId) {
+      return
+    }
+    setToDelete(armId)
+  }
+
   function handleEdit(armId: string) {
     router.push(EDIT_CLASS(armId))
+  }
+
+  function viewClass(armId: string) {
+    router.push(`/admin/class-management/class/${armId}`)
   }
 }
 

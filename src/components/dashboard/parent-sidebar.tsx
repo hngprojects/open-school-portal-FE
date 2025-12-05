@@ -37,7 +37,6 @@ const items = [
 export function ParentSidebar() {
   const pathname = usePathname()
   const { isMobile, setOpenMobile, state } = useSidebar()
-  // const [showLogoutDialog, setShowLogoutDialog] = useState(false)
 
   const handleLinkClick = () => {
     if (isMobile) {
@@ -46,11 +45,6 @@ export function ParentSidebar() {
   }
 
   const isCollapsed = state === "collapsed"
-  // const sendLogoutRequest = useLogout().mutateAsync
-
-  // const handleLogout = async () => {
-  //   await sendLogoutRequest()
-  // }
 
   return (
     <Sidebar>

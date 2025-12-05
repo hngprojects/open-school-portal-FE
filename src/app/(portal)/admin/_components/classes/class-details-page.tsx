@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import AssignTeacherDialog from "./assign-teacher-class-subject-dialog"
 import { toast } from "sonner"
-import { UnassignConfirmationDialog } from "./unassign-confirmation-dialog"
+import { UnassignConfirmationDialog } from "./unassign-teacher-confirmation-dialog"
 
 export default function ViewClassSubjects() {
   const { classID } = useParams<{ classID: string }>()
@@ -67,7 +67,7 @@ export default function ViewClassSubjects() {
     <div>
       <Button asChild className="bg-gray-100" variant="ghost" size="icon">
         <Link
-          href="/admin/class-management/class"
+          href={`/admin/class-management/class/${classID}`}
           aria-label="Go back to classes"
           className="flex"
         >
@@ -75,7 +75,7 @@ export default function ViewClassSubjects() {
         </Link>
       </Button>
 
-      <section className="mt-5 lg:ml-10">
+      <section className="mt-5 lg:mx-5">
         <div className="flex flex-col items-start justify-between space-y-3 md:flex-row">
           <DashboardTitle
             heading="Class Subjects"
@@ -175,7 +175,6 @@ export default function ViewClassSubjects() {
         setOpen={() => setAssignTeacher(null)}
         classSubjectId={assignTeacherSubject?.id || ""}
         subjectName={assignTeacherSubject?.subject.name || ""}
-        classId={classID}
         className={classData?.name || ""}
       />
     </div>

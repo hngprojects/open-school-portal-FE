@@ -1,23 +1,28 @@
+// File: app/(portal)/student/results/_components/student-results-view.tsx
 "use client"
 
-import { Class, Term, Grade } from "@/types/result"
+import { Class, Term, StudentResult, ClassStatistics } from "@/types/result"
 import { FilterSection } from "./filter-section"
 import { DownloadButton } from "./download-button"
 import { ResultsTable } from "./results-table"
-import { TeacherComment } from "./teacher-comment"
+import { OverallSummary } from "./overall-summary"
+import { EmptyState } from "./empty-state"
 
 interface StudentResultsViewProps {
+  studentId: string
   classes: Class[]
   terms: Term[]
-  results: Grade[]
+  results: StudentResult[]
   selectedClass: string
   selectedTerm: string
   onClassChange: (classId: string) => void
   onTermChange: (termId: string) => void
   isLoading: boolean
+  classStatistics?: ClassStatistics
 }
 
 export function StudentResultsView({
+  studentId,
   classes,
   terms,
   results,
@@ -26,9 +31,15 @@ export function StudentResultsView({
   onClassChange,
   onTermChange,
   isLoading,
+  classStatistics,
 }: StudentResultsViewProps) {
   const selectedClassName = classes.find((c) => c.id === selectedClass)?.name || "-"
   const selectedTermName = terms.find((t) => t.id === selectedTerm)?.name || "-"
+
+  // Get the current result for the selected class and term
+  const currentResult = results.find(
+    (result) => result.class_id === selectedClass && result.term_id === selectedTerm
+  )
 
   return (
     <div className="space-y-6">
@@ -45,7 +56,7 @@ export function StudentResultsView({
       {/* Class Info */}
       {selectedClass && selectedTerm && (
         <div className="rounded-lg border bg-white p-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <span className="text-sm font-medium text-gray-500">Class</span>
               <p className="text-lg font-semibold">{selectedClassName}</p>
@@ -54,53 +65,77 @@ export function StudentResultsView({
               <span className="text-sm font-medium text-gray-500">Term</span>
               <p className="text-lg font-semibold">{selectedTermName}</p>
             </div>
+            {currentResult?.position && (
+              <div>
+                <span className="text-sm font-medium text-gray-500">
+                  Position in Class
+                </span>
+                <p className="text-lg font-semibold">{currentResult.position}</p>
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* Download Button */}
-      {selectedClass && selectedTerm && (
+      {selectedClass && selectedTerm && currentResult && (
         <div className="flex justify-end">
           <DownloadButton
-            results={results}
+            result={currentResult}
+            studentId={studentId}
             className={selectedClassName}
             term={selectedTermName}
           />
         </div>
       )}
 
-      {/* Results Table */}
-      {selectedClass && selectedTerm && (
-        <ResultsTable results={results} isLoading={isLoading} />
+      {/* Overall Summary */}
+      {selectedClass && selectedTerm && currentResult && (
+        <OverallSummary result={currentResult} />
       )}
 
-      {/* Teacher Comment */}
-      {selectedClass && selectedTerm && results.length > 0 && (
-        <TeacherComment results={results} />
+      {/* Results Table */}
+      {selectedClass && selectedTerm && (
+        <ResultsTable result={currentResult} isLoading={isLoading} />
+      )}
+
+      {/* Class Statistics */}
+      {selectedClass && selectedTerm && classStatistics && (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+            <span className="text-sm font-medium text-gray-500">Highest Score</span>
+            <p className="text-2xl font-bold">{classStatistics.highest_score}</p>
+          </div>
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <span className="text-sm font-medium text-gray-500">Class Average</span>
+            <p className="text-2xl font-bold">
+              {classStatistics.class_average.toFixed(1)}
+            </p>
+          </div>
+          <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+            <span className="text-sm font-medium text-gray-500">Lowest Score</span>
+            <p className="text-2xl font-bold">{classStatistics.lowest_score}</p>
+          </div>
+          <div className="rounded-lg border border-purple-200 bg-purple-50 p-4">
+            <span className="text-sm font-medium text-gray-500">Total Students</span>
+            <p className="text-2xl font-bold">{classStatistics.total_students}</p>
+          </div>
+        </div>
       )}
 
       {/* Empty State */}
-      {!selectedClass || !selectedTerm ? (
-        <div className="p-12 text-center">
-          <div className="mx-auto max-w-md">
-            <h3 className="text-lg font-semibold text-gray-900">Select class and term</h3>
-            <p className="mt-2 text-gray-600">
-              Please select a class and term to view results.
-            </p>
-          </div>
-        </div>
-      ) : (
-        results.length === 0 &&
-        !isLoading && (
-          <div className="p-12 text-center">
-            <div className="mx-auto max-w-md">
-              <h3 className="text-lg font-semibold text-gray-900">No results found</h3>
-              <p className="mt-2 text-gray-600">
-                No results available for the selected class and term.
-              </p>
-            </div>
-          </div>
-        )
+      {(!selectedClass || !selectedTerm) && (
+        <EmptyState
+          title="Select Class and Term"
+          description="Please select a class and term to view your results."
+        />
+      )}
+
+      {selectedClass && selectedTerm && !currentResult && !isLoading && (
+        <EmptyState
+          title="No Results Found"
+          description={`No results available for ${selectedClassName} in ${selectedTermName}.`}
+        />
       )}
     </div>
   )

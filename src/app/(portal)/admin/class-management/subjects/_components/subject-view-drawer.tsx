@@ -23,22 +23,18 @@ export const SubjectViewDrawer = ({
   onAssign: (subjectID: string) => void
 }) => {
   const { data: subject, isLoading } = useGetSubject(subjectID ?? "")
-  console.log("subjects", subject)
+
   return (
     <Drawer direction="right" open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="ml-auto h-full space-y-6 overflow-x-hidden overflow-y-auto p-6">
-        <DrawerHeader className="flex flex-row items-center justify-between">
+        <DrawerHeader className="flex flex-row items-center justify-between px-0">
           <div>
             <DrawerTitle className="text-xl font-semibold">
               Subject: {subject?.name ?? "Loading..."}
             </DrawerTitle>
             <DrawerDescription>View subject details</DrawerDescription>
           </div>
-          <Button
-            variant="ghost"
-            onClick={() => onOpenChange(false)}
-            className="w-fit rounded-full"
-          >
+          <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)}>
             <X className="text-text-secondary size-5" />
           </Button>
         </DrawerHeader>
@@ -51,7 +47,7 @@ export const SubjectViewDrawer = ({
             <section>
               <h4 className="mb-3 font-semibold">Assigned Classes</h4>
 
-              {subject.classes.length > 0 ? (
+              {subject.classes && subject.classes.length > 0 ? (
                 <div className="space-y-3">
                   {subject.classes.map((cls) => (
                     <div

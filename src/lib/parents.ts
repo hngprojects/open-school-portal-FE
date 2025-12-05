@@ -32,6 +32,12 @@ export interface GetParentsParams {
   search?: string
 }
 
+interface LinkedResponse {
+  parent_id: string
+  linked_students: string[]
+  total_linked: number
+}
+
 export const ParentsAPI = {
   getAll: (params?: GetParentsParams) =>
     apiFetch<ResponsePack<ResponsePack<User[]>>>(
@@ -79,6 +85,23 @@ export const ParentsAPI = {
       },
       true
     ).then((response) => response.data),
+
+  getLinkedStudents: (id: string) =>
+    apiFetch<ResponsePack<User[]>>(
+      `/parents/admin/${id}/students`,
+      { method: "GET" },
+      true
+    ),
+
+  linkToStudents: (id: string, student_ids: string[]) =>
+    apiFetch<ResponsePack<LinkedResponse>>(
+      `/parents/${id}/link-students`,
+      {
+        method: "POST",
+        data: { student_ids },
+      },
+      true
+    ),
 
   delete: (id: string): Promise<void> =>
     apiFetch(

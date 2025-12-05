@@ -127,7 +127,7 @@ export type UserData = {
   last_name: string
   role: string[] // array of roles
   middle_name: string
-  gender: string
+  gender: "MALE" | "FEMALE" | "OTHER" | "male" | "female" | "other" | null | undefined
   dob: string // ISO date (YYYY-MM-DD)
   phone: string
   is_active: boolean

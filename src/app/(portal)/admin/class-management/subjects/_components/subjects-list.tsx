@@ -80,6 +80,7 @@ const SubjectManagement = ({
               <div
                 key={id}
                 className="flex items-center justify-between rounded-xl border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                onClick={() => setViewSubjectID(subject.id)}
               >
                 <div className="flex-1">
                   <h5 className="text-base font-semibold text-gray-900">

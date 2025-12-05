@@ -20,6 +20,17 @@ type ResponsePack<T> = {
   message: string
 }
 
+type MetaResponsePack<T> = {
+  data: T
+  message: string
+  meta?: {
+    total: number
+    limit: number
+    page: number
+    total_pages: number
+  }
+}
+
 export interface GetStudentsParams {
   page?: number
   search?: string
@@ -64,7 +75,7 @@ export const StudentsAPI = {
     ),
 
   getAll: (params?: GetStudentsParams) =>
-    apiFetch<ResponsePack<ResponsePack<User[]>>>(
+    apiFetch<MetaResponsePack<User[]>>(
       "/students",
       {
         params,

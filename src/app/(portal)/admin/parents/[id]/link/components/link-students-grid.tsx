@@ -56,12 +56,6 @@ export default function LinkStudentsGrid({
     })
   }
 
-  const getRelationshipLabel = (relationship: string) => {
-    return (
-      relationshipOptions.find((opt) => opt.value === relationship)?.label || relationship
-    )
-  }
-
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -82,7 +76,7 @@ export default function LinkStudentsGrid({
     )
   }
 
-  if (students.length === 0) {
+  if (students.length === 0 && selectedStudents.length > 0) {
     return (
       <div className="py-8 text-center">
         <p className="text-gray-500">No students found.</p>
@@ -92,79 +86,118 @@ export default function LinkStudentsGrid({
 
   return (
     <div className="space-y-4">
-      {students.map((student) => {
-        const isSelected = selectedStudents.some((s) => s.student.id === student.id)
-        const selectedData = selectedStudents.find((s) => s.student.id === student.id)
-
-        return (
-          <Card
-            key={student.id}
-            className={isSelected ? "border-blue-200 bg-blue-50" : ""}
-          >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={(checked) =>
-                    onStudentSelect(student, checked as boolean)
-                  }
-                  className="mt-1"
-                />
-
-                <Avatar className="h-10 w-10">
-                  <AvatarImage
-                    src={student.avatar}
-                    alt={`${student.first_name} ${student.last_name}`}
-                  />
-                  <AvatarFallback>
-                    {getInitials(student.first_name, student.last_name)}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-semibold">
-                    {student.first_name} {student.last_name}
-                  </h3>
-                  <p className="truncate text-sm text-gray-600">{student.reg_number}</p>
-                  <p className="text-sm text-gray-600">{student.class}</p>
-
-                  {isSelected && (
-                    <div className="mt-3">
-                      <DropdownMenu
-                        open={openDropdowns.has(student.id)}
-                        onOpenChange={() => toggleDropdown(student.id)}
-                      >
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full justify-between"
-                          >
-                            {getRelationshipLabel(selectedData?.relationship || "father")}
-                            <ChevronDown className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="w-full">
-                          {relationshipOptions.map((option) => (
-                            <DropdownMenuItem
-                              key={option.value}
-                              onClick={() =>
-                                onRelationshipChange(student.id, option.value)
-                              }
-                            >
-                              {option.label}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )
-      })}
+      {selectedStudents.map((std) => (
+        <StudentItem
+          key={std.student.id}
+          student={std.student}
+          isSelected={true}
+          onSelect={onStudentSelect}
+          hasDropdownOpen={openDropdowns.has(std.student.id)}
+          toggleDropdown={toggleDropdown}
+          relationship={std.relationship}
+          onRelationshipChange={onRelationshipChange}
+        />
+      ))}
+      {students.map((student) => (
+        <StudentItem
+          key={student.id}
+          student={student}
+          isSelected={false}
+          onSelect={onStudentSelect}
+        />
+      ))}
     </div>
+  )
+}
+
+interface StudentItemProps {
+  student: User
+  isSelected: boolean
+  onSelect: (student: User, selected: boolean) => void
+  relationship?: string
+  hasDropdownOpen?: boolean
+  toggleDropdown?: (studentId: string) => void
+  onRelationshipChange?: (studentId: string, relationship: string) => void
+}
+
+const StudentItem = ({
+  student,
+  isSelected,
+  onSelect,
+  relationship,
+  hasDropdownOpen,
+  toggleDropdown,
+  onRelationshipChange,
+}: StudentItemProps) => {
+  const getRelationshipLabel = (relationship: string) => {
+    return (
+      relationshipOptions.find((opt) => opt.value === relationship)?.label || relationship
+    )
+  }
+
+  return (
+    <Card key={student.id} className={isSelected ? "border-blue-200 bg-blue-50" : ""}>
+      <CardContent className="p-2">
+        <label className="flex cursor-pointer items-start gap-3">
+          <div className="flex items-center gap-3">
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={(checked) => onSelect(student, checked as boolean)}
+              className="mt-1"
+            />
+
+            <Avatar className="h-10 w-10">
+              <AvatarImage
+                src={student.avatar}
+                alt={`${student.first_name} ${student.last_name}`}
+              />
+              <AvatarFallback>
+                {getInitials(student.first_name, student.last_name)}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h3 className="truncate font-semibold">
+              {student.first_name} {student.last_name}
+            </h3>
+            <p className="truncate text-sm text-gray-600">
+              {student.registration_number}
+            </p>
+            <p className="text-sm text-gray-600">{student.class}</p>
+
+            {isSelected && (
+              <div className="mt-3">
+                <DropdownMenu
+                  open={hasDropdownOpen}
+                  onOpenChange={() => toggleDropdown?.(student.id)}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full justify-between"
+                    >
+                      {getRelationshipLabel(relationship || "father")}
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-full">
+                    {relationshipOptions.map((option) => (
+                      <DropdownMenuItem
+                        key={option.value}
+                        onClick={() => onRelationshipChange?.(student.id, option.value)}
+                      >
+                        {option.label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+          </div>
+        </label>
+      </CardContent>
+    </Card>
   )
 }
