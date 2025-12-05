@@ -19,7 +19,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         <SidebarProvider>
           <ParentSidebar />
           <StudentProvider>
-            <main className="mt-[72px] h-full w-full">
+            <main className="mt-[50px] h-full w-full">
               <DashboardHeader />
               {children}
             </main>
