@@ -4,7 +4,7 @@ import { CheckCircle2, AlertCircle, CreditCard } from "lucide-react"
 
 interface StatCardProps {
   title: string
-  value: string
+  value: string | React.ReactNode
   icon: React.ElementType
   iconColor: string
   bgIconColor: string
@@ -32,42 +32,64 @@ const StatCard = ({
   )
 }
 
+import { useFeesAnalytics } from "../_hooks/use-fees-analytics"
+import { Skeleton } from "@/components/ui/skeleton"
+
 const StatsCards = () => {
+  const { data, isLoading } = useFeesAnalytics()
+  const analytics = data?.data?.data
+
   const stats = [
     {
       title: "Total Expected Fees",
-      value: "₦8,600,000",
+      value: analytics?.totals.total_expected_fees,
       icon: PiMoneyWavyBold,
       iconColor: "text-red-500",
       bgIconColor: "bg-red-50",
+      isCurrency: true,
     },
     {
       title: "Total Paid",
-      value: "₦2,000,000",
+      value: analytics?.totals.total_paid,
       icon: CheckCircle2,
       iconColor: "text-green-500",
       bgIconColor: "bg-green-50",
+      isCurrency: true,
     },
     {
       title: "Outstanding Balance",
-      value: "₦110,070,000",
+      value: analytics?.totals.outstanding_balance,
       icon: AlertCircle,
       iconColor: "text-orange-500",
       bgIconColor: "bg-orange-50",
+      isCurrency: true,
     },
     {
       title: "Transaction This Month",
-      value: "110",
+      value: analytics?.totals.transaction_this_month,
       icon: CreditCard,
       iconColor: "text-emerald-500",
       bgIconColor: "bg-emerald-50",
+      isCurrency: false,
     },
   ]
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => (
-        <StatCard key={index} {...stat} />
+        <StatCard
+          key={index}
+          {...stat}
+          value={
+            isLoading ? (
+              <Skeleton className="h-8 w-24" />
+            ) : stat.isCurrency ? (
+              `₦${(stat.value || 0).toLocaleString()}`
+            ) : (
+              (stat.value || 0).toString()
+            )
+          }
+        />
       ))}
     </div>
   )
