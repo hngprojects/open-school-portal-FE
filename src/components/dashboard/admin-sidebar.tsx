@@ -43,7 +43,15 @@ import Logo from "@/components/logo"
 // Menu items
 const mainItems = [
   { title: "Dashboard", url: "/admin", icon: Menu, exactMatch: true },
-  { title: "Fees", url: "/admin/fee-management", icon: PiMoneyWavyBold },
+  {
+    title: "Fees",
+    url: "/admin/fees",
+    icon: PiMoneyWavyBold,
+    subItems: [
+      { title: "Fee Management", url: "/admin/fee-management" },
+      { title: "Fees Record", url: "/admin/fees-record" },
+    ],
+  },
   { title: "Attendance", url: "/admin/attendance", icon: NotePad },
   { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
