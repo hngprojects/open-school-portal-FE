@@ -1,6 +1,6 @@
 "use client"
 
-import { UserProfile } from "@/types/profile"
+import { UserProfileNew } from "@/types/profile"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -10,8 +10,8 @@ import { format } from "date-fns"
 import { useRouter } from "next/navigation"
 
 interface ProfilePageProps {
-  profile: UserProfile
-  role: "student" | "teacher" | "parent" | "admin"
+  profile: UserProfileNew
+  role: "student" | "teacher" | "parent" | "admin" | "super admin"
 }
 
 export const ProfilePage = ({ profile, role }: ProfilePageProps) => {

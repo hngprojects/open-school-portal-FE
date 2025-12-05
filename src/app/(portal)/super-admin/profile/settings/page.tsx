@@ -1,5 +1,5 @@
 import { ProfileSettings } from "@/components/profile/profile-settings"
 
 export default function ProfileSettingsPage() {
-  return <ProfileSettings role="parent" />
+  return <ProfileSettings role="super admin" />
 }

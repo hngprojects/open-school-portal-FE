@@ -54,7 +54,22 @@ export const userProfileSchema = z.object({
   firstName: z.string().trim().min(1).max(100).optional(),
   lastName: z.string().trim().min(1).max(100).optional(),
   middleName: z.string().trim().max(100).optional(),
-  gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
+  gender: z
+    .union([
+      z.enum(["MALE", "FEMALE", "OTHER"]),
+      z.enum(["Male", "Female", "Other"]),
+      z.string(),
+    ])
+    .optional()
+    .nullable()
+    .transform((val) => {
+      if (!val) return null
+      const upperVal = val.toUpperCase()
+      if (["MALE", "FEMALE", "OTHER"].includes(upperVal)) {
+        return upperVal as "MALE" | "FEMALE" | "OTHER"
+      }
+      return null
+    }),
   dob: z.string().optional(),
   email: emailSchema,
   phone: z

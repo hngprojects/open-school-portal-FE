@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export default function AdminProfilePage() {
+export default function SuperAdminProfilePage() {
   const { data: profile, isLoading, error, refetch } = useGetProfile()
 
   if (isLoading) {
@@ -54,5 +54,5 @@ export default function AdminProfilePage() {
     )
   }
 
-  return <ProfilePage profile={profile} role="admin" />
+  return <ProfilePage profile={profile} role="super admin" />
 }

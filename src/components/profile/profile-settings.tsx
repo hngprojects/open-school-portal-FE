@@ -7,20 +7,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
-import { UserProfile, UpdateProfileRequest } from "@/types/profile"
+import { UpdateProfileRequestNew } from "@/types/profile"
 import { useUpdateProfile, useGetProfile } from "@/hooks/use-profile"
 
 interface ProfileSettingsProps {
-  role: "student" | "teacher" | "parent" | "admin"
+  role: "student" | "teacher" | "parent" | "admin" | "super admin"
 }
 
 interface FormData {
@@ -126,10 +119,10 @@ export const ProfileSettings = ({ role }: ProfileSettingsProps) => {
     setIsSaving(true)
 
     try {
-      const updateData: UpdateProfileRequest = {
+      const updateData: UpdateProfileRequestNew = {
         first_name: formData.first_name.trim(),
         last_name: formData.last_name.trim(),
-        middle_name: formData.middle_name.trim() || undefined,
+        middle_name: formData.middle_name.trim() || null,
         phone: formData.phone.trim(),
         homeAddress: formData.homeAddress.trim() || undefined,
       }

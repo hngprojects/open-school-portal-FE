@@ -24,10 +24,10 @@ export interface UserProfileResponse {
   email: string
   first_name: string
   last_name: string
-  middle_name: string | null
-  gender: string
-  dob: string
-  phone: string
+  middle_name?: string | null | undefined
+  gender?: "MALE" | "FEMALE" | "OTHER" | null
+  dob?: string
+  phone?: string
   is_active: boolean
   created_at: string
   updated_at: string

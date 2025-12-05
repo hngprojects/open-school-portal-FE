@@ -1,25 +1,30 @@
-import { UserProfile, UpdateProfileRequest } from "@/types/profile"
-import { apiRequestClient } from "@/lib/api-client"
-import { apiRequestServer } from "@/lib/api-server"
+import { UserProfileNew, UpdateProfileRequestNew } from "@/types/profile"
+import { apiFetch } from "@/lib/api/client"
 
-// Client-side function
-export const getProfileClient = async (): Promise<UserProfile> => {
-  const data = await apiRequestClient("GET", "/auth/me")
-  return data
+// Keep only if needed elsewhere, otherwise you can remove this file
+// since hooks are using apiFetch directly
+
+export const getProfileClient = async (): Promise<UserProfileNew> => {
+  const res = await apiFetch<{ data: UserProfileNew }>(
+    "/auth/me",
+    { method: "GET" },
+    true
+  )
+  if (!res.data) throw new Error("Failed to fetch profile")
+  return res.data
 }
 
 export const updateProfileClient = async (
-  data: UpdateProfileRequest
-): Promise<UserProfile> => {
-  const response = await apiRequestClient("PATCH", "/users", data)
-  return response
+  data: UpdateProfileRequestNew
+): Promise<UserProfileNew> => {
+  const response = await apiFetch<{ data: UserProfileNew }>(
+    "/users",
+    {
+      method: "PATCH",
+      data,
+    },
+    true
+  )
+  if (!response.data) throw new Error("Failed to update profile")
+  return response.data
 }
-
-// Server-side function
-export const getProfileServer = async (): Promise<UserProfile> => {
-  const data = await apiRequestServer("GET", "/auth/me")
-  return data
-}
-
-// Default export - use server function by default
-export const getProfile = getProfileServer
