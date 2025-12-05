@@ -22,6 +22,35 @@ export interface SubmitAttendanceResponse {
   }
 }
 
+export interface AttendanceStudent {
+  student_id: string
+  first_name: string
+  middle_name?: string
+  last_name: string
+  attendance_id: string
+  status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED" | "HALF_DAY" | "NOT_MARKED"
+  check_in_time?: string
+  check_out_time?: string
+  notes?: string
+}
+
+export interface AttendanceSummary {
+  total_students: number
+  present_count: number
+  absent_count: number
+  late_count: number
+  excused_count: number
+  half_day_count: number
+  not_marked_count: number
+}
+
+export interface AttendanceResponse {
+  class_id: string
+  date: string
+  students: AttendanceStudent[]
+  summary: AttendanceSummary
+}
+
 export const AttendanceAPI = {
   markDailyAttendance: (payload: SubmitAttendancePayload) =>
     apiFetch<SubmitAttendanceResponse>(
@@ -32,4 +61,11 @@ export const AttendanceAPI = {
       },
       true
     ),
+
+  // get daily attendance for admin
+  getDailyAttendanceByClass: (classId: string, date: string) =>
+    apiFetch<AttendanceResponse>(`/attendance/daily/student/class/${classId}`, {
+      method: "GET",
+      params: { date },
+    }),
 }
