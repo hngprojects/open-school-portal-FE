@@ -1,62 +1,52 @@
 // File: app/(portal)/student/results/page.tsx
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useAuth } from "@/hooks/use-auth"
 import { StudentResultsView } from "./_components/student-results-view"
 import {
-  useGetStudentClasses,
-  useGetTerms,
+  useGetCurrentStudent,
+  useGetActiveTerm,
   useGetStudentResults,
 } from "./_hooks/use-student-results"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 
 export default function StudentResultsPage() {
-  const { user } = useAuth() // Get authenticated user
-  const [selectedClass, setSelectedClass] = useState<string>("")
-  const [selectedTerm, setSelectedTerm] = useState<string>("")
-  const initializedRef = useRef(false)
+  // Get current student data
+  const {
+    data: currentStudent,
+    isLoading: isLoadingStudent,
+    error: studentError,
+  } = useGetCurrentStudent()
 
-  // Get student ID from auth context
-  const studentId = user?.id || ""
-  const studentName = user?.name || "Student"
+  // Get active term
+  const {
+    data: activeTerm,
+    isLoading: isLoadingTerm,
+    error: termError,
+  } = useGetActiveTerm()
 
-  const { data: classes = [], isLoading: isLoadingClasses } =
-    useGetStudentClasses(studentId)
-  const { data: terms = [], isLoading: isLoadingTerms } = useGetTerms()
+  // Get student results for active term
+  const {
+    data: results = [],
+    isLoading: isLoadingResults,
+    error: resultsError,
+  } = useGetStudentResults(currentStudent?.id)
 
-  const { data: resultsData, isLoading: isLoadingResults } = useGetStudentResults(
-    studentId,
-    selectedTerm ? { term_id: selectedTerm } : undefined
-  )
+  const isLoading = isLoadingStudent || isLoadingTerm || isLoadingResults
+  const error = studentError || termError || resultsError
 
-  // Use derived state
-  const autoSelectedClass = classes.length > 0 ? classes[0].id : ""
-  const autoSelectedTerm = terms.length > 0 ? terms[0].id : ""
-
-  // Initialize selections on mount
-  useEffect(() => {
-    // Skip if already initialized
-    if (initializedRef.current) return
-
-    // Set initial selections when data is available
-    if (classes.length > 0 && terms.length > 0) {
-      // Use setTimeout to defer state updates to next tick
-      const timer = setTimeout(() => {
-        setSelectedClass(autoSelectedClass)
-        setSelectedTerm(autoSelectedTerm)
-        initializedRef.current = true
-      }, 0)
-
-      return () => clearTimeout(timer)
-    }
-  }, [classes.length, terms.length, autoSelectedClass, autoSelectedTerm])
-
-  // Filter results by selected class
-  const filteredResults = (resultsData?.data || []).filter(
-    (result) => !selectedClass || result.class_id === selectedClass
-  )
-
-  const isLoading = isLoadingClasses || isLoadingTerms || isLoadingResults
+  // Transform term data
+  const transformedTerm = activeTerm
+    ? {
+        id: activeTerm.id,
+        name: activeTerm.name,
+        start_date: activeTerm.startDate,
+        end_date: activeTerm.endDate,
+        status: activeTerm.status,
+        is_active: activeTerm.isCurrent,
+      }
+    : undefined
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -64,23 +54,56 @@ export default function StudentResultsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">My Results</h1>
-          <p className="text-gray-600">
-            View and download your academic results, {studentName}
-          </p>
+          <p className="text-gray-600">View and download your academic results</p>
         </div>
 
-        <StudentResultsView
-          studentId={studentId}
-          classes={classes}
-          terms={terms}
-          results={filteredResults}
-          selectedClass={selectedClass}
-          selectedTerm={selectedTerm}
-          onClassChange={setSelectedClass}
-          onTermChange={setSelectedTerm}
-          isLoading={isLoading}
-          classStatistics={resultsData?.class_statistics}
-        />
+        {/* Error Display */}
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {error instanceof Error
+                ? error.message
+                : "An error occurred while loading results"}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Loading State */}
+        {isLoading && !error && (
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        )}
+
+        {/* Results View */}
+        {!isLoading && !error && currentStudent && (
+          <StudentResultsView
+            studentId={currentStudent.id}
+            studentName={currentStudent.full_name}
+            activeTerm={transformedTerm}
+            results={results}
+            isLoading={isLoading}
+          />
+        )}
+
+        {/* No Results State */}
+        {!isLoading && !error && results.length === 0 && (
+          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+            <div className="mx-auto max-w-md">
+              <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                No Results Available
+              </h3>
+              <p className="mt-2 text-gray-600">
+                No results are available for the current term. Results will appear here
+                once they are approved by your teacher and admin.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
