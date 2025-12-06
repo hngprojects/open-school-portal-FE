@@ -67,9 +67,7 @@ const FeesTable = ({
                 <TableHead className="font-outfit gap-[11.48px] px-[22.97px] py-[11.48px] text-[12px] leading-[18px] font-medium text-[#667085]">
                   Student
                 </TableHead>
-                <TableHead className="font-outfit gap-[11.48px] px-[22.97px] py-[11.48px] text-[12px] leading-[18px] font-medium text-[#667085]">
-                  Class
-                </TableHead>
+
                 <TableHead className="font-outfit gap-[11.48px] px-[22.97px] py-[11.48px] text-[12px] leading-[18px] font-medium text-[#667085]">
                   Fee
                 </TableHead>
@@ -131,9 +129,7 @@ const FeesTable = ({
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="font-outfit px-[22.97px] py-4 text-[14px] leading-none font-normal tracking-[0.005em] text-[#535353]">
-                        N/A
-                      </TableCell>
+
                       <TableCell className="font-outfit px-[22.97px] py-4 text-[14px] leading-none font-normal tracking-[0.005em] text-[#535353]">
                         {payment.fee_component.component_name}
                       </TableCell>

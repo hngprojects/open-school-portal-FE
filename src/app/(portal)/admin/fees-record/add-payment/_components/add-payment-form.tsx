@@ -293,7 +293,7 @@ const AddPaymentForm = () => {
           <FormField
             label="Invoice"
             placeholder="Add invoice number"
-            required={true}
+            required={false}
             className="font-outfit h-13! w-full rounded-[8px] border-[0.8px] border-[#2D2D2D4D] px-[12px] py-[10px]"
             {...register("invoice")}
             error={errors.invoice?.message}
@@ -337,7 +337,7 @@ const AddPaymentForm = () => {
         </div>
 
         {/* File Upload */}
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">
             Upload Receipt <span className="text-gray-500">(Optional)</span>
           </h3>
@@ -393,7 +393,7 @@ const AddPaymentForm = () => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-end gap-4">
           <Button
