@@ -28,8 +28,8 @@ interface ClassTeacherViewProps {
 
 const ClassTeacherView: React.FC<ClassTeacherViewProps> = ({
   assignedClasses,
-  selectedSessionId,
-  onSessionChange,
+  // selectedSessionId,
+  // onSessionChange,
 }) => {
   const router = useRouter()
   const [selectedClassId, setSelectedClassId] = useState<string>("")
@@ -61,7 +61,7 @@ const ClassTeacherView: React.FC<ClassTeacherViewProps> = ({
 
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+      <CardHeader className="bg-linear-to-r from-purple-50 to-pink-50">
         <CardTitle className="flex items-center gap-2 text-lg">
           <BookOpen className="h-5 w-5 text-purple-600" />
           Class Teacher Dashboard
@@ -103,7 +103,7 @@ const ClassTeacherView: React.FC<ClassTeacherViewProps> = ({
 
         {/* Class Details Card */}
         {selectedClass && (
-          <div className="rounded-lg border-2 border-purple-100 bg-gradient-to-br from-purple-50 to-white p-4">
+          <div className="rounded-lg border-2 border-purple-100 bg-linear-to-br from-purple-50 to-white p-4">
             <div className="flex items-start justify-between">
               <div className="space-y-3">
                 <div>
@@ -160,7 +160,7 @@ const ClassTeacherView: React.FC<ClassTeacherViewProps> = ({
         {/* Info Banner */}
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
           <div className="flex gap-3">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <svg
                 className="h-5 w-5 text-blue-600"
                 fill="currentColor"

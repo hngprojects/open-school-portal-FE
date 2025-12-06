@@ -1,92 +1,177 @@
-"use client"
-import { useInfiniteQuery } from "@tanstack/react-query"
-import { NotificationsAPI, GetNotificationsResponse } from "@/lib/notifications"
+// FILE: src/hooks/use-notifications.ts
 
-export const useNotifications = () => {
+"use client"
+
+import {
+  useInfiniteQuery,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
+import {
+  NotificationsAPI,
+  GetNotificationsResponse,
+  // Notification,
+} from "@/lib/notifications"
+import { toast } from "sonner"
+import { AxiosError } from "axios"
+
+// QUERY KEYS
+export const NOTIFICATION_KEYS = {
+  all: ["notifications"],
+  infinite: (read?: boolean) => ["notifications", "infinite", { read }],
+  single: (id: string) => ["notification", id],
+  unreadCount: ["notifications", "unread-count"],
+}
+
+/**
+ * Hook to get paginated notifications with infinite scroll
+ * @param read - Optional filter for read/unread notifications
+ */
+export const useNotifications = (read?: boolean) => {
   return useInfiniteQuery<GetNotificationsResponse, Error>({
-    queryKey: ["notifications"],
-    queryFn: async ({ pageParam }) => {
-      return NotificationsAPI.getUserNotifications({ page: pageParam as number })
+    queryKey: NOTIFICATION_KEYS.infinite(read),
+    queryFn: async ({ pageParam = 1 }) => {
+      return NotificationsAPI.getUserNotifications({
+        page: pageParam as number,
+        read,
+      })
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.pagination.has_next ? lastPage.pagination.page + 1 : undefined
     },
-    staleTime: 1000 * 60,
+    staleTime: 1000 * 60, // 1 minute
+  })
+}
+
+/**
+ * Hook to get a single notification by ID
+ * @param notificationId - The notification ID
+ */
+export const useNotification = (notificationId: string) => {
+  return useQuery({
+    queryKey: NOTIFICATION_KEYS.single(notificationId),
+    queryFn: () => NotificationsAPI.getNotificationById(notificationId),
+    select: (data) => data.data,
+    enabled: !!notificationId,
+    staleTime: 1000 * 30, // 30 seconds
+  })
+}
+
+/**
+ * Hook to get unread notification count
+ */
+export const useUnreadNotificationCount = () => {
+  return useQuery({
+    queryKey: NOTIFICATION_KEYS.unreadCount,
+    queryFn: async () => {
+      const response = await NotificationsAPI.getUserNotifications({
+        page: 1,
+        limit: 1,
+        read: false,
+      })
+      return response.pagination.total
+    },
+    refetchInterval: 1000 * 60, // Refetch every minute
+    refetchOnWindowFocus: true,
+  })
+}
+
+/**
+ * Hook to mark notification as read
+ */
+export const useMarkNotificationAsRead = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (notificationId: string) => NotificationsAPI.markAsRead(notificationId),
+    onSuccess: (response, notificationId) => {
+      // Invalidate all notification queries to refresh data
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all })
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.unreadCount })
+
+      // Optionally update cache optimistically for single notification
+      qc.setQueryData(NOTIFICATION_KEYS.single(notificationId), response)
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to mark notification as read")
+      } else {
+        toast.error("Failed to mark notification as read")
+      }
+    },
+  })
+}
+
+/**
+ * Hook to mark notification as unread
+ */
+export const useMarkNotificationAsUnread = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: (notificationId: string) => NotificationsAPI.markAsUnread(notificationId),
+    onSuccess: (response, notificationId) => {
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all })
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.unreadCount })
+      qc.setQueryData(NOTIFICATION_KEYS.single(notificationId), response)
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(
+          err?.response?.data?.message ?? "Failed to mark notification as unread"
+        )
+      } else {
+        toast.error("Failed to mark notification as unread")
+      }
+    },
+  })
+}
+
+/**
+ * Hook to toggle notification read status
+ */
+export const useToggleNotificationReadStatus = () => {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      notificationId,
+      isRead,
+    }: {
+      notificationId: string
+      isRead: boolean
+    }) =>
+      NotificationsAPI.updateNotificationReadStatus(notificationId, { is_read: isRead }),
+    onSuccess: (response, { notificationId }) => {
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.all })
+      qc.invalidateQueries({ queryKey: NOTIFICATION_KEYS.unreadCount })
+      qc.setQueryData(NOTIFICATION_KEYS.single(notificationId), response)
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        toast.error(err?.response?.data?.message ?? "Failed to update notification")
+      } else {
+        toast.error("Failed to update notification")
+      }
+    },
   })
 }
 // "use client"
-
 // import { useInfiniteQuery } from "@tanstack/react-query"
 // import { NotificationsAPI, GetNotificationsResponse } from "@/lib/notifications"
 
-// // Type for query function input
-// interface QueryFnProps {
-//   pageParam?: number
-// }
-
 // export const useNotifications = () => {
-//   return useInfiniteQuery<
-//     GetNotificationsResponse,
-//     Error,
-//     GetNotificationsResponse,
-//     ["notifications"]
-//   >(
-//     ["notifications"],
-//     async ({ pageParam = 1 }: QueryFnProps) => {
-//       return NotificationsAPI.getUserNotifications({ page: pageParam })
+//   return useInfiniteQuery<GetNotificationsResponse, Error>({
+//     queryKey: ["notifications"],
+//     queryFn: async ({ pageParam }) => {
+//       return NotificationsAPI.getUserNotifications({ page: pageParam as number })
 //     },
-//     {
-//       getNextPageParam: (lastPage) => {
-//         return lastPage.pagination.has_next ? lastPage.pagination.page + 1 : undefined
-//       },
-//       staleTime: 1000 * 60,
-//     }
-//   )
+//     initialPageParam: 1,
+//     getNextPageParam: (lastPage) => {
+//       return lastPage.pagination.has_next ? lastPage.pagination.page + 1 : undefined
+//     },
+//     staleTime: 1000 * 60,
+//   })
 // }
-
-// // "use client"
-
-// // import { useInfiniteQuery } from "@tanstack/react-query"
-// // import { NotificationsAPI, GetNotificationsResponse } from "@/lib/notifications"
-
-// // export const useNotifications = () => {
-// //   return useInfiniteQuery<GetNotificationsResponse, Error>(
-// //     ["notifications"],
-// //     async ({ pageParam = 1 }): Promise<GetNotificationsResponse> => {
-// //       const res = await NotificationsAPI.getUserNotifications({ page: pageParam })
-// //       return res
-// //     },
-// //     {
-// //       getNextPageParam: (lastPage: GetNotificationsResponse) => {
-// //         // lastPage now has proper type
-// //         return lastPage.pagination.has_next ? lastPage.pagination.page + 1 : undefined
-// //       },
-// //       staleTime: 1000 * 60, // 1 minute
-// //     }
-// //   )
-// // }
-
-// // // "use client"
-
-// // // import { useInfiniteQuery } from "@tanstack/react-query"
-// // // import { NotificationsAPI, Notification } from "@/lib/notifications"
-
-// // // export const useNotifications = () => {
-// // //   return useInfiniteQuery(
-// // //     ["notifications"],
-// // //     async ({ pageParam = 1 }) => {
-// // //       const res = await NotificationsAPI.getUserNotifications({ page: pageParam })
-// // //       return res
-// // //     },
-// // //     {
-// // //       getNextPageParam: (lastPage) => {
-// // //         if (lastPage.pagination.has_next) {
-// // //           return lastPage.pagination.page + 1
-// // //         }
-// // //         return undefined
-// // //       },
-// // //       staleTime: 1000 * 60, // 1 minute
-// // //     }
-// // //   )
-// // // }
