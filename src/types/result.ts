@@ -188,3 +188,110 @@ export interface GenerateResultResponse {
   generated_count: number
   result_ids: string[]
 }
+
+// API Response types based on Swagger documentation
+export interface ApiResponse<T> {
+  status_code: number
+  message: string
+  data: T
+  meta?: {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+  }
+}
+
+export interface StudentBasicInfo {
+  id: string
+  registration_number: string
+  first_name: string
+  last_name: string
+  middle_name?: string
+  full_name: string
+  photo_url?: string
+}
+
+export interface ParentStudentsResponse {
+  message: string
+  status_code: number
+  data: StudentBasicInfo[]
+}
+
+export interface StudentResultResponse {
+  id: string
+  student: {
+    id: string
+    name: string
+    registration_number: string
+  }
+  class: {
+    id: string
+    name: string
+    arm?: string
+  }
+  term: {
+    id: string
+    name: string
+  }
+  academicSession: {
+    id: string
+    name: string
+    academicYear: string
+  }
+  total_score: number
+  average_score: number
+  grade_letter: string
+  position: number | null
+  remark: string | null
+  subject_count: number
+  subject_lines: Array<{
+    id: string
+    subject: {
+      id: string
+      name: string
+    }
+    ca_score: number
+    exam_score: number
+    total_score: number
+    grade_letter: string
+    remark: string | null
+  }>
+  generated_at: string
+  created_at: string
+  updated_at: string
+}
+
+// For student results endpoint response
+export interface StudentResultsResponse {
+  message: string
+  data: StudentResultResponse[]
+  meta?: {
+    total: number
+    page: number
+    limit: number
+    total_pages: number
+  }
+}
+
+// For class results endpoint response
+export interface ClassResultsResponse {
+  message: string
+  data: {
+    results: StudentResultResponse[]
+    class_statistics: {
+      highest_score: number
+      lowest_score: number
+      class_average: number
+      total_students: number
+    }
+  }
+  pagination: {
+    total: number
+    page: number
+    limit: number
+    total_pages: number
+    has_next: boolean
+    has_previous: boolean
+  }
+}
