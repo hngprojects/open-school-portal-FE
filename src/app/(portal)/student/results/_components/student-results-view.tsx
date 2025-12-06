@@ -1,13 +1,13 @@
-// File: app/(portal)/student/results/_components/student-results-view.tsx
 "use client"
 
 import { Term, StudentResult } from "@/types/result"
 import { DownloadButton } from "./download-button"
 import { ResultsTable } from "./results-table"
 import { OverallSummary } from "./overall-summary"
-import { EmptyState } from "./empty-state"
+import { EmptyState } from "@/components/results/empty-state" // Use shared
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { AlertCircle } from "lucide-react"
 
 interface StudentResultsViewProps {
   studentId: string
@@ -41,10 +41,18 @@ export function StudentResultsView({
                 <span className="text-sm font-medium text-gray-500">Name</span>
                 <p className="text-lg font-semibold">{studentName}</p>
               </div>
-              <div>
+              {/* <div>
                 <span className="text-sm font-medium text-gray-500">Student ID</span>
                 <p className="text-lg font-semibold">{studentId}</p>
-              </div>
+              </div> */}
+              {currentResult && (
+                <div>
+                  <span className="text-sm font-medium text-gray-500">Class</span>
+                  <p className="text-lg font-semibold">
+                    {currentResult.class_name || "-"}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -70,12 +78,6 @@ export function StudentResultsView({
               )}
               {currentResult && (
                 <>
-                  <div>
-                    <span className="text-sm font-medium text-gray-500">Class</span>
-                    <p className="text-lg font-semibold">
-                      {currentResult.class_name || "-"}
-                    </p>
-                  </div>
                   <div>
                     <span className="text-sm font-medium text-gray-500">
                       Position in Class
@@ -103,17 +105,18 @@ export function StudentResultsView({
         </div>
       )}
 
-      {/* Overall Summary - Only show if results exist */}
-      {currentResult && <OverallSummary result={currentResult} />}
-
       {/* Results Table */}
       <ResultsTable result={currentResult} isLoading={isLoading} />
+
+      {/* Overall Summary - Only show if results exist */}
+      {currentResult && <OverallSummary result={currentResult} />}
 
       {/* Empty State - Show when no results */}
       {!currentResult && !isLoading && (
         <EmptyState
           title="No Results Found"
           description="No results are available for the current term. Please check back later."
+          icon={AlertCircle}
         />
       )}
     </div>

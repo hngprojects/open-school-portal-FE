@@ -51,8 +51,8 @@ export function OverallSummary({ result }: OverallSummaryProps) {
         {/* Remark Section */}
         {result.remark && (
           <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <h3 className="mb-2 text-sm font-semibold text-gray-700">
-              Class Teacher Remark:
+            <h3 className="mb-2 text-sm font-semibold text-red-600">
+              Class Teacher Comment:
             </h3>
             <p className="text-gray-700">{result.remark}</p>
           </div>
