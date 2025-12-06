@@ -5,9 +5,10 @@ import { Term, StudentResult } from "@/types/result"
 import { DownloadButton } from "./download-button"
 import { ResultsTable } from "./results-table"
 import { OverallSummary } from "./overall-summary"
-import { EmptyState } from "./empty-state"
+import { EmptyState } from "@/components/results/empty-state" // Use shared
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { AlertCircle } from "lucide-react"
 
 interface StudentResultsViewProps {
   studentId: string
@@ -114,6 +115,7 @@ export function StudentResultsView({
         <EmptyState
           title="No Results Found"
           description="No results are available for the current term. Please check back later."
+          icon={AlertCircle}
         />
       )}
     </div>

@@ -10,6 +10,8 @@ import {
   Settings,
   BookIcon,
   Menu,
+  Calendar,
+  School,
 } from "lucide-react"
 import { PiMoneyWavyBold } from "react-icons/pi"
 import { FaRegUser } from "react-icons/fa6"
@@ -48,28 +50,42 @@ const mainItems = [
     url: "/admin/fees",
     icon: PiMoneyWavyBold,
     subItems: [
+      { title: "Fees Records & Analytics", url: "/admin/fees-record" },
       { title: "Fee Management", url: "/admin/fee-management" },
-      { title: "Fees Record", url: "/admin/fees-record" },
     ],
   },
   { title: "Attendance", url: "/admin/attendance", icon: NotePad },
+
+  {
+    title: "Timetable",
+    url: "/admin/timetable",
+    icon: Calendar,
+    subItems: [
+      { title: "Timetable View", url: "/admin/timetable" },
+      { title: "Timetable Setup", url: "/admin/timetable" },
+    ],
+  },
+  { title: "Results", url: "/admin/results", icon: Calendar },
   { title: "Teachers", url: "/admin/teachers", icon: Users },
   { title: "Students", url: "/admin/students", icon: GraduationCap },
   { title: "Parents", url: "/admin/parents", icon: FaRegUser },
-  // { title: "Timetable", url: "/admin/timetable", icon: Calendar },
-  // { title: "Results", url: "/admin/results", icon: Calendar },
   {
     title: "Class Management",
     url: "/admin/class-management",
     icon: BookIcon,
     subItems: [
+      // { title: "Result Management", url: "/admin/results" },
+      { title: "Classes (per session)", url: "/admin/class-management/class" },
+    ],
+  },
+  {
+    title: "School Structure",
+    url: "/admin/class-management/session",
+    icon: School,
+    subItems: [
       { title: "Session", url: "/admin/class-management/session" },
-      { title: "Class", url: "/admin/class-management/class" },
       { title: "Subjects", url: "/admin/class-management/subjects" },
       { title: "Room", url: "/admin/class-management/classrooms" },
-      { title: "Timetable Setup", url: "/admin/timetable" },
-
-      { title: "Result Management", url: "/admin/results" },
     ],
   },
   { title: "User Configuration", url: "/admin/user-configuration", icon: TbSettingsCog },
