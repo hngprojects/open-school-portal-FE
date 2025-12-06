@@ -8,7 +8,7 @@ import {
   useGetTerms,
   useGetStudents,
   useGetGradingScale,
-  useGetTeacherSubmissions,
+  useGetSubmissionByFilters,
 } from "../_hooks/use-results"
 
 interface Class {
@@ -17,10 +17,23 @@ interface Class {
   academic_session_id: string
 }
 
+// Helper to safely get localStorage value
+const getStoredValue = (key: string): string => {
+  if (typeof window === "undefined") return ""
+  return localStorage.getItem(key) || ""
+}
+
 export default function TeacherResultsPage() {
-  const [selectedClass, setSelectedClass] = useState<string>("")
-  const [selectedSubject, setSelectedSubject] = useState<string>("")
-  const [selectedTerm, setSelectedTerm] = useState<string>("")
+  // Initialize state from localStorage directly in useState
+  const [selectedClass, setSelectedClass] = useState<string>(() =>
+    getStoredValue("results_selectedClass")
+  )
+  const [selectedSubject, setSelectedSubject] = useState<string>(() =>
+    getStoredValue("results_selectedSubject")
+  )
+  const [selectedTerm, setSelectedTerm] = useState<string>(() =>
+    getStoredValue("results_selectedTerm")
+  )
 
   const { data: classes = [] } = useGetClasses()
   const { data: subjects = [] } = useGetSubjects(selectedClass)
@@ -32,11 +45,10 @@ export default function TeacherResultsPage() {
   )
 
   const { data: gradingScale = [] } = useGetGradingScale()
-  const { data: submissions = [] } = useGetTeacherSubmissions({
-    class_id: selectedClass || undefined,
-    subject_id: selectedSubject || undefined,
-    term_id: selectedTerm || undefined,
-  })
+
+  // Use the new specific submission hook
+  const { data: existingSubmission, isLoading: isLoadingSubmission } =
+    useGetSubmissionByFilters(selectedClass, selectedSubject, selectedTerm)
 
   // Handle class change with subject/term reset and persistence
   const handleClassChange = (classId: string) => {
@@ -71,27 +83,18 @@ export default function TeacherResultsPage() {
     }
   }
 
-  // Use useMemo for derived state - Show students if class is selected
+  // Use useMemo for derived state
+  const canShowResults = useMemo(() => {
+    return Boolean(selectedClass && selectedSubject && selectedTerm)
+  }, [selectedClass, selectedSubject, selectedTerm])
+
   const showAllStudents = useMemo(() => {
     return !!selectedClass
   }, [selectedClass])
 
-  // Find existing submission for the selected filters
-  const existingSubmission = useMemo(() => {
-    return submissions.find(
-      (sub) =>
-        sub.class_id === selectedClass &&
-        sub.subject_id === selectedSubject &&
-        sub.term_id === selectedTerm
-    )
-  }, [submissions, selectedClass, selectedSubject, selectedTerm])
-
-  const canShowResults = Boolean(selectedClass && selectedSubject && selectedTerm)
-
   // Get academic session ID from selected class
   const academicSessionId = useMemo(() => {
     const selectedClassObj = classes.find((c) => c.id === selectedClass)
-    // Use proper type instead of 'any'
     const classWithSession = selectedClassObj as Class & { academic_session_id?: string }
     return classWithSession?.academic_session_id || ""
   }, [classes, selectedClass])
@@ -116,9 +119,9 @@ export default function TeacherResultsPage() {
           onClassChange={handleClassChange}
           onSubjectChange={handleSubjectChange}
           onTermChange={handleTermChange}
-          isLoadingStudents={isLoadingStudents}
+          isLoadingStudents={isLoadingStudents || isLoadingSubmission}
           canShowResults={canShowResults}
-          existingSubmission={existingSubmission}
+          existingSubmission={existingSubmission || undefined}
           showAllStudents={showAllStudents}
           academicSessionId={academicSessionId}
         />
