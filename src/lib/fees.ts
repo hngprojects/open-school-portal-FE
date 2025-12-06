@@ -53,6 +53,59 @@ export interface FeesAnalyticsResponse {
   }
 }
 
+export interface FeePayment {
+  id: string
+  student_id: string
+  student: {
+    id: string
+    first_name: string
+    last_name: string
+  }
+  fee_component_id: string
+  fee_component: {
+    id: string
+    component_name: string
+    amount: string
+  }
+  amount_paid: string
+  payment_method: string
+  payment_date: string
+  term_id: string
+  term: {
+    id: string
+    name: string
+  }
+  session_id: string
+  invoice_number: string
+  transaction_id: string
+  receipt_url: string | null
+  status: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface FeePaymentsResponse {
+  payments: FeePayment[]
+  total: number
+  page: number
+  limit: number
+}
+
+export interface FeePaymentParams {
+  page?: number
+  limit?: number
+  sort_by?: string
+  sort_order?: "ASC" | "DESC"
+  search?: string
+  student_id?: string
+  fee_component_id?: string
+  term_id?: string
+  session_id?: string
+  class?: string
+  status?: string
+  payment_method?: string
+}
+
 export const FeesAPI = {
   getActiveFees: () =>
     apiFetch<ResponsePack<ActiveFeesResponse>>("/fees/active", { method: "GET" }, true),
@@ -86,4 +139,54 @@ export const FeesAPI = {
       },
       true
     ),
+
+  getPayments: (params?: FeePaymentParams) =>
+    apiFetch<ResponsePack<FeePaymentsResponse>>(
+      "/fee-payments",
+      {
+        method: "GET",
+        params,
+      },
+      true
+    ),
+
+  getStudentFeeDetails: (
+    studentId: string,
+    params: { term_id: string; session_id: string }
+  ) =>
+    apiFetch<ResponsePack<StudentFeeDetailsResponse>>(
+      `/fees/student/${studentId}`,
+      {
+        method: "GET",
+        params,
+      },
+      true
+    ),
+}
+
+export interface StudentFeeDetailsResponse {
+  student_info: {
+    student_id: string
+    first_name: string
+    last_name: string
+    registration_number: string
+    class: string
+    term: string
+    session: string
+  }
+  fee_breakdown: {
+    component_name: string
+    amount: number
+    amount_paid: number
+    outstanding_amount: number
+    status: string
+  }[]
+  payment_history: {
+    payment_date: string
+    amount_paid: number
+    payment_method: string
+    transaction_reference: string
+    fee_component: string
+    term_label: string
+  }[]
 }

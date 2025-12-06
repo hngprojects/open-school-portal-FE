@@ -25,9 +25,9 @@ const StatCard = ({
         >
           <Icon className={`h-5 w-5 ${iconColor}`} />
         </div>
-        <span className="text-sm font-medium text-gray-600">{title}</span>
+        <span className="text-xs font-medium text-gray-600 sm:text-sm">{title}</span>
       </div>
-      <div className="text-primary text-3xl font-semibold">{value}</div>
+      <div className="text-primary text-[18px] font-semibold sm:text-3xl">{value}</div>
     </div>
   )
 }
@@ -75,7 +75,7 @@ const StatsCards = () => {
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => (
         <StatCard
           key={index}
