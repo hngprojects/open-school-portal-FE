@@ -38,6 +38,21 @@ type ResponsePack<T> = {
   data: T
 }
 
+export interface FeesAnalyticsResponse {
+  data: {
+    totals: {
+      total_expected_fees: number
+      total_paid: number
+      outstanding_balance: number
+      transaction_this_month: number
+    }
+    monthly_payments: {
+      month: string
+      total_payment: number
+    }[]
+  }
+}
+
 export const FeesAPI = {
   getActiveFees: () =>
     apiFetch<ResponsePack<ActiveFeesResponse>>("/fees/active", { method: "GET" }, true),
@@ -58,6 +73,16 @@ export const FeesAPI = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      },
+      true
+    ),
+
+  getAnalytics: (params?: { year?: number; session_id?: string; term_id?: string }) =>
+    apiFetch<ResponsePack<FeesAnalyticsResponse>>(
+      "/fee-payments/dashboard/analytics",
+      {
+        method: "GET",
+        params,
       },
       true
     ),

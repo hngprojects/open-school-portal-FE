@@ -1,84 +1,166 @@
-// File: app/(portal)/student/results/page.tsx
+// File: app/(portal)/parent/results/page.tsx
 "use client"
 
-import { useState, useEffect, useRef } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { ParentResultsView } from "./_components/parent-results-view"
 import {
-  useGetStudentClasses,
-  useGetTerms,
+  useGetLinkedStudents,
+  useGetActiveTerm,
   useGetStudentResults,
 } from "./_hooks/use-parent-results"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
+import { useState } from "react"
 
 export default function ParentResultsPage() {
-  const { user } = useAuth() // Get authenticated user
-  const [selectedClass, setSelectedClass] = useState<string>("")
-  const [selectedTerm, setSelectedTerm] = useState<string>("")
-  const initializedRef = useRef(false)
+  const { user } = useAuth()
+  const [selectedStudentId, setSelectedStudentId] = useState<string>()
 
-  // Get student ID from auth context
-  const studentId = user?.id || ""
-  const studentName = user?.name || "Student"
+  // Get linked students for the parent
+  const {
+    data: linkedStudents = [],
+    isLoading: isLoadingStudents,
+    error: studentsError,
+  } = useGetLinkedStudents()
 
-  const { data: classes = [], isLoading: isLoadingClasses } =
-    useGetStudentClasses(studentId)
-  const { data: terms = [], isLoading: isLoadingTerms } = useGetTerms()
+  // Get active term
+  const {
+    data: activeTerm,
+    isLoading: isLoadingTerm,
+    error: termError,
+  } = useGetActiveTerm()
 
-  const { data: resultsData, isLoading: isLoadingResults } = useGetStudentResults(
-    studentId,
-    selectedTerm ? { term_id: selectedTerm } : undefined
-  )
+  // Get student results for selected student
+  const {
+    data: results = [],
+    isLoading: isLoadingResults,
+    error: resultsError,
+  } = useGetStudentResults(selectedStudentId)
 
-  // Use derived state
-  const autoSelectedClass = classes.length > 0 ? classes[0].id : ""
-  const autoSelectedTerm = terms.length > 0 ? terms[0].id : ""
+  const isLoading = isLoadingStudents || isLoadingTerm || isLoadingResults
+  const error = studentsError || termError || resultsError
 
-  // Initialize selections on mount
-  useEffect(() => {
-    // Skip if already initialized
-    if (initializedRef.current) return
+  // Transform term data
+  const transformedTerm = activeTerm
+    ? {
+        id: activeTerm.id,
+        name: activeTerm.name,
+        start_date: activeTerm.startDate,
+        end_date: activeTerm.endDate,
+        status: activeTerm.status,
+        is_active: activeTerm.isCurrent,
+      }
+    : undefined
 
-    // Set initial selections when data is available
-    if (classes.length > 0 && terms.length > 0) {
-      // Use setTimeout to defer state updates to next tick
-      const timer = setTimeout(() => {
-        setSelectedClass(autoSelectedClass)
-        setSelectedTerm(autoSelectedTerm)
-        initializedRef.current = true
-      }, 0)
+  // Handle student selection
+  const handleStudentSelect = (studentId: string) => {
+    setSelectedStudentId(studentId)
+  }
 
-      return () => clearTimeout(timer)
-    }
-  }, [classes.length, terms.length, autoSelectedClass, autoSelectedTerm])
-
-  // Filter results by selected class
-  const filteredResults = (resultsData?.data || []).filter(
-    (result) => !selectedClass || result.class_id === selectedClass
-  )
-
-  const isLoading = isLoadingClasses || isLoadingTerms || isLoadingResults
+  // Auto-select first student if none selected
+  if (!selectedStudentId && linkedStudents.length > 0) {
+    handleStudentSelect(linkedStudents[0].id)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Student Results</h1>
-          <p className="text-gray-600">View your child &#39; s academic results</p>
+          <h1 className="text-2xl font-bold text-gray-900">Children&apos;s Results</h1>
+          <p className="text-gray-600">
+            View and download your children&apos;s academic results
+          </p>
         </div>
 
-        <ParentResultsView
-          studentId={studentId}
-          classes={classes}
-          terms={terms}
-          results={filteredResults}
-          selectedClass={selectedClass}
-          selectedTerm={selectedTerm}
-          onClassChange={setSelectedClass}
-          onTermChange={setSelectedTerm}
-          isLoading={isLoading}
-          classStatistics={resultsData?.class_statistics}
-        />
+        {/* Error Display */}
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {error instanceof Error
+                ? error.message
+                : "An error occurred while loading results"}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Loading State */}
+        {isLoading && !error && (
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        )}
+
+        {/* Student Selection */}
+        {!isLoading && !error && linkedStudents.length > 0 && (
+          <div className="mb-6">
+            <h2 className="mb-3 text-lg font-semibold">Select Child</h2>
+            <div className="flex flex-wrap gap-3">
+              {linkedStudents.map((student) => (
+                <button
+                  key={student.id}
+                  onClick={() => handleStudentSelect(student.id)}
+                  className={`rounded-lg border px-4 py-3 transition-colors ${
+                    selectedStudentId === student.id
+                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      : "border-gray-300 bg-white hover:bg-gray-50"
+                  }`}
+                >
+                  <div className="text-left">
+                    <p className="font-medium">{student.full_name}</p>
+                    <p className="text-sm text-gray-600">{student.registration_number}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Results View */}
+        {!isLoading && !error && selectedStudentId && linkedStudents.length > 0 && (
+          <ParentResultsView
+            selectedStudent={linkedStudents.find((s) => s.id === selectedStudentId)!}
+            activeTerm={transformedTerm}
+            results={results}
+            isLoading={isLoading}
+          />
+        )}
+
+        {/* No Linked Students */}
+        {!isLoading && !error && linkedStudents.length === 0 && (
+          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+            <div className="mx-auto max-w-md">
+              <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                No Children Linked
+              </h3>
+              <p className="mt-2 text-gray-600">
+                No students are linked to your parent account. Please contact your school
+                administrator.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* No Results State */}
+        {!isLoading && !error && selectedStudentId && results.length === 0 && (
+          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+            <div className="mx-auto max-w-md">
+              <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                No Results Available
+              </h3>
+              <p className="mt-2 text-gray-600">
+                No results are available for the selected student. Results will appear
+                here once they are approved by teachers and admin.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

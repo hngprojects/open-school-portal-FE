@@ -1,77 +1,75 @@
-// File: app/(portal)/student/results/_hooks/use-student-results.ts
+// File: app/(portal)/parent/results/_hooks/use-parent-results.ts
 "use client"
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { ResultsAPI } from "@/lib/results"
-import type { GenerateResultRequest } from "@/types/result"
-import { toast } from "sonner"
+import { useQuery } from "@tanstack/react-query"
+import { getParentLinkedStudents, getStudentResults, getActiveTerm } from "@/lib/results"
+import type { StudentResultResponse } from "@/types/result"
 
-const PARENT_RESULTS_KEY = ["student", "results"]
+const PARENT_RESULTS_KEY = ["parent-results"]
 
-// Get student classes (enrolled classes)
-export function useGetStudentClasses(studentId?: string) {
+// Get linked students for parent
+export function useGetLinkedStudents() {
   return useQuery({
-    queryKey: [...PARENT_RESULTS_KEY, "classes", studentId],
-    queryFn: () => {
-      // In a real app, you would fetch classes the student is enrolled in
-      // For now, we'll reuse the teacher classes endpoint
-      return ResultsAPI.getClasses()
-    },
-    enabled: !!studentId,
+    queryKey: [...PARENT_RESULTS_KEY, "linked-students"],
+    queryFn: () => getParentLinkedStudents(),
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   })
 }
 
-// Get terms
-export function useGetTerms() {
+// Get active term
+export function useGetActiveTerm() {
   return useQuery({
-    queryKey: [...PARENT_RESULTS_KEY, "terms"],
-    queryFn: () => ResultsAPI.getTerms(),
+    queryKey: [...PARENT_RESULTS_KEY, "active-term"],
+    queryFn: () => getActiveTerm(),
     staleTime: 1000 * 60 * 5,
+    retry: 1,
   })
 }
 
-// Get student results with pagination and filters
-export function useGetStudentResults(
-  studentId?: string,
-  params?: { term_id?: string; page?: number; limit?: number }
-) {
+// Get results for a specific student
+export function useGetStudentResults(studentId?: string) {
+  const { data: activeTerm } = useGetActiveTerm()
+
   return useQuery({
-    queryKey: [...PARENT_RESULTS_KEY, "student-results", studentId, params],
+    queryKey: [...PARENT_RESULTS_KEY, "student-results", studentId, activeTerm?.id],
     queryFn: () => {
       if (!studentId) throw new Error("Student ID is required")
-      return ResultsAPI.getStudentResults(studentId, params)
+      return getStudentResults(studentId, activeTerm?.id)
     },
-    enabled: !!studentId,
+    enabled: !!studentId && !!activeTerm?.id,
     staleTime: 1000 * 60 * 5,
-  })
-}
-
-// Get specific result by ID
-export function useGetResultById(resultId?: string) {
-  return useQuery({
-    queryKey: [...PARENT_RESULTS_KEY, "result", resultId],
-    queryFn: () => {
-      if (!resultId) throw new Error("Result ID is required")
-      return ResultsAPI.getResultById(resultId)
-    },
-    enabled: !!resultId,
-    staleTime: 1000 * 60 * 5,
-  })
-}
-
-// Generate result for student
-export function useGenerateResult() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: (data: GenerateResultRequest) => ResultsAPI.generateResult(data),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: [...PARENT_RESULTS_KEY] })
-      toast.success(`Successfully generated ${data.generated_count} result(s)`)
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to generate results")
+    retry: 1,
+    select: (results: StudentResultResponse[]) => {
+      // Transform to your existing StudentResult format
+      return results.map((result) => ({
+        id: result.id,
+        student_id: result.student.id,
+        class_id: result.class.id,
+        class_name: `${result.class.name}${result.class.arm ? ` ${result.class.arm}` : ""}`,
+        term_id: result.term.id,
+        term_name: result.term.name,
+        academic_session_id: result.academicSession.id,
+        academic_session_name: result.academicSession.name,
+        total_score: result.total_score,
+        average_score: result.average_score,
+        grade_letter: result.grade_letter,
+        position: result.position,
+        remark: result.remark,
+        subject_count: result.subject_count,
+        generated_at: result.generated_at,
+        subjects: result.subject_lines.map((subject) => ({
+          id: subject.id,
+          result_id: result.id,
+          subject_id: subject.subject.id,
+          subject_name: subject.subject.name,
+          ca_score: subject.ca_score,
+          exam_score: subject.exam_score,
+          total_score: subject.total_score,
+          grade_letter: subject.grade_letter,
+          remark: subject.remark,
+        })),
+      }))
     },
   })
 }

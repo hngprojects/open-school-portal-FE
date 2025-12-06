@@ -133,12 +133,11 @@ export const ClassesAPI = {
     ),
 
   removeStudentFromClass: (classId: string, studentId: string) => {
-    return new Promise((resolve) => setTimeout(resolve, 1000))
-    //   return apiFetch<ResponsePack<null>>(
-    //     `/classes/${classId}/students/${studentId}`,
-    //     { method: "DELETE" },
-    //     true
-    //   )
+    return apiFetch<ResponsePack<null>>(
+      `/classes/${classId}/students/${studentId}`,
+      { method: "DELETE" },
+      true
+    )
   },
 
   count: () => apiFetch<ResponsePack<{ total: number }>>("/classes/count", {}, true),
