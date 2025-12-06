@@ -60,10 +60,10 @@ const mainItems = [
     title: "Timetable",
     url: "/admin/timetable",
     icon: Calendar,
-    subItems: [
-      { title: "Timetable View", url: "/admin/timetable" },
-      { title: "Timetable Setup", url: "/admin/timetable" },
-    ],
+    // subItems: [
+    //   { title: "Timetable View", url: "/admin/timetable" },
+    //   { title: "Timetable Setup", url: "/admin/timetable" },
+    // ],
   },
   { title: "Results", url: "/admin/results", icon: Calendar },
   { title: "Teachers", url: "/admin/teachers", icon: Users },
