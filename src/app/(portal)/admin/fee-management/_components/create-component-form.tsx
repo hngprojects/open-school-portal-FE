@@ -142,7 +142,7 @@ export default function CreateComponentForm({ onSuccess }: CreateComponentFormPr
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         {/* Component Name */}
         <div className="space-y-1">
-          <Label>Component Name</Label>
+          <Label>Fee Name</Label>
           <Input placeholder="Tuition Fee" {...register("component_name")} />
           {errors.component_name && (
             <p className="text-xs text-red-500">{errors.component_name.message}</p>
@@ -270,7 +270,7 @@ export default function CreateComponentForm({ onSuccess }: CreateComponentFormPr
             Cancel
           </Button>
           <Button type="submit" size="lg" disabled={createComponent.isPending}>
-            {createComponent.isPending ? "Saving..." : "Create Component"}
+            {createComponent.isPending ? "Saving..." : "Create Fee"}
           </Button>
         </div>
       </form>
@@ -279,8 +279,8 @@ export default function CreateComponentForm({ onSuccess }: CreateComponentFormPr
       <SuccessModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        title="Fee Component Created"
-        message="The fee component was successfully created."
+        title="Fee Created"
+        message="The fee was successfully created."
         onAction={() => setModalOpen(false)}
       />
     </>

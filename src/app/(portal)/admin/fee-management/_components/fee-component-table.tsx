@@ -96,19 +96,22 @@ const FeeComponentTable: React.FC<FeeComponentTableProps> = ({ feeComponents }) 
           <Table className="border-[#EAECF0]">
             <TableHeader className="h-13 bg-[#F9FAFB]">
               <TableRow>
-                <TableHead className="px-4 py-2.5">Component Name</TableHead>
+                <TableHead className="px-4 py-2.5">Fee Name</TableHead>
                 <TableHead className="px-4 py-2.5">Description</TableHead>
                 <TableHead className="px-4 py-2.5 text-center">Term</TableHead>
                 <TableHead className="px-4 py-2.5 text-center">Created By</TableHead>
                 <TableHead className="px-4 py-2.5 text-center">Amount</TableHead>
                 <TableHead className="px-4 py-2.5 text-center">Status</TableHead>
-                <TableHead className="px-4 py-2.5 text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
               {feeComponents.map((fee) => (
-                <TableRow key={fee.id}>
+                <TableRow
+                  key={fee.id}
+                  onClick={() => handleViewClick(fee)}
+                  className="cursor-pointer hover:bg-gray-50"
+                >
                   <TableCell className="px-4 py-2.5 font-medium">
                     {fee.component_name}
                   </TableCell>
@@ -135,15 +138,6 @@ const FeeComponentTable: React.FC<FeeComponentTableProps> = ({ feeComponents }) 
                       {fee.status}
                     </span>
                   </TableCell>
-                  <TableCell className="px-4 py-2.5 text-center">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewClick(fee)}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -155,14 +149,14 @@ const FeeComponentTable: React.FC<FeeComponentTableProps> = ({ feeComponents }) 
       <Drawer open={openDrawer} onOpenChange={setOpenDrawer} direction="right">
         <DrawerContent className="w-96">
           <DrawerHeader>
-            <DrawerTitle>Fee Component Details</DrawerTitle>
+            <DrawerTitle>Fee Details</DrawerTitle>
           </DrawerHeader>
 
           <div className="space-y-4 p-4">
             {selectedFee ? (
               <div className="space-y-3 text-sm">
                 <div>
-                  <span className="font-medium text-gray-500">Component Name</span>
+                  <span className="font-medium text-gray-500">Fee Name</span>
                   <p className="mt-1 text-gray-900">{selectedFee.component_name}</p>
                 </div>
 
@@ -243,12 +237,12 @@ const FeeComponentTable: React.FC<FeeComponentTableProps> = ({ feeComponents }) 
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {actionType === "activate" ? "Activate" : "Deactivate"} Fee Component?
+              {actionType === "activate" ? "Activate" : "Deactivate"} Fee?
             </AlertDialogTitle>
             <AlertDialogDescription>
               {actionType === "activate"
-                ? "Are you sure you want to reactivate this fee component? It will be available for use again."
-                : "Are you sure you want to deactivate this fee component? It will no longer be available for use."}
+                ? "Are you sure you want to reactivate this fee? It will be available for use again."
+                : "Are you sure you want to deactivate this fee? It will no longer be available for use."}
             </AlertDialogDescription>
           </AlertDialogHeader>
 
