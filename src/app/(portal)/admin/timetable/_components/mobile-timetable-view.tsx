@@ -121,7 +121,7 @@ export default function MobileTimetableView({
                     <div className="flex flex-col items-end">
                       <span className="text-xs text-gray-500">Room</span>
                       <span className="text-sm font-medium text-[#2d2d2d]">
-                        {schedule.room}
+                        {schedule.room.name}
                       </span>
                     </div>
                   )}

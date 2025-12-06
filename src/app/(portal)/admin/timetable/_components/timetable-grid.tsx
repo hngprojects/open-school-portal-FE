@@ -116,7 +116,7 @@ export default function TimetableGrid({ classId, readonly = false }: TimetableGr
                             )}
                             {schedule.room && (
                               <span className="text-[10px] text-gray-500">
-                                {schedule.room}
+                                Room: {schedule.room.name}
                               </span>
                             )}
                           </div>
