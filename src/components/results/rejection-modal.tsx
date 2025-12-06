@@ -69,7 +69,7 @@ export function RejectionModal({
           <Button
             onClick={handleReject}
             disabled={!rejectionReason.trim() || isRejecting}
-            variant="destructive"
+            variant="default"
           >
             {isRejecting ? "Rejecting..." : "Reject Submission"}
           </Button>

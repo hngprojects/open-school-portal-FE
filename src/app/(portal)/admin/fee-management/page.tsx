@@ -54,18 +54,18 @@ const FeeManagement = () => {
       <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
         <DashboardTitle
           heading="Fee Management"
-          description="Create and manage different fee components"
+          description="Create and manage different fees"
         />
-        <CreateComponentButton>Add Component</CreateComponentButton>
+        <CreateComponentButton>Add Fee</CreateComponentButton>
       </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <p className="text-center text-gray-500">Loading fee components...</p>
+          <p className="text-center text-gray-500">Loading fees...</p>
         </div>
       ) : isError ? (
         <div className="flex items-center justify-center py-20">
-          <p className="text-center text-red-500">Failed to load fee components.</p>
+          <p className="text-center text-red-500">Failed to load fees.</p>
         </div>
       ) : !hasData ? (
         <EmptyState />
@@ -100,7 +100,7 @@ const FeeManagement = () => {
           {/* Show filtered count */}
           {searchQuery || statusFilter !== "all" ? (
             <div className="text-sm text-gray-500">
-              Showing {filteredFees.length} of {fees.length} components
+              Showing {filteredFees.length} of {fees.length} fees
             </div>
           ) : null}
 
@@ -113,7 +113,7 @@ const FeeManagement = () => {
           {/* No results message */}
           {filteredFees.length === 0 && hasData && (
             <div className="flex items-center justify-center py-10">
-              <p className="text-gray-500">No fee components match your filters</p>
+              <p className="text-gray-500">No fees match your filters</p>
             </div>
           )}
         </>

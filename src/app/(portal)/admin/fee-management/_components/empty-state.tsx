@@ -10,15 +10,14 @@ const EmptyState = () => {
       </div>
       <div className="space-y-2">
         <h4 className="text-center text-xl font-semibold text-[#101828]">
-          Your Fee Component Will Appear Here
+          Your Fee Will Appear Here
         </h4>
         <p className="text-text-secondary max-w-[55ch] text-center leading-6">
-          Get started by creating a new fee component to organize your school’s fee
-          structure
+          Get started by creating a new fee to organize your school’s fee structure
         </p>
       </div>
 
-      <CreateComponentButton>Create Your First Component</CreateComponentButton>
+      <CreateComponentButton>Create Your First Fee</CreateComponentButton>
     </section>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { Student, GradeEntry } from "@/types/result"
 import {
   Table,
@@ -17,8 +17,8 @@ import { GradeFormDialog } from "./grade-form-dialog"
 
 interface StudentsTableProps {
   students: Student[]
-  grades: Record<string, GradeEntry & { id?: string }> // Update to include id
-  onGradeUpdate: (studentId: string, updatedGrade: GradeEntry & { id?: string }) => void // Update to include id
+  grades: Record<string, GradeEntry & { id?: string }>
+  onGradeUpdate: (studentId: string, updatedGrade: GradeEntry & { id?: string }) => void
   isLoading: boolean
   classId: string
   subjectId: string
@@ -39,7 +39,45 @@ export function StudentsTable({
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  if (isLoading) {
+  // Create a filter key that changes when filters change
+  const filterKey = `${classId}-${subjectId}-${termId}`
+
+  // create refs and state
+  const prevFilterKeyRef = useRef(filterKey)
+  const timersRef = useRef<number[]>([]) // store timer ids so we can clear them
+  const [showLoader, setShowLoader] = useState(false)
+
+  // effect: schedule show/hide of loader via timers only (no sync setState in body)
+  useEffect(() => {
+    if (filterKey === prevFilterKeyRef.current) return
+
+    // update the ref synchronously (no react state)
+    prevFilterKeyRef.current = filterKey
+
+    // schedule immediate show inside a timer callback (so setState isn't called synchronously)
+    const showTimer = window.setTimeout(() => {
+      setShowLoader(true)
+
+      // schedule hide after your desired delay (300ms)
+      const hideTimer = window.setTimeout(() => {
+        setShowLoader(false)
+      }, 300)
+
+      timersRef.current.push(hideTimer)
+    }, 0)
+
+    timersRef.current.push(showTimer)
+
+    // cleanup: clear timers if effect re-runs or component unmounts
+    return () => {
+      timersRef.current.forEach((t) => clearTimeout(t))
+      timersRef.current = []
+    }
+  }, [filterKey])
+
+  const shouldShowLoader = showLoader || isLoading
+
+  if (shouldShowLoader) {
     return (
       <div className="flex justify-center py-8">
         <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
@@ -141,7 +179,7 @@ export function StudentsTable({
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           student={selectedStudent}
-          grade={grades[selectedStudent.id]} // Just pass the grade directly
+          grade={grades[selectedStudent.id]}
           classId={classId}
           subjectId={subjectId}
           termId={termId}
