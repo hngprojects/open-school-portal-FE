@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect, useRef } from "react"
 import {
   Class,
   Subject,
@@ -14,6 +14,7 @@ import { FilterSection } from "./filter-section"
 import { GradingScaleCard } from "./grading-scale-card"
 import { StudentsTable } from "./students-table"
 import { SubmissionActions } from "./submission-actions"
+import { Loader2 } from "lucide-react"
 
 interface TeacherResultsViewProps {
   classes: Class[]
@@ -56,7 +57,7 @@ const initializeGrades = (
     existingSubmission.grades.forEach((grade) => {
       if (grade.student_id) {
         newGrades[grade.student_id] = {
-          id: grade.id, // Preserve the grade ID
+          id: grade.id,
           student_id: grade.student_id,
           ca_score: grade.ca_score,
           exam_score: grade.exam_score,
@@ -95,22 +96,34 @@ export function TeacherResultsView({
   existingSubmission,
   academicSessionId,
 }: TeacherResultsViewProps) {
-  // Create a unique key that changes when filters change
+  // Track filter key to detect changes
   const filterKey = `${selectedClass}-${selectedSubject}-${selectedTerm}`
+  const prevFilterKeyRef = useRef(filterKey)
 
   // Store grades with student_id as key
-  const [grades, setGrades] = useState<Record<string, GradeEntry & { id?: string }>>(() =>
-    initializeGrades(students, existingSubmission)
-  )
+  const [grades, setGrades] = useState<Record<string, GradeEntry & { id?: string }>>({})
 
-  // Track the previous filter key to detect changes
-  const [prevFilterKey, setPrevFilterKey] = useState(filterKey)
+  // Update grades when filters or data changes
+  useEffect(() => {
+    // Only initialize grades when we have valid filters
+    if (selectedClass && selectedSubject && selectedTerm) {
+      const currentFilterKey = `${selectedClass}-${selectedSubject}-${selectedTerm}`
 
-  // When filters change, reset grades
-  if (filterKey !== prevFilterKey) {
-    setPrevFilterKey(filterKey)
-    setGrades(initializeGrades(students, existingSubmission))
-  }
+      // Check if filters changed or if this is initial load with existing submission
+      const filtersChanged = prevFilterKeyRef.current !== currentFilterKey
+
+      if (filtersChanged || !Object.keys(grades).length) {
+        prevFilterKeyRef.current = currentFilterKey
+
+        // Use setTimeout to avoid setting state during render
+        const timer = setTimeout(() => {
+          setGrades(initializeGrades(students, existingSubmission))
+        }, 0)
+
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [selectedClass, selectedSubject, selectedTerm, students, existingSubmission, grades])
 
   const handleGradeUpdate = useCallback(
     (studentId: string, updatedGrade: GradeEntry & { id?: string }) => {
@@ -130,7 +143,7 @@ export function TeacherResultsView({
           grade.student_id && (grade.ca_score !== null || grade.exam_score !== null)
       )
       .map((grade) => ({
-        id: grade.id, // Include ID for updates
+        id: grade.id,
         student_id: grade.student_id,
         ca_score: grade.ca_score,
         exam_score: grade.exam_score,
@@ -184,6 +197,14 @@ export function TeacherResultsView({
         </div>
       )}
 
+      {/* Loading indicator for submission data */}
+      {canShowResults && isLoadingStudents && (
+        <div className="flex items-center justify-center rounded-lg border bg-white p-4">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          <span className="text-sm text-gray-600">Loading existing grades...</span>
+        </div>
+      )}
+
       {/* Only show grading scale and actions when all filters are selected */}
       {canShowResults && (
         <>
@@ -207,16 +228,19 @@ export function TeacherResultsView({
         <div className="rounded-lg border bg-white p-4">
           <div className="grid grid-cols-3 gap-4 md:grid-cols-4">
             <div>
+              <p className="text-sm font-medium text-gray-500">Class</p>
               <p className="text-lg font-semibold">
                 {classes.find((c) => c.id === selectedClass)?.name || "-"}
               </p>
             </div>
             <div>
+              <p className="text-sm font-medium text-gray-500">Subject</p>
               <p className="text-lg font-semibold">
                 {subjects.find((s) => s.id === selectedSubject)?.name || "-"}
               </p>
             </div>
             <div>
+              <p className="text-sm font-medium text-gray-500">Term</p>
               <p className="text-lg font-semibold">
                 {terms.find((t) => t.id === selectedTerm)?.name || "-"}
               </p>
