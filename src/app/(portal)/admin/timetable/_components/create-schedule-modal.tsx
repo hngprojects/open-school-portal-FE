@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useCreateSchedule } from "../_hooks/use-timetable"
 import { useSubjects } from "../_hooks/use-subjects"
+import { useRooms } from "../_hooks/use-rooms"
 import { useQuery } from "@tanstack/react-query"
 import { TeachersAPI } from "@/lib/teachers"
 
@@ -44,6 +45,7 @@ const formSchema = z
     period_type: z.enum(["ACADEMICS", "BREAK"]),
     subject_id: z.string().optional(),
     teacher_id: z.string().optional(),
+    room_id: z.string().optional(),
   })
   .refine(
     (data) => {
@@ -76,6 +78,8 @@ export default function CreateScheduleModal({
     queryFn: () => TeachersAPI.getAll(),
   })
 
+  const { data: roomsData, isLoading: isLoadingRooms } = useRooms()
+
   const {
     control,
     handleSubmit,
@@ -91,6 +95,7 @@ export default function CreateScheduleModal({
       period_type: "ACADEMICS",
       subject_id: "",
       teacher_id: "",
+      room_id: "",
     },
   })
 
@@ -108,6 +113,7 @@ export default function CreateScheduleModal({
         class_id: selectedClassId,
         subject_id: values.period_type === "BREAK" ? undefined : values.subject_id,
         teacher_id: values.period_type === "BREAK" ? undefined : values.teacher_id,
+        room_id: values.period_type === "BREAK" ? undefined : values.room_id,
       },
       {
         onSuccess: () => {
@@ -120,6 +126,7 @@ export default function CreateScheduleModal({
 
   const subjects = subjectsData?.data?.data || []
   const teachers = teachersData?.data?.data || []
+  const rooms = roomsData?.data?.rooms || []
 
   const renderError = (error?: string) => {
     if (!error) return null
@@ -252,6 +259,39 @@ export default function CreateScheduleModal({
                   )}
                 />
                 {renderError(errors.teacher_id?.message)}
+              </div>
+
+              <div className="w-full">
+                <label className="mb-2 block text-sm font-semibold text-gray-900">
+                  Room
+                </label>
+                <Controller
+                  control={control}
+                  name="room_id"
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      disabled={isLoadingRooms}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={
+                            isLoadingRooms ? "Loading rooms..." : "Select room"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {rooms.map((room) => (
+                          <SelectItem key={room.id} value={room.id}>
+                            {room.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {renderError(errors.room_id?.message)}
               </div>
             </>
           )}

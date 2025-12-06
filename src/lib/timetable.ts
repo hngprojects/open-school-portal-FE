@@ -6,17 +6,21 @@ export interface Schedule {
   start_time: string
   end_time: string
   period_type: string
-  room: string
+  room: {
+    id: string
+    name: string
+    capacity: number
+  } | null
   subject: {
     id: string
     name: string
-  }
+  } | null
   teacher: {
     id: string
     title: string
     first_name: string
     last_name: string
-  }
+  } | null
 }
 
 export interface TimetableResponse {
@@ -31,6 +35,7 @@ export interface CreateSchedulePayload {
   period_type: "ACADEMICS" | "BREAK"
   subject_id?: string
   teacher_id?: string
+  room_id?: string
   class_id: string
 }
 

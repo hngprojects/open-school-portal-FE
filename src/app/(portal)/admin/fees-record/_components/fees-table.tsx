@@ -71,7 +71,7 @@ const FeesTable = ({
                   Class
                 </TableHead>
                 <TableHead className="font-outfit gap-[11.48px] px-[22.97px] py-[11.48px] text-[12px] leading-[18px] font-medium text-[#667085]">
-                  Fee Component
+                  Fee
                 </TableHead>
                 <TableHead className="font-outfit gap-[11.48px] px-[22.97px] py-[11.48px] text-[12px] leading-[18px] font-medium text-[#667085]">
                   Amount Due
@@ -210,7 +210,7 @@ const FeesTable = ({
 
                 <div className="border-t border-gray-100 pt-4">
                   <div className="mb-4 flex flex-col">
-                    <span className="text-xs text-gray-500">Fee Component</span>
+                    <span className="text-xs text-gray-500">Fee</span>
                     <span className="mt-1 text-sm font-semibold text-gray-900">
                       {payment.fee_component.component_name}
                     </span>

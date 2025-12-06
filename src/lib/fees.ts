@@ -123,9 +123,6 @@ export const FeesAPI = {
       {
         method: "POST",
         data,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       },
       true
     ),
@@ -165,28 +162,30 @@ export const FeesAPI = {
 }
 
 export interface StudentFeeDetailsResponse {
-  student_info: {
-    student_id: string
-    first_name: string
-    last_name: string
-    registration_number: string
-    class: string
-    term: string
-    session: string
+  data: {
+    student_info: {
+      student_id: string
+      first_name: string
+      last_name: string
+      registration_number: string
+      class: string
+      term: string
+      session: string
+    }
+    fee_breakdown: {
+      component_name: string
+      amount: number
+      amount_paid: number
+      outstanding_amount: number
+      status: string
+    }[]
+    payment_history: {
+      payment_date: string
+      amount_paid: number
+      payment_method: string
+      transaction_reference: string
+      fee_component: string
+      term_label: string
+    }[]
   }
-  fee_breakdown: {
-    component_name: string
-    amount: number
-    amount_paid: number
-    outstanding_amount: number
-    status: string
-  }[]
-  payment_history: {
-    payment_date: string
-    amount_paid: number
-    payment_method: string
-    transaction_reference: string
-    fee_component: string
-    term_label: string
-  }[]
 }
