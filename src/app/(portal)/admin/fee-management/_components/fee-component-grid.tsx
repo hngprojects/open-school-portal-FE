@@ -162,14 +162,14 @@ const FeeComponentGrid: React.FC<FeeComponentGridProps> = ({ feeComponents }) =>
       <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
         <DrawerContent className="w-96">
           <DrawerHeader>
-            <DrawerTitle>Fee Component Details</DrawerTitle>
+            <DrawerTitle>Fee Details</DrawerTitle>
           </DrawerHeader>
 
           <div className="space-y-4 p-4">
             {selectedFee ? (
               <div className="space-y-3 text-sm">
                 <div>
-                  <span className="text-primary font-medium">Component Name</span>
+                  <span className="text-primary font-medium">Fee Name</span>
                   <p className="text-primary mt-1">{selectedFee.component_name}</p>
                 </div>
 
@@ -258,12 +258,12 @@ const FeeComponentGrid: React.FC<FeeComponentGridProps> = ({ feeComponents }) =>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {actionType === "activate" ? "Activate" : "Deactivate"} Fee Component?
+              {actionType === "activate" ? "Activate" : "Deactivate"} Fee?
             </AlertDialogTitle>
             <AlertDialogDescription>
               {actionType === "activate"
-                ? "Are you sure you want to reactivate this fee component? It will be available for use again."
-                : "Are you sure you want to deactivate this fee component? It will no longer be available for use."}
+                ? "Are you sure you want to reactivate this fee? It will be available for use again."
+                : "Are you sure you want to deactivate this fee? It will no longer be available for use."}
             </AlertDialogDescription>
           </AlertDialogHeader>
 

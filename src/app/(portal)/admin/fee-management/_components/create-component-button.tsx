@@ -16,7 +16,7 @@ const CreateComponentButton = ({ children }: { children?: React.ReactNode }) => 
         className="flex w-full items-center gap-2 md:w-fit"
       >
         <Plus className="size-4" />
-        {children ?? "Create Component"}
+        {children ?? "Create Fee"}
       </Button>
 
       <CreateComponentDrawer open={open} onOpenChange={setOpen} />

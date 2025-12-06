@@ -14,7 +14,7 @@ const CreateComponentDrawer = ({ open, onOpenChange }: Props) => {
       <DrawerContent className="flex max-h-screen flex-col">
         <DrawerHeader className="shrink-0">
           <DrawerTitle className="border-b px-5 pb-5 text-2xl font-normal text-[#313131]">
-            Add Fee Component
+            Add Fee
           </DrawerTitle>
         </DrawerHeader>
 
