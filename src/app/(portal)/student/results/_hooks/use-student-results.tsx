@@ -2,16 +2,16 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { getCurrentStudentProfile, getStudentResults, getActiveTerm } from "@/lib/results"
+import { getCurrentStudentId, getStudentResults, getActiveTerm } from "@/lib/results"
 import type { StudentResultResponse } from "@/types/result"
 
 const STUDENT_RESULTS_KEY = ["student-results"]
 
-// Get current student profile (student dashboard)
+// Get current student ID and info from auth/me endpoint
 export function useGetCurrentStudent() {
   return useQuery({
     queryKey: [...STUDENT_RESULTS_KEY, "current-student"],
-    queryFn: () => getCurrentStudentProfile(),
+    queryFn: () => getCurrentStudentId(),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
   })

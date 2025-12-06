@@ -1,28 +1,32 @@
+// File: src/components/results/shared-results-view.tsx
 "use client"
 
 import { Term, StudentResult } from "@/types/result"
-import { DownloadButton } from "./download-button"
-import { ResultsTable } from "@/app/(portal)/student/results/_components/results-table" // Use shared
-import { OverallSummary } from "@/app/(portal)/student/results/_components/overall-summary" // Use shared
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { StudentBasicInfo } from "@/types/result"
-import { EmptyState } from "@/components/results/empty-state" // Use shared
-import { AlertCircle } from "lucide-react"
+import { OverallSummary } from "@/app/(portal)/student/results/_components/overall-summary"
+import { ResultsTable } from "@/app/(portal)/student/results/_components/results-table"
+import { DownloadButton } from "@/app/(portal)/student/results/_components/download-button"
 
-interface ParentResultsViewProps {
-  selectedStudent: StudentBasicInfo
+interface SharedResultsViewProps {
+  studentId: string
+  studentName: string
+  registrationNumber?: string
   activeTerm?: Term
   results: StudentResult[]
   isLoading: boolean
+  showDownloadButton?: boolean
 }
 
-export function ParentResultsView({
-  selectedStudent,
+export function SharedResultsView({
+  studentId,
+  studentName,
+  registrationNumber,
   activeTerm,
   results,
   isLoading,
-}: ParentResultsViewProps) {
+  showDownloadButton = true,
+}: SharedResultsViewProps) {
   // Get the current result (assuming latest result for active term)
   const currentResult = results.length > 0 ? results[0] : undefined
 
@@ -38,15 +42,19 @@ export function ParentResultsView({
             <div className="space-y-2">
               <div>
                 <span className="text-sm font-medium text-gray-500">Name</span>
-                <p className="text-lg font-semibold">{selectedStudent.full_name}</p>
+                <p className="text-lg font-semibold">{studentName}</p>
               </div>
+              {registrationNumber && (
+                <div>
+                  <span className="text-sm font-medium text-gray-500">
+                    Registration Number
+                  </span>
+                  <p className="text-lg font-semibold">{registrationNumber}</p>
+                </div>
+              )}
               <div>
-                <span className="text-sm font-medium text-gray-500">
-                  Registration Number
-                </span>
-                <p className="text-lg font-semibold">
-                  {selectedStudent.registration_number}
-                </p>
+                <span className="text-sm font-medium text-gray-500">Student ID</span>
+                <p className="text-lg font-semibold">{studentId}</p>
               </div>
             </div>
           </CardContent>
@@ -94,12 +102,12 @@ export function ParentResultsView({
         </Card>
       </div>
 
-      {/* Download Button - Only show if results exist */}
-      {currentResult && activeTerm && (
+      {/* Download Button - Only show if results exist and enabled */}
+      {showDownloadButton && currentResult && activeTerm && (
         <div className="flex justify-end">
           <DownloadButton
             result={currentResult}
-            studentId={selectedStudent.id}
+            studentId={studentId}
             className={currentResult.class_name || "Class"}
             term={activeTerm.name}
           />
@@ -111,15 +119,6 @@ export function ParentResultsView({
 
       {/* Results Table */}
       <ResultsTable result={currentResult} isLoading={isLoading} />
-
-      {/* No Results Message */}
-      {!currentResult && !isLoading && (
-        <EmptyState
-          title="No Results Available"
-          description={`No results are available for ${selectedStudent.full_name} in the current term. Results will appear here once they are approved by teachers and admin.`}
-          icon={AlertCircle}
-        />
-      )}
     </div>
   )
 }

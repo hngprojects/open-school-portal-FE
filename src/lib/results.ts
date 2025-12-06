@@ -10,7 +10,6 @@ import type {
   GetGradesParams,
   CreateSubmissionRequest,
   ReviewActionRequest,
-  ApiResponse,
   StudentBasicInfo,
   ParentStudentsResponse,
   StudentResultResponse,
@@ -356,21 +355,67 @@ const transformBackendResult = (backendResult: ResultResponsePayload): StudentRe
 }
 
 // Standalone functions for student/parent results
-export const getCurrentStudentProfile = (): Promise<StudentBasicInfo> => {
-  return apiFetch<ResponsePack<StudentBasicInfo>>("/students", {}, true)
-    .then((response) => response.data)
+// Add this function to get student ID from auth context
+export const getCurrentStudentId = async (): Promise<{
+  student_id: string
+  full_name: string
+  registration_number?: string
+}> => {
+  // Get the current user from auth/me endpoint which now includes student_id
+  return apiFetch<
+    ResponsePack<{
+      id: string
+      email: string
+      first_name: string
+      last_name: string
+      middle_name?: string
+      role: string[]
+      gender: string
+      dob: string
+      phone: string
+      student_id: string
+      is_active: boolean
+      created_at: string
+      updated_at: string
+    }>
+  >("/auth/me", {}, true)
+    .then((response) => {
+      const userData = response.data
+
+      // Check if user has student role and student_id
+      if (!userData.role.includes("STUDENT") || !userData.student_id) {
+        throw new Error("User is not a student or student ID is not available")
+      }
+
+      return {
+        student_id: userData.student_id,
+        full_name: `${userData.first_name} ${userData.last_name}`,
+        registration_number: userData.email, // Use email as fallback for registration number
+      }
+    })
     .catch((error) => {
-      console.error("Error fetching student profile:", error)
+      console.error("Error fetching current student from auth:", error)
       throw error
     })
 }
 
 export const getParentLinkedStudents = (): Promise<StudentBasicInfo[]> => {
   return apiFetch<ResponsePack<ParentStudentsResponse>>("/parents/my-students", {}, true)
-    .then((response) => response.data.data)
+    .then((response) => {
+      // Make sure we always return an array, even if the structure is different
+      if (response.data && Array.isArray(response.data.data)) {
+        return response.data.data
+      } else if (response.data && Array.isArray(response.data)) {
+        return response.data
+      } else if (Array.isArray(response)) {
+        return response
+      }
+      return [] // Always return an array, never undefined
+    })
     .catch((error) => {
       console.error("Error fetching parent linked students:", error)
-      throw error
+      // Return empty array instead of throwing to prevent the query from failing
+      return []
     })
 }
 

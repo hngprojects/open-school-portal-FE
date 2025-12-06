@@ -1,29 +1,27 @@
-// File: app/(portal)/student/results/page.tsx
 "use client"
 
 import { StudentResultsView } from "./_components/student-results-view"
-import {
-  useGetCurrentStudent,
-  useGetActiveTerm,
-  useGetStudentResults,
-} from "./_hooks/use-student-results"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { ResultsContainer } from "@/components/results/results-container"
+import { useStudentAuth } from "@/hooks/use-auth-user"
+import { useGetActiveTerm } from "./_hooks/use-student-results"
+import { useGetStudentResults } from "./_hooks/use-student-results"
 
 export default function StudentResultsPage() {
-  // Get current student data
+  // Get current student from auth
   const {
-    data: currentStudent,
-    isLoading: isLoadingStudent,
-    error: studentError,
-  } = useGetCurrentStudent()
+    studentId,
+    studentName,
+    isLoading: isLoadingAuth,
+    error: authError,
+    isStudent,
+  } = useStudentAuth()
 
   // Get active term
   const {
     data: activeTerm,
     isLoading: isLoadingTerm,
     error: termError,
+    refetch: refetchTerm,
   } = useGetActiveTerm()
 
   // Get student results for active term
@@ -31,10 +29,11 @@ export default function StudentResultsPage() {
     data: results = [],
     isLoading: isLoadingResults,
     error: resultsError,
-  } = useGetStudentResults(currentStudent?.id)
+    refetch: refetchResults,
+  } = useGetStudentResults(studentId)
 
-  const isLoading = isLoadingStudent || isLoadingTerm || isLoadingResults
-  const error = studentError || termError || resultsError
+  const isLoading = isLoadingAuth || isLoadingTerm || isLoadingResults
+  const error = authError || termError || resultsError
 
   // Transform term data
   const transformedTerm = activeTerm
@@ -48,63 +47,56 @@ export default function StudentResultsPage() {
       }
     : undefined
 
+  const handleRetry = () => {
+    if (authError)
+      window.location.reload() // Refresh for auth errors
+    else if (termError) refetchTerm()
+    else if (resultsError) refetchResults()
+  }
+
+  // Check if user is a student
+  if (!isLoading && !isStudent && !authError) {
+    return (
+      <ResultsContainer
+        title="Access Denied"
+        subtitle=""
+        isLoading={false}
+        error={new Error("This page is only accessible to students.")}
+        isEmpty={false}
+        emptyTitle=""
+        emptyDescription=""
+        onRetry={() => (window.location.href = "/dashboard")}
+      >
+        {/* Add children prop to fix TypeScript error */}
+        <div></div>
+      </ResultsContainer>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">My Results</h1>
-          <p className="text-gray-600">View and download your academic results</p>
-        </div>
-
-        {/* Error Display */}
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {error instanceof Error
-                ? error.message
-                : "An error occurred while loading results"}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Loading State */}
-        {isLoading && !error && (
-          <div className="space-y-6">
-            <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-32 w-full" />
-            <Skeleton className="h-64 w-full" />
-          </div>
-        )}
-
-        {/* Results View */}
-        {!isLoading && !error && currentStudent && (
-          <StudentResultsView
-            studentId={currentStudent.id}
-            studentName={currentStudent.full_name}
-            activeTerm={transformedTerm}
-            results={results}
-            isLoading={isLoading}
-          />
-        )}
-
-        {/* No Results State */}
-        {!isLoading && !error && results.length === 0 && (
-          <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-            <div className="mx-auto max-w-md">
-              <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                No Results Available
-              </h3>
-              <p className="mt-2 text-gray-600">
-                No results are available for the current term. Results will appear here
-                once they are approved by your teacher and admin.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+    <ResultsContainer
+      title="My Results"
+      subtitle="View and download your academic results"
+      isLoading={isLoading}
+      error={error}
+      isEmpty={!studentId || results.length === 0}
+      emptyTitle={studentId ? "No Results Available" : "Student Profile Not Found"}
+      emptyDescription={
+        studentId
+          ? "No results are available for the current term. Results will appear here once they are approved by your teacher and admin."
+          : "Unable to load your student profile. Please try again or contact support."
+      }
+      onRetry={handleRetry}
+    >
+      {studentId && studentName && (
+        <StudentResultsView
+          studentId={studentId}
+          studentName={studentName}
+          activeTerm={transformedTerm}
+          results={results}
+          isLoading={isLoading}
+        />
+      )}
+    </ResultsContainer>
   )
 }
