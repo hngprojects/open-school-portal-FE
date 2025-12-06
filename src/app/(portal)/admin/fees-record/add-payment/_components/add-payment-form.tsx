@@ -203,7 +203,7 @@ const AddPaymentForm = () => {
           {/* Fee Component - First because it drives Student selection */}
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-900">
-              Fee Component <span className="text-red-600">*</span>
+              Fee <span className="text-red-600">*</span>
             </label>
             <Controller
               control={control}
@@ -211,14 +211,26 @@ const AddPaymentForm = () => {
               render={({ field }) => (
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <SelectTrigger className="font-outfit focus:ring-accent h-13! w-full rounded-[8px] border-[0.8px] border-[#2D2D2D4D] px-[12px] py-[10px] placeholder-gray-400 shadow-sm transition-all focus:border-transparent focus:ring-2 focus:outline-none">
-                    <SelectValue placeholder="Select Fee Component" />
+                    <SelectValue
+                      placeholder={isActiveFeesLoading ? "Loading fees..." : "Select Fee"}
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {feeComponents.map((component) => (
-                      <SelectItem key={component.id} value={component.id}>
-                        {component.name} - {component.session} ({component.term})
-                      </SelectItem>
-                    ))}
+                    {isActiveFeesLoading ? (
+                      <div className="flex items-center justify-center p-4">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+                      </div>
+                    ) : feeComponents.length === 0 ? (
+                      <div className="p-2 text-center text-sm text-gray-500">
+                        No fees found
+                      </div>
+                    ) : (
+                      feeComponents.map((component) => (
+                        <SelectItem key={component.id} value={component.id}>
+                          {component.name} - {component.session} ({component.term})
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -245,14 +257,28 @@ const AddPaymentForm = () => {
                   disabled={!watchFeeComponent}
                 >
                   <SelectTrigger className="font-outfit focus:ring-accent h-13! w-full rounded-[8px] border-[0.8px] border-[#2D2D2D4D] px-[12px] py-[10px] placeholder-gray-400 shadow-sm transition-all focus:border-transparent focus:ring-2 focus:outline-none">
-                    <SelectValue placeholder="Select Student" />
+                    <SelectValue
+                      placeholder={
+                        isStudentsLoading ? "Loading students..." : "Select Student"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {students.map((student) => (
-                      <SelectItem key={student.id} value={student.id}>
-                        {student.name}
-                      </SelectItem>
-                    ))}
+                    {isStudentsLoading ? (
+                      <div className="flex items-center justify-center p-4">
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+                      </div>
+                    ) : students.length === 0 ? (
+                      <div className="p-2 text-center text-sm text-gray-500">
+                        No students found
+                      </div>
+                    ) : (
+                      students.map((student) => (
+                        <SelectItem key={student.id} value={student.id}>
+                          {student.name}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               )}
@@ -267,7 +293,7 @@ const AddPaymentForm = () => {
           <FormField
             label="Invoice"
             placeholder="Add invoice number"
-            required={true}
+            required={false}
             className="font-outfit h-13! w-full rounded-[8px] border-[0.8px] border-[#2D2D2D4D] px-[12px] py-[10px]"
             {...register("invoice")}
             error={errors.invoice?.message}
@@ -311,7 +337,7 @@ const AddPaymentForm = () => {
         </div>
 
         {/* File Upload */}
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <h3 className="text-lg font-medium text-gray-900">
             Upload Receipt <span className="text-gray-500">(Optional)</span>
           </h3>
@@ -367,7 +393,7 @@ const AddPaymentForm = () => {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-end gap-4">
           <Button

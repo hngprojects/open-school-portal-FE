@@ -48,15 +48,24 @@ export default function TimetablePage() {
                   className="text-accent border-accent flex w-full justify-between px-8 text-sm font-bold"
                   disabled={isLoadingClasses}
                 >
-                  {selectedClassId
-                    ? classGroups
-                        .flatMap((g) => g.classes)
-                        .find((c) => c.id === selectedClassId)?.arm
-                      ? `${classGroups.find((g) => g.classes.some((c) => c.id === selectedClassId))?.name} ${classGroups.flatMap((g) => g.classes).find((c) => c.id === selectedClassId)?.arm}`
-                      : classGroups.find((g) =>
-                          g.classes.some((c) => c.id === selectedClassId)
-                        )?.name
-                    : "Select Class"}
+                  {isLoadingClasses ? (
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />
+                      <span>Loading classes...</span>
+                    </div>
+                  ) : selectedClassId ? (
+                    classGroups
+                      .flatMap((g) => g.classes)
+                      .find((c) => c.id === selectedClassId)?.arm ? (
+                      `${classGroups.find((g) => g.classes.some((c) => c.id === selectedClassId))?.name} ${classGroups.flatMap((g) => g.classes).find((c) => c.id === selectedClassId)?.arm}`
+                    ) : (
+                      classGroups.find((g) =>
+                        g.classes.some((c) => c.id === selectedClassId)
+                      )?.name
+                    )
+                  ) : (
+                    "Select Class"
+                  )}
                   <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
                 </Button>
               </DropdownMenuTrigger>

@@ -22,7 +22,7 @@ const StudentDetailsSheet = ({
     sessionId: student?.session_id,
   })
 
-  const details = data?.data
+  const details = data?.data?.data
 
   if (!student) return null
 
@@ -108,7 +108,7 @@ const StudentDetailsSheet = ({
               <h4 className="mb-4 text-lg font-bold text-gray-900">Payment Breakdown</h4>
               <div className="rounded-lg border border-gray-100">
                 <div className="grid grid-cols-3 border-b border-gray-100 bg-white p-3 text-xs font-semibold text-gray-900">
-                  <span>Fees Component</span>
+                  <span>Fee</span>
                   <span className="text-center">Amount</span>
                   <span className="text-right">Status</span>
                 </div>

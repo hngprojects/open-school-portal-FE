@@ -65,7 +65,7 @@ export function PaymentSuccessModal({
             </span>
           </div>
           <div className="flex items-start justify-between gap-4 text-sm">
-            <span className="shrink-0 text-gray-500">Fee Component</span>
+            <span className="shrink-0 text-gray-500">Fee</span>
             <span className="text-right font-semibold text-gray-900">
               {data.feeComponent}
             </span>
