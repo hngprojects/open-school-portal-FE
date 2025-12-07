@@ -34,7 +34,6 @@ export function GradeFormDialog({
   subjectId,
   termId,
   academicSessionId,
-  existingSubmissionId,
 }: GradeFormDialogProps) {
   const [formData, setFormData] = useState({
     ca_score: grade?.ca_score?.toString() || "",
