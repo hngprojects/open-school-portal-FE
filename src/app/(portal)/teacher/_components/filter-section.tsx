@@ -61,7 +61,7 @@ export function FilterSection({
   const handleSubjectChange = (subjectId: string) => {
     if (!selectedClass) {
       setShowSubjectWarning(true)
-      setTimeout(() => setShowTermWarning(false), 5000)
+      setTimeout(() => setShowSubjectWarning(false), 5000)
       // const timer = setTimeout(() => setShowSubjectWarning(false), 5000)
       return
     }
@@ -71,7 +71,7 @@ export function FilterSection({
   const handleTermChange = (termId: string) => {
     if (!selectedClass) {
       setShowTermWarning(true)
-      setTimeout(() => setShowSubjectWarning(false), 5000)
+      setTimeout(() => setShowTermWarning(false), 5000)
       // const timer = setTimeout(() => setShowTermWarning(false), 5000)
       return
     }
