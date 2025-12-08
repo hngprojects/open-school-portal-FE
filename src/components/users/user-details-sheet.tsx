@@ -169,13 +169,7 @@ export function UserDetailsSheet({
   }
 
   const handleEdit = () => {
-    if (userType === "teachers") {
-      router.push(`/admin/teachers/${user.id}`)
-    } else if (userType === "students") {
-      router.push(`/admin/students/${user.id}`)
-    } else if (userType === "parents") {
-      router.push(`/admin/parents/${user.id}`)
-    }
+    router.push(`/admin/${userType}/${user.id}`)
     onOpenChange(false)
   }
 
@@ -245,7 +239,7 @@ export function UserDetailsSheet({
                 <div>
                   <p className="text-sm text-gray-600">Date of Birth</p>
                   <p className="font-medium">
-                    {new Date(user.date_of_birth).toLocaleDateString()}
+                    {new Date(user.date_of_birth).toLocaleDateString("en-CA")}
                   </p>
                 </div>
               </div>
