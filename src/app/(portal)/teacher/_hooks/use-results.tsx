@@ -22,9 +22,7 @@ export function useGetSubjects(classId?: string, teacherId?: string) {
     if (!classId) return []
 
     try {
-      const subjects = await ResultsAPI.getSubjects()
-
-      return subjects
+      return ResultsAPI.getSubjects(classId, teacherId)
     } catch (error) {
       console.error("Error fetching subjects:", error)
       throw error
@@ -50,9 +48,7 @@ export function useGetTeacherSubjects(classId?: string) {
       if (!classId || !teacher?.teacher_id) return []
 
       try {
-        const subjects = await ResultsAPI.getSubjects()
-
-        return subjects
+        return ResultsAPI.getSubjects(classId, teacher.teacher_id)
       } catch (error) {
         console.error("Error fetching teacher subjects:", error)
         throw error
